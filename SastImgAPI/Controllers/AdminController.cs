@@ -65,7 +65,7 @@ namespace SastImgAPI.Controllers
             CancellationToken clt
         )
         {
-            var user = await _userManager.FindByNameAsync(data.UserName);
+            var user = await _userManager.FindByNameAsync(data.Username);
             var role = await _roleManager.FindByNameAsync(data.RoleName);
             if (user is null)
                 return ResponseDispatcher

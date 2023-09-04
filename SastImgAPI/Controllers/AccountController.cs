@@ -1,5 +1,4 @@
 using FluentValidation;
-using LanguageResources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +25,6 @@ namespace SastImgAPI.Controllers
     public class AccountController : ControllerBase
     {
         private readonly ILogger<AccountController> _logger;
-        private readonly IStringLocalizer<IdentityLanguage> _identityLocalizer;
         private readonly IValidator<RegisterDto> _registerValidator;
         private readonly IValidator<LoginDto> _loginValidator;
         private readonly IValidator<PasswordResetDto> _passwordResetValidator;
@@ -39,7 +37,6 @@ namespace SastImgAPI.Controllers
         private readonly IDistributedCache _cache;
 
         public AccountController(
-            IStringLocalizer<IdentityLanguage> identityLocalizer,
             IValidator<PasswordResetDto> passwordResetValidator,
             IValidator<RegisterDto> registerValidator,
             IValidator<LoginDto> loginValidator,
@@ -53,7 +50,6 @@ namespace SastImgAPI.Controllers
             IValidator<EmailConfirmDto> emailConfirmValidator
         )
         {
-            _identityLocalizer = identityLocalizer;
             _passwordResetValidator = passwordResetValidator;
             _registerValidator = registerValidator;
             _loginValidator = loginValidator;

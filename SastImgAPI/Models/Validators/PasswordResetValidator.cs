@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using LanguageResources;
 using Microsoft.Extensions.Localization;
 using SastImgAPI.Models.Dtos;
 
@@ -7,13 +6,9 @@ namespace SastImgAPI.Models.Validators
 {
     public class PasswordResetValidator : AbstractValidator<PasswordResetDto>
     {
-        public PasswordResetValidator(IStringLocalizer<ValidationLanguage> localizer)
+        public PasswordResetValidator()
         {
-            RuleFor(x => x.NewPassword)
-                .Length(6, 20)
-                .WithMessage(localizer["PasswordInvalid"])
-                .Equal(x => x.ConfirmPassword)
-                .WithMessage(localizer["ConfirmPasswordInvalid"]);
+            RuleFor(x => x.NewPassword).Length(6, 20).Equal(x => x.ConfirmPassword);
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using LanguageResources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +26,6 @@ namespace SastImgAPI.Controllers
 
         public AlbumController(
             UserManager<User> userManager,
-            IStringLocalizer<IdentityLanguage> identityLocalizer,
             DatabaseContext dbContext,
             IValidator<AlbumDto> albumSetValidator,
             JwtTokenGenerator jwtGenerator,

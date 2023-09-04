@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using SastImgAPI.Describer;
 using SastImgAPI.Filters;
 using SastImgAPI.Models;
 using SastImgAPI.Models.Dtos;
@@ -52,21 +51,19 @@ builder.Services.AddStackExchangeRedisCache(options =>
 });
 
 // Add Identity
-builder.Services
-    .AddIdentityCore<User>(options =>
-    {
-        //options.SignIn.RequireConfirmedEmail = true;
-        options.Password.RequiredLength = 6;
-        options.Password.RequireUppercase = false;
-        options.Password.RequireLowercase = false;
-        options.Password.RequireNonAlphanumeric = false;
-        options.Password.RequireDigit = false;
-        options.User.RequireUniqueEmail = true;
-        options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultPhoneProvider;
-        options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultPhoneProvider;
-        options.Tokens.ChangeEmailTokenProvider = TokenOptions.DefaultPhoneProvider;
-    })
-    .AddErrorDescriber<CustomIdentityErrorResultDescriber>();
+builder.Services.AddIdentityCore<User>(options =>
+{
+    //options.SignIn.RequireConfirmedEmail = true;
+    options.Password.RequiredLength = 6;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireDigit = false;
+    options.User.RequireUniqueEmail = true;
+    options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultPhoneProvider;
+    options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultPhoneProvider;
+    options.Tokens.ChangeEmailTokenProvider = TokenOptions.DefaultPhoneProvider;
+});
 builder.Services.Configure<DataProtectionTokenProviderOptions>(
     options => options.TokenLifespan = TimeSpan.FromMinutes(5)
 );
