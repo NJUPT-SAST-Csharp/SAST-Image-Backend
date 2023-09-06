@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using SastImgAPI.Models.Dtos;
+using SastImgAPI.Models.RequestDtos;
 
 namespace SastImgAPI.Models.Validators
 {
-    public class ImageValidator : AbstractValidator<ImageDto>
+    public class ImageValidator : AbstractValidator<ImageRequestDto>
     {
         public ImageValidator()
         {

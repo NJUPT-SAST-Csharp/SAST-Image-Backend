@@ -7,9 +7,7 @@ namespace SastImgAPI.Models.DbSet
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }
-
         public ICollection<Tag> Tags { get; } = new List<Tag>();
-
         public Category Category { get; set; } = null!;
         public int CategoryId { get; set; } = 0;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

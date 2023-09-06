@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
-using SastImgAPI.Models.Dtos;
+using SastImgAPI.Models.RequestDtos;
 
 namespace SastImgAPI.Models.Validators
 {
-    public class RegisterValidator : AbstractValidator<RegisterDto>
+    public class RegisterValidator : AbstractValidator<RegisterRequestDto>
     {
         public RegisterValidator()
         {

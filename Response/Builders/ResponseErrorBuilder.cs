@@ -1,7 +1,6 @@
 ﻿using FluentValidation.Results;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Response.Dtos;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Response.Builders
@@ -16,41 +15,39 @@ namespace Response.Builders
 
         public ResponseErrorBuilder Add(string field, string message)
         {
-            this.errors ??= new List<ResponseErrorObject>();
-            errors.Add(new ResponseErrorObject(field, message));
+            errors.Add(new ErrorObject(field, message));
             return this;
         }
 
         public ResponseErrorBuilder Add(IEnumerable<ValidationFailure> errors)
         {
-            this.errors ??= new List<ResponseErrorObject>();
             foreach (var error in errors)
             {
-                this.errors.Add(new ResponseErrorObject(error.PropertyName, error.ErrorMessage));
+                this.errors.Add(new ErrorObject(error.PropertyName, error.ErrorMessage));
             }
             return this;
         }
 
         public ResponseErrorBuilder Add(IEnumerable<IdentityError> errors)
         {
-            this.errors ??= new List<ResponseErrorObject>();
             foreach (var error in errors)
             {
-                this.errors.Add(new ResponseErrorObject(error.Code, error.Description));
+                this.errors.Add(new ErrorObject(error.Code, error.Description));
             }
             return this;
         }
 
         public ObjectResult Build()
         {
-            if (errors is null)
-                return new GeneralError(status, detail);
-            else
-                return new DetailedError(status, detail, errors);
+            return new ObjectResult(new ErrorResponseDto(status, detail, errors))
+            {
+                StatusCode = status,
+                ContentTypes = new() { "application/json" }
+            };
         }
 
         private readonly int status;
         private readonly string detail;
-        private ICollection<ResponseErrorObject>? errors;
+        private readonly ICollection<ErrorObject> errors = new List<ErrorObject>();
     }
 }

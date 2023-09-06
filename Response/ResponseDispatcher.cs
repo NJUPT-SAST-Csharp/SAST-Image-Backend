@@ -9,6 +9,10 @@ namespace Response
         public static ResponseErrorBuilder Error(int status, string detail) => new(status, detail);
 
         public static ObjectResult Data(object data) =>
-            new(new { data }) { StatusCode = StatusCodes.Status200OK };
+            new(data)
+            {
+                StatusCode = StatusCodes.Status200OK,
+                ContentTypes = new() { "application/json" }
+            };
     }
 }

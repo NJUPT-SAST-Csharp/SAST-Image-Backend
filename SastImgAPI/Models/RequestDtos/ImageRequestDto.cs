@@ -1,6 +1,6 @@
-﻿namespace SastImgAPI.Models.Dtos
+﻿namespace SastImgAPI.Models.RequestDtos
 {
-    public record ImageDto(
+    public record ImageRequestDto(
         IFormFile ImageFile,
         int AlbumId,
         string Title,

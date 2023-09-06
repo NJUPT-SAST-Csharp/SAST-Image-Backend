@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 using SastImgAPI.Models.DbSet;
-using SastImgAPI.Models.Dtos;
+using SastImgAPI.Models.RequestDtos;
 
 namespace SastImgAPI.Models.Validators
 {
-    public class AlbumValidation : AbstractValidator<AlbumDto>
+    public class AlbumValidation : AbstractValidator<AlbumRequestDto>
     {
         public AlbumValidation()
         {

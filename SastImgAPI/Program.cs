@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SastImgAPI.Filters;
 using SastImgAPI.Models;
-using SastImgAPI.Models.Dtos;
+using SastImgAPI.Models.RequestDtos;
 using SastImgAPI.Models.Identity;
 using SastImgAPI.Models.Validators;
 using SastImgAPI.Options;
@@ -37,10 +37,7 @@ builder.Services
 
 // Add DbContext.
 builder.Services.AddDbContext<DatabaseContext>(
-    options =>
-        options
-            .UseNpgsql(builder.Configuration.GetConnectionString("Postgres"))
-            .UseSnakeCaseNamingConvention()
+    options => options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")).UseSnakeCaseNamingConvention()
 );
 
 // Add Redis caching.
@@ -80,14 +77,14 @@ idBuilder
     .AddSignInManager<SignInManager<User>>();
 
 // Add Validators
-builder.Services.AddSingleton<IValidator<RegisterDto>, RegisterValidator>();
-builder.Services.AddSingleton<IValidator<LoginDto>, LoginValidator>();
-builder.Services.AddSingleton<IValidator<PasswordResetDto>, PasswordResetValidator>();
-builder.Services.AddSingleton<IValidator<AlbumDto>, AlbumValidation>();
-builder.Services.AddSingleton<IValidator<EmailConfirmDto>, EmailConfirmValidator>();
-builder.Services.AddSingleton<IValidator<ImageDto>, ImageValidator>();
-builder.Services.AddSingleton<IValidator<ProfileDto>, ProfileValidator>();
-builder.Services.AddSingleton<IValidator<TagDto>, TagValidator>();
+builder.Services.AddSingleton<IValidator<RegisterRequestDto>, RegisterValidator>();
+builder.Services.AddSingleton<IValidator<LoginRequestDto>, LoginValidator>();
+builder.Services.AddSingleton<IValidator<PasswordResetRequestDto>, PasswordResetValidator>();
+builder.Services.AddSingleton<IValidator<AlbumRequestDto>, AlbumValidation>();
+builder.Services.AddSingleton<IValidator<EmailConfirmRequestDto>, EmailConfirmValidator>();
+builder.Services.AddSingleton<IValidator<ImageRequestDto>, ImageValidator>();
+builder.Services.AddSingleton<IValidator<ProfileRequestDto>, ProfileValidator>();
+builder.Services.AddSingleton<IValidator<TagRequestDto>, TagValidator>();
 
 // Add configuration
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOptions"));
@@ -104,11 +101,7 @@ builder.Services
     .AddJwtBearer(options =>
     {
         SymmetricSecurityKey secKey =
-            new(
-                Encoding.UTF8.GetBytes(
-                    builder.Configuration.GetSection("JwtOptions").Get<JwtOptions>()!.SecKey
-                )
-            );
+            new(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JwtOptions").Get<JwtOptions>()!.SecKey));
         options.TokenValidationParameters = new()
         {
             ValidateIssuer = false,
@@ -134,11 +127,7 @@ builder.Services.AddSwaggerGen(options =>
     var scheme = new OpenApiSecurityScheme
     {
         Description = "Authorization Header \r\nExample:'Bearer 123456789'",
-        Reference = new OpenApiReference
-        {
-            Type = ReferenceType.SecurityScheme,
-            Id = "Authorization"
-        },
+        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Authorization" },
         Scheme = "oauth2",
         Name = "Authorization",
         In = ParameterLocation.Header,
@@ -150,6 +139,7 @@ builder.Services.AddSwaggerGen(options =>
     options.AddSecurityRequirement(requirement);
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+    options.EnableAnnotations();
 });
 
 // Add localizer service

@@ -1,8 +1,8 @@
 ﻿namespace Response
 {
-    public class ResponseErrorObject
+    public class ErrorObject
     {
-        internal ResponseErrorObject(string field, string message)
+        internal ErrorObject(string field, string message)
         {
             Field = field;
             Message = message;
