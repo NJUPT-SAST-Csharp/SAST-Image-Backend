@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using SastImgAPI.Models.Identity;
 using SastImgAPI.Options;
 using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.Formats;
@@ -43,7 +44,7 @@ namespace SastImgAPI.Services
             return url;
         }
 
-        public async Task<string> UploadAvatarAsync(
+        public async Task<string> UploadProfileAvatarAsync(
             IFormFile file,
             int userId,
             CancellationToken clt = default
@@ -61,7 +62,7 @@ namespace SastImgAPI.Services
             return url!;
         }
 
-        public async Task<string> UploadHeaderAsync(
+        public async Task<string> UploadProfileHeaderAsync(
             IFormFile file,
             int userId,
             CancellationToken clt = default
@@ -69,6 +70,24 @@ namespace SastImgAPI.Services
         {
             var filename = string.Concat(userId, ".png");
             string path = Path.Combine(_options.BaseUrl, "user", "header");
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            var url = Path.Combine(path, filename);
+            using (var stream = new FileStream(url, FileMode.Create, FileAccess.ReadWrite))
+            {
+                await file.CopyToAsync(stream, clt);
+            }
+            return url;
+        }
+
+        public async Task<string> UploadAlbumCoverAsync(
+            IFormFile file,
+            int albumId,
+            CancellationToken clt = default
+        )
+        {
+            var filename = string.Concat(albumId, ".png");
+            string path = Path.Combine(_options.BaseUrl, "album", "cover");
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
             var url = Path.Combine(path, filename);

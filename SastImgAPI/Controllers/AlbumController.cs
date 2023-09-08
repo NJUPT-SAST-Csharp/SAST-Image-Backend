@@ -11,6 +11,7 @@ using SastImgAPI.Models.Identity;
 using System.Security.Claims;
 using Swashbuckle.AspNetCore.Annotations;
 using SastImgAPI.Models.ResponseDtos;
+using SastImgAPI.Services;
 
 namespace SastImgAPI.Controllers
 {
@@ -21,8 +22,10 @@ namespace SastImgAPI.Controllers
         private readonly UserManager<User> _userManager;
         private readonly DatabaseContext _dbContext;
         private readonly IValidator<AlbumRequestDto> _albumSetValidator;
+        private readonly ImageAccessor _imageAccessor;
 
         public AlbumController(
+            ImageAccessor imageAccessor,
             UserManager<User> userManager,
             DatabaseContext dbContext,
             IValidator<AlbumRequestDto> albumSetValidator
@@ -31,6 +34,7 @@ namespace SastImgAPI.Controllers
             _userManager = userManager;
             _dbContext = dbContext;
             _albumSetValidator = albumSetValidator;
+            _imageAccessor = imageAccessor;
         }
 
         /// <summary>
@@ -82,6 +86,7 @@ namespace SastImgAPI.Controllers
                         album.Id,
                         album.Name,
                         album.Description,
+                        album.Cover,
                         album.CreatedAt,
                         album.Accessibility,
                         new(album.Author.Id, album.Author.UserName!, album.Author.Nickname)
@@ -159,6 +164,7 @@ namespace SastImgAPI.Controllers
                 album.Id,
                 album.Name,
                 album.Description,
+                album.Cover,
                 album.CreatedAt,
                 album.Accessibility,
                 new(album.Author.Id, album.Author.UserName!, album.Author.Nickname)
@@ -179,7 +185,7 @@ namespace SastImgAPI.Controllers
         /// <param name="id">The unique ID of the album to be modified.</param>
         /// <param name="albumDto">An object containing the updated album details.</param>
         /// <param name="clt">A CancellationToken used for canceling the operation.</param>
-        [HttpPut("{id:int}")]
+        [HttpPatch("{id:int}")]
         [Authorize(Roles = "User")]
         [SwaggerResponse(
             StatusCodes.Status204NoContent,
@@ -200,7 +206,7 @@ namespace SastImgAPI.Controllers
             "Not Found: The specified album was not found.",
             typeof(ErrorResponseDto)
         )]
-        public async Task<IActionResult> ChangeAlbum(
+        public async Task<IActionResult> UpdateAlbum(
             int id,
             [FromBody] AlbumRequestDto albumDto,
             CancellationToken clt
@@ -289,6 +295,7 @@ namespace SastImgAPI.Controllers
                             album.Id,
                             album.Name,
                             album.Description,
+                            album.Cover,
                             album.CreatedAt,
                             album.Accessibility,
                             new(album.Author.Id, album.Author.UserName!, album.Author.Nickname),
@@ -330,11 +337,11 @@ namespace SastImgAPI.Controllers
         }
 
         /// <summary>
-        /// Deletes an album based on its unique ID, if the authenticated user is the owner.
+        /// Deletes an album based on its unique ID, with specific authorization requirements.
         /// </summary>
         /// <remarks>
-        /// Allow authenticated users to delete an album identified by its unique ID.
-        /// The album can only be deleted if the authenticated user is the owner of the album.
+        /// Allows authorized users with the 'User' role to delete their own albums. Users with the 'Admin' role
+        /// have the privilege to delete any album.
         /// </remarks>
         /// <param name="id">The unique ID of the album to be deleted.</param>
         /// <param name="clt">A CancellationToken used for canceling the operation.</param>
@@ -345,19 +352,23 @@ namespace SastImgAPI.Controllers
             "No Content: The album has been successfully deleted."
         )]
         [SwaggerResponse(
-            StatusCodes.Status403Forbidden,
-            "Forbidden: The authenticated user doesn't have permission to delete the album.",
-            typeof(ErrorResponseDto)
-        )]
-        [SwaggerResponse(
             StatusCodes.Status404NotFound,
             "Not Found: The specified album was not found.",
             typeof(ErrorResponseDto)
         )]
         public async Task<IActionResult> DeleteAlbum(int id, CancellationToken clt)
         {
-            // Find the album by its unique ID
-            var album = await _dbContext.Albums.FirstOrDefaultAsync(album => album.Id == id, clt);
+            // Find the album based on the user's authorization level
+            var album = await _dbContext.Albums
+                .Where(
+                    album =>
+                        int.Parse(User.FindFirstValue("id")!) == album.AuthorId // User is the owner
+                        || User.Claims
+                            .Where(claim => claim.Type == "role")
+                            .Select(claim => claim.Value)
+                            .Contains("Admin") // User has Admin role
+                )
+                .FirstOrDefaultAsync(album => album.Id == id, clt);
 
             // Check if the album exists
             if (album is null)
@@ -367,23 +378,60 @@ namespace SastImgAPI.Controllers
                     .Build();
             }
 
-            // Check if the authenticated user is the owner of the album
-            if (album.AuthorId.ToString() != User.FindFirstValue("id"))
-            {
-                return ResponseDispatcher
-                    .Error(
-                        StatusCodes.Status403Forbidden,
-                        "You don't have the access to the album."
-                    )
-                    .Build();
-            }
-
             // Remove the album from the database and save changes
             _dbContext.Remove(album);
             await _dbContext.SaveChangesAsync(clt);
 
             // Return a 204 No Content response indicating successful deletion
             return NoContent();
+        }
+
+        /// <summary>
+        /// Uploads an album cover image for the specified album if the authenticated user is the owner.
+        /// </summary>
+        /// <remarks>
+        /// Allow authenticated users to upload a cover image for an album identified by its unique ID.
+        /// The album cover can only be uploaded if the authenticated user is the owner of the album.
+        /// </remarks>
+        /// <param name="id">The unique ID of the album for which the cover image will be uploaded.</param>
+        /// <param name="cover">The album cover image file to upload.</param>
+        /// <param name="clt">A CancellationToken used for canceling the operation.</param>
+        [HttpPost("{id:int}")]
+        [Authorize(Roles = "User")]
+        [SwaggerResponse(
+            StatusCodes.Status200OK,
+            "OK: Returns the uploaded cover image's URL. ",
+            typeof(UrlResponseDto)
+        )]
+        [SwaggerResponse(
+            StatusCodes.Status404NotFound,
+            "Not Found: The specified album was not found.",
+            typeof(ErrorResponseDto)
+        )]
+        public async Task<IActionResult> UploadAlbumCover(
+            int id,
+            [FromForm] IFormFile cover,
+            CancellationToken clt
+        )
+        {
+            // Find the album by its unique ID
+            var album = await _dbContext.Albums
+                .Where(album => album.AuthorId == int.Parse(User.FindFirstValue("id")!))
+                .FirstOrDefaultAsync(album => album.Id == id, clt);
+
+            // Check if the album exists
+            if (album is null)
+            {
+                return ResponseDispatcher
+                    .Error(StatusCodes.Status404NotFound, "The specified album was not found.")
+                    .Build();
+            }
+
+            // Upload the album cover image and get its URL
+            var url = await _imageAccessor.UploadAlbumCoverAsync(cover, id, clt);
+
+            // Return the URL of the uploaded album cover image
+            return ResponseDispatcher.Data(new UrlResponseDto(url));
         }
     }
 }

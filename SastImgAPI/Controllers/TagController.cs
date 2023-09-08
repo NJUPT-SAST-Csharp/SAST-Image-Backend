@@ -105,7 +105,7 @@ namespace SastImgAPI.Controllers
         /// If the tag is valid and doesn't already exist in the database, it is added, and a success response is returned.
         /// If the tag name already exists, a conflict response is returned.
         /// </remarks>
-        /// <param name="newTag">A <see cref="TagRequestDto"/> object containing the new tag's information.</param>
+        /// <param name="newTag">An object containing the new tag's information.</param>
         /// <param name="clt">A CancellationToken used for canceling the operation.</param>
         [HttpPost]
         [Authorize(Roles = "User")]

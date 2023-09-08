@@ -92,7 +92,7 @@ namespace SastImgAPI.Controllers
         /// </remarks>
         /// <param name="newProfile">An object containing the updated profile information.</param>
         /// <param name="clt">A CancellationToken used for canceling the operation.</param>
-        [HttpPut]
+        [HttpPatch]
         [Authorize(Roles = "User")]
         [SwaggerResponse(
             StatusCodes.Status204NoContent,
@@ -195,7 +195,7 @@ namespace SastImgAPI.Controllers
             }
 
             // Upload the new avatar image and get its URL
-            var url = await _imageAccessor.UploadAvatarAsync(
+            var url = await _imageAccessor.UploadProfileAvatarAsync(
                 avatar,
                 int.Parse(User.FindFirstValue("id")!),
                 clt
@@ -259,7 +259,7 @@ namespace SastImgAPI.Controllers
             }
 
             // Upload the new header image and get its URL
-            var url = await _imageAccessor.UploadHeaderAsync(
+            var url = await _imageAccessor.UploadProfileHeaderAsync(
                 header,
                 int.Parse(User.FindFirstValue("id")!),
                 clt

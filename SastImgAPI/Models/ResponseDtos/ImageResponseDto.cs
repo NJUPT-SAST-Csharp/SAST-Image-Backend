@@ -7,7 +7,7 @@ namespace SastImgAPI.Models.ResponseDtos
         string Url,
         string Title,
         string? Description,
-        int CategoryId,
+        string Category,
         DateTime CreatedAt,
         string Author,
         Accessibility Accessibility,

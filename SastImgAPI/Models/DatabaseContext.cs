@@ -33,13 +33,6 @@ namespace SastImgAPI.Models
             var timezoneConverter = new TimeZoneInfoToStringConverter();
 
             modelBuilder
-                .Entity<Album>()
-                .HasOne(e => e.Cover)
-                .WithOne()
-                .HasForeignKey<Album>(e => e.CoverId)
-                .IsRequired(false);
-
-            modelBuilder
                 .Entity<User>()
                 .Property(user => user.TimeZone)
                 .HasConversion(timezoneConverter);

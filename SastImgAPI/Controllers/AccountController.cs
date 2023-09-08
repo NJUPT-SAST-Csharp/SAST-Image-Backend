@@ -12,6 +12,7 @@ using SastImgAPI.Services;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 using SastImgAPI.Models.ResponseDtos;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SastImgAPI.Controllers
 {
@@ -440,7 +441,7 @@ namespace SastImgAPI.Controllers
         [HttpGet]
         [SwaggerResponse(
             StatusCodes.Status200OK,
-            "Token validation successful, returns a JWT token with role \"Resetter\" for reset process.",
+            "Ok: Returns a JWT token with role \"Resetter\" for reset process.",
             typeof(JwtResponseDto)
         )]
         [SwaggerResponse(
@@ -559,6 +560,31 @@ namespace SastImgAPI.Controllers
                     .Build();
 
             // Return a successful response with no content
+            return NoContent();
+        }
+
+        [HttpPatch]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SetRole(
+            [FromBody] RoleSetRequestDto data,
+            CancellationToken clt
+        )
+        {
+            var user = await _userManager.FindByNameAsync(data.Username);
+            var role = await _roleManager.FindByNameAsync(data.RoleName);
+            if (user is null)
+                return ResponseDispatcher
+                    .Error(StatusCodes.Status404NotFound, "Couldn't find the specific user.")
+                    .Build();
+            if (role is null)
+                return ResponseDispatcher
+                    .Error(StatusCodes.Status404NotFound, "Couldn't find the specific role.")
+                    .Build();
+            var result = await _userManager.AddToRoleAsync(user, data.RoleName);
+            if (!result.Succeeded)
+                return ResponseDispatcher
+                    .Error(StatusCodes.Status400BadRequest, "Add failed.")
+                    .Build();
             return NoContent();
         }
     }

@@ -52,13 +52,14 @@ namespace SastImgAPI.Controllers
         /// </remarks>
         /// <param name="clt">A CancellationToken used for canceling the operation.</param>
         /// <param name="username">Optional: The username of the user whose images are being retrieved.</param>
+        /// <param name="category">Optional: The name of category used to filter images.</param>
         /// <param name="tags">Optional: An array of tags used to filter images.</param>
         /// <param name="page">Optional: The page number for pagination (default is 0).</param>
         /// <param name="pageSize">Optional: The number of images to retrieve per page (default is 12).</param>
         [HttpGet]
         [SwaggerResponse(
             StatusCodes.Status200OK,
-            "Returns the collection of images based on the specified criteria.",
+            "Ok: Returns the collection of images based on the specified criteria.",
             typeof(ImageResponseDto[])
         )]
         [SwaggerResponse(
@@ -78,6 +79,7 @@ namespace SastImgAPI.Controllers
         )]
         public async Task<IActionResult> GetImages(
             CancellationToken clt,
+            [FromQuery] string? category = default,
             [FromQuery] string? username = default,
             [FromQuery] string[]? tags = default,
             [FromQuery] int page = 0,
@@ -90,6 +92,7 @@ namespace SastImgAPI.Controllers
             var query = _dbContext.Images
                 .Include(image => image.Tags)
                 .Include(image => image.Author)
+                .Include(image => image.Category)
                 .OrderBy(image => image.CreatedAt)
                 .Select(
                     image =>
@@ -98,7 +101,7 @@ namespace SastImgAPI.Controllers
                             image.Url,
                             image.Title,
                             image.Description,
-                            image.CategoryId,
+                            image.Category.Name,
                             image.CreatedAt,
                             image.Author.UserName!,
                             image.From.Accessibility,
@@ -112,6 +115,12 @@ namespace SastImgAPI.Controllers
                 query = query.Where(
                     image => image.Tags.Any(imageTag => tags!.Any(tag => tag == imageTag))
                 );
+            }
+
+            // Filter images based on provided category.
+            if (string.IsNullOrWhiteSpace(category))
+            {
+                query = query.Where(image => image.Category == category);
             }
 
             if (string.IsNullOrWhiteSpace(username))
@@ -229,18 +238,19 @@ namespace SastImgAPI.Controllers
                     .Build();
 
             // Check if the specified category exists
-            if (
-                await _dbContext.Categories.AllAsync(
-                    category => category.Id != imageDto.CategoryId,
-                    clt
-                )
-            )
+            var category = await _dbContext.Categories.FirstOrDefaultAsync(
+                category => category.Name == imageDto.Category,
+                clt
+            );
+            if (category is null)
                 return ResponseDispatcher
-                    .Error(
-                        StatusCodes.Status404NotFound,
-                        "Couldn't find the specific classification."
-                    )
+                    .Error(StatusCodes.Status404NotFound, "Couldn't find the specific category.")
                     .Build();
+
+            // Retrieve the necessary tags
+            var tags = await _dbContext.Tags
+                .Where(tag => imageDto.Tags.Contains(tag.Name))
+                .ToListAsync(clt);
 
             // Upload the image and store its URL
             var url = await _fileAccessor.UploadImageAsync(imageDto.ImageFile, clt);
@@ -255,8 +265,12 @@ namespace SastImgAPI.Controllers
                     Title = imageDto.Title,
                     IsExifEnabled = imageDto.IsExifEnabled,
                     Description = imageDto.Description,
-                    CategoryId = imageDto.CategoryId,
+                    Category = category,
                 };
+
+            // Add tags to the uploaded image
+            foreach (var tag in tags)
+                image.Tags.Add(tag);
 
             // Add the image to the database and save changes
             _dbContext.Images.Add(image);
@@ -301,6 +315,8 @@ namespace SastImgAPI.Controllers
                             image.Category.Id,
                             image.From.Accessibility,
                             image.IsExifEnabled,
+                            image.Views,
+                            image.Likes,
                             image.Tags.Select(tag => tag.Name).ToList(),
                             new(image.Author.Id, image.Author.UserName!, image.Author.Nickname),
                             new(image.From.Id, image.From.Name)
@@ -328,56 +344,55 @@ namespace SastImgAPI.Controllers
         }
 
         /// <summary>
-        /// Deletes a specific image by its unique ID.
+        /// Deletes an image based on its unique ID, with specific authorization requirements.
         /// </summary>
         /// <remarks>
-        /// Allow authenticated users to delete a specific image by providing its unique ID.
+        /// Allows authorized users with the 'User' role to delete their own images. Users with the 'Admin' role
+        /// have the privilege to delete any image.
         /// </remarks>
-        /// <param name="id">The unique identifier of the image to delete.</param>
+        /// <param name="id">The unique ID of the image to be deleted.</param>
         /// <param name="clt">A CancellationToken used for canceling the operation.</param>
         [HttpDelete("{id:int}")]
         [Authorize(Roles = "User")]
         [SwaggerResponse(
             StatusCodes.Status204NoContent,
-            "No Content: The image was successfully deleted."
-        )]
-        [SwaggerResponse(
-            StatusCodes.Status403Forbidden,
-            "Forbidden: The user does not have permission to delete this image.",
-            typeof(ErrorResponseDto)
+            "No Content: The image has been successfully deleted."
         )]
         [SwaggerResponse(
             StatusCodes.Status404NotFound,
-            "Not Found: The specified image does not exist.",
+            "Not Found: The specified image was not found.",
             typeof(ErrorResponseDto)
         )]
         public async Task<IActionResult> DeleteImage(int id, CancellationToken clt)
         {
-            // Query the database to find the image by its unique ID
-            var image = await _dbContext.Images.FirstOrDefaultAsync(image => image.Id == id);
+            // Find the image based on the user's authorization level
+            var image = await _dbContext.Images
+                .Where(
+                    image =>
+                        image.AuthorId == int.Parse(User.FindFirstValue("id")!) // User is the owner
+                        || User.Claims
+                            .Where(claim => claim.Type == "role")
+                            .Select(claim => claim.Value)
+                            .Contains("Admin") // User has Admin role
+                )
+                .FirstOrDefaultAsync(image => image.Id == id, clt);
 
-            // Check if the specified image exists
+            // Check if the image exists
             if (image is null)
-                return ResponseDispatcher
-                    .Error(StatusCodes.Status404NotFound, "Couldn't find the specific image.")
-                    .Build();
-
-            // Check if the user has permission to delete the image (must be the author)
-            if (User.FindFirstValue("id") != image.AuthorId.ToString())
             {
                 return ResponseDispatcher
-                    .Error(StatusCodes.Status403Forbidden, "You don't have the access to the image")
+                    .Error(StatusCodes.Status404NotFound, "The specified image was not found.")
                     .Build();
             }
 
-            // Delete the image file from the storage
+            // Delete the image file from storage
             _fileAccessor.DeleteImage(image.Url);
 
-            // Remove the image from the database
+            // Remove the image from the database and save changes
             _dbContext.Images.Remove(image);
             await _dbContext.SaveChangesAsync(clt);
 
-            // Return a success status (No Content) indicating the image was deleted
+            // Return a 204 No Content response indicating successful deletion
             return NoContent();
         }
     }

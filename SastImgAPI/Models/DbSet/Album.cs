@@ -8,9 +8,8 @@ namespace SastImgAPI.Models.DbSet
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public Image Cover { get; set; } = null!;
-        public int CoverId { get; set; }
+        public string? Description { get; set; }
+        public string? Cover { get; set; }
         public User Author { get; set; } = null!;
         public int AuthorId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

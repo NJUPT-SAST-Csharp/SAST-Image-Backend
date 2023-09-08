@@ -7,7 +7,8 @@ namespace SastImgAPI.Models.ResponseDtos
         public AlbumResponseDto(
             int id,
             string name,
-            string description,
+            string? description,
+            string? cover,
             DateTime createdAt,
             Accessibility accessibility,
             AuthorDto author
@@ -16,6 +17,7 @@ namespace SastImgAPI.Models.ResponseDtos
             Id = id;
             Name = name;
             Description = description;
+            Cover = cover;
             CreatedAt = createdAt;
             Accessibility = accessibility;
             Author = author;
@@ -23,7 +25,8 @@ namespace SastImgAPI.Models.ResponseDtos
 
         public int Id { get; init; }
         public string Name { get; init; }
-        public string Description { get; init; }
+        public string? Description { get; init; }
+        public string? Cover { get; init; }
         public DateTime CreatedAt { get; init; }
         public Accessibility Accessibility { get; init; }
         public AuthorDto Author { get; init; }

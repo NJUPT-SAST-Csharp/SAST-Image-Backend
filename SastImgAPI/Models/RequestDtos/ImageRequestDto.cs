@@ -1,4 +1,6 @@
-﻿namespace SastImgAPI.Models.RequestDtos
+﻿using System.Text;
+
+namespace SastImgAPI.Models.RequestDtos
 {
     public record ImageRequestDto(
         IFormFile ImageFile,
@@ -7,6 +9,6 @@
         string[] Tags,
         string Description = "",
         bool IsExifEnabled = false,
-        int CategoryId = 1
+        string Category = null!
     );
 }

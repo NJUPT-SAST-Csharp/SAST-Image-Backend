@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SastImgAPI.Filters;
@@ -37,7 +36,10 @@ builder.Services
 
 // Add DbContext.
 builder.Services.AddDbContext<DatabaseContext>(
-    options => options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")).UseSnakeCaseNamingConvention()
+    options =>
+        options
+            .UseNpgsql(builder.Configuration.GetConnectionString("Postgres"))
+            .UseSnakeCaseNamingConvention()
 );
 
 // Add Redis caching.
@@ -85,6 +87,7 @@ builder.Services.AddSingleton<IValidator<EmailConfirmRequestDto>, EmailConfirmVa
 builder.Services.AddSingleton<IValidator<ImageRequestDto>, ImageValidator>();
 builder.Services.AddSingleton<IValidator<ProfileRequestDto>, ProfileValidator>();
 builder.Services.AddSingleton<IValidator<TagRequestDto>, TagValidator>();
+builder.Services.AddSingleton<IValidator<CategoryRequestDto>, CategoryValidator>();
 
 // Add configuration
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOptions"));
@@ -101,7 +104,11 @@ builder.Services
     .AddJwtBearer(options =>
     {
         SymmetricSecurityKey secKey =
-            new(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JwtOptions").Get<JwtOptions>()!.SecKey));
+            new(
+                Encoding.UTF8.GetBytes(
+                    builder.Configuration.GetSection("JwtOptions").Get<JwtOptions>()!.SecKey
+                )
+            );
         options.TokenValidationParameters = new()
         {
             ValidateIssuer = false,
@@ -127,7 +134,11 @@ builder.Services.AddSwaggerGen(options =>
     var scheme = new OpenApiSecurityScheme
     {
         Description = "Authorization Header \r\nExample:'Bearer 123456789'",
-        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Authorization" },
+        Reference = new OpenApiReference
+        {
+            Type = ReferenceType.SecurityScheme,
+            Id = "Authorization"
+        },
         Scheme = "oauth2",
         Name = "Authorization",
         In = ParameterLocation.Header,
