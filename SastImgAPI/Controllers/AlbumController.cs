@@ -76,25 +76,14 @@ namespace SastImgAPI.Controllers
             if (!user.Albums.Any())
             {
                 user.Albums.Add(new Album { Name = "Default", Author = user });
-                await _dbContext.SaveChangesAsync(clt);
+                _ = _dbContext.SaveChangesAsync(clt);
             }
 
             // Select and prepare album details for the response
-            var albums = user.Albums.Select(
-                album =>
-                    new AlbumResponseDto(
-                        album.Id,
-                        album.Name,
-                        album.Description,
-                        album.Cover,
-                        album.CreatedAt,
-                        album.Accessibility,
-                        new(album.Author.Id, album.Author.UserName!, album.Author.Nickname)
-                    )
-            );
+            var albums = user.Albums.Select(album => new AlbumResponseDto(album));
 
             // Restrict access to private albums if the requester is not the album's owner
-            if (User.FindFirstValue("sub") != user.UserName)
+            if (User.FindFirstValue("username") != user.UserName)
                 albums = albums.Where(album => album.Accessibility != Accessibility.OnlyMe);
 
             // Return the list of albums as a successful response
@@ -129,7 +118,7 @@ namespace SastImgAPI.Controllers
         )
         {
             // Validate the provided album details
-            var validationResult = await _albumSetValidator.ValidateAsync(albumDto);
+            var validationResult = await _albumSetValidator.ValidateAsync(albumDto, clt);
 
             // Check for validation errors
             if (!validationResult.IsValid)
@@ -144,7 +133,13 @@ namespace SastImgAPI.Controllers
             }
 
             // Find the authenticated user
-            var user = (await _userManager.FindByNameAsync(User.FindFirstValue("sub")!))!;
+            var claims = User.Claims;
+            var user = (
+                await _userManager.FindByNameAsync(
+                    User.FindFirstValue("username")
+                        ?? throw new Exception($"No 'username' found in claims")
+                )
+            )!;
 
             // Create a new album with the provided details
             var album = new Album
@@ -157,18 +152,10 @@ namespace SastImgAPI.Controllers
 
             // Add the new album to the database
             await _dbContext.Albums.AddAsync(album, clt);
-            await _dbContext.SaveChangesAsync(clt);
+            _ = _dbContext.SaveChangesAsync(clt);
 
             // Prepare the response with created album details
-            var createdAlbum = new AlbumResponseDto(
-                album.Id,
-                album.Name,
-                album.Description,
-                album.Cover,
-                album.CreatedAt,
-                album.Accessibility,
-                new(album.Author.Id, album.Author.UserName!, album.Author.Nickname)
-            );
+            var createdAlbum = new AlbumResponseDto(album);
 
             // Return the created album details as a successful response
             return ResponseDispatcher.Data(createdAlbum);
@@ -185,7 +172,7 @@ namespace SastImgAPI.Controllers
         /// <param name="id">The unique ID of the album to be modified.</param>
         /// <param name="albumDto">An object containing the updated album details.</param>
         /// <param name="clt">A CancellationToken used for canceling the operation.</param>
-        [HttpPatch("{id:int}")]
+        [HttpPatch("{id:length(11)}")]
         [Authorize(Roles = "User")]
         [SwaggerResponse(
             StatusCodes.Status204NoContent,
@@ -207,13 +194,16 @@ namespace SastImgAPI.Controllers
             typeof(ErrorResponseDto)
         )]
         public async Task<IActionResult> UpdateAlbum(
-            int id,
+            string id,
             [FromBody] AlbumRequestDto albumDto,
             CancellationToken clt
         )
         {
             // Find the album by its unique ID
-            var album = await _dbContext.Albums.FirstOrDefaultAsync(album => album.Id == id, clt);
+            var album = await _dbContext.Albums.FirstOrDefaultAsync(
+                album => album.Id == CodeAccessor.ToLongId(id),
+                clt
+            );
 
             // Check if the album exists
             if (album is null)
@@ -250,7 +240,7 @@ namespace SastImgAPI.Controllers
             album.Accessibility = albumDto.Accessibility;
 
             // Save the changes to the database
-            await _dbContext.SaveChangesAsync(clt);
+            _ = _dbContext.SaveChangesAsync(clt);
 
             // Return a 204 No Content response indicating success
             return NoContent();
@@ -267,7 +257,7 @@ namespace SastImgAPI.Controllers
         /// </remarks>
         /// <param name="id">The unique ID of the album to retrieve.</param>
         /// <param name="clt">A CancellationToken used for canceling the operation.</param>
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:length(11)}")]
         [SwaggerResponse(
             StatusCodes.Status200OK,
             "Ok: Returns the album details if found.",
@@ -278,39 +268,18 @@ namespace SastImgAPI.Controllers
             "Not Found: The specified album was not found.",
             typeof(ErrorResponseDto)
         )]
-        public async Task<IActionResult> GetAlbum(int id, CancellationToken clt)
+        public async Task<IActionResult> GetAlbum(string id, CancellationToken clt)
         {
             // Determine the user ID based on authentication status
-            int userId = User.Identity!.IsAuthenticated
-                ? int.Parse(User.FindFirstValue("id")!)
-                : default;
+            long userId = User.Identity!.IsAuthenticated
+                ? CodeAccessor.ToLongId(User.FindFirstValue("id")!)
+                : 0;
 
             // Query the database to retrieve the album details
             var album = await _dbContext.Albums
                 .Include(album => album.Author)
                 .Include(album => album.Images)
-                .Select(
-                    album =>
-                        new AlbumDetailedResponseDto(
-                            album.Id,
-                            album.Name,
-                            album.Description,
-                            album.Cover,
-                            album.CreatedAt,
-                            album.Accessibility,
-                            new(album.Author.Id, album.Author.UserName!, album.Author.Nickname),
-                            album.Images
-                                .Select(
-                                    image =>
-                                        new AlbumDetailedResponseDto.ImageDto(
-                                            image.Id,
-                                            image.Title,
-                                            image.IsExifEnabled
-                                        )
-                                )
-                                .ToList()
-                        )
-                )
+                .Select(album => new AlbumDetailedResponseDto(album))
                 .Where(
                     album =>
                         album.Accessibility == Accessibility.Everyone
@@ -345,7 +314,7 @@ namespace SastImgAPI.Controllers
         /// </remarks>
         /// <param name="id">The unique ID of the album to be deleted.</param>
         /// <param name="clt">A CancellationToken used for canceling the operation.</param>
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:length(11)}")]
         [Authorize(Roles = "User")]
         [SwaggerResponse(
             StatusCodes.Status204NoContent,
@@ -356,19 +325,19 @@ namespace SastImgAPI.Controllers
             "Not Found: The specified album was not found.",
             typeof(ErrorResponseDto)
         )]
-        public async Task<IActionResult> DeleteAlbum(int id, CancellationToken clt)
+        public async Task<IActionResult> DeleteAlbum(string id, CancellationToken clt)
         {
             // Find the album based on the user's authorization level
             var album = await _dbContext.Albums
                 .Where(
                     album =>
-                        int.Parse(User.FindFirstValue("id")!) == album.AuthorId // User is the owner
+                        CodeAccessor.ToLongId(User.FindFirstValue("id")!) == album.AuthorId // User is the owner
                         || User.Claims
                             .Where(claim => claim.Type == "role")
                             .Select(claim => claim.Value)
                             .Contains("Admin") // User has Admin role
                 )
-                .FirstOrDefaultAsync(album => album.Id == id, clt);
+                .FirstOrDefaultAsync(album => album.Id == CodeAccessor.ToLongId(id), clt);
 
             // Check if the album exists
             if (album is null)
@@ -380,7 +349,7 @@ namespace SastImgAPI.Controllers
 
             // Remove the album from the database and save changes
             _dbContext.Remove(album);
-            await _dbContext.SaveChangesAsync(clt);
+            _ = _dbContext.SaveChangesAsync(clt);
 
             // Return a 204 No Content response indicating successful deletion
             return NoContent();
@@ -396,7 +365,7 @@ namespace SastImgAPI.Controllers
         /// <param name="id">The unique ID of the album for which the cover image will be uploaded.</param>
         /// <param name="cover">The album cover image file to upload.</param>
         /// <param name="clt">A CancellationToken used for canceling the operation.</param>
-        [HttpPost("{id:int}")]
+        [HttpPost("{id:length(11)}")]
         [Authorize(Roles = "User")]
         [SwaggerResponse(
             StatusCodes.Status200OK,
@@ -409,14 +378,14 @@ namespace SastImgAPI.Controllers
             typeof(ErrorResponseDto)
         )]
         public async Task<IActionResult> UploadAlbumCover(
-            int id,
+            long id,
             [FromForm] IFormFile cover,
             CancellationToken clt
         )
         {
             // Find the album by its unique ID
             var album = await _dbContext.Albums
-                .Where(album => album.AuthorId == int.Parse(User.FindFirstValue("id")!))
+                .Where(album => album.AuthorId == CodeAccessor.ToLongId(User.FindFirstValue("id")!))
                 .FirstOrDefaultAsync(album => album.Id == id, clt);
 
             // Check if the album exists
@@ -431,7 +400,7 @@ namespace SastImgAPI.Controllers
             var url = await _imageAccessor.UploadAlbumCoverAsync(cover, id, clt);
 
             // Return the URL of the uploaded album cover image
-            return ResponseDispatcher.Data(new UrlResponseDto(url));
+            return ResponseDispatcher.Data(new UrlResponseDto(new Uri(url)));
         }
     }
 }

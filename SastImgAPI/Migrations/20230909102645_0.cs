@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace SastImgAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class _0 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,7 @@ namespace SastImgAPI.Migrations
                 name: "AspNetRoles",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false)
+                    id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     normalized_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -31,15 +31,12 @@ namespace SastImgAPI.Migrations
                 name: "AspNetUsers",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false)
+                    id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    nickname = table.Column<string>(type: "text", nullable: true),
-                    description = table.Column<string>(type: "text", nullable: true),
+                    nickname = table.Column<string>(type: "text", nullable: false),
+                    biography = table.Column<string>(type: "text", nullable: false),
                     avatar = table.Column<string>(type: "text", nullable: true),
-                    website = table.Column<string>(type: "text", nullable: true),
-                    time_zone = table.Column<string>(type: "text", nullable: false),
-                    language = table.Column<string>(type: "text", nullable: false),
-                    is_news_feed_enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    header = table.Column<string>(type: "text", nullable: true),
                     registered_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     normalized_user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -62,17 +59,30 @@ namespace SastImgAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "classifications",
+                name: "categories",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false)
+                    id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "text", nullable: false),
-                    description = table.Column<string>(type: "text", nullable: true)
+                    description = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_classifications", x => x.id);
+                    table.PrimaryKey("pk_categories", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tags",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_tags", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -81,7 +91,7 @@ namespace SastImgAPI.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    role_id = table.Column<int>(type: "integer", nullable: false),
+                    role_id = table.Column<long>(type: "bigint", nullable: false),
                     claim_type = table.Column<string>(type: "text", nullable: true),
                     claim_value = table.Column<string>(type: "text", nullable: true)
                 },
@@ -100,14 +110,14 @@ namespace SastImgAPI.Migrations
                 name: "albums",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false)
+                    id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "text", nullable: false),
                     description = table.Column<string>(type: "text", nullable: false),
-                    author_id = table.Column<int>(type: "integer", nullable: false),
+                    cover = table.Column<string>(type: "text", nullable: true),
+                    author_id = table.Column<long>(type: "bigint", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    accessibility = table.Column<int>(type: "integer", nullable: false),
-                    password_hash = table.Column<string>(type: "text", nullable: true)
+                    accessibility = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -126,7 +136,7 @@ namespace SastImgAPI.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    user_id = table.Column<int>(type: "integer", nullable: false),
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
                     claim_type = table.Column<string>(type: "text", nullable: true),
                     claim_value = table.Column<string>(type: "text", nullable: true)
                 },
@@ -148,7 +158,7 @@ namespace SastImgAPI.Migrations
                     login_provider = table.Column<string>(type: "text", nullable: false),
                     provider_key = table.Column<string>(type: "text", nullable: false),
                     provider_display_name = table.Column<string>(type: "text", nullable: true),
-                    user_id = table.Column<int>(type: "integer", nullable: false)
+                    user_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -165,8 +175,8 @@ namespace SastImgAPI.Migrations
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
-                    user_id = table.Column<int>(type: "integer", nullable: false),
-                    role_id = table.Column<int>(type: "integer", nullable: false)
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
+                    role_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -189,7 +199,7 @@ namespace SastImgAPI.Migrations
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    user_id = table.Column<int>(type: "integer", nullable: false),
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
                     login_provider = table.Column<string>(type: "text", nullable: false),
                     name = table.Column<string>(type: "text", nullable: false),
                     value = table.Column<string>(type: "text", nullable: true)
@@ -209,11 +219,12 @@ namespace SastImgAPI.Migrations
                 name: "notifications",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false)
+                    id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     title = table.Column<string>(type: "text", nullable: false),
                     content = table.Column<string>(type: "text", nullable: false),
-                    user_id = table.Column<int>(type: "integer", nullable: true)
+                    is_read = table.Column<bool>(type: "boolean", nullable: false),
+                    user_id = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -229,8 +240,8 @@ namespace SastImgAPI.Migrations
                 name: "user_user",
                 columns: table => new
                 {
-                    followers_id = table.Column<int>(type: "integer", nullable: false),
-                    following_id = table.Column<int>(type: "integer", nullable: false)
+                    followers_id = table.Column<long>(type: "bigint", nullable: false),
+                    following_id = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -253,16 +264,15 @@ namespace SastImgAPI.Migrations
                 name: "images",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false)
+                    id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     title = table.Column<string>(type: "text", nullable: false),
-                    description = table.Column<string>(type: "text", nullable: true),
-                    classification_id = table.Column<int>(type: "integer", nullable: false),
+                    description = table.Column<string>(type: "text", nullable: false),
+                    category_id = table.Column<long>(type: "bigint", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    from_id = table.Column<int>(type: "integer", nullable: false),
-                    author_id = table.Column<int>(type: "integer", nullable: false),
+                    album_id = table.Column<long>(type: "bigint", nullable: false),
+                    author_id = table.Column<long>(type: "bigint", nullable: false),
                     views = table.Column<int>(type: "integer", nullable: false),
-                    is_nsfw = table.Column<bool>(type: "boolean", nullable: false),
                     is_exif_enabled = table.Column<bool>(type: "boolean", nullable: false),
                     url = table.Column<string>(type: "text", nullable: false)
                 },
@@ -270,21 +280,45 @@ namespace SastImgAPI.Migrations
                 {
                     table.PrimaryKey("pk_images", x => x.id);
                     table.ForeignKey(
-                        name: "fk_images_albums_from_id",
-                        column: x => x.from_id,
+                        name: "fk_images_albums_album_id",
+                        column: x => x.album_id,
                         principalTable: "albums",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_images_classifications_classification_id",
-                        column: x => x.classification_id,
-                        principalTable: "classifications",
+                        name: "fk_images_categories_category_id",
+                        column: x => x.category_id,
+                        principalTable: "categories",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "fk_images_users_author_id",
                         column: x => x.author_id,
                         principalTable: "AspNetUsers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "image_tag",
+                columns: table => new
+                {
+                    images_id = table.Column<long>(type: "bigint", nullable: false),
+                    tags_id = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_image_tag", x => new { x.images_id, x.tags_id });
+                    table.ForeignKey(
+                        name: "fk_image_tag_images_images_id",
+                        column: x => x.images_id,
+                        principalTable: "images",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_image_tag_tags_tags_id",
+                        column: x => x.tags_id,
+                        principalTable: "tags",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -332,10 +366,20 @@ namespace SastImgAPI.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_classifications_name",
-                table: "classifications",
+                name: "ix_categories_name",
+                table: "categories",
                 column: "name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_image_tag_tags_id",
+                table: "image_tag",
+                column: "tags_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_images_album_id",
+                table: "images",
+                column: "album_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_images_author_id",
@@ -343,19 +387,20 @@ namespace SastImgAPI.Migrations
                 column: "author_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_images_classification_id",
+                name: "ix_images_category_id",
                 table: "images",
-                column: "classification_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_images_from_id",
-                table: "images",
-                column: "from_id");
+                column: "category_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_notifications_user_id",
                 table: "notifications",
                 column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tags_name",
+                table: "tags",
+                column: "name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_user_user_following_id",
@@ -382,7 +427,7 @@ namespace SastImgAPI.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "images");
+                name: "image_tag");
 
             migrationBuilder.DropTable(
                 name: "notifications");
@@ -394,10 +439,16 @@ namespace SastImgAPI.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "images");
+
+            migrationBuilder.DropTable(
+                name: "tags");
+
+            migrationBuilder.DropTable(
                 name: "albums");
 
             migrationBuilder.DropTable(
-                name: "classifications");
+                name: "categories");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

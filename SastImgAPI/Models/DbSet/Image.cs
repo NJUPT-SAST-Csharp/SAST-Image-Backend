@@ -1,23 +1,24 @@
 ﻿using SastImgAPI.Models.Identity;
+using SastImgAPI.Services;
 
 namespace SastImgAPI.Models.DbSet
 {
     public class Image
     {
-        public int Id { get; set; }
+        public long Id { get; set; } = CodeAccessor.GenerateSnowflakeId;
         public string Title { get; set; } = string.Empty;
-        public string? Description { get; set; }
+        public string Description { get; set; } = string.Empty;
         public ICollection<Tag> Tags { get; } = new List<Tag>();
         public Category Category { get; set; } = null!;
-        public int CategoryId { get; set; } = 0;
+        public long CategoryId { get; set; } = 0;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public Album From { get; set; } = null!;
-        public int FromId { get; set; }
+        public Album Album { get; set; } = null!;
+        public long AlbumId { get; set; }
         public User Author { get; set; } = null!;
-        public int AuthorId { get; set; }
-        public ICollection<int> Likes { get; } = new List<int>();
+        public long AuthorId { get; set; }
+        public ICollection<long> LikedBy { get; } = new List<long>();
         public int Views { get; set; } = 0;
         public bool IsExifEnabled { get; set; } = false;
-        public string Url { get; set; } = string.Empty;
+        public Uri Url { get; set; } = null!;
     }
 }

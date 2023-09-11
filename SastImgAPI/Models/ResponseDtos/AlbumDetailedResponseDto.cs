@@ -1,42 +1,59 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using SastImgAPI.Models.DbSet;
+﻿using SastImgAPI.Models.DbSet;
+using SastImgAPI.Models.Identity;
+using SastImgAPI.Services;
+using Image = SastImgAPI.Models.DbSet.Image;
 
 namespace SastImgAPI.Models.ResponseDtos
 {
     public class AlbumDetailedResponseDto
     {
-        public AlbumDetailedResponseDto(
-            int id,
-            string name,
-            string? description,
-            string? cover,
-            DateTime createdAt,
-            Accessibility accessibility,
-            AuthorDto author,
-            ICollection<ImageDto> images
-        )
+        public AlbumDetailedResponseDto(Album album)
         {
-            Id = id;
-            Name = name;
-            Description = description;
-            Cover = cover;
-            CreatedAt = createdAt;
-            Accessibility = accessibility;
-            Author = author;
-            Images = images;
+            Id = CodeAccessor.ToBase64String(album.Id);
+            Name = album.Name;
+            Description = album.Description;
+            Cover = album.Cover;
+            CreatedAt = album.CreatedAt;
+            Accessibility = album.Accessibility;
+            Author = new(album.Author);
+            Images = album.Images.Select(image => new ImageDto(image)).ToList();
         }
 
-        public int Id { get; init; }
+        public string Id { get; init; }
         public string Name { get; init; }
-        public string? Description { get; init; }
-        public string? Cover { get; init; }
+        public string Description { get; init; }
+        public Uri? Cover { get; init; }
         public DateTime CreatedAt { get; init; }
         public Accessibility Accessibility { get; init; }
         public AuthorDto Author { get; init; }
         public ICollection<ImageDto> Images { get; init; }
 
-        public record AuthorDto(int Id, string Username, string Nickname);
+        public class AuthorDto
+        {
+            public AuthorDto(User user)
+            {
+                Id = user.Id;
+                Username = user.UserName!;
+                Nickname = user.Nickname;
+            }
 
-        public record ImageDto(int Id, string Title, bool IsExifEnabled);
+            public long Id { get; init; }
+            public string Username { get; init; }
+            public string Nickname { get; init; }
+        }
+
+        public class ImageDto
+        {
+            public ImageDto(Image image)
+            {
+                Id = CodeAccessor.ToBase64String(image.Id);
+                Title = image.Title;
+                IsExifEnabled = image.IsExifEnabled;
+            }
+
+            public string Id { get; init; }
+            public string Title { get; init; }
+            public bool IsExifEnabled { get; init; }
+        }
     }
 }

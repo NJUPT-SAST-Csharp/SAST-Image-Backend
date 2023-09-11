@@ -46,7 +46,7 @@ namespace SastImgAPI.Services
 
         public async Task<string> UploadProfileAvatarAsync(
             IFormFile file,
-            int userId,
+            long userId,
             CancellationToken clt = default
         )
         {
@@ -64,7 +64,7 @@ namespace SastImgAPI.Services
 
         public async Task<string> UploadProfileHeaderAsync(
             IFormFile file,
-            int userId,
+            long userId,
             CancellationToken clt = default
         )
         {
@@ -82,7 +82,7 @@ namespace SastImgAPI.Services
 
         public async Task<string> UploadAlbumCoverAsync(
             IFormFile file,
-            int albumId,
+            long albumId,
             CancellationToken clt = default
         )
         {

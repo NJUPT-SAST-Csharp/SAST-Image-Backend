@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Response;
 using SastImgAPI.Models;
 using SastImgAPI.Models.DbSet;
+using SastImgAPI.Services;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
@@ -49,7 +50,7 @@ namespace SastImgAPI.Controllers
                 // Retrieve notifications for the authenticated user
                 var notifications = await _dbContext.Users
                     .Include(user => user.Notifications)
-                    .Where(user => user.Id == int.Parse(User.FindFirstValue("id")!))
+                    .Where(user => user.Id == CodeAccessor.ToLongId(User.FindFirstValue("id")!))
                     .Select(user => user.Notifications)
                     .FirstAsync(clt);
 
@@ -73,7 +74,7 @@ namespace SastImgAPI.Controllers
         /// </remarks>
         /// <param name="id">The unique ID of the notification to mark as read.</param>
         /// <param name="clt">A CancellationToken used for canceling the operation.</param>
-        [HttpPatch("{id:int}")]
+        [HttpPatch("{id:length(11)}")]
         [SwaggerResponse(
             StatusCodes.Status204NoContent,
             "No Content: Notification marked as read successfully."
@@ -83,11 +84,11 @@ namespace SastImgAPI.Controllers
             "Not Found: Notification not found.",
             typeof(ErrorResponseDto)
         )]
-        public async Task<IActionResult> ReadNotifications(int id, CancellationToken clt)
+        public async Task<IActionResult> ReadNotifications(string id, CancellationToken clt)
         {
             // Find the notification by its unique ID
             var notification = await _dbContext.Notifications.FirstOrDefaultAsync(
-                x => x.Id == id,
+                x => x.Id == CodeAccessor.ToLongId(id),
                 clt
             );
 
@@ -106,7 +107,7 @@ namespace SastImgAPI.Controllers
             notification.IsRead = true;
 
             // Save the changes to the database
-            await _dbContext.SaveChangesAsync(clt);
+            _ = _dbContext.SaveChangesAsync(clt);
 
             // Return a 204 No Content response indicating successful marking as read
             return NoContent();
@@ -128,7 +129,7 @@ namespace SastImgAPI.Controllers
         {
             // Retrieve all notifications for the authenticated user
             var notifications = await _dbContext.Users
-                .Where(user => user.Id == int.Parse(User.FindFirstValue("id")!))
+                .Where(user => user.Id == CodeAccessor.ToLongId(User.FindFirstValue("id")!))
                 .Select(user => user.Notifications)
                 .ToListAsync(clt);
 
@@ -136,7 +137,7 @@ namespace SastImgAPI.Controllers
             _dbContext.RemoveRange(notifications);
 
             // Save the changes to the database
-            await _dbContext.SaveChangesAsync(clt);
+            _ = _dbContext.SaveChangesAsync(clt);
 
             // Return a 204 No Content response indicating successful deletion
             return NoContent();

@@ -4,11 +4,11 @@ namespace SastImgAPI.Models.RequestDtos
 {
     public record ImageRequestDto(
         IFormFile ImageFile,
-        int AlbumId,
+        string AlbumId,
         string Title,
-        string[] Tags,
+        string[]? Tags,
+        string Category,
         string Description = "",
-        bool IsExifEnabled = false,
-        string Category = null!
+        bool IsExifEnabled = false
     );
 }

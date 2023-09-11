@@ -46,10 +46,7 @@ namespace SastImgAPI.Controllers
         {
             // Retrieve a list of all available categories
             var categories = await _dbContext.Categories
-                .Select(
-                    category =>
-                        new CategoryResponseDto(category.Id, category.Name, category.Description)
-                )
+                .Select(category => new CategoryResponseDto(category))
                 .ToListAsync(clt);
 
             // Return the list of categories
@@ -92,9 +89,7 @@ namespace SastImgAPI.Controllers
             }
 
             // Return the category information
-            return ResponseDispatcher.Data(
-                new CategoryResponseDto(category.Id, category.Name, category.Description)
-            );
+            return ResponseDispatcher.Data(new CategoryResponseDto(category));
         }
 
         /// <summary>
@@ -157,12 +152,10 @@ namespace SastImgAPI.Controllers
 
             // Add the new category to the database and save changes
             _dbContext.Categories.Add(newCategory);
-            await _dbContext.SaveChangesAsync(clt);
+            _ = _dbContext.SaveChangesAsync(clt);
 
             // Return a 200 Ok response with the newly created category's information
-            return ResponseDispatcher.Data(
-                new CategoryResponseDto(newCategory.Id, newCategory.Name, newCategory.Description)
-            );
+            return ResponseDispatcher.Data(new CategoryResponseDto(newCategory));
         }
 
         /// <summary>
@@ -228,7 +221,7 @@ namespace SastImgAPI.Controllers
             category.Description = categoryDto.Description;
 
             // Save changes to the database
-            await _dbContext.SaveChangesAsync(clt);
+            _ = _dbContext.SaveChangesAsync(clt);
 
             // Return a 204 No Content response indicating successful modification
             return NoContent();
@@ -271,7 +264,7 @@ namespace SastImgAPI.Controllers
 
             // Remove the category from the database and save changes
             _dbContext.Remove(category);
-            await _dbContext.SaveChangesAsync(clt);
+            _ = _dbContext.SaveChangesAsync(clt);
 
             // Return a 204 No Content response indicating successful deletion
             return NoContent();

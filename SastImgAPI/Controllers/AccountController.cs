@@ -25,6 +25,7 @@ namespace SastImgAPI.Controllers
         private readonly IValidator<LoginRequestDto> _loginValidator;
         private readonly IValidator<PasswordResetRequestDto> _passwordResetValidator;
         private readonly IValidator<EmailConfirmRequestDto> _emailConfirmValidator;
+        private readonly IValidator<EmailSendRequestDto> _emailSendRequestValidator;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
         private readonly SignInManager<User> _signInManager;
@@ -43,7 +44,8 @@ namespace SastImgAPI.Controllers
             EmailTokenSender tokenSender,
             JwtTokenGenerator jwtTokenGenerator,
             IDistributedCache cache,
-            IValidator<EmailConfirmRequestDto> emailConfirmValidator
+            IValidator<EmailConfirmRequestDto> emailConfirmValidator,
+            IValidator<EmailSendRequestDto> emailSendRequestValidator
         )
         {
             _passwordResetValidator = passwordResetValidator;
@@ -57,6 +59,7 @@ namespace SastImgAPI.Controllers
             _jwtTokenGenerator = jwtTokenGenerator;
             _cache = cache;
             _emailConfirmValidator = emailConfirmValidator;
+            _emailSendRequestValidator = emailSendRequestValidator;
         }
 
         /// <summary>
@@ -139,18 +142,19 @@ namespace SastImgAPI.Controllers
             typeof(ErrorResponseDto)
         )]
         public async Task<IActionResult> SendRegisterToken(
-            [FromBody] EmailConfirmRequestDto dto,
+            [FromBody] EmailSendRequestDto dto,
             CancellationToken clt
         )
         {
             // Check if the provided email is in a valid format
-            if (!RegexValidator.IsValidEmail(dto.Email))
+            var validationResult = await _emailSendRequestValidator.ValidateAsync(dto, clt);
+            if (!validationResult.IsValid)
                 return ResponseDispatcher
                     .Error(
                         StatusCodes.Status400BadRequest,
-                        "One or more parameters to your request was invalid."
+                        "One or more parameters in your request are invalid."
                     )
-                    .Add(dto.Email, "Invalid email format.")
+                    .Add(validationResult.Errors)
                     .Build();
 
             // Check if the email is already registered
@@ -163,7 +167,7 @@ namespace SastImgAPI.Controllers
                     .Build();
 
             // Generate a confirmation code and store it in a cache
-            string code = CodeGenerator.DefaultCode;
+            string code = CodeAccessor.GenerateDefaultNumericCode;
             await _cache.SetStringAsync(
                 dto.Email,
                 code,
@@ -438,7 +442,7 @@ namespace SastImgAPI.Controllers
         /// </remarks>
         /// <param name="dto">An object containing email and token information.</param>
         /// <param name="clt">A CancellationToken used for canceling the operation.</param>
-        [HttpGet]
+        [HttpPost]
         [SwaggerResponse(
             StatusCodes.Status200OK,
             "Ok: Returns a JWT token with role \"Resetter\" for reset process.",
@@ -488,10 +492,11 @@ namespace SastImgAPI.Controllers
             // Generate a new password reset token for the user
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
+            // TODO: Restrict Claim type in JwtTokenGenerator only.
             // Generate a new JWT token containing user claims
             ICollection<Claim> claims = new List<Claim>
             {
-                new Claim("sub", user.UserName!),
+                new Claim("username", user.UserName!),
                 new Claim("token", token),
                 new Claim("role", "Resetter")
             };
@@ -539,7 +544,7 @@ namespace SastImgAPI.Controllers
                     .Build();
 
             // Find the user by their username
-            var user = await _userManager.FindByNameAsync(User.FindFirstValue("sub")!);
+            var user = await _userManager.FindByNameAsync(User.FindFirstValue("username")!);
             if (user is null)
                 return ResponseDispatcher
                     .Error(StatusCodes.Status400BadRequest, "Invalid request")

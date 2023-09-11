@@ -2,5 +2,5 @@
 
 namespace SastImgAPI.Models.RequestDtos
 {
-    public record ProfileRequestDto(string Nickname, string Biography = "", string Website = "");
+    public record ProfileRequestDto(string Nickname, string Biography = "");
 }

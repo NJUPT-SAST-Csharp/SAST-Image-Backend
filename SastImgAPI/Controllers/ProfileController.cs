@@ -11,6 +11,7 @@ using SastImgAPI.Services;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 using SastImgAPI.Models.ResponseDtos;
+using Microsoft.AspNetCore.Routing.Template;
 
 namespace SastImgAPI.Controllers
 {
@@ -69,18 +70,7 @@ namespace SastImgAPI.Controllers
                     .Build();
 
             // Include profile information
-            return ResponseDispatcher.Data(
-                new ProfileResponseDto(
-                    user.UserName!,
-                    user.Nickname,
-                    user.Email,
-                    user.Biography,
-                    user.Website,
-                    user.Avatar,
-                    user.Header,
-                    user.RegisteredAt
-                )
-            );
+            return ResponseDispatcher.Data(new ProfileResponseDto(user));
         }
 
         /// <summary>
@@ -126,7 +116,7 @@ namespace SastImgAPI.Controllers
 
             // Retrieve the authenticated user by their user ID
             var user = await _dbContext.Users.FirstOrDefaultAsync(
-                user => user.Id == int.Parse(User.FindFirstValue("id")!),
+                user => user.Id == CodeAccessor.ToLongId(User.FindFirstValue("id")!),
                 clt
             );
 
@@ -139,10 +129,9 @@ namespace SastImgAPI.Controllers
             // Update the user's profile information with the new data
             user.Nickname = newProfile.Nickname;
             user.Biography = newProfile.Biography;
-            user.Website = newProfile.Website;
 
             // Save the changes to the database
-            await _dbContext.SaveChangesAsync(clt);
+            _ = _dbContext.SaveChangesAsync(clt);
 
             // Return a 204 No Content response to indicate a successful update
             return NoContent();
@@ -197,18 +186,19 @@ namespace SastImgAPI.Controllers
             // Upload the new avatar image and get its URL
             var url = await _imageAccessor.UploadProfileAvatarAsync(
                 avatar,
-                int.Parse(User.FindFirstValue("id")!),
+                CodeAccessor.ToLongId(User.FindFirstValue("id")!),
                 clt
             );
 
             // Update the user's avatar URL with the new URL
-            user!.Avatar = url;
+            Uri uri = new(url);
+            user!.Avatar = uri;
 
             // Save the changes to the database
             _ = _dbContext.SaveChangesAsync(clt);
 
             // Return a JSON response with the URL of the newly uploaded avatar
-            return ResponseDispatcher.Data(new UrlResponseDto(url));
+            return ResponseDispatcher.Data(new UrlResponseDto(uri));
         }
 
         /// <summary>
@@ -261,18 +251,19 @@ namespace SastImgAPI.Controllers
             // Upload the new header image and get its URL
             var url = await _imageAccessor.UploadProfileHeaderAsync(
                 header,
-                int.Parse(User.FindFirstValue("id")!),
+                CodeAccessor.ToLongId(User.FindFirstValue("id")!),
                 clt
             );
 
             // Update the user's header URL with the new URL
-            user!.Header = url;
+            Uri uri = new(url);
+            user!.Header = uri;
 
             // Save the changes to the database
             _ = _dbContext.SaveChangesAsync(clt);
 
             // Return a JSON response with the URL of the newly uploaded header
-            return ResponseDispatcher.Data(new UrlResponseDto(url));
+            return ResponseDispatcher.Data(new UrlResponseDto(uri));
         }
     }
 }

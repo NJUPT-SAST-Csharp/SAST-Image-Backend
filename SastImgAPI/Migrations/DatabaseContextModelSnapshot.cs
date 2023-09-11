@@ -17,19 +17,19 @@ namespace SastImgAPI.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.9")
+                .HasAnnotation("ProductVersion", "7.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("ImageTag", b =>
                 {
-                    b.Property<int>("ImagesId")
-                        .HasColumnType("integer")
+                    b.Property<long>("ImagesId")
+                        .HasColumnType("bigint")
                         .HasColumnName("images_id");
 
-                    b.Property<int>("TagsId")
-                        .HasColumnType("integer")
+                    b.Property<long>("TagsId")
+                        .HasColumnType("bigint")
                         .HasColumnName("tags_id");
 
                     b.HasKey("ImagesId", "TagsId")
@@ -41,7 +41,7 @@ namespace SastImgAPI.Migrations
                     b.ToTable("image_tag", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -58,8 +58,8 @@ namespace SastImgAPI.Migrations
                         .HasColumnType("text")
                         .HasColumnName("claim_value");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("integer")
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint")
                         .HasColumnName("role_id");
 
                     b.HasKey("Id")
@@ -71,7 +71,7 @@ namespace SastImgAPI.Migrations
                     b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<long>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -88,8 +88,8 @@ namespace SastImgAPI.Migrations
                         .HasColumnType("text")
                         .HasColumnName("claim_value");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
@@ -101,7 +101,7 @@ namespace SastImgAPI.Migrations
                     b.ToTable("AspNetUserClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<long>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("text")
@@ -115,8 +115,8 @@ namespace SastImgAPI.Migrations
                         .HasColumnType("text")
                         .HasColumnName("provider_display_name");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
                     b.HasKey("LoginProvider", "ProviderKey")
@@ -128,14 +128,14 @@ namespace SastImgAPI.Migrations
                     b.ToTable("AspNetUserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<long>", b =>
                 {
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("integer")
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint")
                         .HasColumnName("role_id");
 
                     b.HasKey("UserId", "RoleId")
@@ -147,10 +147,10 @@ namespace SastImgAPI.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<long>", b =>
                 {
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer")
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
                     b.Property<string>("LoginProvider")
@@ -173,19 +173,19 @@ namespace SastImgAPI.Migrations
 
             modelBuilder.Entity("SastImgAPI.Models.DbSet.Album", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<int>("Accessibility")
                         .HasColumnType("integer")
                         .HasColumnName("accessibility");
 
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("integer")
+                    b.Property<long>("AuthorId")
+                        .HasColumnType("bigint")
                         .HasColumnName("author_id");
 
                     b.Property<string>("Cover")
@@ -197,6 +197,7 @@ namespace SastImgAPI.Migrations
                         .HasColumnName("created_at");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("description");
 
@@ -216,14 +217,15 @@ namespace SastImgAPI.Migrations
 
             modelBuilder.Entity("SastImgAPI.Models.DbSet.Category", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("description");
 
@@ -244,19 +246,23 @@ namespace SastImgAPI.Migrations
 
             modelBuilder.Entity("SastImgAPI.Models.DbSet.Image", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("integer")
+                    b.Property<long>("AlbumId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("album_id");
+
+                    b.Property<long>("AuthorId")
+                        .HasColumnType("bigint")
                         .HasColumnName("author_id");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("integer")
+                    b.Property<long>("CategoryId")
+                        .HasColumnType("bigint")
                         .HasColumnName("category_id");
 
                     b.Property<DateTime>("CreatedAt")
@@ -264,12 +270,9 @@ namespace SastImgAPI.Migrations
                         .HasColumnName("created_at");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("description");
-
-                    b.Property<int>("FromId")
-                        .HasColumnType("integer")
-                        .HasColumnName("from_id");
 
                     b.Property<bool>("IsExifEnabled")
                         .HasColumnType("boolean")
@@ -292,39 +295,43 @@ namespace SastImgAPI.Migrations
                     b.HasKey("Id")
                         .HasName("pk_images");
 
+                    b.HasIndex("AlbumId")
+                        .HasDatabaseName("ix_images_album_id");
+
                     b.HasIndex("AuthorId")
                         .HasDatabaseName("ix_images_author_id");
 
                     b.HasIndex("CategoryId")
                         .HasDatabaseName("ix_images_category_id");
 
-                    b.HasIndex("FromId")
-                        .HasDatabaseName("ix_images_from_id");
-
                     b.ToTable("images", (string)null);
                 });
 
             modelBuilder.Entity("SastImgAPI.Models.DbSet.Notification", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("content");
 
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_read");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("title");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("integer")
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
@@ -338,12 +345,12 @@ namespace SastImgAPI.Migrations
 
             modelBuilder.Entity("SastImgAPI.Models.DbSet.Tag", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -362,12 +369,12 @@ namespace SastImgAPI.Migrations
 
             modelBuilder.Entity("SastImgAPI.Models.Identity.Role", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -396,19 +403,18 @@ namespace SastImgAPI.Migrations
 
             modelBuilder.Entity("SastImgAPI.Models.Identity.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer")
                         .HasColumnName("access_failed_count");
 
                     b.Property<string>("Avatar")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("avatar");
 
@@ -432,14 +438,8 @@ namespace SastImgAPI.Migrations
                         .HasColumnName("email_confirmed");
 
                     b.Property<string>("Header")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("header");
-
-                    b.Property<string>("Language")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("language");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean")
@@ -484,11 +484,6 @@ namespace SastImgAPI.Migrations
                         .HasColumnType("text")
                         .HasColumnName("security_stamp");
 
-                    b.Property<string>("TimeZone")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("time_zone");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean")
                         .HasColumnName("two_factor_enabled");
@@ -497,11 +492,6 @@ namespace SastImgAPI.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
                         .HasColumnName("user_name");
-
-                    b.Property<string>("Website")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("website");
 
                     b.HasKey("Id")
                         .HasName("pk_asp_net_users");
@@ -518,12 +508,12 @@ namespace SastImgAPI.Migrations
 
             modelBuilder.Entity("UserUser", b =>
                 {
-                    b.Property<int>("FollowersId")
-                        .HasColumnType("integer")
+                    b.Property<long>("FollowersId")
+                        .HasColumnType("bigint")
                         .HasColumnName("followers_id");
 
-                    b.Property<int>("FollowingId")
-                        .HasColumnType("integer")
+                    b.Property<long>("FollowingId")
+                        .HasColumnType("bigint")
                         .HasColumnName("following_id");
 
                     b.HasKey("FollowersId", "FollowingId")
@@ -552,7 +542,7 @@ namespace SastImgAPI.Migrations
                         .HasConstraintName("fk_image_tag_tags_tags_id");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
                 {
                     b.HasOne("SastImgAPI.Models.Identity.Role", null)
                         .WithMany()
@@ -562,7 +552,7 @@ namespace SastImgAPI.Migrations
                         .HasConstraintName("fk_asp_net_role_claims_asp_net_roles_role_id");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<long>", b =>
                 {
                     b.HasOne("SastImgAPI.Models.Identity.User", null)
                         .WithMany()
@@ -572,7 +562,7 @@ namespace SastImgAPI.Migrations
                         .HasConstraintName("fk_asp_net_user_claims_asp_net_users_user_id");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<long>", b =>
                 {
                     b.HasOne("SastImgAPI.Models.Identity.User", null)
                         .WithMany()
@@ -582,7 +572,7 @@ namespace SastImgAPI.Migrations
                         .HasConstraintName("fk_asp_net_user_logins_asp_net_users_user_id");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<long>", b =>
                 {
                     b.HasOne("SastImgAPI.Models.Identity.Role", null)
                         .WithMany()
@@ -599,7 +589,7 @@ namespace SastImgAPI.Migrations
                         .HasConstraintName("fk_asp_net_user_roles_asp_net_users_user_id");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<long>", b =>
                 {
                     b.HasOne("SastImgAPI.Models.Identity.User", null)
                         .WithMany()
@@ -623,6 +613,13 @@ namespace SastImgAPI.Migrations
 
             modelBuilder.Entity("SastImgAPI.Models.DbSet.Image", b =>
                 {
+                    b.HasOne("SastImgAPI.Models.DbSet.Album", "Album")
+                        .WithMany("Images")
+                        .HasForeignKey("AlbumId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_images_albums_album_id");
+
                     b.HasOne("SastImgAPI.Models.Identity.User", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
@@ -637,18 +634,11 @@ namespace SastImgAPI.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_images_categories_category_id");
 
-                    b.HasOne("SastImgAPI.Models.DbSet.Album", "From")
-                        .WithMany("Images")
-                        .HasForeignKey("FromId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_images_albums_from_id");
+                    b.Navigation("Album");
 
                     b.Navigation("Author");
 
                     b.Navigation("Category");
-
-                    b.Navigation("From");
                 });
 
             modelBuilder.Entity("SastImgAPI.Models.DbSet.Notification", b =>

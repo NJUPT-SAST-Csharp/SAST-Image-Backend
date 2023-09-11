@@ -13,9 +13,9 @@ using SastImgAPI.Models.Identity;
 using SastImgAPI.Services;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
-using static SastImgAPI.Services.ImageAccessor;
 using Image = SastImgAPI.Models.DbSet.Image;
 using SastImgAPI.Models.ResponseDtos;
+using System.Linq;
 
 namespace SastImgAPI.Controllers
 {
@@ -23,25 +23,19 @@ namespace SastImgAPI.Controllers
     [ApiController]
     public class ImageController : ControllerBase
     {
-        private readonly UserManager<User> _userManager;
         private readonly DatabaseContext _dbContext;
         private readonly IValidator<ImageRequestDto> _validator;
         private readonly ImageAccessor _fileAccessor;
-        private readonly CacheAuthAccessor _authAccessor;
 
         public ImageController(
             DatabaseContext dbContext,
-            UserManager<User> userManager,
             IValidator<ImageRequestDto> validator,
-            ImageAccessor fileAccessor,
-            CacheAuthAccessor authAccessor
+            ImageAccessor fileAccessor
         )
         {
             _dbContext = dbContext;
-            _userManager = userManager;
             _validator = validator;
             _fileAccessor = fileAccessor;
-            _authAccessor = authAccessor;
         }
 
         /// <summary>
@@ -50,7 +44,7 @@ namespace SastImgAPI.Controllers
         /// <remarks>
         /// Allow users to search for images with options to filter by tags, user, and paginate through results.
         /// </remarks>
-        /// <param name="clt">A CancellationToken used for canceling the operation.</param>
+        /// <param name="cancellationToken">A CancellationToken used for canceling the operation.</param>
         /// <param name="username">Optional: The username of the user whose images are being retrieved.</param>
         /// <param name="category">Optional: The name of category used to filter images.</param>
         /// <param name="tags">Optional: An array of tags used to filter images.</param>
@@ -78,10 +72,10 @@ namespace SastImgAPI.Controllers
             typeof(ErrorResponseDto)
         )]
         public async Task<IActionResult> GetImages(
-            CancellationToken clt,
-            [FromQuery] string? category = default,
-            [FromQuery] string? username = default,
-            [FromQuery] string[]? tags = default,
+            CancellationToken cancellationToken,
+            [FromQuery] string? category = null,
+            [FromQuery] string? username = null,
+            [FromQuery(Name = "tag")] string[]? tags = default,
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 12
         )
@@ -89,78 +83,63 @@ namespace SastImgAPI.Controllers
             var skipCount = page * pageSize;
 
             // Create a query for retrieving images with necessary details
-            var query = _dbContext.Images
-                .Include(image => image.Tags)
+            IQueryable<Image> query = _dbContext.Images
                 .Include(image => image.Author)
-                .Include(image => image.Category)
-                .OrderBy(image => image.CreatedAt)
-                .Select(
+                .Include(image => image.Album);
+
+            // Filter images based on provided category.
+            if (category is not null)
+            {
+                query = query.Where(image => image.Category.Id == CodeAccessor.ToLongId(category));
+            }
+            // TODO: What if "Resetter" ?
+            if (User.Identity!.IsAuthenticated)
+            {
+                // Retrieve images based on user authentication and access level
+                query = query.Where(
                     image =>
-                        new ImageResponseDto(
-                            image.Id,
-                            image.Url,
-                            image.Title,
-                            image.Description,
-                            image.Category.Name,
-                            image.CreatedAt,
-                            image.Author.UserName!,
-                            image.From.Accessibility,
-                            image.Tags.Select(tag => tag.Name).ToList()
+                        (
+                            // Retrieve images authored by the authenticated user
+                            User.FindFirstValue("username") == username
+                            && image.Author.UserName == username
+                        )
+                        || (
+                            // Retrieve images by other authenticated users if accessible to them
+                            (username.IsNullOrEmpty() || image.Author.UserName == username)
+                            && (
+                                image.Album.Accessibility == Accessibility.Everyone
+                                || image.Album.Accessibility == Accessibility.Auth
+                            )
                         )
                 );
+            }
+            else
+            {
+                // Retrieve images by unauthenticated users
+                query = query.Where(
+                    image =>
+                        image.Album.Accessibility == Accessibility.Everyone
+                        && (username.IsNullOrEmpty() || image.Author.UserName == username)
+                );
+            }
 
             // Filter images based on provided tags
             if (!tags.IsNullOrEmpty())
             {
-                query = query.Where(
-                    image => image.Tags.Any(imageTag => tags!.Any(tag => tag == imageTag))
-                );
+                foreach (long tagId in tags!.Select(CodeAccessor.ToLongId))
+                {
+                    query = query.Where(image => image.Tags.Any(imageTag => imageTag.Id == tagId));
+                }
             }
 
-            // Filter images based on provided category.
-            if (string.IsNullOrWhiteSpace(category))
-            {
-                query = query.Where(image => image.Category == category);
-            }
+            var images = await query
+                .OrderBy(image => image.CreatedAt)
+                .Skip(skipCount)
+                .Take(pageSize)
+                .Select(image => new ImageResponseDto(image))
+                .ToListAsync();
 
-            if (string.IsNullOrWhiteSpace(username))
-            {
-                var isAuthenticated = User.Identity!.IsAuthenticated;
-
-                // Retrieve images based on user authentication and access level
-                var images = query
-                    .Where(
-                        image =>
-                            (
-                                isAuthenticated
-                                && (
-                                    image.Accessibility == Accessibility.Everyone
-                                    || image.Accessibility == Accessibility.Auth
-                                )
-                            ) || (!isAuthenticated && image.Accessibility == Accessibility.Everyone)
-                    )
-                    .Skip(skipCount)
-                    .Take(pageSize);
-
-                return ResponseDispatcher.Data(images);
-            }
-
-            if (User.FindFirstValue("sub") == username)
-            {
-                // Retrieve images authored by the authenticated user
-                var images = query.Skip(skipCount).Take(pageSize);
-                return ResponseDispatcher.Data(images);
-            }
-            else
-            {
-                // Retrieve images by username if accessible to others
-                var images = query
-                    .Where(image => image.Accessibility == Accessibility.Everyone)
-                    .Where(image => image.Author == username)
-                    .Skip(skipCount)
-                    .Take(pageSize);
-                return ResponseDispatcher.Data(images);
-            }
+            return ResponseDispatcher.Data(images);
         }
 
         /// <summary>
@@ -210,23 +189,22 @@ namespace SastImgAPI.Controllers
                     .Add(validationResult.Errors)
                     .Build();
 
+            await Console.Out.WriteLineAsync(User.FindFirstValue("id"));
             // Retrieve the user's album where the image will be uploaded
             var album = await _dbContext.Albums
-                .Where(album => int.Parse(User.FindFirstValue("id")!) == album.AuthorId)
-                .Where(album => imageDto.AlbumId == 0 || album.Id == imageDto.AlbumId)
+                .Where(album => CodeAccessor.ToLongId(User.FindFirstValue("id")!) == album.AuthorId)
+                .Where(
+                    album =>
+                        !imageDto.AlbumId.IsNullOrEmpty()
+                        && album.Id == CodeAccessor.ToLongId(imageDto.AlbumId)
+                )
                 .Select(
                     album =>
                         new
                         {
                             album.Id,
-                            album.Images,
                             album.Name,
-                            Author = new
-                            {
-                                album.Author.Id,
-                                Username = album.Author.UserName,
-                                album.Author.Nickname
-                            }
+                            album.AuthorId
                         }
                 )
                 .FirstOrDefaultAsync(clt);
@@ -239,7 +217,7 @@ namespace SastImgAPI.Controllers
 
             // Check if the specified category exists
             var category = await _dbContext.Categories.FirstOrDefaultAsync(
-                category => category.Name == imageDto.Category,
+                category => category.Id == CodeAccessor.ToLongId(imageDto.Category),
                 clt
             );
             if (category is null)
@@ -247,37 +225,39 @@ namespace SastImgAPI.Controllers
                     .Error(StatusCodes.Status404NotFound, "Couldn't find the specific category.")
                     .Build();
 
-            // Retrieve the necessary tags
-            var tags = await _dbContext.Tags
-                .Where(tag => imageDto.Tags.Contains(tag.Name))
-                .ToListAsync(clt);
-
             // Upload the image and store its URL
-            var url = await _fileAccessor.UploadImageAsync(imageDto.ImageFile, clt);
+            string url = await _fileAccessor.UploadImageAsync(imageDto.ImageFile, clt);
 
             // Create a new image record
             Image image =
                 new()
                 {
-                    Url = url,
-                    AuthorId = album.Author.Id,
-                    FromId = album.Id,
+                    Url = new Uri(url),
+                    AuthorId = album.AuthorId,
+                    AlbumId = album.Id,
                     Title = imageDto.Title,
                     IsExifEnabled = imageDto.IsExifEnabled,
                     Description = imageDto.Description,
-                    Category = category,
+                    Category = category
                 };
 
-            // Add tags to the uploaded image
-            foreach (var tag in tags)
-                image.Tags.Add(tag);
+            if (!imageDto.Tags.IsNullOrEmpty())
+            {
+                // Retrieve the necessary tags
+                var tags = await _dbContext.Tags
+                    .Where(tag => imageDto.Tags!.Contains(tag.Name))
+                    .ToListAsync(clt);
+                // Add tags to the uploaded image
+                foreach (Tag tag in tags)
+                    image.Tags.Add(tag);
+            }
 
             // Add the image to the database and save changes
             _dbContext.Images.Add(image);
             await _dbContext.SaveChangesAsync(clt);
 
             // Return the ID of the uploaded image
-            return ResponseDispatcher.Data(new ImageCreatedResponseDto(image.Id));
+            return ResponseDispatcher.Data(new ImageCreatedResponseDto(image));
         }
 
         /// <summary>
@@ -288,7 +268,7 @@ namespace SastImgAPI.Controllers
         /// </remarks>
         /// <param name="id">The unique identifier of the image to retrieve.</param>
         /// <param name="clt">A CancellationToken used for canceling the operation.</param>
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:length(11)}")]
         [SwaggerResponse(
             StatusCodes.Status200OK,
             "Ok: Returns detailed information about the specified image."
@@ -297,40 +277,24 @@ namespace SastImgAPI.Controllers
             StatusCodes.Status404NotFound,
             "Not Found: The specified image does not exist or is not accessible."
         )]
-        public async Task<IActionResult> GetImageById(int id, CancellationToken clt)
+        public async Task<IActionResult> GetImageById(string id, CancellationToken clt)
         {
-            // Determine the user's ID if authenticated, otherwise set to default
-            int userId = User.Identity!.IsAuthenticated
-                ? int.Parse(User.FindFirstValue("id")!)
-                : default;
+            long userId = User.Identity!.IsAuthenticated
+                ? CodeAccessor.ToLongId(User.FindFirstValue("id")!)
+                : 0;
 
             // Query the database to retrieve image details by its unique ID
             var image = await _dbContext.Images
-                .Select(
-                    image =>
-                        new ImageDetailedResponseDto(
-                            image.Id,
-                            image.Title,
-                            image.Description,
-                            image.Category.Id,
-                            image.From.Accessibility,
-                            image.IsExifEnabled,
-                            image.Views,
-                            image.Likes,
-                            image.Tags.Select(tag => tag.Name).ToList(),
-                            new(image.Author.Id, image.Author.UserName!, image.Author.Nickname),
-                            new(image.From.Id, image.From.Name)
-                        )
-                )
                 .Where(
                     image =>
-                        image.Accessibility == Accessibility.Everyone
+                        image.Album.Accessibility == Accessibility.Everyone
                         || image.Author.Id == userId
                         || (
-                            image.Accessibility == Accessibility.Auth
+                            image.Album.Accessibility == Accessibility.Auth
                             && User.Identity!.IsAuthenticated
                         )
                 )
+                .Select(image => new ImageDetailedResponseDto(image))
                 .FirstOrDefaultAsync(image => image.Id == id, clt);
 
             // Check if the specified image exists and is accessible
@@ -352,7 +316,7 @@ namespace SastImgAPI.Controllers
         /// </remarks>
         /// <param name="id">The unique ID of the image to be deleted.</param>
         /// <param name="clt">A CancellationToken used for canceling the operation.</param>
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:length(11)}")]
         [Authorize(Roles = "User")]
         [SwaggerResponse(
             StatusCodes.Status204NoContent,
@@ -363,19 +327,19 @@ namespace SastImgAPI.Controllers
             "Not Found: The specified image was not found.",
             typeof(ErrorResponseDto)
         )]
-        public async Task<IActionResult> DeleteImage(int id, CancellationToken clt)
+        public async Task<IActionResult> DeleteImage(string id, CancellationToken clt)
         {
             // Find the image based on the user's authorization level
             var image = await _dbContext.Images
                 .Where(
                     image =>
-                        image.AuthorId == int.Parse(User.FindFirstValue("id")!) // User is the owner
+                        image.AuthorId == CodeAccessor.ToLongId(User.FindFirstValue("id")!) // User is the owner
                         || User.Claims
                             .Where(claim => claim.Type == "role")
                             .Select(claim => claim.Value)
                             .Contains("Admin") // User has Admin role
                 )
-                .FirstOrDefaultAsync(image => image.Id == id, clt);
+                .FirstOrDefaultAsync(image => image.Id == CodeAccessor.ToLongId(id), clt);
 
             // Check if the image exists
             if (image is null)
@@ -386,11 +350,11 @@ namespace SastImgAPI.Controllers
             }
 
             // Delete the image file from storage
-            _fileAccessor.DeleteImage(image.Url);
+            _fileAccessor.DeleteImage(image.Url.ToString());
 
             // Remove the image from the database and save changes
             _dbContext.Images.Remove(image);
-            await _dbContext.SaveChangesAsync(clt);
+            _ = _dbContext.SaveChangesAsync(clt);
 
             // Return a 204 No Content response indicating successful deletion
             return NoContent();

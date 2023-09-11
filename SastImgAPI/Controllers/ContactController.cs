@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using Response;
 using SastImgAPI.Models;
+using SastImgAPI.Services;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 
@@ -32,7 +33,7 @@ namespace SastImgAPI.Controllers
         /// </remarks>
         /// <param name="id">The unique ID of the image to be liked.</param>
         /// <param name="clt">A CancellationToken used for canceling the operation.</param>
-        [HttpPost("{id:int}")]
+        [HttpPost("{id:length(11)}")]
         [SwaggerResponse(
             StatusCodes.Status204NoContent,
             "No Content: The image has been successfully liked."
@@ -42,12 +43,12 @@ namespace SastImgAPI.Controllers
             "Not Found: The specified image was not found.",
             typeof(ErrorResponseDto)
         )]
-        public async Task<IActionResult> Like(int id, CancellationToken clt)
+        public async Task<IActionResult> Like(string id, CancellationToken clt)
         {
             // Find the likes for the specified image by its unique ID
             var likes = await _dbContext.Images
-                .Where(image => image.Id == id)
-                .Select(image => image.Likes)
+                .Where(image => image.Id == CodeAccessor.ToLongId(id))
+                .Select(image => image.LikedBy)
                 .FirstOrDefaultAsync(clt);
 
             // Check if the image exists
@@ -59,7 +60,7 @@ namespace SastImgAPI.Controllers
             }
 
             // Get the authenticated user's ID from the claims
-            var userId = int.Parse(User.FindFirstValue("id")!);
+            var userId = CodeAccessor.ToLongId(User.FindFirstValue("id")!);
 
             // Check if the user has already liked the image
             if (!likes.Contains(userId))
@@ -69,7 +70,7 @@ namespace SastImgAPI.Controllers
             }
 
             // Save the changes to the database
-            await _dbContext.SaveChangesAsync(clt);
+            _ = _dbContext.SaveChangesAsync(clt);
 
             // Return a 204 No Content response indicating success
             return NoContent();
@@ -85,19 +86,19 @@ namespace SastImgAPI.Controllers
         /// </remarks>
         /// <param name="id">The unique ID of the image to be unliked.</param>
         /// <param name="clt">A CancellationToken used for canceling the operation.</param>
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:length(11)}")]
         [SwaggerResponse(StatusCodes.Status204NoContent, "No Content: The image has been unliked.")]
         [SwaggerResponse(
             StatusCodes.Status404NotFound,
             "Not Found: The specified image was not found.",
             typeof(ErrorResponseDto)
         )]
-        public async Task<IActionResult> Unlike(int id, CancellationToken clt)
+        public async Task<IActionResult> Unlike(string id, CancellationToken clt)
         {
             // Find the likes for the specified image by its unique ID
             var likes = await _dbContext.Images
-                .Where(image => image.Id == id)
-                .Select(image => image.Likes)
+                .Where(image => image.Id == CodeAccessor.ToLongId(id))
+                .Select(image => image.LikedBy)
                 .FirstOrDefaultAsync(clt);
 
             // Check if the image exists
@@ -109,7 +110,7 @@ namespace SastImgAPI.Controllers
             }
 
             // Get the authenticated user's ID from the claims
-            var userId = int.Parse(User.FindFirstValue("id")!);
+            var userId = CodeAccessor.ToLongId(User.FindFirstValue("id")!);
 
             // Check if the user has previously liked the image
             if (likes.Contains(userId))
@@ -119,7 +120,7 @@ namespace SastImgAPI.Controllers
             }
 
             // Save the changes to the database
-            await _dbContext.SaveChangesAsync(clt);
+            _ = _dbContext.SaveChangesAsync(clt);
 
             // Return a 204 No Content response indicating success
             return NoContent();
@@ -134,7 +135,7 @@ namespace SastImgAPI.Controllers
         /// </remarks>
         /// <param name="id">The unique ID of the image to add a view to.</param>
         /// <param name="clt">A CancellationToken used for canceling the operation.</param>
-        [HttpPatch("{id:int}")]
+        [HttpPatch("{id:length(11)}")]
         [SwaggerResponse(
             StatusCodes.Status204NoContent,
             "No Content: The view count has been successfully updated."
@@ -144,13 +145,13 @@ namespace SastImgAPI.Controllers
             "Not Found: The specified image was not found.",
             typeof(ErrorResponseDto)
         )]
-        public async Task<IActionResult> AddViewCount(int id, CancellationToken clt)
+        public async Task<IActionResult> AddViewCount(string id, CancellationToken clt)
         {
             int views;
             try
             {
                 views = await _dbContext.Images
-                    .Where(image => image.Id == id)
+                    .Where(image => image.Id == CodeAccessor.ToLongId(id))
                     .Select(image => image.Views)
                     .FirstAsync(clt);
             }
@@ -164,7 +165,7 @@ namespace SastImgAPI.Controllers
             views++;
 
             // Save the changes to the database
-            await _dbContext.SaveChangesAsync(clt);
+            _ = _dbContext.SaveChangesAsync(clt);
 
             return NoContent();
         }

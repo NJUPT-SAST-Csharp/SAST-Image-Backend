@@ -1,4 +1,4 @@
 ﻿namespace SastImgAPI.Models.ResponseDtos
 {
-    public record UrlResponseDto(string Url);
+    public record UrlResponseDto(Uri Url);
 }

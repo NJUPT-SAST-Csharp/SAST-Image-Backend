@@ -54,7 +54,7 @@ namespace SastImgAPI.Controllers
         {
             // Query the database to find a tag with the specified name
             var tag = await _dbContext.Tags
-                .Select(tag => new TagResponseDto(tag.Id, tag.Name))
+                .Select(tag => new TagResponseDto(tag))
                 .FirstOrDefaultAsync(x => x.Name == name, clt);
 
             // Check if the tag was found
@@ -89,7 +89,7 @@ namespace SastImgAPI.Controllers
         {
             // Query the database to retrieve all available tags
             var tags = await _dbContext.Tags
-                .Select(tag => new TagResponseDto(tag.Id, tag.Name))
+                .Select(tag => new TagResponseDto(tag))
                 .ToListAsync(clt);
 
             // Return a JSON response containing the list of tags
@@ -149,10 +149,10 @@ namespace SastImgAPI.Controllers
             // Create a new Tag instance and add it to the database
             Tag tag = new() { Name = newTag.Name };
             await _dbContext.Tags.AddAsync(tag);
-            await _dbContext.SaveChangesAsync(clt);
+            _ = _dbContext.SaveChangesAsync(clt);
 
             // Return a JSON response containing the newly added tag's information
-            return ResponseDispatcher.Data(new TagResponseDto(tag.Id, tag.Name));
+            return ResponseDispatcher.Data(new TagResponseDto(tag));
         }
 
         /// <summary>
@@ -190,7 +190,7 @@ namespace SastImgAPI.Controllers
 
             // Remove the tag from the database
             _dbContext.Tags.Remove(tag);
-            await _dbContext.SaveChangesAsync(clt);
+            _ = _dbContext.SaveChangesAsync(clt);
 
             // Return a '204 No Content' response indicating successful deletion
             return NoContent();

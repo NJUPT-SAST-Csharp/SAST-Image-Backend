@@ -84,6 +84,7 @@ builder.Services.AddSingleton<IValidator<LoginRequestDto>, LoginValidator>();
 builder.Services.AddSingleton<IValidator<PasswordResetRequestDto>, PasswordResetValidator>();
 builder.Services.AddSingleton<IValidator<AlbumRequestDto>, AlbumValidation>();
 builder.Services.AddSingleton<IValidator<EmailConfirmRequestDto>, EmailConfirmValidator>();
+builder.Services.AddSingleton<IValidator<EmailSendRequestDto>, EmailSendValidator>();
 builder.Services.AddSingleton<IValidator<ImageRequestDto>, ImageValidator>();
 builder.Services.AddSingleton<IValidator<ProfileRequestDto>, ProfileValidator>();
 builder.Services.AddSingleton<IValidator<TagRequestDto>, TagValidator>();
@@ -170,14 +171,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-var languages = builder.Configuration.GetSection("SupportLanguages").Get<string[]>()!;
-app.UseRequestLocalization(
-    new RequestLocalizationOptions()
-        .AddSupportedCultures(languages)
-        .AddSupportedUICultures(languages)
-        .SetDefaultCulture(languages[0])
-);
 
 //app.UseHttpsRedirection();
 

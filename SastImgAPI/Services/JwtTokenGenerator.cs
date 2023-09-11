@@ -23,7 +23,11 @@ namespace SastImgAPI.Services
         public async Task<string> GenerateJwtByUserAsync(User user)
         {
             List<Claim> claims =
-                new() { new Claim("id", user.Id.ToString()), new Claim("sub", user.UserName!), };
+                new()
+                {
+                    new Claim("id", CodeAccessor.ToBase64String(user.Id)),
+                    new Claim("username", user.UserName!),
+                };
             foreach (var role in await _userManager.GetRolesAsync(user))
             {
                 claims.Add(new Claim("role", role));

@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SastImgAPI.Services;
 
 namespace SastImgAPI.Models.DbSet
 {
     [Index(nameof(Name), IsUnique = true)]
     public class Category
     {
-        public int Id { get; set; }
+        public long Id { get; set; } = CodeAccessor.GenerateSnowflakeId;
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public ICollection<Image> Images { get; } = new List<Image>();
