@@ -7,7 +7,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SastImgAPI", "SastImgAPI\Sa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Response", "Response\Response.csproj", "{6C05D892-B13D-4666-A81F-E95615A4AC2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SastImgAPI.Tests", "SastImgAPI.Tests\SastImgAPI.Tests.csproj", "{9F18D997-D2B8-4D3C-AA16-5F363E13E14E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SastImgAPI.Tests", "SastImgAPI.Tests\SastImgAPI.Tests.csproj", "{9F18D997-D2B8-4D3C-AA16-5F363E13E14E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{88633096-664A-40A2-951A-C142974B7C6C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Entity", "Entity", "{8518A4F9-F7F1-4FAC-911D-5673CAE62DF0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{E1409BFA-015D-4041-B3E2-1FE721301B54}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{C868FD56-A37C-4907-9BD9-E47FA30AA0BD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{66132B32-E6C9-4CEF-B262-706B3C26F4B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,6 +40,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6ECDD05B-D9CA-4193-841C-509D63E43894} = {88633096-664A-40A2-951A-C142974B7C6C}
+		{9F18D997-D2B8-4D3C-AA16-5F363E13E14E} = {C868FD56-A37C-4907-9BD9-E47FA30AA0BD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DEF9C9F4-A717-4AEF-BE30-DF9F13D3C94E}
