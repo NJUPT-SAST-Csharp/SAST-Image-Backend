@@ -5,13 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Response;
 using SastImgAPI.Models;
-using SastImgAPI.Models.RequestDtos;
 using SastImgAPI.Models.Identity;
+using SastImgAPI.Models.RequestDtos;
+using SastImgAPI.Models.ResponseDtos;
 using SastImgAPI.Services;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
-using SastImgAPI.Models.ResponseDtos;
-using Microsoft.AspNetCore.Routing.Template;
 
 namespace SastImgAPI.Controllers
 {
