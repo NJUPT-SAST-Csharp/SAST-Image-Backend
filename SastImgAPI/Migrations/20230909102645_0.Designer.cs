@@ -281,7 +281,7 @@ namespace SastImgAPI.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_exif_enabled");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("title");
@@ -328,7 +328,7 @@ namespace SastImgAPI.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_read");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("title");

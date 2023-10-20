@@ -1,7 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SastImgAPI.Models.Identity;
+﻿using SastImgAPI.Models.Identity;
 using SastImgAPI.Services;
-using System.ComponentModel.DataAnnotations;
 
 namespace SastImgAPI.Models.DbSet
 {
@@ -10,7 +8,7 @@ namespace SastImgAPI.Models.DbSet
         public long Id { get; set; } = CodeAccessor.GenerateSnowflakeId;
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public Uri? Cover { get; set; } = null!;
+        public Uri? Cover { get; set; } = null;
         public User Author { get; set; } = null!;
         public long AuthorId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
