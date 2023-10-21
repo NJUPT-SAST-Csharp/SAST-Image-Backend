@@ -3,7 +3,7 @@
     public abstract class Entity<T> : IEquatable<Entity<T>>
         where T : IEquatable<T>
     {
-        protected Entity(T id = default!)
+        protected Entity(T id)
         {
             Id = id;
         }

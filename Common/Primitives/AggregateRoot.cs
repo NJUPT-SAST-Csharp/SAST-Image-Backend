@@ -3,7 +3,7 @@
     public abstract class AggregateRoot<T> : Entity<T>
         where T : IEquatable<T>
     {
-        protected AggregateRoot(T id = default!)
+        protected AggregateRoot(T id)
             : base(id) { }
     }
 }
