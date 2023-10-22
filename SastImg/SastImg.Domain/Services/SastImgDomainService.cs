@@ -5,18 +5,21 @@ namespace SastImg.Domain.Services
     public class SastImgDomainService
     {
         private readonly IAlbumRepository _albumRepository;
-        private readonly IImageRepository _imageRepository;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ITagRepository _tagRepository;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly IUnitOfWork _unit;
 
         public SastImgDomainService(
-            IUnitOfWork unitOfWork,
-            IImageRepository imageRepository,
-            IAlbumRepository albumRepository
+            IUnitOfWork unit,
+            IAlbumRepository albumRepository,
+            ITagRepository tagRepository,
+            ICategoryRepository categoryRepository
         )
         {
-            _unitOfWork = unitOfWork;
-            _imageRepository = imageRepository;
+            _unit = unit;
             _albumRepository = albumRepository;
+            _tagRepository = tagRepository;
+            _categoryRepository = categoryRepository;
         }
     }
 }

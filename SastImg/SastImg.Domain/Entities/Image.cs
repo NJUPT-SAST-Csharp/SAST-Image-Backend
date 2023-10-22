@@ -19,7 +19,7 @@ namespace SastImg.Domain.Entities
 
         public string Description { get; private set; } = string.Empty;
 
-        public Uri Uri { get; init; }
+        public Uri Uri { get; private init; }
 
         public DateTime UploadedAt { get; } = DateTime.Now;
 

@@ -11,8 +11,6 @@ namespace SastImg.Domain.Entities
 
     public sealed class Album : AggregateRoot<long>
     {
-        private readonly ICollection<Image> images = new List<Image>();
-
         public Album(
             long authorId,
             string title,
@@ -26,6 +24,8 @@ namespace SastImg.Domain.Entities
             Description = description;
             Accessibility = accessibility;
         }
+
+        private readonly ICollection<Image> images = new List<Image>();
 
         #region Properties
 
@@ -47,9 +47,15 @@ namespace SastImg.Domain.Entities
 
         public ICollection<long> Collaborators { get; } = new List<long>();
 
+        public IEnumerable<Image> Images => images;
+
         #endregion
 
         #region Methods
+
+        public void Remove() => IsRemoved = true;
+
+        public void Restore() => IsRemoved = false;
 
         public void UpdateAlbumInfo(string title, string description, Accessibility accessibility)
         {
@@ -58,13 +64,8 @@ namespace SastImg.Domain.Entities
             Accessibility = accessibility;
         }
 
-        public void Remove() => IsRemoved = true;
-
-        public void Restore() => IsRemoved = false;
-
-        public void AddImage(string title, string description, Uri uri)
+        public void AddImage(Image image)
         {
-            Image image = new(title, description) { Uri = uri };
             images.Add(image);
             UpdatedAt = DateTime.Now;
         }
