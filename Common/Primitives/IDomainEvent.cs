@@ -2,6 +2,6 @@
 {
     public interface IDomainEvent
     {
-        public DateTime RegisteredTime { get; }
+        public DateTime RegisteredAt { get; }
     }
 }

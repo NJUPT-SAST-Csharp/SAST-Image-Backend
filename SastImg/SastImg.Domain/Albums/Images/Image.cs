@@ -8,9 +8,9 @@ namespace SastImg.Domain.Albums.Images
         private Image(string title, Uri uri, string description)
             : base(SnowFlakeIdGenerator.NewId)
         {
-            this.title = title;
-            this.uri = uri;
-            this.description = description;
+            Title = title;
+            Uri = uri;
+            Description = description;
         }
 
         internal static Image CreateNewImage(string title, Uri uri, string description)
@@ -20,21 +20,23 @@ namespace SastImg.Domain.Albums.Images
 
         #region Properties
 
-        private string title = string.Empty;
+        public string Title { get; private set; } = string.Empty;
 
-        private string description = string.Empty;
+        public string Description { get; private set; } = string.Empty;
 
-        private Uri uri;
+        public Uri Uri { get; private init; }
 
-        private DateTime uploadedAt = DateTime.Now;
+        public DateTime UploadedAt { get; } = DateTime.Now;
 
-        private bool isRemoved = false;
+        public bool IsRemoved { get; private set; } = false;
 
-        private int viewCount = 0;
+        public bool IsHidden { get; private set; } = false;
 
-        private int categoryId;
+        public int ViewCount { get; private set; } = 0;
 
-        private ICollection<long> tags = new List<long>();
+        public int CategoryId { get; private set; }
+
+        public ICollection<long> Tags { get; } = new List<long>();
 
         #endregion
 
@@ -42,17 +44,23 @@ namespace SastImg.Domain.Albums.Images
 
         internal void UpdateImageInfo(string title, string description)
         {
-            this.title = title;
-            this.description = description;
+            Title = title;
+            Description = description;
         }
 
-        internal void Remove() => isRemoved = true;
+        internal void SetRemoval(bool isRemoved)
+        {
+            IsRemoved = isRemoved;
+        }
 
-        internal void Restore() => isRemoved = false;
+        internal void SetVisibility(bool isVisible)
+        {
+            IsHidden = !isVisible;
+        }
 
-        internal void AddViewCount() => viewCount++;
+        internal void AddViewCount() => ViewCount++;
 
-        internal void ChangeCategory(int id) => categoryId = id;
+        internal void ChangeCategory(int id) => CategoryId = id;
 
         #endregion
     }

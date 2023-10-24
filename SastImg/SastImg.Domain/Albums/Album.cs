@@ -68,27 +68,43 @@ namespace SastImg.Domain.Albums
             Accessibility = accessibility;
         }
 
-        public long AddImage(string title, Uri uri, string description = "")
+        public long AddImage(string title, Uri uri, string description)
         {
             var image = Image.CreateNewImage(title, uri, description);
             UpdatedAt = DateTime.Now;
             return image.Id;
         }
 
-        public void RemoveImageById(long id)
+        public void RemoveImage(long imageId)
         {
-            var image = GetImageById(id);
-            image?.Remove();
+            var image = images.FirstOrDefault(image => image.Id == imageId);
+            image?.SetRemoval(true);
         }
 
-        public void RestoreImageById(long id)
+        public void RestoreImage(long imageId)
         {
-            var image = GetImageById(id);
-            image?.Restore();
+            var image = images.FirstOrDefault(image => image.Id == imageId);
+            image?.SetRemoval(false);
         }
 
-        // TODO: Implement
-        private Image? GetImageById(long id) => throw new NotImplementedException();
+        public void HideImage(long imageId)
+        {
+            var image = images.FirstOrDefault(image => image.Id == imageId);
+            image?.SetVisibility(false);
+        }
+
+        public void ShowImage(long imageId)
+        {
+            var image = images.FirstOrDefault(image => image.Id == imageId);
+            image?.SetVisibility(true);
+        }
+
+        public void UpdateImage(
+            long imageId,
+            string title,
+            string description,
+            IEnumerable<long> tags
+        ) { }
 
         #endregion
     }
