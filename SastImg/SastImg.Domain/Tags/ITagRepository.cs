@@ -1,6 +1,4 @@
-﻿using SastImg.Domain.Entities;
-
-namespace SastImg.Domain.Repositories
+﻿namespace SastImg.Domain.Tags
 {
     public interface ITagRepository
     {

@@ -1,9 +1,8 @@
-﻿using SastImg.Domain.Enums;
-using SastImg.Domain.ValueObjects;
+﻿using SastImg.Domain.Albums.Images;
 using Shared.Primitives;
 using Shared.Utilities;
 
-namespace SastImg.Domain.Entities
+namespace SastImg.Domain.Albums
 {
     /// <summary>
     /// The aggregate root of the SastImg Domain, containing references of images and authorId (user).
@@ -11,18 +10,23 @@ namespace SastImg.Domain.Entities
 
     public sealed class Album : AggregateRoot<long>
     {
-        public Album(
-            long authorId,
-            string title,
-            string description = "",
-            Accessibility accessibility = Accessibility.Public
-        )
+        private Album(long authorId, string title, string description, Accessibility accessibility)
             : base(SnowFlakeIdGenerator.NewId)
         {
             Title = title;
             AuthorId = authorId;
             Description = description;
             Accessibility = accessibility;
+        }
+
+        public static Album CreateNewAlbum(
+            long authorId,
+            string title,
+            string description,
+            Accessibility accessibility
+        )
+        {
+            return new Album(authorId, title, description, accessibility);
         }
 
         private readonly ICollection<Image> images = new List<Image>();
@@ -64,28 +68,27 @@ namespace SastImg.Domain.Entities
             Accessibility = accessibility;
         }
 
-        public void AddImage(Image image)
+        public long AddImage(string title, Uri uri, string description = "")
         {
-            images.Add(image);
+            var image = Image.CreateNewImage(title, uri, description);
             UpdatedAt = DateTime.Now;
+            return image.Id;
         }
 
         public void RemoveImageById(long id)
         {
             var image = GetImageById(id);
-            if (image is not null)
-                image.IsRemoved = true;
+            image?.Remove();
         }
 
         public void RestoreImageById(long id)
         {
             var image = GetImageById(id);
-            if (image is not null)
-                image.IsRemoved = true;
+            image?.Restore();
         }
 
-        public Image? GetImageById(long id) =>
-            images.Where(image => !image.IsRemoved).FirstOrDefault(image => image.Id == id);
+        // TODO: Implement
+        private Image? GetImageById(long id) => throw new NotImplementedException();
 
         #endregion
     }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SastImg.Domain.Entities;
-using SastImg.Domain.Enums;
-using SastImg.Domain.Repositories;
+using SastImg.Domain;
+using SastImg.Domain.Albums;
+using SastImg.Domain.Albums.Images;
 using SastImg.Infrastructure.Persistence;
 
 namespace SastImg.Infrastructure.Repositories
@@ -24,7 +24,7 @@ namespace SastImg.Infrastructure.Repositories
         )
         {
             _dbContext.Albums.AddAsync(album);
-            _unit.SaveChangesAsync(cancellationToken);
+            _unit.CommitChangesAsync(cancellationToken);
             return Task.FromResult(album.AuthorId);
         }
 
@@ -32,7 +32,7 @@ namespace SastImg.Infrastructure.Repositories
         {
             var albums = _dbContext.Albums.Where(album => album.IsRemoved);
             _dbContext.RemoveRange(albums);
-            return _unit.SaveChangesAsync(cancellationToken);
+            return _unit.CommitChangesAsync(cancellationToken);
         }
 
         public Task<int> DeleteAllRemovedImagesAsync(CancellationToken cancellationToken = default)
@@ -41,7 +41,7 @@ namespace SastImg.Infrastructure.Repositories
                 .SelectMany(album => album.Images)
                 .Where(image => image.IsRemoved);
             _dbContext.RemoveRange(images);
-            return _unit.SaveChangesAsync(cancellationToken);
+            return _unit.CommitChangesAsync(cancellationToken);
         }
 
         public Task<Album?> GetAlbumByIdAsync(
@@ -77,11 +77,11 @@ namespace SastImg.Infrastructure.Repositories
             CancellationToken cancellationToken = default
         )
         {
-            var album = _dbContext.Albums.Where(album => album.Id == id).FirstOrDefault();
+            var album = _dbContext.Albums.Where(album => album.Id == albumId).FirstOrDefault();
             if (album is not null)
             {
                 album.Remove();
-                return _unit.SaveChangesAsync(cancellationToken);
+                return _unit.CommitChangesAsync(cancellationToken);
             }
             else
                 return Task.CompletedTask;
@@ -93,7 +93,7 @@ namespace SastImg.Infrastructure.Repositories
             if (album is not null)
             {
                 album.Restore();
-                return _unit.SaveChangesAsync(cancellationToken);
+                return _unit.CommitChangesAsync(cancellationToken);
             }
             else
                 return Task.CompletedTask;
@@ -111,7 +111,7 @@ namespace SastImg.Infrastructure.Repositories
             if (album is not null)
             {
                 album.UpdateAlbumInfo(title, description, accessibility);
-                return _unit.SaveChangesAsync(cancellationToken);
+                return _unit.CommitChangesAsync(cancellationToken);
             }
             else
                 return Task.CompletedTask;
@@ -130,8 +130,9 @@ namespace SastImg.Infrastructure.Repositories
             var album = await GetAlbumByIdAsync(albumId, cancellationToken);
             if (album is { })
             {
-                album.AddImage(image);
-                _ = _unit.SaveChangesAsync(cancellationToken);
+                // TODO: Change the parameters.
+                album.AddImage();
+                _ = _unit.CommitChangesAsync(cancellationToken);
             }
         }
 
@@ -145,7 +146,7 @@ namespace SastImg.Infrastructure.Repositories
             if (album is { })
             {
                 album.RemoveImageById(imageId);
-                _ = _unit.SaveChangesAsync(cancellationToken);
+                _ = _unit.CommitChangesAsync(cancellationToken);
             }
         }
 

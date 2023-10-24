@@ -1,7 +1,7 @@
 ﻿using Shared.Primitives;
 using Shared.Utilities;
 
-namespace SastImg.Domain.Entities
+namespace SastImg.Domain.Tags
 {
     public sealed class Tag : AggregateRoot<long>
     {

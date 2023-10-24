@@ -1,4 +1,5 @@
-﻿using SastImg.Domain.Repositories;
+﻿using Common.Primitives;
+using SastImg.Domain;
 
 namespace SastImg.Infrastructure.Persistence
 {
@@ -11,8 +12,21 @@ namespace SastImg.Infrastructure.Persistence
             _dbContext = dbContext;
         }
 
-        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        public Task<int> CommitChangesAsync(CancellationToken cancellationToken = default)
         {
+            var domainEntities = _dbContext.ChangeTracker
+                .Entries<IDomainEventContainer>()
+                .Where(x => x.Entity.DomainEvents.Any())
+                .Select(x => x.Entity)
+                .ToList();
+
+            var domainEvents = domainEntities.SelectMany(x => x.DomainEvents).ToList();
+
+            // TODO: Pulish events.
+            domainEvents.ForEach(e => { });
+
+            domainEntities.ForEach(x => x.ClearDomainEvents());
+
             return _dbContext.SaveChangesAsync(cancellationToken);
         }
     }

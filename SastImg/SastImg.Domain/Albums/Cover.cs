@@ -1,4 +1,4 @@
-﻿namespace SastImg.Domain.ValueObjects
+﻿namespace SastImg.Domain.Albums
 {
     public sealed class Cover
     {

@@ -1,6 +1,6 @@
 ﻿using Shared.Primitives;
 
-namespace SastImg.Domain.Entities
+namespace SastImg.Domain.Categories
 {
     public sealed class Category : AggregateRoot<int>
     {

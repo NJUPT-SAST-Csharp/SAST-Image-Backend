@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SastImg.Domain.Entities;
+using SastImg.Domain.Albums;
+using SastImg.Domain.Categories;
+using SastImg.Domain.Tags;
 
 namespace SastImg.Infrastructure.Persistence
 {

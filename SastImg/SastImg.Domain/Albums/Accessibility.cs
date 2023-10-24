@@ -1,4 +1,4 @@
-﻿namespace SastImg.Domain.Enums
+﻿namespace SastImg.Domain.Albums
 {
     public enum Accessibility
     {

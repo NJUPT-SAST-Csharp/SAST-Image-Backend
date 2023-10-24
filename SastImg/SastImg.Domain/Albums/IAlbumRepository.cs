@@ -1,7 +1,6 @@
-﻿using SastImg.Domain.Entities;
-using SastImg.Domain.Enums;
+﻿using SastImg.Domain.Albums.Images;
 
-namespace SastImg.Domain.Repositories
+namespace SastImg.Domain.Albums
 {
     public interface IAlbumRepository
     {

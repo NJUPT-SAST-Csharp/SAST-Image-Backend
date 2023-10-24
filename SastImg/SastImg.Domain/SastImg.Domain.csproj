@@ -10,4 +10,10 @@
     <ProjectReference Include="..\..\Common\Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Albums\Images\DomainEvents\" />
+    <Folder Include="Categories\DomainEvents\" />
+    <Folder Include="Tags\DomainEvents\" />
+  </ItemGroup>
+
 </Project>
