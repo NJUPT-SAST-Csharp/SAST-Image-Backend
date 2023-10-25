@@ -4,7 +4,7 @@
     {
         #region Properties
 
-        public Uri? Url { get; private set; } = null;
+        public Uri? Uri { get; private set; } = null;
         public long ImageId { get; private set; } = 0;
         public bool IsLatestImage { get; private set; } = true;
 
@@ -24,7 +24,7 @@
         public void SetCoverByImageId(long imageId)
         {
             ImageId = imageId;
-            Url = null;
+            Uri = null;
             IsLatestImage = false;
         }
 
@@ -36,7 +36,7 @@
         /// </param>
         public void SetCoverByUri(Uri uri)
         {
-            Url = uri;
+            Uri = uri;
             ImageId = 0;
             IsLatestImage = false;
         }

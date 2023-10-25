@@ -1,12 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SastImg.Domain;
 using SastImg.Domain.Albums;
-using SastImg.Domain.Albums.Repositories;
 using SastImg.Infrastructure.Persistence;
 
 namespace SastImg.Infrastructure.Domain.Albums.Repositories
 {
-    internal class AlbumCommandRepository : IAlbumCommandRepository
+    internal class AlbumCommandRepository : IAlbumRepository
     {
         private readonly SastImgDbContext _dbContext;
         private readonly IUnitOfWork _unitOfWork;

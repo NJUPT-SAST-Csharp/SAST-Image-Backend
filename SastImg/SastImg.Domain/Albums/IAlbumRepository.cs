@@ -1,6 +1,6 @@
-﻿namespace SastImg.Domain.Albums.Repositories
+﻿namespace SastImg.Domain.Albums
 {
-    public interface IAlbumCommandRepository
+    public interface IAlbumRepository
     {
         #region Album
 
