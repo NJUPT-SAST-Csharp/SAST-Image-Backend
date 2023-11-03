@@ -61,7 +61,7 @@
             long imageId,
             string title,
             string description,
-            IEnumerable<long> tags
+            IEnumerable<long> tags,
             CancellationToken cancellationToken = default
         );
 

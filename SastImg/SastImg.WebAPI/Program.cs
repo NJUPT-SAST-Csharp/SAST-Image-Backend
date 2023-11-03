@@ -1,8 +1,21 @@
-using Microsoft.AspNetCore;
-using SastImg.WebAPI;
+using SastImg.Infrastructure.Extensions;
 
-var builder = WebHost.CreateDefaultBuilder(args).UseStartup<Startup>();
+var builder = WebApplication.CreateBuilder(args);
 
-var host = builder.Build();
+// Configure the config provider.
+var configuration = builder.Services.ConfigureConfig(builder.Environment);
 
-host.Run();
+// Configure the logger.
+builder.Logging.ConfigureLogger();
+
+// Add & Configure services.
+builder.ConfigureServices(configuration);
+
+// Build the web application.
+var app = builder.Build();
+
+// Add & Configure services.
+app.ConfigureApplication();
+
+// Start the web application.
+app.Run();

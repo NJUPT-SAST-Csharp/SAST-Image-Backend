@@ -7,6 +7,7 @@ namespace SastImg.Application.Albums
     public interface IAlbumQueryRepository
     {
         #region Album
+
         public Task<AlbumDetailsDto?> GetAlbumDetailsAsync(
             long albumId,
             CancellationToken cancellationToken = default
@@ -32,6 +33,16 @@ namespace SastImg.Application.Albums
 
         public Task<IEnumerable<ImageDto>> GetAlbumImagesAsync(
             long albumId,
+            CancellationToken cancellationToken = default
+        );
+
+        public Task<IEnumerable<ImageDto>> GetImagesByTagAsync(
+            IEnumerable<long> tags,
+            CancellationToken cancellationToken = default
+        );
+
+        public Task<IEnumerable<ImageDto>> GetImagesByCategoryAsync(
+            long category,
             CancellationToken cancellationToken = default
         );
 
