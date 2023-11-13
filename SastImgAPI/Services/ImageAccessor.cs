@@ -1,9 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
-using SastImgAPI.Models.Identity;
 using SastImgAPI.Options;
-using SixLabors.ImageSharp.Advanced;
-using SixLabors.ImageSharp.Formats;
-using System.Reflection.Metadata.Ecma335;
 
 namespace SastImgAPI.Services
 {

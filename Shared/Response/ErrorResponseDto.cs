@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Response
+﻿namespace Shared.Response
 {
     public class ErrorResponseDto
     {
         public ErrorResponseDto(int statusCode, string detail, ICollection<ErrorObject> errors)
         {
-            this.Status = statusCode;
-            this.Detail = detail;
-            this.Errors = errors;
+            Status = statusCode;
+            Detail = detail;
+            Errors = errors;
         }
 
         public int Status { get; init; }

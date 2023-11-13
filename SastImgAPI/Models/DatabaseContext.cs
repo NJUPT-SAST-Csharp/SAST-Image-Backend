@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using SastImgAPI.Models.DbSet;
 using SastImgAPI.Models.Identity;
 using Image = SastImgAPI.Models.DbSet.Image;
-using System.Xml;
-using System.Reflection.Metadata;
 
 namespace SastImgAPI.Models
 {

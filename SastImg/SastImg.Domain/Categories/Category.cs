@@ -1,4 +1,4 @@
-﻿using Shared.Primitives;
+﻿using Shared.DomainPrimitives;
 
 namespace SastImg.Domain.Categories
 {

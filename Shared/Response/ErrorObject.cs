@@ -1,4 +1,4 @@
-﻿namespace Response
+﻿namespace Shared.Response
 {
     public class ErrorObject
     {

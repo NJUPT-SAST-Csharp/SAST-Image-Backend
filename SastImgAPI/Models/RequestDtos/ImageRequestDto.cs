@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace SastImgAPI.Models.RequestDtos
+﻿namespace SastImgAPI.Models.RequestDtos
 {
     public record ImageRequestDto(
         IFormFile ImageFile,

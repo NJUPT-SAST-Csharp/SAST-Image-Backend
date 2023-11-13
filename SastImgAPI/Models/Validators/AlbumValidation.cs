@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using SastImgAPI.Models.DbSet;
 using SastImgAPI.Models.RequestDtos;
 
 namespace SastImgAPI.Models.Validators

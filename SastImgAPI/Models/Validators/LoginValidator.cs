@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Microsoft.Extensions.Localization;
 using SastImgAPI.Models.RequestDtos;
 
 namespace SastImgAPI.Models.Validators

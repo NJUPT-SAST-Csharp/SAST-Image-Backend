@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\DomainPrimitives\DomainPrimitives.csproj" />
-    <ProjectReference Include="..\..\Shared\Utilities\Utilities.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.13" />
+    <PackageReference Include="Microsoft.OpenApi" Version="1.6.10" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Response.Builders
+namespace Shared.Response.Builders
 {
     public class ResponseErrorBuilder
     {

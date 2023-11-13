@@ -1,4 +1,4 @@
-﻿using Shared.Primitives;
+﻿using Shared.DomainPrimitives;
 using Shared.Utilities;
 
 namespace SastImg.Domain.Albums.Images

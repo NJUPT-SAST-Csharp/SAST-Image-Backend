@@ -1,6 +1,6 @@
-﻿using Common.Primitives.DomainEvent;
-using SastImg.Application.EventBus;
+﻿using SastImg.Application.EventBus;
 using SastImg.Domain;
+using Shared.DomainPrimitives.DomainEvent;
 
 namespace SastImg.Infrastructure.Persistence
 {

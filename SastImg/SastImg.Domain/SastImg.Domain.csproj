@@ -7,14 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Albums\Images\DomainEvents\" />
     <Folder Include="Albums\DomainEvents\" />
     <Folder Include="Categories\DomainEvents\" />
     <Folder Include="Tags\DomainEvents\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\DomainPrimitives\DomainPrimitives.csproj" />
+    <ProjectReference Include="..\..\Shared\Utilities\Utilities.csproj" />
   </ItemGroup>
 
 </Project>

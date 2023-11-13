@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Response.Builders;
+using Shared.Response.Builders;
 
 namespace SastImg.WebAPI.Controllers
 {

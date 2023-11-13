@@ -1,5 +1,5 @@
-﻿using Common.Primitives.DomainNotification;
-using Common.Primitives.Query;
+﻿using Common.Primitives.Query;
+using Shared.DomainPrimitives.DomainNotification;
 
 namespace SastImg.Application.EventBus
 {
