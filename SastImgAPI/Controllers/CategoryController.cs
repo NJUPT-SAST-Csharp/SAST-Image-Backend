@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Response;
+using Response.Builders;
 using SastImgAPI.Models;
 using SastImgAPI.Models.DbSet;
 using SastImgAPI.Models.RequestDtos;
@@ -45,12 +46,13 @@ namespace SastImgAPI.Controllers
         public async Task<IActionResult> GetCategories(CancellationToken clt)
         {
             // Retrieve a list of all available categories
-            var categories = await _dbContext.Categories
+            var categories = await _dbContext
+                .Categories
                 .Select(category => new CategoryResponseDto(category))
                 .ToListAsync(clt);
 
             // Return the list of categories
-            return ResponseDispatcher.Data(categories);
+            return ReponseBuilder.Data(categories);
         }
 
         /// <summary>
@@ -75,21 +77,20 @@ namespace SastImgAPI.Controllers
         public async Task<IActionResult> GetCategory(string name, CancellationToken clt)
         {
             // Find the category by its unique name
-            var category = await _dbContext.Categories.FirstOrDefaultAsync(
-                category => category.Name == name,
-                clt
-            );
+            var category = await _dbContext
+                .Categories
+                .FirstOrDefaultAsync(category => category.Name == name, clt);
 
             // Check if the category exists
             if (category is null)
             {
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "The specified category was not found.")
                     .Build();
             }
 
             // Return the category information
-            return ResponseDispatcher.Data(new CategoryResponseDto(category));
+            return ReponseBuilder.Data(new CategoryResponseDto(category));
         }
 
         /// <summary>
@@ -125,7 +126,7 @@ namespace SastImgAPI.Controllers
             // Validate the incoming category data
             var validationResult = await _validator.ValidateAsync(category, clt);
             if (!validationResult.IsValid)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(
                         StatusCodes.Status400BadRequest,
                         "One or more parameters in your request are invalid."
@@ -134,12 +135,13 @@ namespace SastImgAPI.Controllers
                     .Build();
 
             // Check for conflicts with existing category names
-            var isConflict = await _dbContext.Categories
+            var isConflict = await _dbContext
+                .Categories
                 .Select(existingCategory => existingCategory.Name)
                 .AnyAsync(name => name == category.Name);
 
             if (isConflict)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(
                         StatusCodes.Status409Conflict,
                         "A category with the same name already exists."
@@ -155,7 +157,7 @@ namespace SastImgAPI.Controllers
             _ = _dbContext.SaveChangesAsync(clt);
 
             // Return a 200 Ok response with the newly created category's information
-            return ResponseDispatcher.Data(new CategoryResponseDto(newCategory));
+            return ReponseBuilder.Data(new CategoryResponseDto(newCategory));
         }
 
         /// <summary>
@@ -193,7 +195,7 @@ namespace SastImgAPI.Controllers
             var validationResult = await _validator.ValidateAsync(categoryDto, clt);
             if (!validationResult.IsValid)
             {
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(
                         StatusCodes.Status400BadRequest,
                         "One or more parameters in your request are invalid."
@@ -203,15 +205,14 @@ namespace SastImgAPI.Controllers
             }
 
             // Find the category by its name
-            var category = await _dbContext.Categories.FirstOrDefaultAsync(
-                c => c.Name == name,
-                clt
-            );
+            var category = await _dbContext
+                .Categories
+                .FirstOrDefaultAsync(c => c.Name == name, clt);
 
             // Check if the category exists
             if (category is null)
             {
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "Couldn't find the specific category.")
                     .Build();
             }
@@ -249,15 +250,14 @@ namespace SastImgAPI.Controllers
         public async Task<IActionResult> Delete(string name, CancellationToken clt)
         {
             // Find the category by its unique name
-            var category = await _dbContext.Categories.FirstOrDefaultAsync(
-                category => category.Name == name,
-                clt
-            );
+            var category = await _dbContext
+                .Categories
+                .FirstOrDefaultAsync(category => category.Name == name, clt);
 
             // Check if the category exists
             if (category is null)
             {
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "The specified category was not found.")
                     .Build();
             }

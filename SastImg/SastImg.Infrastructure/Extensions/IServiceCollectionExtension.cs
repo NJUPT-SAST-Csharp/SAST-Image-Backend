@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using SastImg.Application.EventBus;
+using SastImg.Infrastructure.Cache;
+using SastImg.Infrastructure.Event;
 using SastImg.Infrastructure.Persistence;
-using System.Reflection;
+using StackExchange.Redis;
 
 namespace SastImg.Infrastructure.Extensions
 {
@@ -16,17 +18,6 @@ namespace SastImg.Infrastructure.Extensions
             return services;
         }
 
-        public static IConfigurationRoot ConfigureConfig(
-            this IServiceCollection services,
-            IWebHostEnvironment env
-        )
-        {
-            return new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json")
-                .Build();
-        }
-
         public static IServiceCollection ConfigureDatabase(
             this IServiceCollection services,
             string connectionString
@@ -36,12 +27,37 @@ namespace SastImg.Infrastructure.Extensions
             {
                 options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
             });
+
+            services.AddSingleton<IDbConnectionProvider>(
+                new DbConnectionProvider(connectionString)
+            );
+            return services;
+        }
+
+        public static IServiceCollection ConfigureRedis(
+            this IServiceCollection services,
+            string connectionString
+        )
+        {
+            services.AddSingleton<IConnectionMultiplexer>(
+                ConnectionMultiplexer.Connect(connectionString)
+            );
             return services;
         }
 
         public static IServiceCollection ConfigureCache(this IServiceCollection services)
         {
-            // TODO: Add Redis configuration.
+            services.AddSingleton<ICache, RedisCache>();
+            return services;
+        }
+
+        public static IServiceCollection ConfigureMediator(this IServiceCollection services)
+        {
+            services.AddSingleton<IExternalEventBus, ExternalEventBus>();
+            services.AddSingleton<IInternalEventBus, InternalEventBus>();
+            services.AddMediatR(
+                cfg => cfg.RegisterServicesFromAssembly(Application.AssemblyReference.Assembly)
+            );
             return services;
         }
 
@@ -67,7 +83,7 @@ namespace SastImg.Infrastructure.Extensions
                 var requirement = new OpenApiSecurityRequirement();
                 requirement[scheme] = new List<string>();
                 options.AddSecurityRequirement(requirement);
-                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlFilename = $"{Assembly.GetEntryAssembly()!.GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
             return services;

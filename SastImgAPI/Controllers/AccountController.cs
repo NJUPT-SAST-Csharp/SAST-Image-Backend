@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -5,14 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Response;
-using SastImgAPI.Models.RequestDtos;
+using Response.Builders;
 using SastImgAPI.Models.Identity;
+using SastImgAPI.Models.RequestDtos;
+using SastImgAPI.Models.ResponseDtos;
 using SastImgAPI.Models.Validators;
 using SastImgAPI.Services;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Security.Claims;
-using SastImgAPI.Models.ResponseDtos;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SastImgAPI.Controllers
 {
@@ -88,7 +88,7 @@ namespace SastImgAPI.Controllers
         )
         {
             // Build an error result for login failure
-            var errorResult = ResponseDispatcher
+            var errorResult = ReponseBuilder
                 .Error(StatusCodes.Status400BadRequest, "Username or password incorrect.")
                 .Build();
 
@@ -113,7 +113,7 @@ namespace SastImgAPI.Controllers
 
             // Generate a JWT token and return a successful result
             var token = await _jwtTokenGenerator.GenerateJwtByUserAsync(user);
-            return ResponseDispatcher.Data(new JwtResponseDto(token));
+            return ReponseBuilder.Data(new JwtResponseDto(token));
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace SastImgAPI.Controllers
             // Check if the provided email is in a valid format
             var validationResult = await _emailSendRequestValidator.ValidateAsync(dto, clt);
             if (!validationResult.IsValid)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(
                         StatusCodes.Status400BadRequest,
                         "One or more parameters in your request are invalid."
@@ -158,11 +158,12 @@ namespace SastImgAPI.Controllers
                     .Build();
 
             // Check if the email is already registered
-            var check = await _userManager.Users
+            var check = await _userManager
+                .Users
                 .Select(user => user.NormalizedEmail)
                 .AnyAsync(email => email == dto.Email.ToUpper(), clt);
             if (check)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status409Conflict, "The email has been registered.")
                     .Build();
 
@@ -214,7 +215,7 @@ namespace SastImgAPI.Controllers
             // Validate the registration confirmation token
             var validationResult = await _emailConfirmValidator.ValidateAsync(dto, clt);
             if (!validationResult.IsValid)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(
                         StatusCodes.Status400BadRequest,
                         "One or more parameters in your request was invalid."
@@ -225,7 +226,7 @@ namespace SastImgAPI.Controllers
             // Check if the provided token matches the one stored in the cache
             var token = await _cache.GetStringAsync(dto.Email);
             if (token is null || token != dto.Token)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status400BadRequest, "Invalid token")
                     .Build();
 
@@ -239,7 +240,7 @@ namespace SastImgAPI.Controllers
                 new Claim("role", "Registrant")
             };
             var jwt = _jwtTokenGenerator.GenerateJwtByClaims(claims, TimeSpan.FromMinutes(10));
-            return ResponseDispatcher.Data(new JwtResponseDto(jwt));
+            return ReponseBuilder.Data(new JwtResponseDto(jwt));
         }
 
         /// <summary>
@@ -281,7 +282,7 @@ namespace SastImgAPI.Controllers
             // Validate the registration data
             var validationResult = await _registerValidator.ValidateAsync(account);
             if (!validationResult.IsValid)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(
                         StatusCodes.Status400BadRequest,
                         "One or more parameters in your request were invalid."
@@ -292,7 +293,7 @@ namespace SastImgAPI.Controllers
             // Retrieve the user's email from the claims
             var email = User.FindFirstValue(ClaimTypes.Email);
             if (email is null)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(
                         StatusCodes.Status500InternalServerError,
                         "Cannot find email claim or invalid email claim."
@@ -302,7 +303,7 @@ namespace SastImgAPI.Controllers
             // Check if the username is already registered
             var user = await _userManager.FindByNameAsync(account.Username);
             if (user is not null)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(
                         StatusCodes.Status409Conflict,
                         "The username has already been registered."
@@ -321,7 +322,7 @@ namespace SastImgAPI.Controllers
             // Attempt to create the user
             var createResult = await _userManager.CreateAsync(newUser, account.Password);
             if (!createResult.Succeeded)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status400BadRequest, "Check Error message for details.")
                     .Add(createResult.Errors)
                     .Build();
@@ -338,7 +339,7 @@ namespace SastImgAPI.Controllers
             var result = await _userManager.AddToRoleAsync(newUser, "User");
 
             if (!result.Succeeded)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status500InternalServerError, "Role assignment failed.")
                     .Add(result.Errors)
                     .Build();
@@ -352,14 +353,14 @@ namespace SastImgAPI.Controllers
             // Confirm the user's email
             result = await _userManager.ConfirmEmailAsync(newUser, confirmToken);
             if (!result.Succeeded)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status500InternalServerError, "Email confirmation failed.")
                     .Add(result.Errors)
                     .Build();
 
             // Generate a JWT token for the newly registered user and return it
             var token = await _jwtTokenGenerator.GenerateJwtByUserAsync(newUser);
-            return ResponseDispatcher.Data(new JwtResponseDto(token));
+            return ReponseBuilder.Data(new JwtResponseDto(token));
         }
 
         /// <summary>
@@ -394,7 +395,7 @@ namespace SastImgAPI.Controllers
         {
             // Validate the email format
             if (!RegexValidator.IsValidEmail(email))
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(
                         StatusCodes.Status400BadRequest,
                         "One or more parameters in your request are invalid."
@@ -405,7 +406,7 @@ namespace SastImgAPI.Controllers
             // Find the user by their email address
             var user = await _userManager.FindByEmailAsync(email);
             if (user is null)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status400BadRequest, "Invalid email address")
                     .Build();
 
@@ -424,7 +425,7 @@ namespace SastImgAPI.Controllers
             );
             // Handle email send success or failure
             if (!successed)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status500InternalServerError, "Email send timeout.")
                     .Build();
 
@@ -460,7 +461,7 @@ namespace SastImgAPI.Controllers
         {
             // Validate the email format
             if (!RegexValidator.IsValidEmail(dto.Email))
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(
                         StatusCodes.Status400BadRequest,
                         "One or more parameters in your request are invalid."
@@ -471,7 +472,7 @@ namespace SastImgAPI.Controllers
             // Find the user by their email address
             var user = await _userManager.FindByEmailAsync(dto.Email);
             if (user is null)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status400BadRequest, "Invalid request")
                     .Build();
 
@@ -485,7 +486,7 @@ namespace SastImgAPI.Controllers
 
             // Handle token validation success or failure
             if (!validationResult)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status400BadRequest, "Invalid request")
                     .Build();
 
@@ -503,7 +504,7 @@ namespace SastImgAPI.Controllers
             var jwt = _jwtTokenGenerator.GenerateJwtByClaims(claims, TimeSpan.FromMinutes(10));
 
             // Return a successful response with the new JWT token
-            return ResponseDispatcher.Data(new JwtResponseDto(jwt));
+            return ReponseBuilder.Data(new JwtResponseDto(jwt));
         }
 
         /// <summary>
@@ -535,7 +536,7 @@ namespace SastImgAPI.Controllers
             // Validate the reset credentials
             var validationResult = await _passwordResetValidator.ValidateAsync(account, clt);
             if (!validationResult.IsValid)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(
                         StatusCodes.Status400BadRequest,
                         "One or more parameters in your request are invalid."
@@ -546,7 +547,7 @@ namespace SastImgAPI.Controllers
             // Find the user by their username
             var user = await _userManager.FindByNameAsync(User.FindFirstValue("username")!);
             if (user is null)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status400BadRequest, "Invalid request")
                     .Build();
 
@@ -559,7 +560,7 @@ namespace SastImgAPI.Controllers
 
             // Handle password reset success or failure
             if (!result.Succeeded)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status400BadRequest, "Invalid request")
                     .Add(result.Errors)
                     .Build();
@@ -578,18 +579,16 @@ namespace SastImgAPI.Controllers
             var user = await _userManager.FindByNameAsync(data.Username);
             var role = await _roleManager.FindByNameAsync(data.RoleName);
             if (user is null)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "Couldn't find the specific user.")
                     .Build();
             if (role is null)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "Couldn't find the specific role.")
                     .Build();
             var result = await _userManager.AddToRoleAsync(user, data.RoleName);
             if (!result.Succeeded)
-                return ResponseDispatcher
-                    .Error(StatusCodes.Status400BadRequest, "Add failed.")
-                    .Build();
+                return ReponseBuilder.Error(StatusCodes.Status400BadRequest, "Add failed.").Build();
             return NoContent();
         }
     }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Response;
+using Response.Builders;
 using SastImgAPI.Models.RequestDtos;
 
 namespace SastImgAPI.Filters
@@ -9,7 +9,7 @@ namespace SastImgAPI.Filters
     {
         public Task OnExceptionAsync(ExceptionContext context)
         {
-            context.Result = ResponseDispatcher
+            context.Result = ReponseBuilder
                 .Error(StatusCodes.Status500InternalServerError, "An unexpected error occurred.")
                 .Add(context.Exception.GetType().Name, context.Exception.Message)
                 .Build();

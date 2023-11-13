@@ -1,18 +1,16 @@
-﻿using Npgsql;
-using System.Data;
+﻿using System.Data;
+using Npgsql;
 
 namespace SastImg.Infrastructure.Persistence
 {
     public class DbConnectionProvider : IDbConnectionProvider
     {
-        // TODO: Replace the dbConnectionString.
-        private readonly string _dbConnectionString = string.Empty;
-        private IDbConnection _connection;
+        private readonly IDbConnection _connection;
         private readonly NpgsqlDataSource _dbSource;
 
-        public DbConnectionProvider()
+        public DbConnectionProvider(string connectionString)
         {
-            _dbSource = new NpgsqlDataSourceBuilder(_dbConnectionString).Build();
+            _dbSource = new NpgsqlDataSourceBuilder(connectionString).Build();
             _connection = _dbSource.OpenConnection();
         }
 

@@ -1,16 +1,17 @@
-﻿using FluentValidation;
+﻿using System.Security.Claims;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Response;
+using Response.Builders;
 using SastImgAPI.Models;
 using SastImgAPI.Models.Identity;
 using SastImgAPI.Models.RequestDtos;
 using SastImgAPI.Models.ResponseDtos;
 using SastImgAPI.Services;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Security.Claims;
 
 namespace SastImgAPI.Controllers
 {
@@ -64,12 +65,12 @@ namespace SastImgAPI.Controllers
 
             // Check if the specified user exists
             if (user is null)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "Couldn't find the specific user.")
                     .Build();
 
             // Include profile information
-            return ResponseDispatcher.Data(new ProfileResponseDto(user));
+            return ReponseBuilder.Data(new ProfileResponseDto(user));
         }
 
         /// <summary>
@@ -105,7 +106,7 @@ namespace SastImgAPI.Controllers
             // Validate the updated profile information
             var validationResult = await _validator.ValidateAsync(newProfile, clt);
             if (!validationResult.IsValid)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(
                         StatusCodes.Status400BadRequest,
                         "One or more parameters to your request was invalid."
@@ -114,14 +115,16 @@ namespace SastImgAPI.Controllers
                     .Build();
 
             // Retrieve the authenticated user by their user ID
-            var user = await _dbContext.Users.FirstOrDefaultAsync(
-                user => user.Id == CodeAccessor.ToLongId(User.FindFirstValue("id")!),
-                clt
-            );
+            var user = await _dbContext
+                .Users
+                .FirstOrDefaultAsync(
+                    user => user.Id == CodeAccessor.ToLongId(User.FindFirstValue("id")!),
+                    clt
+                );
 
             // Check if the authenticated user exists
             if (user is null)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "Couldn't find the specific user.")
                     .Build();
 
@@ -177,7 +180,7 @@ namespace SastImgAPI.Controllers
             // Check if the authenticated user exists
             if (user == null)
             {
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "Couldn't find the specific user.")
                     .Build();
             }
@@ -197,7 +200,7 @@ namespace SastImgAPI.Controllers
             _ = _dbContext.SaveChangesAsync(clt);
 
             // Return a JSON response with the URL of the newly uploaded avatar
-            return ResponseDispatcher.Data(new UrlResponseDto(uri));
+            return ReponseBuilder.Data(new UrlResponseDto(uri));
         }
 
         /// <summary>
@@ -242,7 +245,7 @@ namespace SastImgAPI.Controllers
             // Check if the authenticated user exists
             if (user == null)
             {
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "Couldn't find the specific user.")
                     .Build();
             }
@@ -262,7 +265,7 @@ namespace SastImgAPI.Controllers
             _ = _dbContext.SaveChangesAsync(clt);
 
             // Return a JSON response with the URL of the newly uploaded header
-            return ResponseDispatcher.Data(new UrlResponseDto(uri));
+            return ReponseBuilder.Data(new UrlResponseDto(uri));
         }
     }
 }

@@ -3,7 +3,10 @@ using SastImg.Infrastructure.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure the config provider.
-var configuration = builder.Services.ConfigureConfig(builder.Environment);
+var configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json")
+    .Build();
 
 // Configure the logger.
 builder.Logging.ConfigureLogger();

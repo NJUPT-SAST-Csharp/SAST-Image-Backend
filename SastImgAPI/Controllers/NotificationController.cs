@@ -1,14 +1,15 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Runtime.CompilerServices;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Response;
+using Response.Builders;
 using SastImgAPI.Models;
 using SastImgAPI.Models.DbSet;
 using SastImgAPI.Services;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Runtime.CompilerServices;
-using System.Security.Claims;
 
 namespace SastImgAPI.Controllers
 {
@@ -48,19 +49,20 @@ namespace SastImgAPI.Controllers
             try
             {
                 // Retrieve notifications for the authenticated user
-                var notifications = await _dbContext.Users
+                var notifications = await _dbContext
+                    .Users
                     .Include(user => user.Notifications)
                     .Where(user => user.Id == CodeAccessor.ToLongId(User.FindFirstValue("id")!))
                     .Select(user => user.Notifications)
                     .FirstAsync(clt);
 
                 // Return the retrieved notifications
-                return ResponseDispatcher.Data(notifications);
+                return ReponseBuilder.Data(notifications);
             }
             catch
             {
                 // Return a 404 Not Found response if notifications are not found
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "Notifications not found.")
                     .Build();
             }
@@ -87,15 +89,14 @@ namespace SastImgAPI.Controllers
         public async Task<IActionResult> ReadNotifications(string id, CancellationToken clt)
         {
             // Find the notification by its unique ID
-            var notification = await _dbContext.Notifications.FirstOrDefaultAsync(
-                x => x.Id == CodeAccessor.ToLongId(id),
-                clt
-            );
+            var notification = await _dbContext
+                .Notifications
+                .FirstOrDefaultAsync(x => x.Id == CodeAccessor.ToLongId(id), clt);
 
             // Check if the notification exists
             if (notification is null)
             {
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(
                         StatusCodes.Status404NotFound,
                         "Couldn't find the specific notification."
@@ -128,7 +129,8 @@ namespace SastImgAPI.Controllers
         public async Task<IActionResult> DeleteAllNotifications(CancellationToken clt)
         {
             // Retrieve all notifications for the authenticated user
-            var notifications = await _dbContext.Users
+            var notifications = await _dbContext
+                .Users
                 .Where(user => user.Id == CodeAccessor.ToLongId(User.FindFirstValue("id")!))
                 .Select(user => user.Notifications)
                 .ToListAsync(clt);

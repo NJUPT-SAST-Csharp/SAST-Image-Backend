@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.15" />
     <PackageReference Include="EFCore.NamingConventions" Version="7.0.2" />
+    <PackageReference Include="MediatR" Version="12.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.13" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.13">
       <PrivateAssets>all</PrivateAssets>
@@ -24,6 +25,7 @@
     <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="StackExchange.Redis" Version="2.7.4" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
@@ -31,11 +33,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SastImg.Application\SastImg.Application.csproj" />
-    <ProjectReference Include="..\SastImg.Domain\SastImg.Domain.csproj" />
+	<ProjectReference Include="..\SastImg.Domain\SastImg.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Options\" />
+    <Folder Include="Persistence\Migrations\" />
   </ItemGroup>
 
 </Project>

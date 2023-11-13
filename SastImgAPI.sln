@@ -23,23 +23,23 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Account.Presentation", "Acc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Contact", "Contact", "{2A259553-4028-4E93-921D-A089D0DDD0C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contact.Domain", "Contact\Contact.Domain\Contact.Domain.csproj", "{546F295C-AD34-4979-B62A-62C092ABD9CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contact.Domain", "Contact\Contact.Domain\Contact.Domain.csproj", "{546F295C-AD34-4979-B62A-62C092ABD9CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contact.Infrastructure", "Contact\Contact.Infrastructure\Contact.Infrastructure.csproj", "{5C48394D-7EF4-4FA9-9C23-6B66D3A39535}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contact.Infrastructure", "Contact\Contact.Infrastructure\Contact.Infrastructure.csproj", "{5C48394D-7EF4-4FA9-9C23-6B66D3A39535}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contact.Application", "Contact\Contact.Application\Contact.Application.csproj", "{7399D12A-E5CB-48A4-BB57-7326133CBD65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contact.Application", "Contact\Contact.Application\Contact.Application.csproj", "{7399D12A-E5CB-48A4-BB57-7326133CBD65}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contact.WebAPI", "WebAPI\Contact.WebAPI\Contact.WebAPI.csproj", "{A2F1DF65-60BE-4492-99D7-F3799A9D7DD9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contact.WebAPI", "WebAPI\Contact.WebAPI\Contact.WebAPI.csproj", "{A2F1DF65-60BE-4492-99D7-F3799A9D7DD9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SastImg", "SastImg", "{EC76366E-E765-4463-8B45-13E80A4D2E2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SastImg.WebAPI", "SastImg\SastImg.WebAPI\SastImg.WebAPI.csproj", "{D45AE23B-3B98-4869-9CE5-61C40D04BE72}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SastImg.WebAPI", "SastImg\SastImg.WebAPI\SastImg.WebAPI.csproj", "{D45AE23B-3B98-4869-9CE5-61C40D04BE72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SastImg.Domain", "SastImg\SastImg.Domain\SastImg.Domain.csproj", "{42CA61B8-0FAD-4A27-9CA6-891547FF111B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SastImg.Domain", "SastImg\SastImg.Domain\SastImg.Domain.csproj", "{42CA61B8-0FAD-4A27-9CA6-891547FF111B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SastImg.Application", "SastImg\SastImg.Application\SastImg.Application.csproj", "{4D15EF60-3A22-4F83-9C91-5B5222A772C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SastImg.Application", "SastImg\SastImg.Application\SastImg.Application.csproj", "{4D15EF60-3A22-4F83-9C91-5B5222A772C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SastImg.Infrastructure", "SastImg\SastImg.Infrastructure\SastImg.Infrastructure.csproj", "{B30FCE28-5308-4587-A802-87894EA985D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SastImg.Infrastructure", "SastImg\SastImg.Infrastructure\SastImg.Infrastructure.csproj", "{B30FCE28-5308-4587-A802-87894EA985D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

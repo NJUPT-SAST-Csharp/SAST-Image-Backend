@@ -1,4 +1,5 @@
-﻿using Common.Primitives;
+﻿using Common.Primitives.DomainEvent;
+using SastImg.Application.EventBus;
 using SastImg.Domain;
 
 namespace SastImg.Infrastructure.Persistence
@@ -7,14 +8,18 @@ namespace SastImg.Infrastructure.Persistence
     {
         private readonly SastImgDbContext _dbContext;
 
-        public UnitOfWork(SastImgDbContext dbContext)
+        private readonly IInternalEventBus _eventBus;
+
+        public UnitOfWork(SastImgDbContext dbContext, IInternalEventBus eventBus)
         {
             _dbContext = dbContext;
+            _eventBus = eventBus;
         }
 
-        public Task<int> CommitChangesAsync(CancellationToken cancellationToken = default)
+        public async Task<int> CommitChangesAsync(CancellationToken cancellationToken = default)
         {
-            var domainEntities = _dbContext.ChangeTracker
+            var domainEntities = _dbContext
+                .ChangeTracker
                 .Entries<IDomainEventContainer>()
                 .Where(x => x.Entity.DomainEvents.Any())
                 .Select(x => x.Entity)
@@ -22,12 +27,13 @@ namespace SastImg.Infrastructure.Persistence
 
             var domainEvents = domainEntities.SelectMany(x => x.DomainEvents).ToList();
 
-            // TODO: Pulish events.
-            domainEvents.ForEach(e => { });
+            var tasks = domainEvents.Select(e => _eventBus.PublishAsync(e));
+
+            await Task.WhenAll(tasks);
 
             domainEntities.ForEach(x => x.ClearDomainEvents());
 
-            return _dbContext.SaveChangesAsync(cancellationToken);
+            return await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

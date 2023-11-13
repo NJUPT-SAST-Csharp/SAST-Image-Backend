@@ -11,13 +11,23 @@ namespace SastImg.Infrastructure.Extensions
             IConfigurationRoot configuration
         )
         {
-            builder.Services
+            builder
+                .Services
                 .AddSingleton(configuration)
                 .AddLogging()
                 .ConfigureDatabase(
                     configuration.GetConnectionString("SastimgDb")
-                        ?? throw new Exception("The connection string is null.")
-                );
+                        ?? throw new Exception("The connection string \"SastimgDb\" is null.")
+                )
+                .ConfigureRedis(
+                    configuration.GetConnectionString("DistributedCache")
+                        ?? throw new Exception(
+                            "The connection string \"DistributedCache\" is null."
+                        )
+                )
+                .ConfigureCache()
+                .ConfigureMediator();
+
             builder.Services.ConfigureSwagger();
             builder.Services.AddControllers();
         }

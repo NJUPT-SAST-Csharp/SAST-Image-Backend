@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Response;
+using Response.Builders;
 using SastImgAPI.Models;
 using SastImgAPI.Models.DbSet;
 using SastImgAPI.Models.RequestDtos;
@@ -53,7 +54,8 @@ namespace SastImgAPI.Controllers
         public async Task<IActionResult> GetTag(string name, CancellationToken clt)
         {
             // Query the database to find a tag with the specified name
-            var tag = await _dbContext.Tags
+            var tag = await _dbContext
+                .Tags
                 .Select(tag => new TagResponseDto(tag))
                 .FirstOrDefaultAsync(x => x.Name == name, clt);
 
@@ -61,13 +63,13 @@ namespace SastImgAPI.Controllers
             if (tag is null)
             {
                 // Return a "404 Not Found" response if the tag is not found
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "Couldn't find the specific tag.")
                     .Build();
             }
 
             // Return a JSON response with information about the retrieved tag
-            return ResponseDispatcher.Data(tag);
+            return ReponseBuilder.Data(tag);
         }
 
         /// <summary>
@@ -88,12 +90,13 @@ namespace SastImgAPI.Controllers
         public async Task<IActionResult> GetAllTags(CancellationToken clt)
         {
             // Query the database to retrieve all available tags
-            var tags = await _dbContext.Tags
+            var tags = await _dbContext
+                .Tags
                 .Select(tag => new TagResponseDto(tag))
                 .ToListAsync(clt);
 
             // Return a JSON response containing the list of tags
-            return ResponseDispatcher.Data(tags);
+            return ReponseBuilder.Data(tags);
         }
 
         /// <summary>
@@ -129,7 +132,7 @@ namespace SastImgAPI.Controllers
             // Validate the provided tag data
             var validationResult = await _tagValidator.ValidateAsync(newTag, clt);
             if (!validationResult.IsValid)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(
                         StatusCodes.Status400BadRequest,
                         "One or more parameters to your request was invalid."
@@ -139,7 +142,7 @@ namespace SastImgAPI.Controllers
 
             // Check if a tag with the same name already exists in the database
             if (await _dbContext.Tags.AnyAsync(tag => tag.Name == newTag.Name, clt))
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(
                         StatusCodes.Status409Conflict,
                         "A tag with the name '" + newTag.Name + "' already exists."
@@ -152,7 +155,7 @@ namespace SastImgAPI.Controllers
             _ = _dbContext.SaveChangesAsync(clt);
 
             // Return a JSON response containing the newly added tag's information
-            return ResponseDispatcher.Data(new TagResponseDto(tag));
+            return ReponseBuilder.Data(new TagResponseDto(tag));
         }
 
         /// <summary>
@@ -184,7 +187,7 @@ namespace SastImgAPI.Controllers
 
             // If the tag is not found, return a '404 Not Found' response
             if (tag is null)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "Couldn't find the specific tag.")
                     .Build();
 

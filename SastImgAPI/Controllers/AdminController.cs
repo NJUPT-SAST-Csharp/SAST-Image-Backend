@@ -2,8 +2,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Response;
-using SastImgAPI.Models.RequestDtos;
+using Response.Builders;
 using SastImgAPI.Models.Identity;
+using SastImgAPI.Models.RequestDtos;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace SastImgAPI.Controllers
@@ -49,7 +50,7 @@ namespace SastImgAPI.Controllers
             // Check if the user exists
             if (user is null)
             {
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "Couldn't find the specific user.")
                     .Build();
             }
@@ -60,7 +61,7 @@ namespace SastImgAPI.Controllers
             // Check if the deletion was successful
             if (!result.Succeeded)
             {
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status500InternalServerError, "Delete failed.")
                     .Add(result.Errors)
                     .Build();
@@ -100,7 +101,7 @@ namespace SastImgAPI.Controllers
             var role = await _roleManager.FindByNameAsync(name);
             if (role is not null)
             {
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status409Conflict, $"There has been a role called '{name}'.")
                     .Build();
             }
@@ -114,14 +115,14 @@ namespace SastImgAPI.Controllers
             // Check if role creation was successful
             if (!result.Succeeded)
             {
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status500InternalServerError, "Create failed.")
                     .Add(result.Errors)
                     .Build();
             }
 
             // Return the created role
-            return ResponseDispatcher.Data(role);
+            return ReponseBuilder.Data(role);
         }
 
         [HttpPatch]
@@ -133,18 +134,16 @@ namespace SastImgAPI.Controllers
             var user = await _userManager.FindByNameAsync(data.Username);
             var role = await _roleManager.FindByNameAsync(data.RoleName);
             if (user is null)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "Couldn't find the specific user.")
                     .Build();
             if (role is null)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "Couldn't find the specific role.")
                     .Build();
             var result = await _userManager.AddToRoleAsync(user, data.RoleName);
             if (!result.Succeeded)
-                return ResponseDispatcher
-                    .Error(StatusCodes.Status400BadRequest, "Add failed.")
-                    .Build();
+                return ReponseBuilder.Error(StatusCodes.Status400BadRequest, "Add failed.").Build();
             return NoContent();
         }
     }

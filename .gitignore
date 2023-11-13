@@ -479,3 +479,9 @@ $RECYCLE.BIN/
 SastImgAPI/appsettings.Development.json
 /SastImg/SastImg.WebAPI/appsettings.Development.json
 /SastImg/SastImg.WebAPI/appsettings.json
+/SastImg/SastImg.Infrastructure/Persistence/Migrations/20231104061732_First.cs
+/SastImg/SastImg.Infrastructure/Persistence/Migrations/SastImgDbContextModelSnapshot.cs
+/SastImg/SastImg.Infrastructure/Persistence/Migrations/20231104061732_First.cs
+/SastImg/SastImg.Infrastructure/Persistence/Migrations/20231104061732_First.Designer.cs
+/SastImg/SastImg.Infrastructure/Persistence/Migrations/20231103150729_First.cs
+/SastImg/SastImg.Infrastructure/Persistence/Migrations/20231103150729_First.Designer.cs

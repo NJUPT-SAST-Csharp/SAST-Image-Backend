@@ -1,13 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using Response;
+using Response.Builders;
 using SastImgAPI.Models;
 using SastImgAPI.Services;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Security.Claims;
 
 namespace SastImgAPI.Controllers
 {
@@ -46,7 +47,8 @@ namespace SastImgAPI.Controllers
         public async Task<IActionResult> Like(string id, CancellationToken clt)
         {
             // Find the likes for the specified image by its unique ID
-            var likes = await _dbContext.Images
+            var likes = await _dbContext
+                .Images
                 .Where(image => image.Id == CodeAccessor.ToLongId(id))
                 .Select(image => image.LikedBy)
                 .FirstOrDefaultAsync(clt);
@@ -54,7 +56,7 @@ namespace SastImgAPI.Controllers
             // Check if the image exists
             if (likes is null)
             {
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "Couldn't find the specific image")
                     .Build();
             }
@@ -96,7 +98,8 @@ namespace SastImgAPI.Controllers
         public async Task<IActionResult> Unlike(string id, CancellationToken clt)
         {
             // Find the likes for the specified image by its unique ID
-            var likes = await _dbContext.Images
+            var likes = await _dbContext
+                .Images
                 .Where(image => image.Id == CodeAccessor.ToLongId(id))
                 .Select(image => image.LikedBy)
                 .FirstOrDefaultAsync(clt);
@@ -104,7 +107,7 @@ namespace SastImgAPI.Controllers
             // Check if the image exists
             if (likes is null)
             {
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "Couldn't find the specific image")
                     .Build();
             }
@@ -150,14 +153,15 @@ namespace SastImgAPI.Controllers
             int views;
             try
             {
-                views = await _dbContext.Images
+                views = await _dbContext
+                    .Images
                     .Where(image => image.Id == CodeAccessor.ToLongId(id))
                     .Select(image => image.Views)
                     .FirstAsync(clt);
             }
             catch
             {
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "The specified image was not found.")
                     .Build();
             }

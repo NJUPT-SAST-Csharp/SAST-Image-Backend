@@ -1,4 +1,4 @@
-﻿using Common.Primitives;
+﻿using Common.Primitives.DomainEvent;
 
 namespace Shared.Primitives
 {

@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Response.Builders;
 
-namespace Response
+namespace Response.Builders
 {
-    public static class ResponseDispatcher
+    public static class ReponseBuilder
     {
         public static ResponseErrorBuilder Error(int status, string detail) => new(status, detail);
+
+        public static ResponseErrorBuilder BadRequest(
+            string detail = ResponseMessages.InvalidParameters
+        ) => new(StatusCodes.Status400BadRequest, detail);
 
         public static ObjectResult Data(object data) =>
             new(data)

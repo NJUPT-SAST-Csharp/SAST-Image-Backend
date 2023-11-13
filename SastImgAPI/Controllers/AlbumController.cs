@@ -1,17 +1,18 @@
-﻿using FluentValidation;
+﻿using System.Security.Claims;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Response;
+using Response.Builders;
 using SastImgAPI.Models;
 using SastImgAPI.Models.DbSet;
-using SastImgAPI.Models.RequestDtos;
 using SastImgAPI.Models.Identity;
-using System.Security.Claims;
-using Swashbuckle.AspNetCore.Annotations;
+using SastImgAPI.Models.RequestDtos;
 using SastImgAPI.Models.ResponseDtos;
 using SastImgAPI.Services;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace SastImgAPI.Controllers
 {
@@ -62,13 +63,14 @@ namespace SastImgAPI.Controllers
         public async Task<IActionResult> Albums([FromQuery] string username, CancellationToken clt)
         {
             // Find the user by their normalized username
-            var user = await _userManager.Users
+            var user = await _userManager
+                .Users
                 .Include(user => user.Albums)
                 .FirstOrDefaultAsync(user => user.NormalizedUserName == username.ToUpper(), clt);
 
             // Check if the user exists
             if (user is null)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "Couldn't find the album.")
                     .Build();
 
@@ -87,7 +89,7 @@ namespace SastImgAPI.Controllers
                 albums = albums.Where(album => album.Accessibility != Accessibility.OnlyMe);
 
             // Return the list of albums as a successful response
-            return ResponseDispatcher.Data(albums);
+            return ReponseBuilder.Data(albums);
         }
 
         /// <summary>
@@ -123,7 +125,7 @@ namespace SastImgAPI.Controllers
             // Check for validation errors
             if (!validationResult.IsValid)
             {
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(
                         StatusCodes.Status400BadRequest,
                         "One or more parameters in your request are invalid."
@@ -158,7 +160,7 @@ namespace SastImgAPI.Controllers
             var createdAlbum = new AlbumResponseDto(album);
 
             // Return the created album details as a successful response
-            return ResponseDispatcher.Data(createdAlbum);
+            return ReponseBuilder.Data(createdAlbum);
         }
 
         /// <summary>
@@ -200,15 +202,14 @@ namespace SastImgAPI.Controllers
         )
         {
             // Find the album by its unique ID
-            var album = await _dbContext.Albums.FirstOrDefaultAsync(
-                album => album.Id == CodeAccessor.ToLongId(id),
-                clt
-            );
+            var album = await _dbContext
+                .Albums
+                .FirstOrDefaultAsync(album => album.Id == CodeAccessor.ToLongId(id), clt);
 
             // Check if the album exists
             if (album is null)
             {
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "The specified album was not found.")
                     .Build();
             }
@@ -225,7 +226,7 @@ namespace SastImgAPI.Controllers
             // Check for validation errors
             if (!validationResult.IsValid)
             {
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(
                         StatusCodes.Status400BadRequest,
                         "Bad Request: One or more parameters in your request are invalid."
@@ -276,7 +277,8 @@ namespace SastImgAPI.Controllers
                 : 0;
 
             // Query the database to retrieve the album details
-            var album = await _dbContext.Albums
+            var album = await _dbContext
+                .Albums
                 .Include(album => album.Author)
                 .Include(album => album.Images)
                 .Select(album => new AlbumDetailedResponseDto(album))
@@ -294,14 +296,14 @@ namespace SastImgAPI.Controllers
             // Check if the album was found
             if (album is null)
             {
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "The specified album was not found.")
                     .Build();
             }
             else
             {
                 // Return the album details in a successful response
-                return ResponseDispatcher.Data(album);
+                return ReponseBuilder.Data(album);
             }
         }
 
@@ -328,7 +330,8 @@ namespace SastImgAPI.Controllers
         public async Task<IActionResult> DeleteAlbum(string id, CancellationToken clt)
         {
             // Find the album based on the user's authorization level
-            var album = await _dbContext.Albums
+            var album = await _dbContext
+                .Albums
                 .Where(
                     album =>
                         CodeAccessor.ToLongId(User.FindFirstValue("id")!) == album.AuthorId // User is the owner
@@ -342,7 +345,7 @@ namespace SastImgAPI.Controllers
             // Check if the album exists
             if (album is null)
             {
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "The specified album was not found.")
                     .Build();
             }
@@ -384,14 +387,15 @@ namespace SastImgAPI.Controllers
         )
         {
             // Find the album by its unique ID
-            var album = await _dbContext.Albums
+            var album = await _dbContext
+                .Albums
                 .Where(album => album.AuthorId == CodeAccessor.ToLongId(User.FindFirstValue("id")!))
                 .FirstOrDefaultAsync(album => album.Id == id, clt);
 
             // Check if the album exists
             if (album is null)
             {
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "The specified album was not found.")
                     .Build();
             }
@@ -400,7 +404,7 @@ namespace SastImgAPI.Controllers
             var url = await _imageAccessor.UploadAlbumCoverAsync(cover, id, clt);
 
             // Return the URL of the uploaded album cover image
-            return ResponseDispatcher.Data(new UrlResponseDto(new Uri(url)));
+            return ReponseBuilder.Data(new UrlResponseDto(new Uri(url)));
         }
     }
 }

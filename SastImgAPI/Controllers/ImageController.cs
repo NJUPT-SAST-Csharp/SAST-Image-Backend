@@ -1,4 +1,6 @@
-﻿using FluentValidation;
+﻿using System.Linq;
+using System.Security.Claims;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -6,16 +8,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualBasic;
 using Response;
+using Response.Builders;
 using SastImgAPI.Models;
 using SastImgAPI.Models.DbSet;
-using SastImgAPI.Models.RequestDtos;
 using SastImgAPI.Models.Identity;
+using SastImgAPI.Models.RequestDtos;
+using SastImgAPI.Models.ResponseDtos;
 using SastImgAPI.Services;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Security.Claims;
 using Image = SastImgAPI.Models.DbSet.Image;
-using SastImgAPI.Models.ResponseDtos;
-using System.Linq;
 
 namespace SastImgAPI.Controllers
 {
@@ -83,7 +84,8 @@ namespace SastImgAPI.Controllers
             var skipCount = page * pageSize;
 
             // Create a query for retrieving images with necessary details
-            IQueryable<Image> query = _dbContext.Images
+            IQueryable<Image> query = _dbContext
+                .Images
                 .Include(image => image.Author)
                 .Include(image => image.Album);
 
@@ -139,7 +141,7 @@ namespace SastImgAPI.Controllers
                 .Select(image => new ImageResponseDto(image))
                 .ToListAsync();
 
-            return ResponseDispatcher.Data(images);
+            return ReponseBuilder.Data(images);
         }
 
         /// <summary>
@@ -181,7 +183,7 @@ namespace SastImgAPI.Controllers
             // Validate the uploaded image details
             var validationResult = await _validator.ValidateAsync(imageDto, clt);
             if (!validationResult.IsValid)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(
                         StatusCodes.Status400BadRequest,
                         "One or more parameters in your request were invalid."
@@ -191,7 +193,8 @@ namespace SastImgAPI.Controllers
 
             await Console.Out.WriteLineAsync(User.FindFirstValue("id"));
             // Retrieve the user's album where the image will be uploaded
-            var album = await _dbContext.Albums
+            var album = await _dbContext
+                .Albums
                 .Where(album => CodeAccessor.ToLongId(User.FindFirstValue("id")!) == album.AuthorId)
                 .Where(
                     album =>
@@ -211,17 +214,19 @@ namespace SastImgAPI.Controllers
 
             // Check if the specified album exists
             if (album is null)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "Couldn't find the specific album.")
                     .Build();
 
             // Check if the specified category exists
-            var category = await _dbContext.Categories.FirstOrDefaultAsync(
-                category => category.Id == CodeAccessor.ToLongId(imageDto.Category),
-                clt
-            );
+            var category = await _dbContext
+                .Categories
+                .FirstOrDefaultAsync(
+                    category => category.Id == CodeAccessor.ToLongId(imageDto.Category),
+                    clt
+                );
             if (category is null)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "Couldn't find the specific category.")
                     .Build();
 
@@ -244,7 +249,8 @@ namespace SastImgAPI.Controllers
             if (!imageDto.Tags.IsNullOrEmpty())
             {
                 // Retrieve the necessary tags
-                var tags = await _dbContext.Tags
+                var tags = await _dbContext
+                    .Tags
                     .Where(tag => imageDto.Tags!.Contains(tag.Name))
                     .ToListAsync(clt);
                 // Add tags to the uploaded image
@@ -257,7 +263,7 @@ namespace SastImgAPI.Controllers
             await _dbContext.SaveChangesAsync(clt);
 
             // Return the ID of the uploaded image
-            return ResponseDispatcher.Data(new ImageCreatedResponseDto(image));
+            return ReponseBuilder.Data(new ImageCreatedResponseDto(image));
         }
 
         /// <summary>
@@ -284,7 +290,8 @@ namespace SastImgAPI.Controllers
                 : 0;
 
             // Query the database to retrieve image details by its unique ID
-            var image = await _dbContext.Images
+            var image = await _dbContext
+                .Images
                 .Where(
                     image =>
                         image.Album.Accessibility == Accessibility.Everyone
@@ -299,12 +306,12 @@ namespace SastImgAPI.Controllers
 
             // Check if the specified image exists and is accessible
             if (image is null)
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "Couldn't find the specific image.")
                     .Build();
 
             // Return detailed information about the specified image
-            return ResponseDispatcher.Data(image);
+            return ReponseBuilder.Data(image);
         }
 
         /// <summary>
@@ -330,7 +337,8 @@ namespace SastImgAPI.Controllers
         public async Task<IActionResult> DeleteImage(string id, CancellationToken clt)
         {
             // Find the image based on the user's authorization level
-            var image = await _dbContext.Images
+            var image = await _dbContext
+                .Images
                 .Where(
                     image =>
                         image.AuthorId == CodeAccessor.ToLongId(User.FindFirstValue("id")!) // User is the owner
@@ -344,7 +352,7 @@ namespace SastImgAPI.Controllers
             // Check if the image exists
             if (image is null)
             {
-                return ResponseDispatcher
+                return ReponseBuilder
                     .Error(StatusCodes.Status404NotFound, "The specified image was not found.")
                     .Build();
             }
