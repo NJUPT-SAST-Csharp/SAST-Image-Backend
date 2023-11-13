@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Response.Builders;
-using SastImgAPI.Models.RequestDtos;
 
 namespace SastImgAPI.Filters
 {

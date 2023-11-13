@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Response.Builders
+namespace Shared.Response.Builders
 {
     public static class ResponseBuilder
     {

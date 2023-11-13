@@ -1,6 +1,6 @@
-﻿using Common.Primitives.DomainNotification;
+﻿using Shared.DomainPrimitives.DomainNotification;
 
-namespace Common.Primitives.DomainEvent
+namespace Shared.DomainPrimitives.DomainEvent
 {
     public interface IDomainEvent : IDomainNotification
     {

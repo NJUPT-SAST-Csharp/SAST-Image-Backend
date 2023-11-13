@@ -1,7 +1,7 @@
-﻿using Common.Primitives.DomainNotification;
-using Common.Primitives.Query;
+﻿using Common.Primitives.Query;
 using MediatR;
 using SastImg.Application.EventBus;
+using Shared.DomainPrimitives.DomainNotification;
 
 namespace SastImg.Infrastructure.Event
 {

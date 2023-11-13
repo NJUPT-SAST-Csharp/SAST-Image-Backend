@@ -1,5 +1,4 @@
 ﻿#pragma warning disable CS1591
-using Microsoft.IdentityModel.Tokens;
 
 namespace SastImgAPI.Options
 {

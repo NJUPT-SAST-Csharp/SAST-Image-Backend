@@ -1,4 +1,4 @@
-﻿namespace Response
+﻿namespace Shared.Response
 {
     public static class ResponseMessages
     {

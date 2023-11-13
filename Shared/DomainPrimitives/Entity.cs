@@ -1,4 +1,4 @@
-﻿namespace Shared.Primitives
+﻿namespace Shared.DomainPrimitives
 {
     public abstract class Entity<T> : IEquatable<Entity<T>>
         where T : IEquatable<T>
@@ -9,7 +9,7 @@
         }
 
         public static bool operator ==(Entity<T> left, Entity<T> right) =>
-            ReferenceEquals(left, right) || (left is { } && right is { } && left.Equals(right));
+            ReferenceEquals(left, right) || left is { } && right is { } && left.Equals(right);
 
         public static bool operator !=(Entity<T> left, Entity<T> right) => !(left == right);
 

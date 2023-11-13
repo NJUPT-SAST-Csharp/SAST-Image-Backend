@@ -1,6 +1,6 @@
-﻿using Common.Primitives.DomainEvent;
+﻿using Shared.DomainPrimitives.DomainEvent;
 
-namespace Shared.Primitives
+namespace Shared.DomainPrimitives
 {
     public abstract class AggregateRoot<T> : Entity<T>, IDomainEventContainer
         where T : IEquatable<T>

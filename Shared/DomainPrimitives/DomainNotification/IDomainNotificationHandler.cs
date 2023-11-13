@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Shared.DomainPrimitives.DomainNotification;
 
 namespace Common.Primitives.DomainNotification
 {

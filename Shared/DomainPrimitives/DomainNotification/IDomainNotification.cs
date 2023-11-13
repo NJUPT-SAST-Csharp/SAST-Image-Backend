@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Common.Primitives.DomainNotification
+namespace Shared.DomainPrimitives.DomainNotification
 {
     public interface IDomainNotification : INotification { }
 }

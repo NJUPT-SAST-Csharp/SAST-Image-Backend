@@ -1,4 +1,4 @@
-﻿namespace Common.Primitives.DomainEvent
+﻿namespace Shared.DomainPrimitives.DomainEvent
 {
     public interface IDomainEventContainer
     {
