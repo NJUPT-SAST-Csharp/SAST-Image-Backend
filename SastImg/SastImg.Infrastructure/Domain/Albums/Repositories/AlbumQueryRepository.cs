@@ -1,9 +1,9 @@
-﻿using Dapper;
+﻿using System.Data;
+using Dapper;
 using SastImg.Application.Albums;
 using SastImg.Application.Albums.Dtos;
 using SastImg.Application.Albums.Images.Dtos;
-using SastImg.Infrastructure.Persistence;
-using System.Data;
+using SastImg.Application.Services;
 
 namespace SastImg.Infrastructure.Domain.Albums.Repositories
 {

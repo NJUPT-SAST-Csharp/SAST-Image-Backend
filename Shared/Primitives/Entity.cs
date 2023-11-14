@@ -1,4 +1,4 @@
-﻿namespace Shared.DomainPrimitives
+﻿namespace Shared.Primitives
 {
     public abstract class Entity<T> : IEquatable<Entity<T>>
         where T : IEquatable<T>

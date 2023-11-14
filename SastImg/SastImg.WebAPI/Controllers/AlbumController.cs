@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SastImg.Application.Albums.GetAlbums;
 using Shared.Response.Builders;
 
 namespace SastImg.WebAPI.Controllers
@@ -18,7 +19,8 @@ namespace SastImg.WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAlbums(CancellationToken cancellationToken)
         {
-            return ResponseBuilder.Data(new List<int>());
+            var albums = await _request.Send(new GetAlbumsQuery(), cancellationToken);
+            return ResponseBuilder.Data(albums.ToList());
         }
     }
 }

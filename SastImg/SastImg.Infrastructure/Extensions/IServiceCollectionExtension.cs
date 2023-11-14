@@ -1,11 +1,14 @@
 ﻿using System.Reflection;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using SastImg.Application.EventBus;
+using SastImg.Application.Services;
+using SastImg.Application.Services.EventBus;
 using SastImg.Infrastructure.Cache;
 using SastImg.Infrastructure.Event;
 using SastImg.Infrastructure.Persistence;
+using SastImg.Infrastructure.Persistence.TypeConverters;
 using StackExchange.Redis;
 
 namespace SastImg.Infrastructure.Extensions
@@ -27,7 +30,7 @@ namespace SastImg.Infrastructure.Extensions
             {
                 options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
             });
-
+            SqlMapper.AddTypeHandler(new UriStringConverter());
             services.AddSingleton<IDbConnectionProvider>(
                 new DbConnectionProvider(connectionString)
             );

@@ -39,7 +39,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SastImg.Infrastructure", "S
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{62F54EB9-A9EE-4956-8FA2-534C755263C9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainPrimitives", "Shared\DomainPrimitives\DomainPrimitives.csproj", "{AAD2B642-EF9A-4455-AF02-6794EB185E26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Primitives", "Shared\Primitives\Primitives.csproj", "{AAD2B642-EF9A-4455-AF02-6794EB185E26}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilities", "Shared\Utilities\Utilities.csproj", "{5FB4113A-F728-4535-934B-103584DAFB9B}"
 EndProject

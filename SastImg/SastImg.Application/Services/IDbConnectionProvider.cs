@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace SastImg.Infrastructure.Persistence
+namespace SastImg.Application.Services
 {
     public interface IDbConnectionProvider
     {

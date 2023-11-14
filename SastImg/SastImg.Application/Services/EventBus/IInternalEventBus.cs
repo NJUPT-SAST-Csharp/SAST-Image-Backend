@@ -1,7 +1,7 @@
-﻿using Common.Primitives.Query;
-using Shared.DomainPrimitives.DomainNotification;
+﻿using Shared.Primitives.DomainNotification;
+using Shared.Primitives.Query;
 
-namespace SastImg.Application.EventBus
+namespace SastImg.Application.Services.EventBus
 {
     public interface IInternalEventBus
     {

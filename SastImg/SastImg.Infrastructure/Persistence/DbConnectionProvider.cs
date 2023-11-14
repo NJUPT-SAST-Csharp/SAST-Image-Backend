@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using Npgsql;
+using SastImg.Application.Services;
 
 namespace SastImg.Infrastructure.Persistence
 {

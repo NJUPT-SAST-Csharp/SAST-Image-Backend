@@ -2,11 +2,12 @@
 
 namespace SastImg.Application.Albums.Dtos
 {
-    public record AlbumDto(
-        long AuthorId,
-        long AlbumId,
-        string Title,
-        Accessibility Accessibility,
-        Uri CoverUri
-    );
+    public class AlbumDto
+    {
+        public required long AuthorId { get; init; }
+        public required long AlbumId { get; init; }
+        public required string Title { get; init; }
+        public required Accessibility Accessibility { get; init; }
+        public required Uri CoverUri { get; init; }
+    };
 }

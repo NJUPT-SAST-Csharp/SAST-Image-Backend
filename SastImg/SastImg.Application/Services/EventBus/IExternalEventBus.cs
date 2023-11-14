@@ -1,4 +1,4 @@
-﻿namespace SastImg.Application.EventBus
+﻿namespace SastImg.Application.Services.EventBus
 {
     public interface IExternalEventBus
     {

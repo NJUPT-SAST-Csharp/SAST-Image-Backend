@@ -1,4 +1,4 @@
-﻿using Shared.DomainPrimitives;
+﻿using Shared.Primitives;
 using Shared.Utilities;
 
 namespace SastImg.Domain.Tags

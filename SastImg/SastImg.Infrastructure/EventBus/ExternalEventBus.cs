@@ -1,4 +1,4 @@
-﻿using SastImg.Application.EventBus;
+﻿using SastImg.Application.Services.EventBus;
 using StackExchange.Redis;
 
 namespace SastImg.Infrastructure.Event

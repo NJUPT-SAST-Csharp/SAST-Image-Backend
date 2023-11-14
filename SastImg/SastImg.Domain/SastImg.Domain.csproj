@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\DomainPrimitives\DomainPrimitives.csproj" />
+    <ProjectReference Include="..\..\Shared\Primitives\Primitives.csproj" />
     <ProjectReference Include="..\..\Shared\Utilities\Utilities.csproj" />
   </ItemGroup>
 

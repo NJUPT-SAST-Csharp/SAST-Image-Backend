@@ -1,5 +1,5 @@
 ﻿using SastImg.Domain.Albums.Images;
-using Shared.DomainPrimitives;
+using Shared.Primitives;
 using Shared.Utilities;
 
 namespace SastImg.Domain.Albums
