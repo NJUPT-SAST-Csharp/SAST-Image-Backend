@@ -5,9 +5,9 @@ namespace SastImg.Infrastructure.Persistence.TypeConverters
 {
     internal class UriStringConverter : SqlMapper.TypeHandler<Uri>
     {
-        public override void SetValue(IDbDataParameter parameter, Uri value)
+        public override void SetValue(IDbDataParameter parameter, Uri? value)
         {
-            parameter.Value = value.ToString();
+            parameter.Value = value?.ToString();
         }
 
         public override Uri Parse(object value)

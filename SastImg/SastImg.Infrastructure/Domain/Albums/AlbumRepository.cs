@@ -3,18 +3,13 @@ using SastImg.Domain;
 using SastImg.Domain.Albums;
 using SastImg.Infrastructure.Persistence;
 
-namespace SastImg.Infrastructure.Domain.Albums.Repositories
+namespace SastImg.Infrastructure.Domain.Albums
 {
-    internal class AlbumCommandRepository : IAlbumRepository
+    internal class AlbumRepository(SastImgDbContext dbContext, IUnitOfWork unitOfWork)
+        : IAlbumRepository
     {
-        private readonly SastImgDbContext _dbContext;
-        private readonly IUnitOfWork _unitOfWork;
-
-        public AlbumCommandRepository(SastImgDbContext dbContext, IUnitOfWork unitOfWork)
-        {
-            _dbContext = dbContext;
-            _unitOfWork = unitOfWork;
-        }
+        private readonly SastImgDbContext _dbContext = dbContext;
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         #region Album
 
@@ -81,7 +76,8 @@ namespace SastImg.Infrastructure.Domain.Albums.Repositories
 
         public Task DeleteAllRemovedImagesAsync(CancellationToken cancellationToken = default)
         {
-            var images = _dbContext.Albums
+            var images = _dbContext
+                .Albums
                 .SelectMany(album => album.Images)
                 .Where(image => image.IsRemoved);
             _dbContext.RemoveRange(images);
@@ -97,7 +93,8 @@ namespace SastImg.Infrastructure.Domain.Albums.Repositories
             CancellationToken cancellationToken = default
         )
         {
-            var album = await _dbContext.Albums
+            var album = await _dbContext
+                .Albums
                 .Where(album => album.Id == albumId)
                 .FirstOrDefaultAsync(cancellationToken);
             if (album is { })
@@ -112,7 +109,8 @@ namespace SastImg.Infrastructure.Domain.Albums.Repositories
             CancellationToken cancellationToken = default
         )
         {
-            var album = await _dbContext.Albums
+            var album = await _dbContext
+                .Albums
                 .Where(album => album.Id == albumId)
                 .FirstOrDefaultAsync();
             if (album is { })
@@ -130,7 +128,8 @@ namespace SastImg.Infrastructure.Domain.Albums.Repositories
             CancellationToken cancellationToken = default
         )
         {
-            var album = await _dbContext.Albums
+            var album = await _dbContext
+                .Albums
                 .Where(album => album.Id == albumId)
                 .FirstOrDefaultAsync(cancellationToken);
             if (album is { })
@@ -144,7 +143,8 @@ namespace SastImg.Infrastructure.Domain.Albums.Repositories
             CancellationToken cancellationToken = default
         )
         {
-            var album = await _dbContext.Albums
+            var album = await _dbContext
+                .Albums
                 .Where(album => album.Id == albumId && album.IsRemoved)
                 .FirstOrDefaultAsync(cancellationToken);
             if (album is { })
@@ -159,7 +159,8 @@ namespace SastImg.Infrastructure.Domain.Albums.Repositories
             CancellationToken cancellationToken = default
         )
         {
-            var album = await _dbContext.Albums
+            var album = await _dbContext
+                .Albums
                 .Include(album => album.Images)
                 .Where(album => album.Id == albumId && album.IsRemoved)
                 .FirstOrDefaultAsync(cancellationToken);

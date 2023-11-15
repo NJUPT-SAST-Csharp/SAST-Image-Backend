@@ -20,7 +20,7 @@ namespace SastImg.WebAPI.Controllers
         public async Task<IActionResult> GetAlbums(CancellationToken cancellationToken)
         {
             var albums = await _request.Send(new GetAlbumsQuery(), cancellationToken);
-            return ResponseBuilder.Data(albums.ToList());
+            return ResponseBuilder.Data(albums);
         }
     }
 }

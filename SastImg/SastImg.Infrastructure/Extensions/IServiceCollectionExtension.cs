@@ -31,9 +31,7 @@ namespace SastImg.Infrastructure.Extensions
                 options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
             });
             SqlMapper.AddTypeHandler(new UriStringConverter());
-            services.AddSingleton<IDbConnectionProvider>(
-                new DbConnectionProvider(connectionString)
-            );
+            services.AddSingleton<IQueryDatabase>(new QueryDatabase(connectionString));
             return services;
         }
 

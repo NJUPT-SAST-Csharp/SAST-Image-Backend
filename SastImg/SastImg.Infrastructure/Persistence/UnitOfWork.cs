@@ -4,24 +4,18 @@ using Shared.Primitives.DomainEvent;
 
 namespace SastImg.Infrastructure.Persistence
 {
-    internal class UnitOfWork : IUnitOfWork
+    internal class UnitOfWork(SastImgDbContext dbContext, IInternalEventBus eventBus) : IUnitOfWork
     {
-        private readonly SastImgDbContext _dbContext;
+        private readonly SastImgDbContext _dbContext = dbContext;
 
-        private readonly IInternalEventBus _eventBus;
-
-        public UnitOfWork(SastImgDbContext dbContext, IInternalEventBus eventBus)
-        {
-            _dbContext = dbContext;
-            _eventBus = eventBus;
-        }
+        private readonly IInternalEventBus _eventBus = eventBus;
 
         public async Task<int> CommitChangesAsync(CancellationToken cancellationToken = default)
         {
             var domainEntities = _dbContext
                 .ChangeTracker
                 .Entries<IDomainEventContainer>()
-                .Where(x => x.Entity.DomainEvents.Any())
+                .Where(x => x.Entity.DomainEvents.Count != 0)
                 .Select(x => x.Entity)
                 .ToList();
 

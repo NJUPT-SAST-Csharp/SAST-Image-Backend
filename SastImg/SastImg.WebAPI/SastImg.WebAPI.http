@@ -1,0 +1,5 @@
+﻿@SastImg.WebAPI_HostAddress = http://localhost:5240
+
+GET {{SastImg.WebAPI_HostAddress}}/api/album
+
+###
