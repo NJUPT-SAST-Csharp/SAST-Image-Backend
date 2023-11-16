@@ -1,5 +1,10 @@
-﻿using System.Reflection;
+﻿using System.Globalization;
+using System.Reflection;
+using System.Threading.RateLimiting;
 using Dapper;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -52,6 +57,15 @@ namespace SastImg.Infrastructure.Extensions
             return services;
         }
 
+        public static IServiceCollection ConfigureRateLimit(this IServiceCollection services)
+        {
+            services.AddRateLimiter(options =>
+            {
+                options.OnRejected += RateLimitOnRejected;
+            });
+            return services;
+        }
+
         public static IServiceCollection ConfigureMediator(this IServiceCollection services)
         {
             services.AddSingleton<IExternalEventBus, ExternalEventBus>();
@@ -88,6 +102,26 @@ namespace SastImg.Infrastructure.Extensions
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
             return services;
+        }
+
+        private static ValueTask RateLimitOnRejected(
+            OnRejectedContext context,
+            CancellationToken cancellationToken
+        )
+        {
+            if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
+            {
+                context.HttpContext.Response.Headers.RetryAfter = (
+                    (int)retryAfter.TotalSeconds
+                ).ToString(NumberFormatInfo.InvariantInfo);
+            }
+
+            context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+            context
+                .HttpContext
+                .Response
+                .WriteAsync("Too many requests. Please try again later.", cancellationToken);
+            return ValueTask.CompletedTask;
         }
     }
 }

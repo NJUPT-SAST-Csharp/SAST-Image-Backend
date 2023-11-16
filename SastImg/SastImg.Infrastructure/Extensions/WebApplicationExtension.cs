@@ -16,6 +16,10 @@ namespace SastImg.Infrastructure.Extensions
 
             app.UseAuthorization();
 
+            //app.UseRateLimiter();
+
+            app.UseResponseCaching();
+
             app.MapControllers();
         }
     }

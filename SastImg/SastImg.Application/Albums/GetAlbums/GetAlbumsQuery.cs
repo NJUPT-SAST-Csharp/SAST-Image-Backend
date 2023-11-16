@@ -3,5 +3,8 @@ using Shared.Primitives.Query;
 
 namespace SastImg.Application.Albums.GetAlbums
 {
-    public class GetAlbumsQuery : IQuery<IEnumerable<AlbumDto>> { }
+    public class GetAlbumsQuery(int page) : IQuery<IEnumerable<AlbumDto>>
+    {
+        public int Page { get; } = page;
+    }
 }
