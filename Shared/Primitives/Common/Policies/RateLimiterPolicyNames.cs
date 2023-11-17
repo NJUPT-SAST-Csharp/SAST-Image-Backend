@@ -1,6 +1,6 @@
 ﻿namespace Primitives.Common.Policies
 {
-    public static class RateLimiterPolicies
+    public static class RateLimiterPolicyNames
     {
         public const string Default = "Default";
         public const string Global = "Global";

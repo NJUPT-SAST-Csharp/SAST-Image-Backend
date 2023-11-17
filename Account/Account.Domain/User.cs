@@ -3,7 +3,7 @@ using Shared.Utilities;
 
 namespace User.Domain
 {
-    public class User(string linkId) : AggregateRoot<long>(SnowFlakeIdGenerator.NewId)
+    public sealed class User(string linkId) : AggregateRoot<long>(SnowFlakeIdGenerator.NewId)
     {
         private readonly List<User> following =  [ ];
         private readonly List<User> followers =  [ ];

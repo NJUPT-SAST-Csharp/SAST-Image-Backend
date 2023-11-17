@@ -493,7 +493,6 @@ namespace SastImgAPI.Controllers
             // Generate a new password reset token for the user
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-            // TODO: Restrict Claim type in JwtTokenGenerator only.
             // Generate a new JWT token containing user claims
             ICollection<Claim> claims = new List<Claim>
             {

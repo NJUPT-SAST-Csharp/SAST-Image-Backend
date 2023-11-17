@@ -90,7 +90,6 @@ namespace SastImgAPI.Controllers
             {
                 query = query.Where(image => image.Category.Id == CodeAccessor.ToLongId(category));
             }
-            // TODO: What if "Resetter" ?
             if (User.Identity!.IsAuthenticated)
             {
                 // Retrieve images based on user authentication and access level

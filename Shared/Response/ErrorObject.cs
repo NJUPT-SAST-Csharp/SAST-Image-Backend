@@ -1,6 +1,6 @@
 ﻿namespace Shared.Response
 {
-    public class ErrorObject
+    public sealed class ErrorObject
     {
         internal ErrorObject(string field, string message)
         {

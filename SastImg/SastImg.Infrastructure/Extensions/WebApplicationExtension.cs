@@ -21,7 +21,7 @@ namespace SastImg.Infrastructure.Extensions
 
             app.UseResponseCaching();
 
-            app.MapControllers().RequireRateLimiting(RateLimiterPolicies.Concurrency);
+            app.MapControllers().RequireRateLimiting(RateLimiterPolicyNames.Concurrency);
         }
     }
 }

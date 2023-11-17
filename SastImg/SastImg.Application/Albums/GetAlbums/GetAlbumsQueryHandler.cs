@@ -5,7 +5,7 @@ using Shared.Primitives.Query;
 
 namespace SastImg.Application.Albums.GetAlbums
 {
-    public class GetAlbumsQueryHandler(IQueryDatabase database, ICache cache)
+    public sealed class GetAlbumsQueryHandler(IQueryDatabase database, ICache cache)
         : IQueryHandler<GetAlbumsQuery, IEnumerable<AlbumDto>>
     {
         private readonly IQueryDatabase _database = database;

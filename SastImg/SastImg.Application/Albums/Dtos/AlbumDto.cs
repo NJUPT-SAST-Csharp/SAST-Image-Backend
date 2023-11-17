@@ -2,7 +2,7 @@
 
 namespace SastImg.Application.Albums.Dtos
 {
-    public class AlbumDto
+    public sealed class AlbumDto
     {
         public required long AuthorId { get; init; }
         public required long AlbumId { get; init; }

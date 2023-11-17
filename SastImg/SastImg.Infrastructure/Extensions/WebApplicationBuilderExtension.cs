@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Primitives.Common.Policies;
 
 namespace SastImg.Infrastructure.Extensions
 {
@@ -39,7 +40,7 @@ namespace SastImg.Infrastructure.Extensions
                     options
                         .CacheProfiles
                         .Add(
-                            "Default",
+                            ResponseCachePolicyNames.Default,
                             new() { Duration = 20, Location = ResponseCacheLocation.Any }
                         );
                 });

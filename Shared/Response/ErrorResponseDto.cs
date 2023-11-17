@@ -1,16 +1,13 @@
 ﻿namespace Shared.Response
 {
-    public class ErrorResponseDto
+    public sealed class ErrorResponseDto(
+        int statusCode,
+        string detail,
+        ICollection<ErrorObject> errors
+    )
     {
-        public ErrorResponseDto(int statusCode, string detail, ICollection<ErrorObject> errors)
-        {
-            Status = statusCode;
-            Detail = detail;
-            Errors = errors;
-        }
-
-        public int Status { get; init; }
-        public string Detail { get; init; }
-        public ICollection<ErrorObject> Errors { get; init; }
+        public int Status { get; init; } = statusCode;
+        public string Detail { get; init; } = detail;
+        public ICollection<ErrorObject> Errors { get; init; } = errors;
     }
 }

@@ -78,12 +78,12 @@ namespace SastImg.Infrastructure.Extensions
             {
                 options.OnRejected += RateLimitOnRejected;
                 options.AddConcurrencyLimiter(
-                    RateLimiterPolicies.Concurrency,
+                    RateLimiterPolicyNames.Concurrency,
                     options =>
                     {
                         var value = configuration
                             .GetSection(nameof(RateLimiter))
-                            .GetSection(RateLimiterPolicies.Concurrency)
+                            .GetSection(RateLimiterPolicyNames.Concurrency)
                             .Get<ConcurrencyLimiterOptions>()!;
                         options.PermitLimit = value.PermitLimit;
                         options.QueueLimit = value.QueueLimit;
