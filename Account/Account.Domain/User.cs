@@ -3,20 +3,14 @@ using Shared.Utilities;
 
 namespace User.Domain
 {
-    public class User : AggregateRoot<long>
+    public class User(string linkId) : AggregateRoot<long>(SnowFlakeIdGenerator.NewId)
     {
-        private readonly ICollection<User> following = new List<User>();
-        private readonly ICollection<User> followers = new List<User>();
-
-        public User(string linkId)
-            : base(SnowFlakeIdGenerator.NewId)
-        {
-            LinkId = linkId;
-        }
+        private readonly List<User> following =  [ ];
+        private readonly List<User> followers =  [ ];
 
         #region Properties
 
-        public string LinkId { get; private init; }
+        public string LinkId { get; private init; } = linkId;
 
         public string Email { get; private set; } = string.Empty;
 

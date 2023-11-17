@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Data.Common;
+using System.Globalization;
 using System.Reflection;
 using System.Threading.RateLimiting;
 using Dapper;
@@ -6,23 +7,29 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using Npgsql;
+using Primitives.Common.Policies;
 using SastImg.Application.Services;
 using SastImg.Application.Services.EventBus;
 using SastImg.Infrastructure.Cache;
 using SastImg.Infrastructure.Event;
 using SastImg.Infrastructure.Persistence;
 using SastImg.Infrastructure.Persistence.TypeConverters;
+using Shared.Response;
 using StackExchange.Redis;
 
 namespace SastImg.Infrastructure.Extensions
 {
     public static class IServiceCollectionExtension
     {
-        public static IServiceCollection ConfigureOptions(this IServiceCollection services)
+        public static IServiceCollection ConfigureOptions(
+            this IServiceCollection services,
+            IConfiguration configuration
+        )
         {
-            // TODO: Add options
             return services;
         }
 
@@ -36,7 +43,10 @@ namespace SastImg.Infrastructure.Extensions
                 options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
             });
             SqlMapper.AddTypeHandler(new UriStringConverter());
-            services.AddSingleton<IQueryDatabase>(new QueryDatabase(connectionString));
+            services.AddSingleton<DbDataSource>(
+                new NpgsqlDataSourceBuilder(connectionString).Build()
+            );
+            services.AddScoped<IQueryDatabase, QueryDatabase>();
             return services;
         }
 
@@ -53,15 +63,33 @@ namespace SastImg.Infrastructure.Extensions
 
         public static IServiceCollection ConfigureCache(this IServiceCollection services)
         {
-            services.AddSingleton<ICache, RedisCache>();
+            services.AddResponseCaching();
+            services.AddScoped<ICache, RedisCache>();
             return services;
         }
 
-        public static IServiceCollection ConfigureRateLimit(this IServiceCollection services)
+        public static IServiceCollection ConfigureRateLimiter(
+            this IServiceCollection services,
+            IConfiguration configuration
+        )
         {
+            // Concurrency Limiter
             services.AddRateLimiter(options =>
             {
                 options.OnRejected += RateLimitOnRejected;
+                options.AddConcurrencyLimiter(
+                    RateLimiterPolicies.Concurrency,
+                    options =>
+                    {
+                        var value = configuration
+                            .GetSection(nameof(RateLimiter))
+                            .GetSection(RateLimiterPolicies.Concurrency)
+                            .Get<ConcurrencyLimiterOptions>()!;
+                        options.PermitLimit = value.PermitLimit;
+                        options.QueueLimit = value.QueueLimit;
+                        options.QueueProcessingOrder = value.QueueProcessingOrder;
+                    }
+                );
             });
             return services;
         }
@@ -104,6 +132,9 @@ namespace SastImg.Infrastructure.Extensions
             return services;
         }
 
+        /// <summary>
+        /// Triggered when reaching the rate limiter's max, containing the response content.
+        /// </summary>
         private static ValueTask RateLimitOnRejected(
             OnRejectedContext context,
             CancellationToken cancellationToken
@@ -120,7 +151,16 @@ namespace SastImg.Infrastructure.Extensions
             context
                 .HttpContext
                 .Response
-                .WriteAsync("Too many requests. Please try again later.", cancellationToken);
+                .WriteAsJsonAsync(
+                    new
+                    {
+                        details = ResponseMessages.TooManyRequests,
+                        errors = Array.Empty<string>(),
+                        status = StatusCodes.Status429TooManyRequests
+                    },
+                    cancellationToken
+                );
+
             return ValueTask.CompletedTask;
         }
     }

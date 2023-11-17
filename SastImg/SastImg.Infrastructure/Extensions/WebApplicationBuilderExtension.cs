@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +15,7 @@ namespace SastImg.Infrastructure.Extensions
             builder
                 .Services
                 .AddSingleton(configuration)
+                .ConfigureOptions(builder.Configuration)
                 .AddLogging()
                 .ConfigureDatabase(
                     configuration.GetConnectionString("SastimgDb")
@@ -26,10 +28,21 @@ namespace SastImg.Infrastructure.Extensions
                         )
                 )
                 .ConfigureCache()
-                .ConfigureMediator();
+                .ConfigureMediator()
+                .ConfigureRateLimiter(builder.Configuration);
 
             builder.Services.ConfigureSwagger();
-            builder.Services.AddControllers();
+            builder
+                .Services
+                .AddControllers(options =>
+                {
+                    options
+                        .CacheProfiles
+                        .Add(
+                            "Default",
+                            new() { Duration = 20, Location = ResponseCacheLocation.Any }
+                        );
+                });
         }
     }
 }

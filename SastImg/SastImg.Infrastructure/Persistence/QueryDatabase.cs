@@ -1,46 +1,63 @@
-﻿using System.Data;
+﻿using System.Data.Common;
 using Dapper;
-using Npgsql;
 using SastImg.Application.Services;
 
 namespace SastImg.Infrastructure.Persistence
 {
-    public class QueryDatabase : IQueryDatabase
+    public class QueryDatabase(DbDataSource source) : IQueryDatabase
     {
         private const int QueryCommandTimeout = 10;
 
-        private readonly IDbConnection _connection;
-        private readonly NpgsqlDataSource _dbSource;
+        private DbConnection? _connection = null;
 
-        private IDbConnection Connection =>
-            _connection.State == ConnectionState.Closed ? _dbSource.OpenConnection() : _connection;
-
-        public QueryDatabase(string connectionString)
-        {
-            _dbSource = new NpgsqlDataSourceBuilder(connectionString).Build();
-            _connection = _dbSource.OpenConnection();
-        }
-
-        public Task<IEnumerable<T>> QueryAsync<T>(
+        public async Task<IEnumerable<T>> QueryAsync<T>(
             string sql,
             object? parameters = null,
             CancellationToken cancellationToken = default
         )
         {
-            return Connection.QueryAsync<T>(sql, parameters, commandTimeout: QueryCommandTimeout);
-        }
-
-        public Task<T> QuerySingle<T>(
-            string sql,
-            object? parameters = null,
-            CancellationToken cancellationToken = default
-        )
-        {
-            return Connection.QuerySingleAsync<T>(
+            _connection = await source.OpenConnectionAsync(cancellationToken);
+            var task = _connection.QueryAsync<T>(
                 sql,
                 parameters,
                 commandTimeout: QueryCommandTimeout
             );
+
+            _ = task.ContinueWith(
+                async t =>
+                {
+                    await _connection.CloseAsync();
+                    await _connection.DisposeAsync();
+                },
+                cancellationToken
+            );
+
+            return await task;
+        }
+
+        public async Task<T> QuerySingle<T>(
+            string sql,
+            object? parameters = null,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _connection = await source.OpenConnectionAsync(cancellationToken);
+            var task = _connection.QuerySingleAsync<T>(
+                sql,
+                parameters,
+                commandTimeout: QueryCommandTimeout
+            );
+
+            _ = task.ContinueWith(
+                async t =>
+                {
+                    await _connection.CloseAsync();
+                    await _connection.DisposeAsync();
+                },
+                cancellationToken
+            );
+
+            return await task;
         }
     }
 }

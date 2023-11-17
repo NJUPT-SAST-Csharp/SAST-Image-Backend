@@ -11,11 +11,17 @@ namespace Shared.Response.Builders
             string detail = ResponseMessages.InvalidParameters
         ) => new(StatusCodes.Status400BadRequest, detail);
 
+        public static ObjectResult TooManyRequests =>
+            new ResponseErrorBuilder(
+                StatusCodes.Status429TooManyRequests,
+                ResponseMessages.TooManyRequests
+            ).Build();
+
         public static ObjectResult Data(object data) =>
-            new(new { data })
+            new(new { data, status = StatusCodes.Status200OK })
             {
                 StatusCode = StatusCodes.Status200OK,
-                ContentTypes = new() { "application/json" }
+                ContentTypes =  [ "application/json" ]
             };
     }
 }

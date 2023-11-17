@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Primitives.Common.Policies;
 using SastImg.Application.Albums.GetAlbums;
 using Shared.Response.Builders;
 
@@ -17,6 +18,10 @@ namespace SastImg.WebAPI.Controllers
         }
 
         [HttpGet]
+        [ResponseCache(
+            CacheProfileName = RateLimiterPolicies.Default,
+            VaryByQueryKeys = [ "page" ]
+        )]
         public async Task<IActionResult> GetAlbums(int page, CancellationToken cancellationToken)
         {
             var albums = await _request.Send(new GetAlbumsQuery(page), cancellationToken);

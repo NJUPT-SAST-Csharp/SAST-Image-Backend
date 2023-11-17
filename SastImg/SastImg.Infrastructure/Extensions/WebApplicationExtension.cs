@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
+using Primitives.Common.Policies;
 
 namespace SastImg.Infrastructure.Extensions
 {
@@ -16,11 +17,11 @@ namespace SastImg.Infrastructure.Extensions
 
             app.UseAuthorization();
 
-            //app.UseRateLimiter();
+            app.UseRateLimiter();
 
             app.UseResponseCaching();
 
-            app.MapControllers();
+            app.MapControllers().RequireRateLimiting(RateLimiterPolicies.Concurrency);
         }
     }
 }
