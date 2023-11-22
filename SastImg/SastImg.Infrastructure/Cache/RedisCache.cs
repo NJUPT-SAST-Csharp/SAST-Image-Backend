@@ -14,6 +14,7 @@ namespace SastImg.Infrastructure.Cache
         }
 
         public async Task<TValue?> HashGetAsync<TValue>(string key, long field)
+            where TValue : class
         {
             var json = await _database.HashGetAsync(key, field);
             if (json.IsNull)
@@ -23,6 +24,7 @@ namespace SastImg.Infrastructure.Cache
         }
 
         public Task<bool> HashSetAsync<TValue>(string key, long field, TValue value)
+            where TValue : class
         {
             var json = JsonSerializer.Serialize(value);
             return _database.HashSetAsync(key, field, json);
@@ -30,7 +32,7 @@ namespace SastImg.Infrastructure.Cache
 
         public Task<bool> StringSetAsync(string key, string value, TimeSpan? expiry = null)
         {
-            return _database.StringSetAsync(key, value, expiry ?? TimeSpan.FromMinutes(5));
+            return _database.StringSetAsync(key, value, expiry ?? TimeSpan.FromMinutes(10));
         }
 
         public Task HashSetAsync<TValue>(string key, IEnumerable<(long, TValue)> values)
@@ -47,6 +49,23 @@ namespace SastImg.Infrastructure.Cache
         {
             var data = await _database.HashGetAllAsync(key);
             return data.Select(v => JsonSerializer.Deserialize<TValue>(v.Value.ToString())!);
+        }
+
+        public Task<bool> HashSetAsync<TValue>(string key, string field, TValue value)
+            where TValue : class
+        {
+            var json = JsonSerializer.Serialize(value);
+            return _database.HashSetAsync(key, field, json);
+        }
+
+        public async Task<TValue?> HashGetAsync<TValue>(string key, string field)
+            where TValue : class
+        {
+            var json = await _database.HashGetAsync(key, field);
+            if (json.IsNull)
+                return default;
+            var result = JsonSerializer.Deserialize<TValue>(json.ToString());
+            return result;
         }
     }
 }

@@ -3,8 +3,13 @@
     internal static class CacheKey
     {
         /// <summary>
-        /// Hashtable containing the main pages of all accessible albums.
+        /// Hashtable containing the pages of all accessible albums in anonymous access level.
         /// </summary>
-        public const string MainPages = "MainPages";
+        public const string AnonymousAlbums = "AnonymousAlbums";
+
+        /// <summary>
+        /// Hashtable containing all accessible albums of specific user in anonymous access level.
+        /// </summary>
+        public const string AnonymousUserAlbums = "AnonymousUserAlbums";
     }
 }

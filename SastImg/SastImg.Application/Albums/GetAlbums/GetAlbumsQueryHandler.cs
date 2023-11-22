@@ -1,11 +1,12 @@
-﻿using System.Text.Json;
+﻿using Primitives.Common;
 using SastImg.Application.Albums.Dtos;
 using SastImg.Application.Services;
 using Shared.Primitives.Query;
+using Utilities;
 
 namespace SastImg.Application.Albums.GetAlbums
 {
-    public sealed class GetAlbumsQueryHandler(IQueryDatabase database, ICache cache)
+    internal sealed class GetAlbumsQueryHandler(IQueryDatabase database, ICache cache)
         : IQueryHandler<GetAlbumsQuery, IEnumerable<AlbumDto>>
     {
         private readonly IQueryDatabase _database = database;
@@ -16,49 +17,85 @@ namespace SastImg.Application.Albums.GetAlbums
             CancellationToken cancellationToken
         )
         {
-            const int numPerPage = 20;
-
-            int page = (request.Page < 0 || request.Page >= int.MaxValue / 20) ? 0 : request.Page;
-
-            var albums = await GetFromCacheAsync(page);
-
-            if (albums is not null)
+            // When request is anonymous.
+            IEnumerable<AlbumDto>? albums = null;
+            if (request.User.Identity is null || !request.User.Identity.IsAuthenticated)
+            {
+                // Get from cache first when anonymous.
+                albums = await GetCacheAsync(request.Page, request.AuthorId);
+                if (albums is not null)
+                    return albums;
+                var query = GetAlbumsSqlStrategy.Anonymous(request.Page, request.AuthorId);
+                albums = await _database.QueryAsync<AlbumDto>(
+                    query.SqlString,
+                    query.Parameters,
+                    cancellationToken
+                );
+                // Cache all the anonymous request.
+                _ = SetCacheAsync(albums, request.Page, request.AuthorId);
                 return albums;
+            }
+            // When user is an administrator.
+            else if (request.User.IsInRole(UserRoles.Admin))
+            {
+                var query = GetAlbumsSqlStrategy.Admin(request.Page, request.AuthorId);
+                albums = await _database.QueryAsync<AlbumDto>(
+                    query.SqlString,
+                    query.Parameters,
+                    cancellationToken
+                );
+                return albums;
+            }
+            // When user is an auth common user.
+            else
+            {
+                var result = AuthenticationHelper.TryFetchId(request.User, out long requesterId);
+                if (!result)
+                    throw new Exception(
+                        "Successfully validated user identity but failed when fetching user id."
+                    );
+                var query = GetAlbumsSqlStrategy.Common(
+                    request.Page,
+                    requesterId,
+                    request.AuthorId
+                );
+                albums = await _database.QueryAsync<AlbumDto>(
+                    query.SqlString,
+                    query.Parameters,
+                    cancellationToken
+                );
+                return albums;
+            }
+        }
 
-            const string sql =
-                "SELECT "
-                + "id as AlbumId, "
-                + "title as Title, "
-                + "cover_uri as CoverUri, "
-                + "accessibility as Accessibility, "
-                + "author_id as AuthorId "
-                + "FROM albums "
-                + "ORDER BY updated_at DESC "
-                + "LIMIT @take "
-                + "OFFSET @skip";
-            albums = await _database.QueryAsync<AlbumDto>(
-                sql,
-                new { take = numPerPage, skip = page * numPerPage },
-                cancellationToken
-            );
+        private async Task<IEnumerable<AlbumDto>?> GetCacheAsync(int page, long authorId)
+        {
+            IEnumerable<AlbumDto>? albums = null;
 
-            _ = SetCacheAsync(page, albums);
+            if (authorId == 0)
+                albums = await _cache.HashGetAsync<IEnumerable<AlbumDto>>(
+                    CacheKey.AnonymousAlbums,
+                    page
+                );
+            else
+                albums = await _cache.HashGetAsync<IEnumerable<AlbumDto>>(
+                    CacheKey.AnonymousUserAlbums,
+                    string.Concat('u', authorId, 'p', page)
+                );
 
             return albums;
         }
 
-        private async Task<IEnumerable<AlbumDto>?> GetFromCacheAsync(int page)
+        private Task<bool> SetCacheAsync(IEnumerable<AlbumDto> albums, int page, long userId)
         {
-            var json = await _cache.HashGetAsync<string>(CacheKey.MainPages, page);
-            if (json is null)
-                return null;
-            var albums = JsonSerializer.Deserialize<IEnumerable<AlbumDto>>(json);
-            return albums;
-        }
-
-        private Task<bool> SetCacheAsync(int page, IEnumerable<AlbumDto> albums)
-        {
-            return _cache.HashSetAsync("MainPages", page, JsonSerializer.Serialize(albums));
+            if (userId == 0)
+                return _cache.HashSetAsync(CacheKey.AnonymousAlbums, page, albums);
+            else
+                return _cache.HashSetAsync(
+                    CacheKey.AnonymousUserAlbums,
+                    string.Concat('u', userId, 'p', page),
+                    albums
+                );
         }
     }
 }

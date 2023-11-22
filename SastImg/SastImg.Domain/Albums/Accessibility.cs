@@ -4,6 +4,6 @@
     {
         Public,
         Auth,
-        OnlyMe
+        Private
     }
 }

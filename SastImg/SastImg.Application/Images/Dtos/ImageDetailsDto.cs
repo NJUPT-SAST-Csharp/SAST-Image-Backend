@@ -1,4 +1,4 @@
-﻿namespace SastImg.Application.Albums.Images.Dtos
+﻿namespace SastImg.Application.Images.Dtos
 {
     public record ImageDetailsDto(
         long ImageId,

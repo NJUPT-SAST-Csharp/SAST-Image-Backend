@@ -41,7 +41,13 @@ namespace SastImg.Infrastructure.Extensions
                         .CacheProfiles
                         .Add(
                             ResponseCachePolicyNames.Default,
-                            new() { Duration = 20, Location = ResponseCacheLocation.Any }
+                            new()
+                            {
+                                Duration = configuration
+                                    .GetSection("Cache")
+                                    .GetValue<int>("ResponseCacheDuration"),
+                                Location = ResponseCacheLocation.Any
+                            }
                         );
                 });
         }

@@ -1,4 +1,4 @@
-﻿using SastImg.Application.Albums.Images.Dtos;
+﻿using SastImg.Application.Images.Dtos;
 using SastImg.Domain.Albums;
 
 namespace SastImg.Application.Albums.Dtos
