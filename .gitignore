@@ -485,3 +485,7 @@ SastImgAPI/appsettings.Development.json
 /SastImg/SastImg.Infrastructure/Persistence/Migrations/20231104061732_First.Designer.cs
 /SastImg/SastImg.Infrastructure/Persistence/Migrations/20231103150729_First.cs
 /SastImg/SastImg.Infrastructure/Persistence/Migrations/20231103150729_First.Designer.cs
+/Account/Account.WebAPI/appsettings.json
+/Account/Account.WebAPI/appsettings.Development.json
+/SNS/SNS.WebAPI/appsettings.json
+/SNS/SNS.WebAPI/appsettings.Development.json
