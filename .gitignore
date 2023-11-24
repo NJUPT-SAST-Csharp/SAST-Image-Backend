@@ -489,3 +489,5 @@ SastImgAPI/appsettings.Development.json
 /Account/Account.WebAPI/appsettings.Development.json
 /SNS/SNS.WebAPI/appsettings.json
 /SNS/SNS.WebAPI/appsettings.Development.json
+/Account/Account.Infrastructure/Persistence/Migrations/20231124142516_Init.cs
+/Account/Account.Infrastructure/Persistence/Migrations/AccountDbContextModelSnapshot.cs
