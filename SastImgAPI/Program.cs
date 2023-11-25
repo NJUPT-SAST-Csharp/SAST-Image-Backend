@@ -1,3 +1,7 @@
+using System.Reflection;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -13,10 +17,6 @@ using SastImgAPI.Models.Validators;
 using SastImgAPI.Options;
 using SastImgAPI.Services;
 using Serilog;
-using System.Reflection;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +25,8 @@ Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 builder.Logging.ClearProviders().AddSerilog();
 
 // Add controllers.
-builder.Services
+builder
+    .Services
     .AddControllers()
     .AddJsonOptions(options =>
     {
@@ -35,37 +36,45 @@ builder.Services
     });
 
 // Add DbContext.
-builder.Services.AddDbContext<DatabaseContext>(
-    options =>
-        options
-            .UseNpgsql(builder.Configuration.GetConnectionString("Postgres"))
-            .UseSnakeCaseNamingConvention()
-);
+builder
+    .Services
+    .AddDbContext<DatabaseContext>(
+        options =>
+            options
+                .UseNpgsql(builder.Configuration.GetConnectionString("Postgres"))
+                .UseSnakeCaseNamingConvention()
+    );
 
 // Add Redis caching.
-builder.Services.AddStackExchangeRedisCache(options =>
-{
-    options.Configuration = "localhost";
-    options.InstanceName = "SastImg";
-});
+builder
+    .Services
+    .AddStackExchangeRedisCache(options =>
+    {
+        options.Configuration = "localhost";
+        options.InstanceName = "SastImg";
+    });
 
 // Add Identity
-builder.Services.AddIdentityCore<User>(options =>
-{
-    //options.SignIn.RequireConfirmedEmail = true;
-    options.Password.RequiredLength = 6;
-    options.Password.RequireUppercase = false;
-    options.Password.RequireLowercase = false;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireDigit = false;
-    options.User.RequireUniqueEmail = true;
-    options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultPhoneProvider;
-    options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultPhoneProvider;
-    options.Tokens.ChangeEmailTokenProvider = TokenOptions.DefaultPhoneProvider;
-});
-builder.Services.Configure<DataProtectionTokenProviderOptions>(
-    options => options.TokenLifespan = TimeSpan.FromMinutes(5)
-);
+builder
+    .Services
+    .AddIdentityCore<User>(options =>
+    {
+        //options.SignIn.RequireConfirmedEmail = true;
+        options.Password.RequiredLength = 6;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireDigit = false;
+        options.User.RequireUniqueEmail = true;
+        options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultPhoneProvider;
+        options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultPhoneProvider;
+        options.Tokens.ChangeEmailTokenProvider = TokenOptions.DefaultPhoneProvider;
+    });
+builder
+    .Services
+    .Configure<DataProtectionTokenProviderOptions>(
+        options => options.TokenLifespan = TimeSpan.FromMinutes(5)
+    );
 
 builder.Services.AddDataProtection();
 
@@ -96,7 +105,8 @@ builder.Services.Configure<EmailSendOption>(builder.Configuration.GetSection("Em
 builder.Services.Configure<FileStorageOptions>(builder.Configuration.GetSection("File"));
 
 // Add Jwt
-builder.Services
+builder
+    .Services
     .AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -106,9 +116,11 @@ builder.Services
     {
         SymmetricSecurityKey secKey =
             new(
-                Encoding.UTF8.GetBytes(
-                    builder.Configuration.GetSection("JwtOptions").Get<JwtOptions>()!.SecKey
-                )
+                Encoding
+                    .UTF8
+                    .GetBytes(
+                        builder.Configuration.GetSection("JwtOptions").Get<JwtOptions>()!.SecKey
+                    )
             );
         options.TokenValidationParameters = new()
         {
@@ -122,37 +134,41 @@ builder.Services
     });
 
 // Add filters.
-builder.Services.Configure<MvcOptions>(opts =>
-{
-    opts.Filters.Add<GlobalExceptionFilter>();
-    opts.Filters.Add<LoggerExceptionFilter>();
-});
+builder
+    .Services
+    .Configure<MvcOptions>(opts =>
+    {
+        opts.Filters.Add<GlobalExceptionFilter>();
+        opts.Filters.Add<LoggerExceptionFilter>();
+    });
 
 //Add and configure swagger.
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    var scheme = new OpenApiSecurityScheme
+builder
+    .Services
+    .AddSwaggerGen(options =>
     {
-        Description = "Authorization Header \r\nExample:'Bearer 123456789'",
-        Reference = new OpenApiReference
+        var scheme = new OpenApiSecurityScheme
         {
-            Type = ReferenceType.SecurityScheme,
-            Id = "Authorization"
-        },
-        Scheme = "oauth2",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey
-    };
-    options.AddSecurityDefinition("Authorization", scheme);
-    var requirement = new OpenApiSecurityRequirement();
-    requirement[scheme] = new List<string>();
-    options.AddSecurityRequirement(requirement);
-    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-    options.EnableAnnotations();
-});
+            Description = "Authorization Header \r\nExample:'Bearer 123456789'",
+            Reference = new OpenApiReference
+            {
+                Type = ReferenceType.SecurityScheme,
+                Id = "Authorization"
+            },
+            Scheme = "oauth2",
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey
+        };
+        options.AddSecurityDefinition("Authorization", scheme);
+        var requirement = new OpenApiSecurityRequirement();
+        requirement[scheme] = new List<string>();
+        options.AddSecurityRequirement(requirement);
+        var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+        options.EnableAnnotations();
+    });
 
 // Add localizer service
 builder.Services.AddLocalization();

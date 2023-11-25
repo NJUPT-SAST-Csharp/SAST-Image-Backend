@@ -6,7 +6,7 @@ using SastImg.Domain.Tags;
 
 namespace SastImg.Infrastructure.Persistence
 {
-    public class SastImgDbContext : DbContext
+    public sealed class SastImgDbContext : DbContext
     {
         public SastImgDbContext(DbContextOptions<SastImgDbContext> options)
             : base(options) { }

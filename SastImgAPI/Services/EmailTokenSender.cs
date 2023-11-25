@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System.Net.Mail;
+using Microsoft.Extensions.Options;
 using SastImgAPI.Options;
-using System.Net.Mail;
 
 namespace SastImgAPI.Services
 {

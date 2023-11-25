@@ -40,7 +40,9 @@ namespace SastImg.Infrastructure.Extensions
         {
             services.AddDbContext<SastImgDbContext>(options =>
             {
-                options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
+                options.UseNpgsql(connectionString)
+                //.UseSnakeCaseNamingConvention()
+                ;
             });
             SqlMapper.AddTypeHandler(new UriStringConverter());
             services.AddSingleton<DbDataSource>(
