@@ -2,9 +2,9 @@
 {
     public sealed class Profile
     {
-        public string Nickname { get; set; } = string.Empty;
-        public string Biography { get; set; } = string.Empty;
-        public Uri? Avatar { get; set; } = null;
-        public Uri? Header { get; set; } = null;
+        public string Nickname { get; init; } = string.Empty;
+        public string Biography { get; init; } = string.Empty;
+        public Uri? Avatar { get; init; } = null;
+        public Uri? Header { get; init; } = null;
     }
 }

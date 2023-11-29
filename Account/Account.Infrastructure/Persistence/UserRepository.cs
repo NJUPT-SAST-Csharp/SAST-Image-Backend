@@ -1,22 +1,62 @@
-﻿using Account.Application.Services;
-using Account.Application.Users;
+﻿using Account.Application.Users.Repository;
+using Account.Entity.User;
+using Account.Entity.User.Models;
+using Account.Entity.User.Options;
+using Microsoft.EntityFrameworkCore;
 
 namespace Account.Infrastructure.Persistence
 {
-    internal sealed class UserRepository(IPasswordHasher passwordHasher, AccountDbContext dbContext)
-        : IUserRepository
+    public sealed class UserRepository(AccountDbContext _dbContext) : IUserRepository
     {
-        private readonly AccountDbContext _dbContext = dbContext;
-        private readonly IPasswordHasher _passwordHasher = passwordHasher;
-
-        public Task CreateUserAsync(CancellationToken cancellationToken = default)
+        public Task CreateUserAsync(
+            CreateUserOptions options,
+            CancellationToken cancellationToken = default
+        )
         {
-            return _dbContext.SaveChangesAsync(cancellationToken);
+            throw new NotImplementedException();
         }
 
-        public Task ModifyUserProfileAsync(CancellationToken cancellationToken = default)
+        public Task<User?> GetUserByIdAsync(
+            long userId,
+            CancellationToken cancellationToken = default
+        )
         {
-            return _dbContext.SaveChangesAsync(cancellationToken);
+            throw new NotImplementedException();
+        }
+
+        public Task<User?> GetUserByUsernameAsync(
+            string username,
+            CancellationToken cancellationToken = default
+        )
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserIdentity?> GetUserIdentityByIdAsync(
+            long userId,
+            CancellationToken cancellationToken = default
+        )
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<UserIdentity?> GetUserIdentityByUsernameAsync(
+            string username,
+            CancellationToken cancellationToken = default
+        )
+        {
+            return _dbContext
+                .Users
+                .Select(
+                    u =>
+                        new UserIdentity()
+                        {
+                            Id = u.Id,
+                            Username = u.Username,
+                            PasswordHash = u.PasswordHash
+                        }
+                )
+                .FirstOrDefaultAsync(u => u.Username == username, cancellationToken);
         }
     }
 }

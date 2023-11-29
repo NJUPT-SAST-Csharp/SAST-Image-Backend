@@ -1,17 +1,27 @@
-﻿namespace Account.WebAPI.Endpoints
+﻿using Account.Application.Users.Login;
+using Account.WebAPI.Endpoints.Login;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Account.WebAPI.Endpoints
 {
     internal static class EndpointsExtension
     {
         internal static WebApplication MapEndpoints(this WebApplication app)
         {
-            MapUser(app);
+            var api = app.MapGroup("/api");
+            MapUser(api);
             return app;
         }
 
-        private static void MapUser(WebApplication app)
+        private static void MapUser(RouteGroupBuilder builder)
         {
-            var userRoute = app.MapGroup("/user");
-            userRoute.MapGet("/login", () => { });
+            var userRoute = builder.MapGroup("/user");
+            userRoute.MapPost(
+                "/login",
+                ([FromServices] LoginEndpointHandler handler, LoginRequest request) =>
+                    handler.Handle(request.Username, request.Password)
+            );
+            userRoute.MapGet("/test", () => { });
         }
     }
 }

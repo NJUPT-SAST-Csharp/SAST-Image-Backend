@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Response\Response.csproj" />
+    <ProjectReference Include="..\Account.Entity\Account.Entity.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Users\Register\" />
+  </ItemGroup>
+
 </Project>

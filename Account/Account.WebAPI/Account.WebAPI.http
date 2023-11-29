@@ -1,2 +1,6 @@
-@Account.WebAPI_HostAddress = http://localhost:5064
+@Account.WebAPI_HostAddress = http://localhost:5001
 
+GET {{Account.WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

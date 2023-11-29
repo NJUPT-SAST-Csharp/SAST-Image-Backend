@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Primitives.Common.Policies;
 
 namespace SastImg.Infrastructure.Extensions
@@ -13,9 +14,9 @@ namespace SastImg.Infrastructure.Extensions
             IConfigurationRoot configuration
         )
         {
+            builder.Services.TryAddSingleton(configuration);
             builder
                 .Services
-                .AddSingleton(configuration)
                 .ConfigureOptions(builder.Configuration)
                 .AddLogging()
                 .ConfigureDatabase(

@@ -18,7 +18,7 @@ using SastImg.Infrastructure.Cache;
 using SastImg.Infrastructure.Event;
 using SastImg.Infrastructure.Persistence;
 using SastImg.Infrastructure.Persistence.TypeConverters;
-using Shared.Response;
+using Shared.Response.Builders;
 using StackExchange.Redis;
 
 namespace SastImg.Infrastructure.Extensions
@@ -40,9 +40,7 @@ namespace SastImg.Infrastructure.Extensions
         {
             services.AddDbContext<SastImgDbContext>(options =>
             {
-                options.UseNpgsql(connectionString)
-                //.UseSnakeCaseNamingConvention()
-                ;
+                options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
             });
             SqlMapper.AddTypeHandler(new UriStringConverter());
             services.AddSingleton<DbDataSource>(
@@ -153,15 +151,7 @@ namespace SastImg.Infrastructure.Extensions
             context
                 .HttpContext
                 .Response
-                .WriteAsJsonAsync(
-                    new
-                    {
-                        details = ResponseMessages.TooManyRequests,
-                        errors = Array.Empty<string>(),
-                        status = StatusCodes.Status429TooManyRequests
-                    },
-                    cancellationToken
-                );
+                .WriteAsJsonAsync(ResponseBuilder.TooManyRequests, cancellationToken);
 
             return ValueTask.CompletedTask;
         }

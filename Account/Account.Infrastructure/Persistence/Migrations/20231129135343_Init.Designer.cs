@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Account.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AccountDbContext))]
-    [Migration("20231125205323_Init")]
+    [Migration("20231129135343_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -24,7 +24,7 @@ namespace Account.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Account.Entity.User", b =>
+            modelBuilder.Entity("Account.Entity.User.User", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -54,9 +54,9 @@ namespace Account.Infrastructure.Persistence.Migrations
                     b.ToTable("users", (string)null);
                 });
 
-            modelBuilder.Entity("Account.Entity.User", b =>
+            modelBuilder.Entity("Account.Entity.User.User", b =>
                 {
-                    b.OwnsOne("Account.Entity.Profile", "Profile", b1 =>
+                    b.OwnsOne("Account.Entity.User.Profile", "Profile", b1 =>
                         {
                             b1.Property<long>("UserId")
                                 .HasColumnType("bigint")

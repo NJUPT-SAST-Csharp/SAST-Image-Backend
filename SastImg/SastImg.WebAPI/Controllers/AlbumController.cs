@@ -27,9 +27,9 @@ namespace SastImg.WebAPI.Controllers
         [HttpGet]
         [ResponseCache(
             CacheProfileName = RateLimiterPolicyNames.Default,
-            VaryByQueryKeys = [ "page", "userId" ]
+            VaryByQueryKeys = ["page", "userId"]
         )]
-        public async Task<IActionResult> GetAlbums(
+        public async Task<IResult> GetAlbums(
             [Range(0, 10000)] int page = 0,
             [Range(0, long.MaxValue)] long userId = 0,
             CancellationToken cancellationToken = default
@@ -39,8 +39,7 @@ namespace SastImg.WebAPI.Controllers
                 new GetAlbumsQuery(User, page, userId),
                 cancellationToken
             );
-
-            return ResponseBuilder.Data(albums);
+            return ResponseBuilder.Data(nameof(albums), albums);
         }
     }
 }

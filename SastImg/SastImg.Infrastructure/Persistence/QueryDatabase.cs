@@ -8,31 +8,18 @@ namespace SastImg.Infrastructure.Persistence
     {
         private const int QueryCommandTimeout = 10;
 
-        private DbConnection? _connection = null;
-
         public async Task<IEnumerable<T>> QueryAsync<T>(
             string sql,
             object? parameters = null,
             CancellationToken cancellationToken = default
         )
         {
-            _connection = await source.OpenConnectionAsync(cancellationToken);
-            var task = _connection.QueryAsync<T>(
+            using var connection = await source.OpenConnectionAsync(cancellationToken);
+            return await connection.QueryAsync<T>(
                 sql,
                 parameters,
                 commandTimeout: QueryCommandTimeout
             );
-
-            _ = task.ContinueWith(
-                async t =>
-                {
-                    await _connection.CloseAsync();
-                    await _connection.DisposeAsync();
-                },
-                cancellationToken
-            );
-
-            return await task;
         }
 
         public async Task<T> QuerySingle<T>(
@@ -41,23 +28,12 @@ namespace SastImg.Infrastructure.Persistence
             CancellationToken cancellationToken = default
         )
         {
-            _connection = await source.OpenConnectionAsync(cancellationToken);
-            var task = _connection.QuerySingleAsync<T>(
+            using var connection = await source.OpenConnectionAsync(cancellationToken);
+            return await connection.QuerySingleAsync<T>(
                 sql,
                 parameters,
                 commandTimeout: QueryCommandTimeout
             );
-
-            _ = task.ContinueWith(
-                async t =>
-                {
-                    await _connection.CloseAsync();
-                    await _connection.DisposeAsync();
-                },
-                cancellationToken
-            );
-
-            return await task;
         }
     }
 }
