@@ -2,7 +2,6 @@ using Account.Infrastructure.Configurations;
 using Account.WebAPI.Configurations;
 using Account.WebAPI.Endpoints;
 
-
 var builder = WebApplication.CreateSlimBuilder(args);
 
 builder.Logging.ConfigureLogger();
@@ -22,4 +21,3 @@ var app = builder.Build();
 app.MapEndpoints();
 
 app.Run();
-

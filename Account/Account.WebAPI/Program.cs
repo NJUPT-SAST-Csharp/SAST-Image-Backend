@@ -4,6 +4,8 @@ using Account.WebAPI.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.ConfigureLogger();
+
 builder
     .Configuration
     .AddJsonFile("appsettings.json")

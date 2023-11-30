@@ -1,22 +1,34 @@
 ﻿using Account.Application.SeedWorks;
 using Account.Application.Services;
 using Account.Application.Users.Repository;
+using Account.WebAPI.Endpoints.Login;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Shared.Response.Builders;
 
 namespace Account.Application.Users.Login
 {
     public sealed class LoginEndpointHandler(
-        IUserRepository _repository,
-        IPasswordHasher _passwordHasher
+        IUserRepository repository,
+        IPasswordHasher passwordHasher,
+        IValidator<LoginRequest> validator
     ) : IEndpointHandler
     {
-        public async Task<IResult> Handle(string username, string password)
+        private readonly IUserRepository _repository = repository;
+        private readonly IPasswordHasher _passwordHasher = passwordHasher;
+        private readonly IValidator<LoginRequest> _validator = validator;
+
+        public async Task<IResult> Handle(LoginRequest request)
         {
-            var userIdentity = await _repository.GetUserIdentityByUsernameAsync(username);
+            var result = await _validator.ValidateAsync(request);
+            if (result.IsValid == false)
+                return ResponseBuilder.ValidationFailure(result.ToDictionary());
+
+            var userIdentity = await _repository.GetUserIdentityByUsernameAsync(request.Username);
             if (
                 userIdentity is null
-                || await _passwordHasher.ValidateAsync(password, userIdentity.PasswordHash) == false
+                || await _passwordHasher.ValidateAsync(request.Password, userIdentity.PasswordHash)
+                    == false
             )
             {
                 return ResponseBuilder.BadRequest(

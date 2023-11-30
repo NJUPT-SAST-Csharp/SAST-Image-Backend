@@ -19,7 +19,9 @@ namespace Account.WebAPI.Endpoints
             userRoute.MapPost(
                 "/login",
                 ([FromServices] LoginEndpointHandler handler, LoginRequest request) =>
-                    handler.Handle(request.Username, request.Password)
+                {
+                    return handler.Handle(request);
+                }
             );
             userRoute.MapGet("/test", () => { });
         }

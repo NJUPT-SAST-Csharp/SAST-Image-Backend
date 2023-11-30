@@ -5,14 +5,7 @@ namespace Shared.Response.Builders
     public static class ResponseBuilder
     {
         public static IResult Data(IDictionary<string, object> objs) =>
-            TypedResults.Ok(
-                new
-                {
-                    type = "https://tools.ietf.org/html/rfc9110#section-15.3.1",
-                    status = StatusCodes.Status200OK,
-                    data = objs
-                }
-            );
+            TypedResults.Ok(new { data = objs });
 
         public static IResult Data(string key, object value) =>
             Data(new Dictionary<string, object> { { key, value } });
