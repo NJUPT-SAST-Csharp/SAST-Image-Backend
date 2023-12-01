@@ -1,4 +1,4 @@
-﻿using Account.Application.Users.Repository;
+﻿using Account.Application.Account.Repository;
 using Account.Entity.User;
 using Account.Entity.User.Models;
 using Account.Entity.User.Options;

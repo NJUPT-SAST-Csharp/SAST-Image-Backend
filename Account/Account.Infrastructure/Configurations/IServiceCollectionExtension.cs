@@ -1,17 +1,18 @@
 ﻿using System.Text;
+using Account.Application.Account.Login;
+using Account.Application.Account.Register;
+using Account.Application.Account.Repository;
 using Account.Application.Services;
-using Account.Application.Users.Login;
-using Account.Application.Users.Repository;
 using Account.Infrastructure.Persistence;
 using Account.Infrastructure.Services;
 using Account.WebAPI.Endpoints.Login;
 using FluentValidation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Primitives.Common;
 using Serilog;
 
 namespace Account.Infrastructure.Configurations
@@ -24,7 +25,8 @@ namespace Account.Infrastructure.Configurations
         )
         {
             services
-                .AddAuthenticationHandle(configuration)
+                .ConfigureAuthentication(configuration)
+                .ConfigureAuthorization(configuration)
                 .AddEndpointHandlers()
                 .AddValidators()
                 .AddPasswordHasher()
@@ -69,7 +71,7 @@ namespace Account.Infrastructure.Configurations
         }
 
         /// <summary>
-        /// Add password hash provider
+        /// Configure password hash provider
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
@@ -79,23 +81,26 @@ namespace Account.Infrastructure.Configurations
             return services;
         }
 
+        /// <summary>
+        /// Configure endpoint handlers that provided when requests are received from endpoints.
+        /// </summary>
         private static IServiceCollection AddEndpointHandlers(this IServiceCollection services)
         {
             services.AddScoped<LoginEndpointHandler>();
+            services.AddScoped<SendCodeEndpointHandler>();
             return services;
         }
 
-        private static IServiceCollection AddAuthenticationHandle(
+        /// <summary>
+        /// Configure authentication module (jwt)
+        /// </summary>
+        private static IServiceCollection ConfigureAuthentication(
             this IServiceCollection services,
             IConfiguration configuration
         )
         {
             services
-                .AddAuthentication(options =>
-                {
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.RequireAuthenticatedSignIn = true;
-                })
+                .AddAuthentication()
                 .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new()
@@ -113,9 +118,27 @@ namespace Account.Infrastructure.Configurations
             return services;
         }
 
+        private static IServiceCollection ConfigureAuthorization(
+            this IServiceCollection services,
+            IConfiguration configuration
+        )
+        {
+            services
+                .AddAuthorizationBuilder()
+                .AddPolicy(
+                    AuthorizationRoles.User,
+                    policy => policy.RequireAuthenticatedUser().RequireClaim("role", "user")
+                );
+            return services;
+        }
+
+        /// <summary>
+        /// Configure model validators. (mainly for request)
+        /// </summary>
         private static IServiceCollection AddValidators(this IServiceCollection services)
         {
             services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
+            services.AddScoped<IValidator<SendCodeRequest>, SendCodeRequestValidator>();
             return services;
         }
     }

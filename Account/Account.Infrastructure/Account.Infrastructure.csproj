@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Primitives\Primitives.csproj" />
     <ProjectReference Include="..\Account.Application\Account.Application.csproj" />
     <ProjectReference Include="..\Account.Entity\Account.Entity.csproj" />
   </ItemGroup>

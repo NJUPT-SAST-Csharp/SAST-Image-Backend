@@ -36,7 +36,7 @@ namespace SastImg.Application.Albums.GetAlbums
                 return albums;
             }
             // When user is an administrator.
-            else if (request.User.IsInRole(UserRoles.Admin))
+            else if (request.User.IsInRole(AuthorizationRoles.Admin))
             {
                 var query = GetAlbumsSqlStrategy.Admin(request.Page, request.AuthorId);
                 albums = await _database.QueryAsync<AlbumDto>(

@@ -1,7 +1,0 @@
-@Account.WebAPI_HostAddress = http://localhost:5064
-
-GET {{Account.WebAPI_HostAddress}}/user/login
-
-###
-
-GET {{Account.WebAPI_HostAddress}}/user/test

@@ -39,7 +39,7 @@ namespace SastImg.WebAPI.Controllers
                 new GetAlbumsQuery(User, page, userId),
                 cancellationToken
             );
-            return ResponseBuilder.Data(nameof(albums), albums);
+            return Responses.Data(albums);
         }
     }
 }

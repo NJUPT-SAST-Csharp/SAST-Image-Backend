@@ -2,7 +2,7 @@
 using Account.Entity.User.Models;
 using Account.Entity.User.Options;
 
-namespace Account.Application.Users.Repository
+namespace Account.Application.Account.Repository
 {
     public interface IUserRepository
     {

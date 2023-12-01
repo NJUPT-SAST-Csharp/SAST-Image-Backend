@@ -1,4 +1,4 @@
-﻿namespace Account.Application.Users.Login
+﻿namespace Account.Application.Account.Login
 {
     public sealed class LoginDto(string jwt)
     {

@@ -151,7 +151,7 @@ namespace SastImg.Infrastructure.Extensions
             context
                 .HttpContext
                 .Response
-                .WriteAsJsonAsync(ResponseBuilder.TooManyRequests, cancellationToken);
+                .WriteAsJsonAsync(Responses.TooManyRequests, cancellationToken);
 
             return ValueTask.CompletedTask;
         }
