@@ -17,7 +17,7 @@ namespace Shared.Utilities
 
         public static long FromBase64ToLongId(string base64)
         {
-            byte[] bytes = WebEncoders.Base64UrlDecode(base64);
+            ReadOnlySpan<byte> bytes = WebEncoders.Base64UrlDecode(base64);
             long id = BitConverter.ToInt64(bytes);
             return id;
         }

@@ -1,12 +1,11 @@
 ﻿using Account.Application.Account.Login;
 using Account.Application.Account.Register;
-using Account.Application.Services;
-using Account.WebAPI.Endpoints.Login;
+using Account.Application.SeedWorks;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Account.WebAPI.Endpoints
 {
-    internal static class EndpointsExtension
+    internal static class EndpointsMapper
     {
         internal static WebApplication MapEndpoints(this WebApplication app)
         {
@@ -18,21 +17,31 @@ namespace Account.WebAPI.Endpoints
         private static void MapAccount(RouteGroupBuilder builder)
         {
             var account = builder.MapGroup("/account");
+
             account
                 .MapPost(
                     "/login",
-                    ([FromServices] LoginEndpointHandler handler, LoginRequest request) =>
+                    ([FromServices] IEndpointHandler<LoginRequest> handler, LoginRequest request) =>
                         handler.Handle(request)
                 )
-                .AddEndpointFilter<ValidationFilter<LoginRequest>>();
+                .AddValidator<LoginRequest>();
 
-            var register = account.MapGroup("/register");
-            register
+            MapRegistration(account);
+        }
+
+        private static void MapRegistration(RouteGroupBuilder builder)
+        {
+            var registration = builder.MapGroup("/registration");
+
+            registration
                 .MapPost(
                     "/sendCode",
-                    ([FromServices] SendCodeEndpointHandler handler, SendCodeRequest request) => { }
+                    (
+                        [FromServices] IEndpointHandler<SendCodeRequest> handler,
+                        SendCodeRequest request
+                    ) => handler.Handle(request)
                 )
-                .AddEndpointFilter<ValidationFilter<SendCodeRequest>>();
+                .AddValidator<SendCodeRequest>();
         }
     }
 }

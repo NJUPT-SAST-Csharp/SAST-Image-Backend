@@ -1,12 +1,12 @@
-﻿using Account.Application.Account.Repository;
-using Account.Entity.User;
+﻿using Account.Entity.User;
 using Account.Entity.User.Models;
 using Account.Entity.User.Options;
+using Account.Entity.User.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Account.Infrastructure.Persistence
 {
-    public sealed class UserRepository(AccountDbContext _dbContext) : IUserRepository
+    public sealed class UserRepository(AccountDbContext _dbContext) : IUserQueryRepository
     {
         public Task CreateUserAsync(
             CreateUserOptions options,

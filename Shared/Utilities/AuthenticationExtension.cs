@@ -2,9 +2,9 @@
 
 namespace Utilities
 {
-    public static class AuthenticationHelper
+    public static class AuthenticationExtension
     {
-        public static bool TryFetchId(ClaimsPrincipal user, out long id)
+        public static bool TryFetchId(this ClaimsPrincipal user, out long id)
         {
             if (TryParseClaim(user, out string? claim))
             {
@@ -15,7 +15,7 @@ namespace Utilities
             return false;
         }
 
-        public static bool TryFetchId(ClaimsPrincipal user, out int id)
+        public static bool TryFetchId(this ClaimsPrincipal user, out int id)
         {
             if (TryParseClaim(user, out string? claim))
             {
@@ -26,7 +26,7 @@ namespace Utilities
             return false;
         }
 
-        public static bool TryFetchId(ClaimsPrincipal user, out Guid id)
+        public static bool TryFetchId(this ClaimsPrincipal user, out Guid id)
         {
             if (TryParseClaim(user, out string? claim))
             {
@@ -37,7 +37,7 @@ namespace Utilities
             return false;
         }
 
-        public static bool TryFetchId(ClaimsPrincipal user, out string? id)
+        public static bool TryFetchId(this ClaimsPrincipal user, out string? id)
         {
             return TryParseClaim(user, out id);
         }

@@ -50,20 +50,15 @@ namespace SastImg.Infrastructure.Extensions
             return services;
         }
 
-        public static IServiceCollection ConfigureRedis(
+        public static IServiceCollection ConfigureCache(
             this IServiceCollection services,
             string connectionString
         )
         {
+            services.AddResponseCaching();
             services.AddSingleton<IConnectionMultiplexer>(
                 ConnectionMultiplexer.Connect(connectionString)
             );
-            return services;
-        }
-
-        public static IServiceCollection ConfigureCache(this IServiceCollection services)
-        {
-            services.AddResponseCaching();
             services.AddScoped<ICache, RedisCache>();
             return services;
         }

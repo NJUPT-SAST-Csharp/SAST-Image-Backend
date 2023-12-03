@@ -2,9 +2,9 @@
 using Account.Entity.User.Models;
 using Account.Entity.User.Options;
 
-namespace Account.Application.Account.Repository
+namespace Account.Entity.User.Repositories
 {
-    public interface IUserRepository
+    public interface IUserQueryRepository
     {
         public Task CreateUserAsync(
             CreateUserOptions options,

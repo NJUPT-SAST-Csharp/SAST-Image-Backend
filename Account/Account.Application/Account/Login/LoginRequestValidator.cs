@@ -1,5 +1,4 @@
-﻿using Account.WebAPI.Endpoints.Login;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace Account.Application.Account.Login
 {

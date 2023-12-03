@@ -6,7 +6,7 @@ namespace Account.Application.Account.Register
     {
         public SendCodeRequestValidator()
         {
-            RuleFor(r => r.Email).NotEmpty().EmailAddress();
+            RuleFor(r => r.Email).NotEmpty().MaximumLength(50).EmailAddress();
         }
     }
 }

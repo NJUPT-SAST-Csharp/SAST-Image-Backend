@@ -23,13 +23,12 @@ namespace SastImg.Infrastructure.Extensions
                     configuration.GetConnectionString("SastimgDb")
                         ?? throw new Exception("The connection string \"SastimgDb\" is null.")
                 )
-                .ConfigureRedis(
+                .ConfigureCache(
                     configuration.GetConnectionString("DistributedCache")
                         ?? throw new Exception(
                             "The connection string \"DistributedCache\" is null."
                         )
                 )
-                .ConfigureCache()
                 .ConfigureMediator()
                 .ConfigureRateLimiter(builder.Configuration);
 

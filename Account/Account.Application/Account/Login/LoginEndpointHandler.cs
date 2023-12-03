@@ -1,36 +1,33 @@
-﻿using Account.Application.Account.Repository;
-using Account.Application.SeedWorks;
+﻿using Account.Application.SeedWorks;
 using Account.Application.Services;
-using Account.WebAPI.Endpoints.Login;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Response.ReponseObjects;
+using Account.Entity.User.Repositories;
+using Microsoft.AspNetCore.Http;
 using Shared.Response.Builders;
 
 namespace Account.Application.Account.Login
 {
     public sealed class LoginEndpointHandler(
-        IUserRepository repository,
+        IUserCheckRepository repository,
         IPasswordHasher passwordHasher
-    ) : IEndpointHandler
+    ) : IEndpointHandler<LoginRequest>
     {
-        private readonly IUserRepository _repository = repository;
+        private readonly IUserCheckRepository _repository = repository;
         private readonly IPasswordHasher _passwordHasher = passwordHasher;
 
-        public async Task<
-            Results<Ok<DataResponse<LoginDto>>, BadRequest<BadRequestResponse>>
+        public async Task<IResult
+        //Results<Ok<DataResponse<LoginDto>>, BadRequest<BadRequestResponse>>
         > Handle(LoginRequest request)
         {
-            var userIdentity = await _repository.GetUserIdentityByUsernameAsync(request.Username);
-            if (
-                userIdentity is null
-                || await _passwordHasher.ValidateAsync(request.Password, userIdentity.PasswordHash)
-                    == false
-            )
+            var passwordHash = await _passwordHasher.HashAsync(request.Password);
+            var isValid = await _repository.CheckSignInAsync(request.Username, passwordHash);
+            if (isValid)
+            {
+                return Responses.Data(new LoginDto("2333"));
+            }
+            else
             {
                 return Responses.BadRequest("Login failed.", "Username or password is incorrect.");
             }
-
-            return Responses.Data(new LoginDto("2333"));
         }
     }
 }

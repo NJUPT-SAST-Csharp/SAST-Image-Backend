@@ -4,7 +4,7 @@ using StackExchange.Redis;
 
 namespace SastImg.Infrastructure.Cache
 {
-    internal class RedisCache(IConnectionMultiplexer connectionMultiplexer) : ICache
+    internal sealed class RedisCache(IConnectionMultiplexer connectionMultiplexer) : ICache
     {
         private readonly IDatabase _database = connectionMultiplexer.GetDatabase();
 

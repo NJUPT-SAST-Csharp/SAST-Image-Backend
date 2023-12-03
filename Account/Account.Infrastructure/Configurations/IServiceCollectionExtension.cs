@@ -1,11 +1,11 @@
 ﻿using System.Text;
 using Account.Application.Account.Login;
 using Account.Application.Account.Register;
-using Account.Application.Account.Repository;
+using Account.Application.SeedWorks;
 using Account.Application.Services;
+using Account.Entity.User.Repositories;
 using Account.Infrastructure.Persistence;
 using Account.Infrastructure.Services;
-using Account.WebAPI.Endpoints.Login;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Primitives.Common;
 using Serilog;
+using StackExchange.Redis;
 
 namespace Account.Infrastructure.Configurations
 {
@@ -32,14 +33,102 @@ namespace Account.Infrastructure.Configurations
                 .AddPasswordHasher()
                 .AddPersistence(
                     configuration.GetConnectionString("AccountDb")
-                        ?? throw new NullReferenceException()
+                        ?? throw new NullReferenceException(
+                            "Couldn't find the database connection string."
+                        )
+                )
+                .AddDistributedCache(
+                    configuration.GetConnectionString("DistributedCache")
+                        ?? throw new NullReferenceException(
+                            "Couldn't find the cache connection string."
+                        )
                 );
 
             return services;
         }
 
         /// <summary>
-        /// Configure database & persistence
+        /// Configure password hash provider
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        private static IServiceCollection AddPasswordHasher(this IServiceCollection services)
+        {
+            services.AddTransient<IPasswordHasher, PasswordHasher>();
+            return services;
+        }
+
+        /// <summary>
+        /// Configure endpoint handlers that provided when requests are received from endpoints.
+        /// </summary>
+        private static IServiceCollection AddEndpointHandlers(this IServiceCollection services)
+        {
+            services.AddScoped<IEndpointHandler<LoginRequest>, LoginEndpointHandler>();
+            services.AddScoped<IEndpointHandler<SendCodeRequest>, SendCodeEndpointHandler>();
+            return services;
+        }
+
+        /// <summary>
+        /// Configure model validators. (mainly for request)
+        /// </summary>
+        private static IServiceCollection AddValidators(this IServiceCollection services)
+        {
+            services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
+            services.AddScoped<IValidator<SendCodeRequest>, SendCodeRequestValidator>();
+            return services;
+        }
+
+        /// <summary>
+        /// Configure authentication module based on jwt
+        /// </summary>
+        private static IServiceCollection ConfigureAuthentication(
+            this IServiceCollection services,
+            IConfiguration configuration
+        )
+        {
+            services
+                .AddAuthentication()
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new()
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.Default.GetBytes("233")
+                        ),
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.FromDays(1),
+                        ValidAlgorithms =  ["SHA256", "Argon2"]
+                    };
+                });
+
+            return services;
+        }
+
+        /// <summary>
+        /// Configure authorization module based on policy
+        /// </summary>
+        private static IServiceCollection ConfigureAuthorization(
+            this IServiceCollection services,
+            IConfiguration configuration
+        )
+        {
+            services
+                .AddAuthorizationBuilder()
+                .AddPolicy(
+                    AuthorizationRoles.User,
+                    policy =>
+                        policy
+                            .RequireAuthenticatedUser()
+                            .RequireClaim("role", "user")
+                            .RequireClaim("username")
+                            .RequireClaim("id")
+                );
+            return services;
+        }
+
+        /// <summary>
+        /// Add database & persistence provider
         /// </summary>
         /// <param name="services"></param>
         /// <param name="connectionString"></param>
@@ -66,79 +155,22 @@ namespace Account.Infrastructure.Configurations
                 options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
             });
 
-            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserQueryRepository, UserRepository>();
             return services;
         }
 
         /// <summary>
-        /// Configure password hash provider
+        /// Add distributed cache provider (redis)
         /// </summary>
-        /// <param name="services"></param>
-        /// <returns></returns>
-        private static IServiceCollection AddPasswordHasher(this IServiceCollection services)
-        {
-            services.AddTransient<IPasswordHasher, PasswordHasher>();
-            return services;
-        }
-
-        /// <summary>
-        /// Configure endpoint handlers that provided when requests are received from endpoints.
-        /// </summary>
-        private static IServiceCollection AddEndpointHandlers(this IServiceCollection services)
-        {
-            services.AddScoped<LoginEndpointHandler>();
-            services.AddScoped<SendCodeEndpointHandler>();
-            return services;
-        }
-
-        /// <summary>
-        /// Configure authentication module (jwt)
-        /// </summary>
-        private static IServiceCollection ConfigureAuthentication(
+        private static IServiceCollection AddDistributedCache(
             this IServiceCollection services,
-            IConfiguration configuration
+            string connectionString
         )
         {
-            services
-                .AddAuthentication()
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new()
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.Default.GetBytes("233")
-                        ),
-                        ValidateLifetime = true,
-                        ClockSkew = TimeSpan.FromDays(1),
-                        ValidAlgorithms =  ["SHA256", "Argon2"]
-                    };
-                });
-
-            return services;
-        }
-
-        private static IServiceCollection ConfigureAuthorization(
-            this IServiceCollection services,
-            IConfiguration configuration
-        )
-        {
-            services
-                .AddAuthorizationBuilder()
-                .AddPolicy(
-                    AuthorizationRoles.User,
-                    policy => policy.RequireAuthenticatedUser().RequireClaim("role", "user")
-                );
-            return services;
-        }
-
-        /// <summary>
-        /// Configure model validators. (mainly for request)
-        /// </summary>
-        private static IServiceCollection AddValidators(this IServiceCollection services)
-        {
-            services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
-            services.AddScoped<IValidator<SendCodeRequest>, SendCodeRequestValidator>();
+            services.AddSingleton<IConnectionMultiplexer>(
+                ConnectionMultiplexer.Connect(connectionString)
+            );
+            services.AddScoped<IAuthCache, RedisAuthCache>();
             return services;
         }
     }

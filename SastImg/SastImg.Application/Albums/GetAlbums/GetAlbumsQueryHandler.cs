@@ -17,9 +17,10 @@ namespace SastImg.Application.Albums.GetAlbums
             CancellationToken cancellationToken
         )
         {
+            // TODO: Reconstruct.
             // When request is anonymous.
             IEnumerable<AlbumDto>? albums = null;
-            if (request.User.Identity is null || !request.User.Identity.IsAuthenticated)
+            if (request.User.Identity is null || request.User.Identity.IsAuthenticated == false)
             {
                 // Get from cache first when anonymous.
                 albums = await GetCacheAsync(request.Page, request.AuthorId);
@@ -49,7 +50,7 @@ namespace SastImg.Application.Albums.GetAlbums
             // When user is an auth common user.
             else
             {
-                var result = AuthenticationHelper.TryFetchId(request.User, out long requesterId);
+                var result = AuthenticationExtension.TryFetchId(request.User, out long requesterId);
                 if (!result)
                     throw new Exception(
                         "Successfully validated user identity but failed when fetching user id."
