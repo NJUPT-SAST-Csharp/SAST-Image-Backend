@@ -1,5 +1,6 @@
 ﻿using Account.Application.Account.Login;
-using Account.Application.Account.Register;
+using Account.Application.Account.Register.SendCode;
+using Account.Application.Account.Register.Verify;
 using Account.Application.SeedWorks;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,6 +43,16 @@ namespace Account.WebAPI.Endpoints
                     ) => handler.Handle(request)
                 )
                 .AddValidator<SendCodeRequest>();
+
+            registration
+                .MapPost(
+                    "/verify",
+                    (
+                        [FromServices] IEndpointHandler<VerifyRequest> handler,
+                        VerifyRequest request
+                    ) => handler.Handle(request)
+                )
+                .AddValidator<VerifyRequest>();
         }
     }
 }

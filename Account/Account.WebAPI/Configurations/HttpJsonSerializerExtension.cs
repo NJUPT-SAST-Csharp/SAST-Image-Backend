@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using Account.Application.Account.Login;
-using Account.Application.Account.Register;
+using Account.Application.Account.Register.SendCode;
 using Response.ReponseObjects;
 
 namespace Account.WebAPI.Configurations

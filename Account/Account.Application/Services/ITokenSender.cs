@@ -2,6 +2,10 @@
 {
     public interface ITokenSender
     {
-        Task<bool> SendTokenAsync(string token, CancellationToken cancellationToken = default);
+        Task<bool> SendTokenAsync(
+            string token,
+            string email,
+            CancellationToken cancellationToken = default
+        );
     }
 }

@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Account.Application.Account.Register
+namespace Account.Application.Account.Register.SendCode
 {
     public class SendCodeRequestValidator : AbstractValidator<SendCodeRequest>
     {
