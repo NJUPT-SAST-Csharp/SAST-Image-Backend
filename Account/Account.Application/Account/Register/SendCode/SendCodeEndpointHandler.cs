@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Shared.Response.Builders;
 
-namespace Account.Application.Account.Register
+namespace Account.Application.Account.Register.SendCode
 {
     public sealed class SendCodeEndpointHandler(
         IAuthCache cache,
@@ -32,24 +32,16 @@ namespace Account.Application.Account.Register
                 );
                 return Responses.Conflict(nameof(request.Email), request.Email);
             }
+
             var code = Random.Shared.Next(100000, 999999).ToString();
-            var result = await _sender.SendTokenAsync(code);
+            var result = await _sender.SendTokenAsync(code, request.Email);
             if (result)
             {
-                _logger.LogInformation(
-                    "Registration code {code} has sent to {email}.",
-                    code,
-                    request.Email
-                );
                 _ = _cache.StoreCodeAsync(request.Email, code);
                 return Responses.NoContent;
             }
             else
             {
-                _logger.LogError(
-                    "Failed when try to send registration code to {email}.",
-                    request.Email
-                );
                 return TypedResults.Empty;
             }
         }

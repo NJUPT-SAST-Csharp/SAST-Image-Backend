@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Account.Application.Account.Login;
-using Account.Application.Account.Register;
+using Account.Application.Account.Register.SendCode;
+using Account.Application.Account.Register.Verify;
 using Account.Application.SeedWorks;
 using Account.Application.Services;
 using Account.Entity.User.Repositories;
@@ -56,6 +57,7 @@ namespace Account.Infrastructure.Configurations
         {
             services.AddScoped<IEndpointHandler<LoginRequest>, LoginEndpointHandler>();
             services.AddScoped<IEndpointHandler<SendCodeRequest>, SendCodeEndpointHandler>();
+            services.AddScoped<IEndpointHandler<VerifyRequest>, VerifyRequestHandler>();
             return services;
         }
 
@@ -66,6 +68,7 @@ namespace Account.Infrastructure.Configurations
         {
             services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
             services.AddScoped<IValidator<SendCodeRequest>, SendCodeRequestValidator>();
+            services.AddScoped<IValidator<VerifyRequest>, VerifyRequestValidator>();
             return services;
         }
 
@@ -89,7 +92,12 @@ namespace Account.Infrastructure.Configurations
                         ),
                         ValidateLifetime = true,
                         ClockSkew = TimeSpan.FromDays(1),
-                        ValidAlgorithms =  ["SHA256", "Argon2"]
+                        ValidAlgorithms =
+                        [
+                            SecurityAlgorithms.Sha256,
+                            SecurityAlgorithms.RsaSha256,
+                            SecurityAlgorithms.HmacSha256
+                        ]
                     };
                 });
 

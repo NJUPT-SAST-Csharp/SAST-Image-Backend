@@ -1,7 +1,8 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using Account.Application.Account.Login;
-using Account.Application.Account.Register;
+using Account.Application.Account.Register.SendCode;
+using Account.Application.Account.Register.Verify;
 using Response.ReponseObjects;
 
 namespace Account.WebAPI.Configurations
@@ -24,6 +25,7 @@ namespace Account.WebAPI.Configurations
     }
 
     [JsonSerializable(typeof(LoginRequest))]
+    [JsonSerializable(typeof(VerifyRequest))]
     [JsonSerializable(typeof(SendCodeRequest))]
     [JsonSerializable(typeof(BadRequestResponse))]
     [JsonSerializable(typeof(DataResponse<LoginDto>))]

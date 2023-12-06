@@ -1,10 +1,15 @@
 ﻿using Account.Application.Services;
+using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 
 namespace Account.Infrastructure.Services
 {
-    internal sealed class RedisAuthCache(IConnectionMultiplexer connection) : IAuthCache
+    internal sealed class RedisAuthCache(
+        IConnectionMultiplexer connection,
+        ILogger<RedisAuthCache> logger
+    ) : IAuthCache
     {
+        private readonly ILogger<RedisAuthCache> _logger = logger;
         private readonly IDatabase _database = connection.GetDatabase();
 
         public Task StoreCodeAsync(string key, string code, TimeSpan expiry)
@@ -14,6 +19,7 @@ namespace Account.Infrastructure.Services
                 .ContinueWith(async t =>
                 {
                     await Task.Delay(expiry);
+                    _logger.LogInformation("Registration code {code} has expired.", code);
                     _ = _database.HashDeleteAsync(CacheKeys.RegistrationCodes, key);
                 });
         }
