@@ -22,6 +22,7 @@ namespace Account.Infrastructure.Services
             using Argon2 argon = new Argon2id(Encoding.Default.GetBytes(password));
             argon.Iterations = 16;
             argon.MemorySize = 4096;
+            argon.DegreeOfParallelism = 1;
             argon.Salt = Encoding.Default.GetBytes(_salt);
             return argon.GetBytes(32);
         }
@@ -31,6 +32,7 @@ namespace Account.Infrastructure.Services
             using Argon2 argon = new Argon2id(Encoding.Default.GetBytes(password));
             argon.Iterations = 16;
             argon.MemorySize = 4096;
+            argon.DegreeOfParallelism = 1;
             argon.Salt = Encoding.Default.GetBytes(_salt);
             return argon.GetBytesAsync(32);
         }

@@ -10,11 +10,11 @@ namespace Account.Infrastructure.Services
         public Task StoreCodeAsync(string key, string code, TimeSpan expiry)
         {
             return _database
-                .HashSetAsync("VerificationCodes", key, code)
+                .HashSetAsync(CacheKeys.RegistrationCodes, key, code)
                 .ContinueWith(async t =>
                 {
                     await Task.Delay(expiry);
-                    _ = _database.HashDeleteAsync("VerificationCodes", key);
+                    _ = _database.HashDeleteAsync(CacheKeys.RegistrationCodes, key);
                 });
         }
 
@@ -25,7 +25,7 @@ namespace Account.Infrastructure.Services
 
         public async Task<bool> VerifyCodeAsync(string key, string code)
         {
-            var cacheCode = await _database.HashGetAsync("VerificationCodes", key);
+            var cacheCode = await _database.HashGetAsync(CacheKeys.RegistrationCodes, key);
             if (cacheCode.IsNull)
                 return false;
             else

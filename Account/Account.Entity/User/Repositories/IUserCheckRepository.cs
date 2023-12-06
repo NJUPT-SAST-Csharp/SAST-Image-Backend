@@ -2,8 +2,18 @@
 {
     public interface IUserCheckRepository
     {
-        public Task<bool> CheckEmailExistenceAsync(string email);
-        public Task<bool> CheckUsernameExistenceAsync(string email);
-        public Task<bool> CheckSignInAsync(string username, byte[] password);
+        public Task<bool> CheckEmailExistenceAsync(
+            string email,
+            CancellationToken cancellationToken = default
+        );
+        public Task<bool> CheckUsernameExistenceAsync(
+            string email,
+            CancellationToken cancellationToken = default
+        );
+        public Task<bool> CheckSignInAsync(
+            string username,
+            byte[] password,
+            CancellationToken cancellationToken = default
+        );
     }
 }

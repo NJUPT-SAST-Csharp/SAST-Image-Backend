@@ -10,8 +10,8 @@ namespace Account.Infrastructure.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().OwnsOne(u => u.Profile);
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<User>().OwnsOne(u => u.Profile);
         }
     }
 }

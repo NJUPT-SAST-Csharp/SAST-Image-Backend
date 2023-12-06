@@ -30,7 +30,6 @@ namespace Account.Infrastructure.Configurations
                 .ConfigureAuthorization(configuration)
                 .AddEndpointHandlers()
                 .AddValidators()
-                .AddPasswordHasher()
                 .AddPersistence(
                     configuration.GetConnectionString("AccountDb")
                         ?? throw new NullReferenceException(
@@ -44,17 +43,9 @@ namespace Account.Infrastructure.Configurations
                         )
                 );
 
-            return services;
-        }
-
-        /// <summary>
-        /// Configure password hash provider
-        /// </summary>
-        /// <param name="services"></param>
-        /// <returns></returns>
-        private static IServiceCollection AddPasswordHasher(this IServiceCollection services)
-        {
+            services.AddScoped<ITokenSender, EmailTokenSender>();
             services.AddTransient<IPasswordHasher, PasswordHasher>();
+
             return services;
         }
 
@@ -156,6 +147,8 @@ namespace Account.Infrastructure.Configurations
             });
 
             services.AddScoped<IUserQueryRepository, UserRepository>();
+            services.AddScoped<IUserCommandRepository, UserRepository>();
+            services.AddScoped<IUserCheckRepository, UserRepository>();
             return services;
         }
 

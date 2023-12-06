@@ -1,6 +1,6 @@
 ﻿namespace SastImg.Application.Services
 {
-    internal static class CacheKey
+    internal static class CacheKeys
     {
         /// <summary>
         /// Hashtable containing the pages of all accessible albums in anonymous access level.

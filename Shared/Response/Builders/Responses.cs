@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Response.ReponseObjects;
+using Response.ResponseObjects;
 
 namespace Shared.Response.Builders
 {
@@ -35,5 +36,13 @@ namespace Shared.Response.Builders
                 title: "Too many requests.",
                 statusCode: StatusCodes.Status429TooManyRequests
             );
+
+        public static Conflict<ConflictResponse> Conflict(string fieldName, string value) =>
+            TypedResults.Conflict(
+                new ConflictResponse(new Dictionary<string, string> { { fieldName, value } })
+            );
+
+        public static Conflict<ConflictResponse> Conflict(IDictionary<string, string> conflicts) =>
+            TypedResults.Conflict(new ConflictResponse(conflicts));
     }
 }

@@ -1,5 +1,4 @@
-﻿using Account.Entity.User.Options;
-using Shared.Utilities;
+﻿using Shared.Utilities;
 
 namespace Account.Entity.User
 {
@@ -7,22 +6,19 @@ namespace Account.Entity.User
     {
         private User() { }
 
-        public required long Id { get; init; }
-        public required string Username { get; init; } = string.Empty;
-        public required byte[] PasswordHash { get; init; }
-        public required string Email { get; init; } = string.Empty;
+        public long Id { get; private set; }
+        public string Username { get; private set; } = string.Empty;
+        public byte[] PasswordHash { get; private set; }
+        public string Email { get; private set; } = string.Empty;
 
         public Profile Profile { get; set; } = new();
 
-        public static User CreateUser(CreateUserOptions options)
+        public User(string username, byte[] passwordHash, string email)
         {
-            return new User()
-            {
-                Id = SnowFlakeIdGenerator.NewId,
-                Username = options.Username,
-                PasswordHash = options.PasswordHash,
-                Email = options.Email
-            };
+            Id = SnowFlakeIdGenerator.NewId;
+            Username = username;
+            PasswordHash = passwordHash;
+            Email = email;
         }
 
         public void EditProfile(Profile profile)

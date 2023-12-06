@@ -13,7 +13,7 @@ namespace Account.Infrastructure.Configurations
                 .WriteTo
                 .Console()
                 .CreateLogger();
-            builder.AddSerilog(logger);
+            builder.ClearProviders().AddSerilog(logger);
         }
     }
 }

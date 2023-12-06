@@ -75,12 +75,12 @@ namespace SastImg.Application.Albums.GetAlbums
 
             if (authorId == 0)
                 albums = await _cache.HashGetAsync<IEnumerable<AlbumDto>>(
-                    CacheKey.AnonymousAlbums,
+                    CacheKeys.AnonymousAlbums,
                     page
                 );
             else
                 albums = await _cache.HashGetAsync<IEnumerable<AlbumDto>>(
-                    CacheKey.AnonymousUserAlbums,
+                    CacheKeys.AnonymousUserAlbums,
                     string.Concat('u', authorId, 'p', page)
                 );
 
@@ -90,10 +90,10 @@ namespace SastImg.Application.Albums.GetAlbums
         private Task<bool> SetCacheAsync(IEnumerable<AlbumDto> albums, int page, long userId)
         {
             if (userId == 0)
-                return _cache.HashSetAsync(CacheKey.AnonymousAlbums, page, albums);
+                return _cache.HashSetAsync(CacheKeys.AnonymousAlbums, page, albums);
             else
                 return _cache.HashSetAsync(
-                    CacheKey.AnonymousUserAlbums,
+                    CacheKeys.AnonymousUserAlbums,
                     string.Concat('u', userId, 'p', page),
                     albums
                 );
