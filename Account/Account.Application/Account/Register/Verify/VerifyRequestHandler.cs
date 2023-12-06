@@ -19,8 +19,8 @@ namespace Account.Application.Account.Register.Verify
             }
             else
             {
-                return Results.NoContent();
-            }
+            return Results.NoContent();
         }
     }
+}
 }
