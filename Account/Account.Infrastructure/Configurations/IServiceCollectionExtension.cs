@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Account.Application.Account.Login;
+using Account.Application.Account.Register.CreateAccount;
 using Account.Application.Account.Register.SendCode;
 using Account.Application.Account.Register.Verify;
 using Account.Application.SeedWorks;
@@ -57,7 +58,11 @@ namespace Account.Infrastructure.Configurations
         {
             services.AddScoped<IEndpointHandler<LoginRequest>, LoginEndpointHandler>();
             services.AddScoped<IEndpointHandler<SendCodeRequest>, SendCodeEndpointHandler>();
-            services.AddScoped<IEndpointHandler<VerifyRequest>, VerifyRequestHandler>();
+            services.AddScoped<IEndpointHandler<VerifyRequest>, VerifyEndpointHandler>();
+            services.AddScoped<
+                IEndpointHandler<CreateAccountRequest>,
+                CreateAccountEndpointHandler
+            >();
             return services;
         }
 
@@ -69,6 +74,7 @@ namespace Account.Infrastructure.Configurations
             services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
             services.AddScoped<IValidator<SendCodeRequest>, SendCodeRequestValidator>();
             services.AddScoped<IValidator<VerifyRequest>, VerifyRequestValidator>();
+            services.AddScoped<IValidator<CreateAccountRequest>, CreateAccountValidator>();
             return services;
         }
 

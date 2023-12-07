@@ -11,7 +11,7 @@ namespace Account.Entity.User
         public byte[] PasswordHash { get; private set; }
         public string Email { get; private set; } = string.Empty;
 
-        public Profile Profile { get; set; } = new();
+        public Profile Profile { get; private set; }
 
         public User(string username, byte[] passwordHash, string email)
         {
@@ -19,6 +19,7 @@ namespace Account.Entity.User
             Username = username;
             PasswordHash = passwordHash;
             Email = email;
+            Profile = new Profile() { Nickname = username };
         }
 
         public void EditProfile(Profile profile)

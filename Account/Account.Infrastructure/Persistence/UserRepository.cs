@@ -55,15 +55,6 @@ namespace Account.Infrastructure.Persistence
             CancellationToken cancellationToken = default
         )
         {
-            var isExist = await CheckEmailExistenceAsync(user.Email);
-            if (isExist)
-            {
-                _logger.LogInformation(
-                    "Try to insert duplicated user \"{username}\".",
-                    user.Username
-                );
-                return false;
-            }
             try
             {
                 await _dbContext.Users.AddAsync(user, cancellationToken);

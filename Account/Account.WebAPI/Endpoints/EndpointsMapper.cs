@@ -1,8 +1,6 @@
 ﻿using Account.Application.Account.Login;
 using Account.Application.Account.Register.SendCode;
 using Account.Application.Account.Register.Verify;
-using Account.Application.SeedWorks;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Account.WebAPI.Endpoints
 {
@@ -19,13 +17,7 @@ namespace Account.WebAPI.Endpoints
         {
             var account = builder.MapGroup("/account");
 
-            account
-                .MapPost(
-                    "/login",
-                    ([FromServices] IEndpointHandler<LoginRequest> handler, LoginRequest request) =>
-                        handler.Handle(request)
-                )
-                .AddValidator<LoginRequest>();
+            account.AddPost<LoginRequest>("/login");
 
             MapRegistration(account);
         }
@@ -34,25 +26,11 @@ namespace Account.WebAPI.Endpoints
         {
             var registration = builder.MapGroup("/registration");
 
-            registration
-                .MapPost(
-                    "/sendCode",
-                    (
-                        [FromServices] IEndpointHandler<SendCodeRequest> handler,
-                        SendCodeRequest request
-                    ) => handler.Handle(request)
-                )
-                .AddValidator<SendCodeRequest>();
+            registration.AddPost<SendCodeRequest>("/sendCode");
 
-            registration
-                .MapPost(
-                    "/verify",
-                    (
-                        [FromServices] IEndpointHandler<VerifyRequest> handler,
-                        VerifyRequest request
-                    ) => handler.Handle(request)
-                )
-                .AddValidator<VerifyRequest>();
+            registration.AddPost<VerifyRequest>("/verify");
+
+            registration.AddPost<VerifyRequest>("/createAccount");
         }
     }
 }

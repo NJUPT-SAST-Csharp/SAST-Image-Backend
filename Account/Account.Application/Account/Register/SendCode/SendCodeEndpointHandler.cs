@@ -34,16 +34,10 @@ namespace Account.Application.Account.Register.SendCode
             }
 
             var code = Random.Shared.Next(100000, 999999).ToString();
+
             var result = await _sender.SendTokenAsync(code, request.Email);
-            if (result)
-            {
-                _ = _cache.StoreCodeAsync(request.Email, code);
-                return Responses.NoContent;
-            }
-            else
-            {
-                return TypedResults.Empty;
-            }
+            _ = _cache.StoreCodeAsync(request.Email, code);
+            return Responses.NoContent;
         }
     }
 }

@@ -10,4 +10,8 @@
     <ProjectReference Include="..\..\Shared\Utilities\Utilities.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Role\" />
+  </ItemGroup>
+
 </Project>
