@@ -1,5 +1,5 @@
-﻿using Account.Entity.User;
-using Account.Entity.User.Repositories;
+﻿using Account.Entity.UserEntity;
+using Account.Entity.UserEntity.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -21,22 +21,19 @@ namespace Account.Infrastructure.Persistence
             return _dbContext
                 .Users
                 .Select(u => u.Email)
-                .AnyAsync(e => e == email, cancellationToken);
+                .AnyAsync(e => e == email.ToUpperInvariant(), cancellationToken);
         }
 
-        public Task<bool> CheckSignInAsync(
+        public Task<byte[]?> RetrievePasswordHashAsync(
             string username,
-            byte[] passwordHash,
             CancellationToken cancellationToken = default
         )
         {
             return _dbContext
                 .Users
-                .Select(u => new { u.Username, u.PasswordHash })
-                .AnyAsync(
-                    u => u.Username == username && u.PasswordHash == passwordHash,
-                    cancellationToken: cancellationToken
-                );
+                .Where(u => u.UsernameNormalized == username.ToUpperInvariant())
+                .Select(u => u.PasswordHash)
+                .FirstOrDefaultAsync(cancellationToken);
         }
 
         public Task<bool> CheckUsernameExistenceAsync(
@@ -46,8 +43,8 @@ namespace Account.Infrastructure.Persistence
         {
             return _dbContext
                 .Users
-                .Select(u => u.Username)
-                .AnyAsync(name => name == username, cancellationToken);
+                .Select(u => u.UsernameNormalized)
+                .AnyAsync(name => name == username.ToUpperInvariant(), cancellationToken);
         }
 
         public async Task<bool> CreateUserAsync(
@@ -83,7 +80,10 @@ namespace Account.Infrastructure.Persistence
         {
             return _dbContext
                 .Users
-                .FirstOrDefaultAsync(u => u.Username == username, cancellationToken);
+                .FirstOrDefaultAsync(
+                    u => u.UsernameNormalized == username.ToUpperInvariant(),
+                    cancellationToken
+                );
         }
     }
 }

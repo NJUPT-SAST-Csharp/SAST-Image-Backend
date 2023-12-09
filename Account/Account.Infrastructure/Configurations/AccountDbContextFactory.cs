@@ -8,14 +8,9 @@ namespace Account.Infrastructure.Configurations
     {
         public AccountDbContext CreateDbContext(string[] args)
         {
-            var optionsBuilder = new DbContextOptionsBuilder<AccountDbContext>();
-            optionsBuilder
-                .UseNpgsql(
-                    "Host=localhost;Port=5432;Database=sastimg_account;Username=postgres;Password=150524"
-                )
-                .UseSnakeCaseNamingConvention();
-
-            return new AccountDbContext(optionsBuilder.Options);
+            DbContextOptionsBuilder<AccountDbContext> optionsBuilder = new();
+            optionsBuilder.UseNpgsql(args.First()).UseSnakeCaseNamingConvention();
+            return new(optionsBuilder.Options);
         }
     }
 }

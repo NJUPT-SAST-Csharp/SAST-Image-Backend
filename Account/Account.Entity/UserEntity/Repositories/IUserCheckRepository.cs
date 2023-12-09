@@ -1,4 +1,4 @@
-﻿namespace Account.Entity.User.Repositories
+﻿namespace Account.Entity.UserEntity.Repositories
 {
     public interface IUserCheckRepository
     {
@@ -10,9 +10,8 @@
             string email,
             CancellationToken cancellationToken = default
         );
-        public Task<bool> CheckSignInAsync(
+        public Task<byte[]?> RetrievePasswordHashAsync(
             string username,
-            byte[] password,
             CancellationToken cancellationToken = default
         );
     }

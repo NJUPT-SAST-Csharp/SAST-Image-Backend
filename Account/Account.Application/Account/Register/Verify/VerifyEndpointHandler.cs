@@ -6,9 +6,9 @@ namespace Account.Application.Account.Register.Verify
 {
     public sealed class VerifyEndpointHandler : IEndpointHandler<VerifyRequest>
     {
-        public async Task<IResult> Handle(VerifyRequest request)
+        public Task<IResult> Handle(VerifyRequest request)
         {
-            return Responses.NoContent;
+            return Task.FromResult(Responses.NoContent as IResult);
         }
     }
 }

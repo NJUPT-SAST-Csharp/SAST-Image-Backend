@@ -12,12 +12,14 @@ builder
     .AddJsonFile("appsettings.Development.json")
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json");
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 builder.Services.ConfigureJsonSerializer();
 
 builder.Services.ConfigureServices(builder.Configuration);
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.ConfigureSwagger();
+}
 
 var app = builder.Build();
 

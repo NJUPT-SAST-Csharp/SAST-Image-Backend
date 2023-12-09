@@ -13,13 +13,13 @@ namespace Account.Infrastructure.Services
     {
         private readonly int _port = configuration.GetSection("SMS").GetValue<int>("Port");
         private readonly string _host =
-            configuration.GetSection("SMS").GetValue<string>("Host")
+            configuration["SMS:Host"]
             ?? throw new ArgumentNullException("Couldn't load 'Host' from configuration.");
         private readonly string _username =
-            configuration.GetSection("SMS").GetValue<string>("Username")
+            configuration["SMS:Username"]
             ?? throw new ArgumentNullException("Couldn't load 'Username' from configuration.");
         private readonly string _password =
-            configuration.GetSection("SMS").GetValue<string>("Password")
+            configuration["SMS:Password"]
             ?? throw new ArgumentNullException("Couldn't load 'Password' from configuration.");
 
         private readonly ILogger _logger = logger;
@@ -32,9 +32,10 @@ namespace Account.Infrastructure.Services
         {
             try
             {
+                await Task.Run(() => { }, cancellationToken);
                 //await SendEmailAsync(email, "Register code", code);
                 _logger.LogInformation(
-                    "Registrantion code {code} has sent to {email}.",
+                    "Registrantion code [{code}] has sent to [{email}].",
                     code,
                     email
                 );
@@ -43,7 +44,7 @@ namespace Account.Infrastructure.Services
             catch
             {
                 _logger.LogError(
-                    "Failed when try to send registration code {code} to {email}.",
+                    "Failed when try to send registration code [{code}] to [{email}].",
                     code,
                     email
                 );

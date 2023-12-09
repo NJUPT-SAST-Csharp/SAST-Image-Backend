@@ -22,11 +22,12 @@
     <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
     <PackageReference Include="StackExchange.Redis" Version="2.7.4" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Primitives\Primitives.csproj" />
+    <ProjectReference Include="..\..\Shared\Auth\Auth.csproj" />
     <ProjectReference Include="..\Account.Application\Account.Application.csproj" />
     <ProjectReference Include="..\Account.Entity\Account.Entity.csproj" />
   </ItemGroup>

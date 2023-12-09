@@ -1,4 +1,4 @@
-﻿namespace Account.Entity.User.Repositories
+﻿namespace Account.Entity.UserEntity.Repositories
 {
     public interface IUserQueryRepository
     {

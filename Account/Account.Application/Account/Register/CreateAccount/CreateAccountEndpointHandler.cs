@@ -1,7 +1,7 @@
 ﻿using Account.Application.SeedWorks;
 using Account.Application.Services;
-using Account.Entity.User;
-using Account.Entity.User.Repositories;
+using Account.Entity.UserEntity;
+using Account.Entity.UserEntity.Repositories;
 using Microsoft.AspNetCore.Http;
 using Shared.Response.Builders;
 

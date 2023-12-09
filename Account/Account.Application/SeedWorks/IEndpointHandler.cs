@@ -2,9 +2,9 @@
 
 namespace Account.Application.SeedWorks
 {
-    public interface IEndpointHandler<T>
-        where T : IRequest
+    public interface IEndpointHandler<TRequest>
+        where TRequest : IRequest
     {
-        Task<IResult> Handle(T request);
+        Task<IResult> Handle(TRequest request);
     }
 }

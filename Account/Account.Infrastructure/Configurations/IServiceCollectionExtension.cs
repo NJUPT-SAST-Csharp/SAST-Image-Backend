@@ -1,20 +1,25 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
+using Account.Application.Account.Authorize;
 using Account.Application.Account.Login;
 using Account.Application.Account.Register.CreateAccount;
 using Account.Application.Account.Register.SendCode;
 using Account.Application.Account.Register.Verify;
 using Account.Application.SeedWorks;
 using Account.Application.Services;
-using Account.Entity.User.Repositories;
+using Account.Entity.RoleEntity.Repositories;
+using Account.Entity.UserEntity.Repositories;
 using Account.Infrastructure.Persistence;
 using Account.Infrastructure.Services;
+using Auth.Authorization;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using Primitives.Common;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using StackExchange.Redis;
 
@@ -30,8 +35,7 @@ namespace Account.Infrastructure.Configurations
             services
                 .ConfigureAuthentication(configuration)
                 .ConfigureAuthorization(configuration)
-                .AddEndpointHandlers()
-                .AddValidators()
+                .ConfigureEndpoints()
                 .AddPersistence(
                     configuration.GetConnectionString("AccountDb")
                         ?? throw new NullReferenceException(
@@ -47,72 +51,104 @@ namespace Account.Infrastructure.Configurations
 
             services.AddScoped<ITokenSender, EmailTokenSender>();
             services.AddTransient<IPasswordHasher, PasswordHasher>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }
 
-        /// <summary>
-        /// Configure endpoint handlers that provided when requests are received from endpoints.
-        /// </summary>
-        private static IServiceCollection AddEndpointHandlers(this IServiceCollection services)
+        public static IServiceCollection ConfigureSwagger(this IServiceCollection services)
         {
-            services.AddScoped<IEndpointHandler<LoginRequest>, LoginEndpointHandler>();
-            services.AddScoped<IEndpointHandler<SendCodeRequest>, SendCodeEndpointHandler>();
-            services.AddScoped<IEndpointHandler<VerifyRequest>, VerifyEndpointHandler>();
-            services.AddScoped<
-                IEndpointHandler<CreateAccountRequest>,
-                CreateAccountEndpointHandler
-            >();
+            services.AddEndpointsApiExplorer();
+            services.AddSwaggerGen(options =>
+            {
+                var scheme = new OpenApiSecurityScheme
+                {
+                    Description = "Authorization Header \r\nExample:'Bearer 123456789'",
+                    Reference = new() { Type = ReferenceType.SecurityScheme, Id = "Authorization" },
+                    Scheme = "oauth2",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey
+                };
+                options.AddSecurityDefinition("Authorization", scheme);
+                var requirement = new OpenApiSecurityRequirement { [scheme] = new List<string>() };
+                options.AddSecurityRequirement(requirement);
+                var xmlFilename = $"{Assembly.GetEntryAssembly()!.GetName().Name}.xml";
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+            });
             return services;
         }
 
-        /// <summary>
-        /// Configure model validators. (mainly for request)
-        /// </summary>
-        private static IServiceCollection AddValidators(this IServiceCollection services)
+        public static IServiceCollection ConfigureEndpoints(this IServiceCollection services)
         {
-            services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
-            services.AddScoped<IValidator<SendCodeRequest>, SendCodeRequestValidator>();
-            services.AddScoped<IValidator<VerifyRequest>, VerifyRequestValidator>();
-            services.AddScoped<IValidator<CreateAccountRequest>, CreateAccountValidator>();
+            services
+                .RegisterEndpointResolver<
+                    LoginRequest,
+                    LoginEndpointHandler,
+                    LoginRequestValidator
+                >()
+                .RegisterEndpointResolver<
+                    SendCodeRequest,
+                    SendCodeEndpointHandler,
+                    SendCodeRequestValidator
+                >()
+                .RegisterEndpointResolver<
+                    VerifyRequest,
+                    VerifyEndpointHandler,
+                    VerifyRequestValidator
+                >()
+                .RegisterEndpointResolver<
+                    CreateAccountRequest,
+                    CreateAccountEndpointHandler,
+                    CreateAccountValidator
+                >()
+                .RegisterEndpointResolver<
+                    AuthorizeRequest,
+                    AuthorizeEndpointHandler,
+                    AuthorizeRequestValidator
+                >();
             return services;
         }
 
-        /// <summary>
-        /// Configure authentication module based on jwt
-        /// </summary>
         private static IServiceCollection ConfigureAuthentication(
             this IServiceCollection services,
             IConfiguration configuration
         )
         {
             services
-                .AddAuthentication()
+                .AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
                 .AddJwtBearer(options =>
                 {
+                    var secKey =
+                        configuration["Authentication:SecKey"]
+                        ?? throw new NullReferenceException("Couldn't find 'SecKey'.");
                     options.TokenValidationParameters = new()
                     {
-                        ValidateIssuerSigningKey = true,
+                        NameClaimType = "Username",
+                        RoleClaimType = "Roles",
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.Default.GetBytes("233")
+                            Encoding.Default.GetBytes(secKey)
                         ),
+                        ValidateIssuerSigningKey = true,
                         ValidateLifetime = true,
-                        ClockSkew = TimeSpan.FromDays(1),
-                        ValidAlgorithms =
-                        [
-                            SecurityAlgorithms.Sha256,
-                            SecurityAlgorithms.RsaSha256,
-                            SecurityAlgorithms.HmacSha256
-                        ]
+                        LifetimeValidator = (notbefore, expires, _, _) =>
+                        {
+                            return DateTime.UtcNow > (notbefore ?? DateTime.MinValue)
+                                && DateTime.UtcNow < (expires ?? DateTime.MaxValue);
+                        },
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ValidAlgorithms = [configuration["Authentication:Algorithm"]]
                     };
                 });
 
             return services;
         }
 
-        /// <summary>
-        /// Configure authorization module based on policy
-        /// </summary>
         private static IServiceCollection ConfigureAuthorization(
             this IServiceCollection services,
             IConfiguration configuration
@@ -125,19 +161,30 @@ namespace Account.Infrastructure.Configurations
                     policy =>
                         policy
                             .RequireAuthenticatedUser()
-                            .RequireClaim("role", "user")
-                            .RequireClaim("username")
-                            .RequireClaim("id")
+                            .RequireClaim("Username")
+                            .RequireClaim("Roles", AuthorizationRoles.User)
+                            .RequireClaim("Id")
+                )
+                .AddPolicy(
+                    AuthorizationRoles.Admin,
+                    policy =>
+                        policy
+                            .RequireAuthenticatedUser()
+                            .RequireClaim("Username")
+                            .RequireClaim("Roles", AuthorizationRoles.Admin)
+                            .RequireClaim("Id")
+                )
+                .AddPolicy(
+                    AuthorizationRoles.Registrant,
+                    policy =>
+                        policy
+                            .RequireAuthenticatedUser()
+                            .RequireClaim("Email")
+                            .RequireClaim("Roles", AuthorizationRoles.Registrant)
                 );
             return services;
         }
 
-        /// <summary>
-        /// Add database & persistence provider
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="connectionString"></param>
-        /// <returns></returns>
         private static IServiceCollection AddPersistence(
             this IServiceCollection services,
             string connectionString
@@ -163,12 +210,10 @@ namespace Account.Infrastructure.Configurations
             services.AddScoped<IUserQueryRepository, UserRepository>();
             services.AddScoped<IUserCommandRepository, UserRepository>();
             services.AddScoped<IUserCheckRepository, UserRepository>();
+            services.AddScoped<IRoleRespository, RoleRepository>();
             return services;
         }
 
-        /// <summary>
-        /// Add distributed cache provider (redis)
-        /// </summary>
         private static IServiceCollection AddDistributedCache(
             this IServiceCollection services,
             string connectionString
@@ -178,6 +223,18 @@ namespace Account.Infrastructure.Configurations
                 ConnectionMultiplexer.Connect(connectionString)
             );
             services.AddScoped<IAuthCache, RedisAuthCache>();
+            return services;
+        }
+
+        private static IServiceCollection RegisterEndpointResolver<TRequest, THandler, TValidator>(
+            this IServiceCollection services
+        )
+            where TRequest : IRequest
+            where THandler : class, IEndpointHandler<TRequest>
+            where TValidator : class, IValidator<TRequest>
+        {
+            services.AddScoped<IEndpointHandler<TRequest>, THandler>();
+            services.AddScoped<IValidator<TRequest>, TValidator>();
             return services;
         }
     }

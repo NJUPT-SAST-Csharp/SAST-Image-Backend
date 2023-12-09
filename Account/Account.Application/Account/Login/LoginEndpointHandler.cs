@@ -1,6 +1,6 @@
 ﻿using Account.Application.SeedWorks;
 using Account.Application.Services;
-using Account.Entity.User.Repositories;
+using Account.Entity.UserEntity.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Shared.Response.Builders;
@@ -21,11 +21,19 @@ namespace Account.Application.Account.Login
         //Results<Ok<DataResponse<LoginDto>>, BadRequest<BadRequestResponse>>
         > Handle(LoginRequest request)
         {
-            var passwordHash = await _passwordHasher.HashAsync(request.Password);
-            var isValid = await _repository.CheckSignInAsync(request.Username, passwordHash);
+            var passwordHash = await _repository.RetrievePasswordHashAsync(request.Username);
+            if (passwordHash is null)
+            {
+                return Responses.BadRequest(
+                    "Login failed.",
+                    "Username or passwordHash is incorrect."
+                );
+            }
+
+            var isValid = await _passwordHasher.ValidateAsync(request.Password, passwordHash);
             if (isValid)
             {
-                _logger.LogInformation("User \"{username}\" logged in.", request.Username);
+                _logger.LogInformation("UserEntity \"{username}\" logged in.", request.Username);
                 return Responses.Data(new LoginDto("2333"));
             }
             else
@@ -35,7 +43,10 @@ namespace Account.Application.Account.Login
                     request.Username,
                     request.Password
                 );
-                return Responses.BadRequest("Login failed.", "Username or password is incorrect.");
+                return Responses.BadRequest(
+                    "Login failed.",
+                    "Username or passwordHash is incorrect."
+                );
             }
         }
     }

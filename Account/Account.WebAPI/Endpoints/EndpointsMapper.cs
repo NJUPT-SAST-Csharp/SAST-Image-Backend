@@ -1,6 +1,10 @@
-﻿using Account.Application.Account.Login;
+﻿using System.Security.Claims;
+using Account.Application.Account.Authorize;
+using Account.Application.Account.Login;
+using Account.Application.Account.Register.CreateAccount;
 using Account.Application.Account.Register.SendCode;
 using Account.Application.Account.Register.Verify;
+using Auth.Authorization;
 
 namespace Account.WebAPI.Endpoints
 {
@@ -9,6 +13,10 @@ namespace Account.WebAPI.Endpoints
         internal static WebApplication MapEndpoints(this WebApplication app)
         {
             var api = app.MapGroup("/api");
+
+            api.MapPost("/test", (ClaimsPrincipal user) => user.Identity)
+                .RequireAuthorization(AuthorizationRoles.User);
+
             MapAccount(api);
             return app;
         }
@@ -16,6 +24,8 @@ namespace Account.WebAPI.Endpoints
         private static void MapAccount(RouteGroupBuilder builder)
         {
             var account = builder.MapGroup("/account");
+
+            account.AddPost<AuthorizeRequest>("/authorize");
 
             account.AddPost<LoginRequest>("/login");
 
@@ -30,7 +40,7 @@ namespace Account.WebAPI.Endpoints
 
             registration.AddPost<VerifyRequest>("/verify");
 
-            registration.AddPost<VerifyRequest>("/createAccount");
+            registration.AddPost<CreateAccountRequest>("/createAccount");
         }
     }
 }

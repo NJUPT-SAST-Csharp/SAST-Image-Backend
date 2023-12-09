@@ -59,11 +59,6 @@ namespace Account.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("email");
 
-                    b.Property<string>("EmailNormalized")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("email_normalized");
-
                     b.Property<byte[]>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("bytea")
@@ -82,9 +77,9 @@ namespace Account.Infrastructure.Persistence.Migrations
                     b.HasKey("Id")
                         .HasName("pk_users");
 
-                    b.HasIndex("EmailNormalized")
+                    b.HasIndex("Email")
                         .IsUnique()
-                        .HasDatabaseName("ix_users_email_normalized");
+                        .HasDatabaseName("ix_users_email");
 
                     b.HasIndex("UsernameNormalized")
                         .IsUnique()
