@@ -10,9 +10,5 @@
             string email,
             CancellationToken cancellationToken = default
         );
-        public Task<byte[]?> RetrievePasswordHashAsync(
-            string username,
-            CancellationToken cancellationToken = default
-        );
     }
 }

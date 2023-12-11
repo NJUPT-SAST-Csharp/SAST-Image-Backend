@@ -29,10 +29,10 @@ namespace Account.WebAPI.Endpoints
                 .AddValidator<TRequest>();
         }
 
-        public static RouteHandlerBuilder AddAuthPost<TRequest>(
+        public static RouteHandlerBuilder AddPost<TRequest>(
             this RouteGroupBuilder builder,
             string route,
-            Func<ClaimsPrincipal, TRequest> middle
+            string policy
         )
             where TRequest : class, IRequest
         {
@@ -40,12 +40,33 @@ namespace Account.WebAPI.Endpoints
                 .MapPost(
                     route,
                     (
-                        [FromServices] IEndpointHandler<TRequest> handler,
+                        [FromServices] IAuthEndpointHandler<TRequest> handler,
                         TRequest request,
                         ClaimsPrincipal user
-                    ) => handler.Handle(request)
+                    ) => handler.Handle(request, user)
                 )
-                .AddValidator<TRequest>();
+                .AddValidator<TRequest>()
+                .RequireAuthorization(policy);
+        }
+
+        public static RouteHandlerBuilder AddPut<TRequest>(
+            this RouteGroupBuilder builder,
+            string route,
+            string policy
+        )
+            where TRequest : class, IRequest
+        {
+            return builder
+                .MapPut(
+                    route,
+                    (
+                        [FromServices] IAuthEndpointHandler<TRequest> handler,
+                        TRequest request,
+                        ClaimsPrincipal user
+                    ) => handler.Handle(request, user)
+                )
+                .AddValidator<TRequest>()
+                .RequireAuthorization(policy);
         }
     }
 }

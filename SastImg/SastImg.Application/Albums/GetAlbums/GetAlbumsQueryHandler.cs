@@ -1,8 +1,8 @@
-﻿using Primitives.Common;
+﻿using Auth.Authentication;
+using Auth.Authorization;
 using SastImg.Application.Albums.Dtos;
 using SastImg.Application.Services;
 using Shared.Primitives.Query;
-using Utilities;
 
 namespace SastImg.Application.Albums.GetAlbums
 {
@@ -50,7 +50,7 @@ namespace SastImg.Application.Albums.GetAlbums
             // When user is an auth common user.
             else
             {
-                var result = AuthenticationExtension.TryFetchId(request.User, out long requesterId);
+                var result = request.User.TryFetchId(out long requesterId);
                 if (!result)
                     throw new Exception(
                         "Successfully validated user identity but failed when fetching user id."

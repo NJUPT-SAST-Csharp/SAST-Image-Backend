@@ -5,7 +5,9 @@ namespace Account.Entity.UserEntity
 {
     public sealed class User
     {
+#pragma warning disable CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑声明为可以为 null。
         private User() { }
+#pragma warning restore CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑声明为可以为 null。
 
         private readonly List<Role> roles = [];
 
@@ -31,7 +33,20 @@ namespace Account.Entity.UserEntity
         public void EditProfile(string nickname, string bio, Uri? avatar, Uri? header) =>
             Profile = new(nickname, bio, avatar, header);
 
-        public void ChangePassword(byte[] passwordHash) => PasswordHash = passwordHash;
+        public bool ChangePassword(byte[] formerPasswordHash, byte[] newPasswordHash)
+        {
+            if (formerPasswordHash.SequenceEqual(PasswordHash))
+            {
+                PasswordHash = newPasswordHash;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public void ResetPassword(byte[] passwordHash) => PasswordHash = passwordHash;
 
         public void AddRole(Role role) => roles.Add(role);
     }

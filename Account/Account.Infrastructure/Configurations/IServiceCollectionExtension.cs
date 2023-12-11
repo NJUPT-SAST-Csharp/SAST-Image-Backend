@@ -1,10 +1,14 @@
 ﻿using System.Reflection;
 using System.Text;
-using Account.Application.Account.Authorize;
-using Account.Application.Account.Login;
-using Account.Application.Account.Register.CreateAccount;
-using Account.Application.Account.Register.SendCode;
-using Account.Application.Account.Register.Verify;
+using Account.Application.Endpoints.AccountEndpoints.Authorize;
+using Account.Application.Endpoints.AccountEndpoints.ChangePassword;
+using Account.Application.Endpoints.AccountEndpoints.ForgetAccount.ResetPassword;
+using Account.Application.Endpoints.AccountEndpoints.ForgetAccount.SendForgetCode;
+using Account.Application.Endpoints.AccountEndpoints.Login;
+using Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount;
+using Account.Application.Endpoints.AccountEndpoints.Register.SendRegistrationCode;
+using Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistrationCode;
+using Account.Application.Endpoints.UserEndpoints.ChangeProfile;
 using Account.Application.SeedWorks;
 using Account.Application.Services;
 using Account.Entity.RoleEntity.Repositories;
@@ -50,8 +54,8 @@ namespace Account.Infrastructure.Configurations
                 );
 
             services.AddScoped<ITokenSender, EmailTokenSender>();
-            services.AddTransient<IPasswordHasher, PasswordHasher>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
+            services.AddScoped<IJwtProvider, JwtProvider>();
 
             return services;
         }
@@ -88,24 +92,49 @@ namespace Account.Infrastructure.Configurations
                     LoginRequestValidator
                 >()
                 .RegisterEndpointResolver<
-                    SendCodeRequest,
-                    SendCodeEndpointHandler,
-                    SendCodeRequestValidator
+                    SendRegistrationCodeRequest,
+                    SendRegistrationCodeEndpointHandler,
+                    SendRegistrationCodeRequestValidator
                 >()
                 .RegisterEndpointResolver<
-                    VerifyRequest,
-                    VerifyEndpointHandler,
-                    VerifyRequestValidator
+                    VerifyRegistrationCodeRequest,
+                    VerifyRegistrationCodeEndpointHandler,
+                    VerifyRegistrationCodeRequestValidator
                 >()
                 .RegisterEndpointResolver<
+                    SendForgetCodeRequest,
+                    SendForgetCodeEndpointHandler,
+                    SendForgetCodeRequestValidator
+                >()
+                .RegisterEndpointResolver<
+                    VerifyRegistrationCodeRequest,
+                    VerifyRegistrationCodeEndpointHandler,
+                    VerifyRegistrationCodeRequestValidator
+                >()
+                .RegisterEndpointResolver<
+                    ResetPasswordRequest,
+                    ResetPasswordEndpointHandler,
+                    ResetPasswordValidator
+                >()
+                .RegisterAuthEndpointResolver<
+                    AuthorizeRequest,
+                    AuthorizeEndpointHandler,
+                    AuthorizeRequestValidator
+                >()
+                .RegisterAuthEndpointResolver<
                     CreateAccountRequest,
                     CreateAccountEndpointHandler,
                     CreateAccountValidator
                 >()
-                .RegisterEndpointResolver<
-                    AuthorizeRequest,
-                    AuthorizeEndpointHandler,
-                    AuthorizeRequestValidator
+                .RegisterAuthEndpointResolver<
+                    ChangeProfileRequest,
+                    ChangeProfileEndpointHandler,
+                    ChangeProfileRequestValidator
+                >()
+                .RegisterAuthEndpointResolver<
+                    ChangePasswordRequest,
+                    ChangePasswordEndpointHandler,
+                    ChangePasswordRequestValidator
                 >();
             return services;
         }
@@ -190,6 +219,7 @@ namespace Account.Infrastructure.Configurations
             string connectionString
         )
         {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddDbContext<AccountDbContext>(options =>
             {
                 options.UseLoggerFactory(
@@ -234,6 +264,20 @@ namespace Account.Infrastructure.Configurations
             where TValidator : class, IValidator<TRequest>
         {
             services.AddScoped<IEndpointHandler<TRequest>, THandler>();
+            services.AddScoped<IValidator<TRequest>, TValidator>();
+            return services;
+        }
+
+        private static IServiceCollection RegisterAuthEndpointResolver<
+            TRequest,
+            THandler,
+            TValidator
+        >(this IServiceCollection services)
+            where TRequest : IRequest
+            where THandler : class, IAuthEndpointHandler<TRequest>
+            where TValidator : class, IValidator<TRequest>
+        {
+            services.AddScoped<IAuthEndpointHandler<TRequest>, THandler>();
             services.AddScoped<IValidator<TRequest>, TValidator>();
             return services;
         }

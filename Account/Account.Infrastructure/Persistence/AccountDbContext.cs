@@ -15,9 +15,14 @@ namespace Account.Infrastructure.Persistence
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<User>().OwnsOne(u => u.Profile);
             modelBuilder.Entity<User>().HasIndex(u => u.UsernameNormalized).IsUnique();
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
+            modelBuilder.Entity<Profile>().HasKey("id");
+            modelBuilder
+                .Entity<User>()
+                .HasOne(u => u.Profile)
+                .WithOne()
+                .HasForeignKey<Profile>("user_id");
 
             modelBuilder.Entity<Role>().HasIndex(r => r.Name).IsUnique();
         }

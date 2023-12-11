@@ -54,6 +54,11 @@ namespace Auth.Authentication
             return user.TryFetchClaim("Username", out username);
         }
 
+        public static bool TryFetchEmail(this ClaimsPrincipal user, out string? email)
+        {
+            return user.TryFetchClaim("Email", out email);
+        }
+
         public static bool HasRole(this ClaimsPrincipal user, string role)
         {
             foreach (var r in user.FindAll("Roles"))

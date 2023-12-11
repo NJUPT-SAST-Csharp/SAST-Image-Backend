@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Auth\Auth.csproj" />
     <ProjectReference Include="..\SastImg.Domain\SastImg.Domain.csproj" />
   </ItemGroup>
 

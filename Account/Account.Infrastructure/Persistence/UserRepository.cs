@@ -24,18 +24,6 @@ namespace Account.Infrastructure.Persistence
                 .AnyAsync(e => e == email.ToUpperInvariant(), cancellationToken);
         }
 
-        public Task<byte[]?> RetrievePasswordHashAsync(
-            string username,
-            CancellationToken cancellationToken = default
-        )
-        {
-            return _dbContext
-                .Users
-                .Where(u => u.UsernameNormalized == username.ToUpperInvariant())
-                .Select(u => u.PasswordHash)
-                .FirstOrDefaultAsync(cancellationToken);
-        }
-
         public Task<bool> CheckUsernameExistenceAsync(
             string username,
             CancellationToken cancellationToken = default
@@ -55,14 +43,27 @@ namespace Account.Infrastructure.Persistence
             try
             {
                 await _dbContext.Users.AddAsync(user, cancellationToken);
-                await _dbContext.SaveChangesAsync(cancellationToken);
-                return true;
+                var result = await _dbContext.SaveChangesAsync(cancellationToken);
+                return result > 0;
             }
             catch (Exception ex)
             {
                 _logger.LogError("Add user failed for {exception}", ex.ToString());
                 return false;
             }
+        }
+
+        public Task<User?> GetUserByEmailAsync(
+            string email,
+            CancellationToken cancellationToken = default
+        )
+        {
+            return _dbContext
+                .Users
+                .FirstOrDefaultAsync(
+                    user => user.Email == email.ToUpperInvariant(),
+                    cancellationToken
+                );
         }
 
         public Task<User?> GetUserByIdAsync(
