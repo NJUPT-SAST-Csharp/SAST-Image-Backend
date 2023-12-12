@@ -17,12 +17,14 @@ namespace Account.Infrastructure.Persistence
 
             modelBuilder.Entity<User>().HasIndex(u => u.UsernameNormalized).IsUnique();
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
-            modelBuilder.Entity<Profile>().HasKey("id");
             modelBuilder
                 .Entity<User>()
-                .HasOne(u => u.Profile)
+                .HasOne(user => user.Profile)
                 .WithOne()
-                .HasForeignKey<Profile>("user_id");
+                .HasForeignKey<Profile>(profile => profile.Id);
+
+            modelBuilder.Entity<Profile>().HasKey(profile => profile.Id);
+            modelBuilder.Entity<Profile>().ToTable("profiles");
 
             modelBuilder.Entity<Role>().HasIndex(r => r.Name).IsUnique();
         }

@@ -16,5 +16,10 @@
             string email,
             CancellationToken cancellationToken = default
         );
+
+        public Task<User?> GetUserDetailByIdAsync(
+            long userId,
+            CancellationToken cancellationToken = default
+        );
     }
 }

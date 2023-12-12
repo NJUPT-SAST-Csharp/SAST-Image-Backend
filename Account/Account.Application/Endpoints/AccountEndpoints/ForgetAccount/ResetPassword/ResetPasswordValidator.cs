@@ -17,7 +17,8 @@ namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.ResetPass
                 .NotEmpty()
                 .MaximumLength(50)
                 .EmailAddress()
-                .MustAsync(checker.CheckEmailExistenceAsync);
+                .MustAsync(checker.CheckEmailExistenceAsync)
+                .WithMessage("Invalid email");
 
             RuleFor(r => r.Code)
                 .Cascade(CascadeMode.Stop)
@@ -30,7 +31,8 @@ namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.ResetPass
                             code,
                             cancellationToken
                         )
-                );
+                )
+                .WithMessage("Invalid code");
         }
     }
 }

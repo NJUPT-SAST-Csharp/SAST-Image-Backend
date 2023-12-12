@@ -7,7 +7,7 @@ using Shared.Response.Builders;
 
 namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.VerifyForgetCode
 {
-    internal class VerifyForgetCodeEndpointHandler(
+    public sealed class VerifyForgetCodeEndpointHandler(
         IAuthCache cache,
         IUserQueryRepository repository,
         ILogger<VerifyForgetCodeEndpointHandler> logger
@@ -31,7 +31,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.VerifyFor
 
             var code = Random.Shared.Next(100000, 999999);
 
-            _ = _cache.StoreCodeAsync(CacheKeys.Registration, request.Email, code);
+            _ = _cache.StoreCodeAsync(CacheKeys.ForgetAccount, request.Email, code);
 
             return Responses.Data(new VerifyForgetCodeDto(user.Username, code));
         }

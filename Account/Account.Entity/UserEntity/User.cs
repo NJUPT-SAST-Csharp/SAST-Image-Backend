@@ -27,11 +27,13 @@ namespace Account.Entity.UserEntity
             UsernameNormalized = username.ToUpperInvariant();
             Email = email.ToUpperInvariant();
             PasswordHash = passwordHash;
-            Profile = new Profile(username, string.Empty);
+            Profile = new(Id, username, string.Empty);
         }
 
-        public void EditProfile(string nickname, string bio, Uri? avatar, Uri? header) =>
-            Profile = new(nickname, bio, avatar, header);
+        public void EditProfile(string nickname, string bio, Uri? avatar, Uri? header)
+        {
+            Profile = new(Id, nickname, bio, avatar, header);
+        }
 
         public bool ChangePassword(byte[] formerPasswordHash, byte[] newPasswordHash)
         {

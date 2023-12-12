@@ -4,6 +4,7 @@ using Account.Application.Endpoints.AccountEndpoints.Authorize;
 using Account.Application.Endpoints.AccountEndpoints.ChangePassword;
 using Account.Application.Endpoints.AccountEndpoints.ForgetAccount.ResetPassword;
 using Account.Application.Endpoints.AccountEndpoints.ForgetAccount.SendForgetCode;
+using Account.Application.Endpoints.AccountEndpoints.ForgetAccount.VerifyForgetCode;
 using Account.Application.Endpoints.AccountEndpoints.Login;
 using Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount;
 using Account.Application.Endpoints.AccountEndpoints.Register.SendRegistrationCode;
@@ -107,9 +108,9 @@ namespace Account.Infrastructure.Configurations
                     SendForgetCodeRequestValidator
                 >()
                 .RegisterEndpointResolver<
-                    VerifyRegistrationCodeRequest,
-                    VerifyRegistrationCodeEndpointHandler,
-                    VerifyRegistrationCodeRequestValidator
+                    VerifyForgetCodeRequest,
+                    VerifyForgetCodeEndpointHandler,
+                    VerifyForgetCodeRequestValidator
                 >()
                 .RegisterEndpointResolver<
                     ResetPasswordRequest,

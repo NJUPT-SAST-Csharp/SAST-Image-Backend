@@ -2,6 +2,7 @@
 using Account.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Account.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AccountDbContext))]
-    partial class AccountDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231212121001_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,36 +46,6 @@ namespace Account.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("ix_roles_name");
 
                     b.ToTable("roles", (string)null);
-                });
-
-            modelBuilder.Entity("Account.Entity.UserEntity.Profile", b =>
-                {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Avatar")
-                        .HasColumnType("text")
-                        .HasColumnName("avatar");
-
-                    b.Property<string>("Biography")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("biography");
-
-                    b.Property<string>("Header")
-                        .HasColumnType("text")
-                        .HasColumnName("header");
-
-                    b.Property<string>("Nickname")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("nickname");
-
-                    b.HasKey("Id")
-                        .HasName("pk_profiles");
-
-                    b.ToTable("profiles", (string)null);
                 });
 
             modelBuilder.Entity("Account.Entity.UserEntity.User", b =>
@@ -137,14 +110,44 @@ namespace Account.Infrastructure.Persistence.Migrations
                     b.ToTable("role_user", (string)null);
                 });
 
-            modelBuilder.Entity("Account.Entity.UserEntity.Profile", b =>
+            modelBuilder.Entity("Account.Entity.UserEntity.User", b =>
                 {
-                    b.HasOne("Account.Entity.UserEntity.User", null)
-                        .WithOne("Profile")
-                        .HasForeignKey("Account.Entity.UserEntity.Profile", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_profiles_users_id");
+                    b.OwnsOne("Account.Entity.UserEntity.Profile", "Profile", b1 =>
+                        {
+                            b1.Property<long>("UserId")
+                                .HasColumnType("bigint")
+                                .HasColumnName("id");
+
+                            b1.Property<string>("Avatar")
+                                .HasColumnType("text")
+                                .HasColumnName("avatar");
+
+                            b1.Property<string>("Biography")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("biography");
+
+                            b1.Property<string>("Header")
+                                .HasColumnType("text")
+                                .HasColumnName("header");
+
+                            b1.Property<string>("Nickname")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("nickname");
+
+                            b1.HasKey("UserId")
+                                .HasName("pk_profiles");
+
+                            b1.ToTable("profiles", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId")
+                                .HasConstraintName("fk_profiles_users_id");
+                        });
+
+                    b.Navigation("Profile")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("RoleUser", b =>
@@ -162,12 +165,6 @@ namespace Account.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_role_user_users_users_id");
-                });
-
-            modelBuilder.Entity("Account.Entity.UserEntity.User", b =>
-                {
-                    b.Navigation("Profile")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

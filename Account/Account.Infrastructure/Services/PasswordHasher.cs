@@ -59,7 +59,18 @@ namespace Account.Infrastructure.Services
             argon.DegreeOfParallelism = _degreeOfParallelism;
             argon.Salt = Encoding.Default.GetBytes(_salt);
             var bytes = await argon.GetBytesAsync(32);
+
             return bytes.SequenceEqual(passwordHash);
+        }
+
+        private bool Debug(byte[] a, byte[] b)
+        {
+            Console.WriteLine($"{a.Length},{b.Length}");
+            for (var x = 0; x < a.Length && x < b.Length; x++)
+            {
+                Console.WriteLine($"{a[x]} == {b[x]}");
+            }
+            return a.SequenceEqual(b);
         }
     }
 }
