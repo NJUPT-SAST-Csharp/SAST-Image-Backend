@@ -7,7 +7,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount
 {
     public sealed class CreateAccountValidator : AbstractValidator<CreateAccountRequest>
     {
-        public CreateAccountValidator(IAuthCache cache, IUserCheckRepository checker)
+        public CreateAccountValidator(IAuthCodeCache cache, IUserCheckRepository checker)
         {
             ClassLevelCascadeMode = CascadeMode.Stop;
 

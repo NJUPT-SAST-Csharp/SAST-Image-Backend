@@ -1,7 +1,4 @@
-﻿using System.Security.Claims;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Account.Application.Endpoints.AccountEndpoints.Authorize;
+﻿using Account.Application.Endpoints.AccountEndpoints.Authorize;
 using Account.Application.Endpoints.AccountEndpoints.ChangePassword;
 using Account.Application.Endpoints.AccountEndpoints.ForgetAccount.ResetPassword;
 using Account.Application.Endpoints.AccountEndpoints.ForgetAccount.SendForgetCode;
@@ -12,11 +9,20 @@ using Account.Application.Endpoints.AccountEndpoints.Register.SendRegistrationCo
 using Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistrationCode;
 using Account.Application.Endpoints.UserEndpoints.ChangeProfile;
 using Response.ReponseObjects;
+using System.Security.Claims;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Account.WebAPI.Configurations
 {
+    /// <summary>
+    /// TODO: complete
+    /// </summary>
     public static class HttpJsonSerializerExtension
     {
+        /// <summary>
+        /// TODO: complete
+        /// </summary>
         public static IServiceCollection ConfigureJsonSerializer(this IServiceCollection services)
         {
             services.ConfigureHttpJsonOptions(options =>
@@ -33,6 +39,9 @@ namespace Account.WebAPI.Configurations
         }
     }
 
+    /// <summary>
+    /// TODO: complete
+    /// </summary>
     [JsonSerializable(typeof(ClaimsPrincipal))]
     [JsonSerializable(typeof(BadRequestResponse))]
     [JsonSerializable(typeof(LoginRequest))]

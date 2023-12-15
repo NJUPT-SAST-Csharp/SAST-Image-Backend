@@ -31,7 +31,7 @@ namespace Shared.Response.Builders
             string message
         ) => ValidationFailure(new Dictionary<string, string[]> { { parameter, [message] } });
 
-        public static IResult TooManyRequests =>
+        public static ProblemHttpResult TooManyRequests =>
             TypedResults.Problem(
                 title: "Too many requests.",
                 statusCode: StatusCodes.Status429TooManyRequests

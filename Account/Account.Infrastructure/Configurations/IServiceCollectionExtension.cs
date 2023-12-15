@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Text;
 using Account.Application.Endpoints.AccountEndpoints.Authorize;
 using Account.Application.Endpoints.AccountEndpoints.ChangePassword;
 using Account.Application.Endpoints.AccountEndpoints.ForgetAccount.ResetPassword;
@@ -16,14 +15,13 @@ using Account.Entity.RoleEntity.Repositories;
 using Account.Entity.UserEntity.Repositories;
 using Account.Infrastructure.Persistence;
 using Account.Infrastructure.Services;
-using Auth.Authorization;
+using Auth.Authentication.Extensions;
+using Auth.Authorization.Extensions;
 using FluentValidation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using StackExchange.Redis;
@@ -38,8 +36,7 @@ namespace Account.Infrastructure.Configurations
         )
         {
             services
-                .ConfigureAuthentication(configuration)
-                .ConfigureAuthorization(configuration)
+                .ConfigureAuth(configuration)
                 .ConfigureEndpoints()
                 .AddPersistence(
                     configuration.GetConnectionString("AccountDb")
@@ -55,7 +52,6 @@ namespace Account.Infrastructure.Configurations
                 );
 
             services.AddScoped<ITokenSender, EmailTokenSender>();
-            services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IJwtProvider, JwtProvider>();
 
             return services;
@@ -140,78 +136,23 @@ namespace Account.Infrastructure.Configurations
             return services;
         }
 
-        private static IServiceCollection ConfigureAuthentication(
+        public static IServiceCollection ConfigureAuth(
             this IServiceCollection services,
             IConfiguration configuration
         )
         {
-            services
-                .AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(options =>
-                {
-                    var secKey =
-                        configuration["Authentication:SecKey"]
-                        ?? throw new NullReferenceException("Couldn't find 'SecKey'.");
-                    options.TokenValidationParameters = new()
-                    {
-                        NameClaimType = "Username",
-                        RoleClaimType = "Roles",
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.Default.GetBytes(secKey)
-                        ),
-                        ValidateIssuerSigningKey = true,
-                        ValidateLifetime = true,
-                        LifetimeValidator = (notbefore, expires, _, _) =>
-                        {
-                            return DateTime.UtcNow > (notbefore ?? DateTime.MinValue)
-                                && DateTime.UtcNow < (expires ?? DateTime.MaxValue);
-                        },
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        ValidAlgorithms = [configuration["Authentication:Algorithm"]]
-                    };
-                });
-
-            return services;
-        }
-
-        private static IServiceCollection ConfigureAuthorization(
-            this IServiceCollection services,
-            IConfiguration configuration
-        )
-        {
-            services
-                .AddAuthorizationBuilder()
-                .AddPolicy(
-                    AuthorizationRoles.User,
-                    policy =>
-                        policy
-                            .RequireAuthenticatedUser()
-                            .RequireClaim("Username")
-                            .RequireClaim("Roles", AuthorizationRoles.User)
-                            .RequireClaim("Id")
-                )
-                .AddPolicy(
-                    AuthorizationRoles.Admin,
-                    policy =>
-                        policy
-                            .RequireAuthenticatedUser()
-                            .RequireClaim("Username")
-                            .RequireClaim("Roles", AuthorizationRoles.Admin)
-                            .RequireClaim("Id")
-                )
-                .AddPolicy(
-                    AuthorizationRoles.Registrant,
-                    policy =>
-                        policy
-                            .RequireAuthenticatedUser()
-                            .RequireClaim("Email")
-                            .RequireClaim("Roles", AuthorizationRoles.Registrant)
-                );
+            services.AddAuthorizationBuilder().AddBasicPolicies().AddRegistrantPolicy();
+            services.ConfigureJwtAuthentication(options =>
+            {
+                options.SecKey =
+                    configuration["Authentication:SecKey"]
+                    ?? throw new NullReferenceException("Couldn't find 'SecKey'.");
+                options.Algorithms =
+                [
+                    configuration["Authentication:Algorithm"]
+                        ?? throw new NullReferenceException("Couldn't find 'Algorithm'.")
+                ];
+            });
             return services;
         }
 
@@ -253,7 +194,7 @@ namespace Account.Infrastructure.Configurations
             services.AddSingleton<IConnectionMultiplexer>(
                 ConnectionMultiplexer.Connect(connectionString)
             );
-            services.AddScoped<IAuthCache, RedisAuthCache>();
+            services.AddScoped<IAuthCodeCache, RedisAuthCache>();
             return services;
         }
 

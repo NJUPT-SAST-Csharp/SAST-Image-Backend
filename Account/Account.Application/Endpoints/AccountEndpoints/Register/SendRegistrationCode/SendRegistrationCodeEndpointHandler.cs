@@ -8,13 +8,13 @@ using Shared.Response.Builders;
 namespace Account.Application.Endpoints.AccountEndpoints.Register.SendRegistrationCode
 {
     public sealed class SendRegistrationCodeEndpointHandler(
-        IAuthCache cache,
+        IAuthCodeCache cache,
         IUserCheckRepository repository,
         ITokenSender sender,
         ILogger<SendRegistrationCodeEndpointHandler> logger
     ) : IEndpointHandler<SendRegistrationCodeRequest>
     {
-        private readonly IAuthCache _cache = cache;
+        private readonly IAuthCodeCache _cache = cache;
         private readonly IUserCheckRepository _repository = repository;
         private readonly ITokenSender _sender = sender;
         private readonly ILogger<SendRegistrationCodeEndpointHandler> _logger = logger;
@@ -32,7 +32,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.Register.SendRegistrati
                 return Responses.BadRequest("Something went wrong.");
             }
 
-            _ = _cache.StoreCodeAsync(CacheKeys.Registration, request.Email, code);
+            _ = _cache.StoreCodeAsync(CodeCaheKey.Registration, request.Email, code);
             return Responses.NoContent;
         }
     }

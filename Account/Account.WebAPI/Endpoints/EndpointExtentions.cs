@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Account.Application.SeedWorks;
 using Account.Application.Services;
+using Auth.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Account.WebAPI.Endpoints
@@ -32,7 +33,7 @@ namespace Account.WebAPI.Endpoints
         public static RouteHandlerBuilder AddPost<TRequest>(
             this RouteGroupBuilder builder,
             string route,
-            string policy
+            AuthorizationRole role
         )
             where TRequest : class, IRequest
         {
@@ -46,13 +47,13 @@ namespace Account.WebAPI.Endpoints
                     ) => handler.Handle(request, user)
                 )
                 .AddValidator<TRequest>()
-                .RequireAuthorization(policy);
+                .RequireAuthorization(role.ToString());
         }
 
         public static RouteHandlerBuilder AddPut<TRequest>(
             this RouteGroupBuilder builder,
             string route,
-            string policy
+            AuthorizationRole role
         )
             where TRequest : class, IRequest
         {
@@ -66,7 +67,7 @@ namespace Account.WebAPI.Endpoints
                     ) => handler.Handle(request, user)
                 )
                 .AddValidator<TRequest>()
-                .RequireAuthorization(policy);
+                .RequireAuthorization(role.ToString());
         }
     }
 }

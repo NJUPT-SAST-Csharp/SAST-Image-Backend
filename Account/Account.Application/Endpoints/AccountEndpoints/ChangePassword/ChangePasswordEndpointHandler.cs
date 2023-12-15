@@ -1,24 +1,23 @@
-﻿using System.Security.Claims;
-using Account.Application.SeedWorks;
+﻿using Account.Application.SeedWorks;
 using Account.Application.Services;
 using Account.Entity.UserEntity.Repositories;
 using Auth.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Shared.Response.Builders;
+using System.Security.Claims;
+using Utilities;
 
 namespace Account.Application.Endpoints.AccountEndpoints.ChangePassword
 {
     public sealed class ChangePasswordEndpointHandler(
         IUserQueryRepository repository,
-        IPasswordHasher hasher,
         IUnitOfWork unit,
         ILogger<ChangePasswordEndpointHandler> logger
     ) : IAuthEndpointHandler<ChangePasswordRequest>
     {
         private readonly ILogger<ChangePasswordEndpointHandler> _logger = logger;
         private readonly IUserQueryRepository _repository = repository;
-        private readonly IPasswordHasher _hasher = hasher;
         private readonly IUnitOfWork _unit = unit;
 
         public async Task<IResult> Handle(ChangePasswordRequest request, ClaimsPrincipal user)
@@ -37,20 +36,22 @@ namespace Account.Application.Endpoints.AccountEndpoints.ChangePassword
                 return Responses.BadRequest("Something went wrong.");
             }
 
-            var formerPasswordHash = await _hasher.HashAsync(request.FormerPassword);
-            var newPasswordHash = await _hasher.HashAsync(request.NewPassword);
-            var result = targetUser.ChangePassword(formerPasswordHash, newPasswordHash);
+            var formerPasswordHash = await Argon2Hasher.HashAsync(request.FormerPassword, targetUser.PasswordSalt);
 
-            if (result == false)
+            if (formerPasswordHash.SequenceEqual(targetUser.PasswordHash) == false)
             {
                 return Responses.BadRequest("Incorrect former password.");
             }
 
+            targetUser.ResetPassword(request.NewPassword);
+
             _ = _unit.SaveChangesAsync();
+
             _logger.LogInformation(
                 "User [{username}] password has been changed.",
                 targetUser.Username
             );
+
             return Responses.NoContent;
         }
     }

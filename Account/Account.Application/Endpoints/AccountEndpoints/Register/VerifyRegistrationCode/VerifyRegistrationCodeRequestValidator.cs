@@ -9,10 +9,12 @@ namespace Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistra
         : AbstractValidator<VerifyRegistrationCodeRequest>
     {
         public VerifyRegistrationCodeRequestValidator(
-            IAuthCache cache,
+            IAuthCodeCache cache,
             IUserCheckRepository checker
         )
         {
+            ClassLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(r => r.Email)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()
@@ -31,7 +33,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistra
                 .MustAsync(
                     (v, code, cancellationToken) =>
                         cache.VerifyCodeAsync(
-                            CacheKeys.Registration,
+                            CodeCaheKey.Registration,
                             v.Email,
                             code,
                             cancellationToken

@@ -1,23 +1,20 @@
-﻿using System.Security.Claims;
-using Account.Application.SeedWorks;
-using Account.Application.Services;
+﻿using Account.Application.SeedWorks;
 using Account.Entity.UserEntity;
 using Account.Entity.UserEntity.Repositories;
 using Auth.Authentication;
 using Microsoft.AspNetCore.Http;
 using Shared.Response.Builders;
+using System.Security.Claims;
 
 namespace Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount
 {
     public sealed class CreateAccountEndpointHandler(
-        IPasswordHasher hasher,
         IUserCommandRepository repository,
         IUserCheckRepository checker
     ) : IAuthEndpointHandler<CreateAccountRequest>
     {
         private readonly IUserCheckRepository _checker = checker;
         private readonly IUserCommandRepository _repository = repository;
-        private readonly IPasswordHasher _hasher = hasher;
 
         public async Task<IResult> Handle(CreateAccountRequest request, ClaimsPrincipal user)
         {
@@ -27,8 +24,8 @@ namespace Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount
                 return Responses.ValidationFailure("Email", "Duplicated email");
             }
 
-            var hash = await _hasher.HashAsync(request.Password);
-            User newAccount = new(request.Username, hash, email!);
+            User newAccount = new(request.Username, request.Password, email!);
+
             var result = await _repository.CreateUserAsync(newAccount);
 
             if (result == false)

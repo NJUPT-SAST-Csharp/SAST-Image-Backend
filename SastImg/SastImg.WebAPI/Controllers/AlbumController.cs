@@ -22,7 +22,7 @@ namespace SastImg.WebAPI.Controllers
         /// </summary>
         /// <param name="page"></param>
         /// <param name="userId"></param>
-        /// <param name="cancellationToken"></param>
+        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns></returns>
         [HttpGet]
         [ResponseCache(

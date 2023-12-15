@@ -7,13 +7,13 @@ namespace Account.Infrastructure.Services
     internal sealed class RedisAuthCache(
         IConnectionMultiplexer connection,
         ILogger<RedisAuthCache> logger
-    ) : IAuthCache
+    ) : IAuthCodeCache
     {
         private readonly ILogger<RedisAuthCache> _logger = logger;
         private readonly IDatabase _database = connection.GetDatabase();
 
         public Task StoreCodeAsync(
-            string purpose,
+            CodeCaheKey purpose,
             string email,
             int code,
             TimeSpan expiry,
@@ -21,17 +21,17 @@ namespace Account.Infrastructure.Services
         )
         {
             return _database
-                .HashSetAsync(purpose, email.ToUpperInvariant(), code)
+                .HashSetAsync(purpose.ToString(), email.ToUpperInvariant(), code)
                 .ContinueWith(async t =>
                 {
                     await Task.Delay(expiry);
                     _logger.LogInformation("Registration code {code} has expired.", code);
-                    _ = _database.HashDeleteAsync(purpose, email);
+                    _ = _database.HashDeleteAsync(purpose.ToString(), email);
                 });
         }
 
         public Task StoreCodeAsync(
-            string purpose,
+            CodeCaheKey purpose,
             string email,
             int code,
             CancellationToken cancellationToken = default
@@ -47,22 +47,25 @@ namespace Account.Infrastructure.Services
         }
 
         public Task<bool> DeleteCodeAsync(
-            string purpose,
+            CodeCaheKey purpose,
             string email,
             CancellationToken cancellationToken = default
         )
         {
-            return _database.HashDeleteAsync(purpose, email.ToUpperInvariant());
+            return _database.HashDeleteAsync(purpose.ToString(), email.ToUpperInvariant());
         }
 
         public async Task<bool> VerifyCodeAsync(
-            string purpose,
+            CodeCaheKey purpose,
             string email,
             int code,
             CancellationToken cancellationToken = default
         )
         {
-            var cacheCode = await _database.HashGetAsync(purpose, email.ToUpperInvariant());
+            var cacheCode = await _database.HashGetAsync(
+                purpose.ToString(),
+                email.ToUpperInvariant()
+            );
             if (cacheCode.IsNull)
                 return false;
             else

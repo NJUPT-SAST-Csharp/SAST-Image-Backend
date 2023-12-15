@@ -19,7 +19,7 @@ namespace SastImg.Application.Albums.GetAlbums
         {
             // TODO: Reconstruct.
             // When request is anonymous.
-            IEnumerable<AlbumDto>? albums = null;
+            IEnumerable<AlbumDto>? albums;
             if (request.User.Identity is null || request.User.Identity.IsAuthenticated == false)
             {
                 // Get from cache first when anonymous.
@@ -37,7 +37,7 @@ namespace SastImg.Application.Albums.GetAlbums
                 return albums;
             }
             // When user is an administrator.
-            else if (request.User.IsInRole(AuthorizationRoles.Admin))
+            else if (request.User.IsInRole(AuthorizationRole.Admin.ToString()))
             {
                 var query = GetAlbumsSqlStrategy.Admin(request.Page, request.AuthorId);
                 albums = await _database.QueryAsync<AlbumDto>(

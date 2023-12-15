@@ -4,6 +4,6 @@
     {
         public string GetRegistrantJwt(string email);
 
-        public string GetLoginJwt(string userId, string username);
+        public string GetLoginJwt(string userId, string username, IEnumerable<string> roles);
     }
 }

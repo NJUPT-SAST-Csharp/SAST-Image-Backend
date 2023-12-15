@@ -5,11 +5,11 @@ using Shared.Response.Builders;
 
 namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.SendForgetCode
 {
-    public sealed class SendForgetCodeEndpointHandler(ITokenSender sender, IAuthCache cache)
+    public sealed class SendForgetCodeEndpointHandler(ITokenSender sender, IAuthCodeCache cache)
         : IEndpointHandler<SendForgetCodeRequest>
     {
         private readonly ITokenSender _sender = sender;
-        private readonly IAuthCache _cache = cache;
+        private readonly IAuthCodeCache _cache = cache;
 
         public async Task<IResult> Handle(SendForgetCodeRequest request)
         {
@@ -19,7 +19,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.SendForge
             {
                 return Responses.BadRequest("Something went wrong.");
             }
-            _ = _cache.StoreCodeAsync(CacheKeys.ForgetAccount, request.Email, code);
+            _ = _cache.StoreCodeAsync(CodeCaheKey.ForgetAccount, request.Email, code);
             return Responses.NoContent;
         }
     }

@@ -8,14 +8,14 @@ using Shared.Response.Builders;
 namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.VerifyForgetCode
 {
     public sealed class VerifyForgetCodeEndpointHandler(
-        IAuthCache cache,
+        IAuthCodeCache cache,
         IUserQueryRepository repository,
         ILogger<VerifyForgetCodeEndpointHandler> logger
     ) : IEndpointHandler<VerifyForgetCodeRequest>
     {
         private readonly ILogger<VerifyForgetCodeEndpointHandler> _logger = logger;
         private readonly IUserQueryRepository _repository = repository;
-        private readonly IAuthCache _cache = cache;
+        private readonly IAuthCodeCache _cache = cache;
 
         public async Task<IResult> Handle(VerifyForgetCodeRequest request)
         {
@@ -27,11 +27,11 @@ namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.VerifyFor
                 return Responses.BadRequest("Something went wrong.");
             }
 
-            _ = _cache.DeleteCodeAsync(CacheKeys.Registration, request.Email);
+            _ = _cache.DeleteCodeAsync(CodeCaheKey.Registration, request.Email);
 
             var code = Random.Shared.Next(100000, 999999);
 
-            _ = _cache.StoreCodeAsync(CacheKeys.ForgetAccount, request.Email, code);
+            _ = _cache.StoreCodeAsync(CodeCaheKey.ForgetAccount, request.Email, code);
 
             return Responses.Data(new VerifyForgetCodeDto(user.Username, code));
         }

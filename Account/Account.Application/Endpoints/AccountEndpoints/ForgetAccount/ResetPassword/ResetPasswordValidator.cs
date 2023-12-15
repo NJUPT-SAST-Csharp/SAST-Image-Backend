@@ -6,7 +6,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.ResetPass
 {
     public sealed class ResetPasswordValidator : AbstractValidator<ResetPasswordRequest>
     {
-        public ResetPasswordValidator(IAuthCache cache, IUserCheckRepository checker)
+        public ResetPasswordValidator(IAuthCodeCache cache, IUserCheckRepository checker)
         {
             ClassLevelCascadeMode = CascadeMode.Stop;
 
@@ -26,7 +26,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.ResetPass
                 .MustAsync(
                     (request, code, cancellationToken) =>
                         cache.VerifyCodeAsync(
-                            CacheKeys.ForgetAccount,
+                            CodeCaheKey.ForgetAccount,
                             request.Email,
                             code,
                             cancellationToken

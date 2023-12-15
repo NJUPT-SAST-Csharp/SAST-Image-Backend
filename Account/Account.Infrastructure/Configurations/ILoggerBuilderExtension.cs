@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using Serilog;
-using Serilog.Sinks.SystemConsole.Themes;
 
 namespace Account.Infrastructure.Configurations
 {
@@ -12,7 +11,7 @@ namespace Account.Infrastructure.Configurations
                 .Enrich
                 .FromLogContext()
                 .WriteTo
-                .Console(theme: AnsiConsoleTheme.Code)
+                .Console()
                 .CreateLogger();
             builder.ClearProviders().AddSerilog(logger);
         }

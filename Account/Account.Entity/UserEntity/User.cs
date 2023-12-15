@@ -1,5 +1,6 @@
 ﻿using Account.Entity.RoleEntity;
 using Shared.Utilities;
+using Utilities;
 
 namespace Account.Entity.UserEntity
 {
@@ -16,17 +17,20 @@ namespace Account.Entity.UserEntity
         public string UsernameNormalized { get; private set; }
         public string Email { get; private set; }
         public byte[] PasswordHash { get; private set; }
+        public byte[] PasswordSalt { get; private set; }
 
         public IReadOnlyCollection<Role> Roles => roles;
         public Profile Profile { get; private set; }
 
-        public User(string username, byte[] passwordHash, string email)
+
+        public User(string username, string password, string email)
         {
             Id = SnowFlakeIdGenerator.NewId;
             Username = username;
             UsernameNormalized = username.ToUpperInvariant();
             Email = email.ToUpperInvariant();
-            PasswordHash = passwordHash;
+            PasswordSalt = Argon2Hasher.RandomSalt;
+            PasswordHash = Argon2Hasher.Hash(password, PasswordSalt);
             Profile = new(Id, username, string.Empty);
         }
 
@@ -35,20 +39,11 @@ namespace Account.Entity.UserEntity
             Profile = new(Id, nickname, bio, avatar, header);
         }
 
-        public bool ChangePassword(byte[] formerPasswordHash, byte[] newPasswordHash)
+        public void ResetPassword(string password)
         {
-            if (formerPasswordHash.SequenceEqual(PasswordHash))
-            {
-                PasswordHash = newPasswordHash;
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            Argon2Hasher.RegenerateSalt(PasswordSalt);
+            Argon2Hasher.Hash(password, PasswordSalt);
         }
-
-        public void ResetPassword(byte[] passwordHash) => PasswordHash = passwordHash;
 
         public void AddRole(Role role) => roles.Add(role);
     }

@@ -6,7 +6,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.VerifyFor
     public sealed class VerifyForgetCodeRequestValidator
         : AbstractValidator<VerifyForgetCodeRequest>
     {
-        public VerifyForgetCodeRequestValidator(IAuthCache cache)
+        public VerifyForgetCodeRequestValidator(IAuthCodeCache cache)
         {
             ClassLevelCascadeMode = CascadeMode.Stop;
 
@@ -18,7 +18,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.VerifyFor
                 .MustAsync(
                     (request, code, cancellationToken) =>
                         cache.VerifyCodeAsync(
-                            CacheKeys.ForgetAccount,
+                            CodeCaheKey.ForgetAccount,
                             request.Email,
                             code,
                             cancellationToken

@@ -20,7 +20,7 @@ namespace Account.WebAPI.Endpoints
             var api = app.MapGroup("/api");
 
             api.MapPost("/test", (ClaimsPrincipal user) => user.Identity)
-                .RequireAuthorization(AuthorizationRoles.User);
+                .RequireAuthorization(AuthorizationRole.User.ToString());
 
             MapAccount(api);
             MapUser(api);
@@ -31,18 +31,18 @@ namespace Account.WebAPI.Endpoints
         {
             var user = builder.MapGroup("/user");
 
-            user.AddPut<ChangeProfileRequest>("/changeProfile", AuthorizationRoles.User);
+            user.AddPut<ChangeProfileRequest>("/changeProfile", AuthorizationRole.User);
         }
 
         private static void MapAccount(RouteGroupBuilder builder)
         {
             var account = builder.MapGroup("/account");
 
-            account.AddPost<AuthorizeRequest>("/authorize", AuthorizationRoles.Admin);
+            account.AddPost<AuthorizeRequest>("/authorize", AuthorizationRole.Admin);
 
             account.AddPost<LoginRequest>("/login");
 
-            account.AddPut<ChangePasswordRequest>("/changePassword", AuthorizationRoles.User);
+            account.AddPut<ChangePasswordRequest>("/changePassword", AuthorizationRole.User);
 
             MapRegistration(account);
             MapForget(account);
@@ -56,7 +56,7 @@ namespace Account.WebAPI.Endpoints
             registration.AddPost<VerifyRegistrationCodeRequest>("/verify");
             registration.AddPost<CreateAccountRequest>(
                 "/createAccount",
-                AuthorizationRoles.Registrant
+                AuthorizationRole.Registrant
             );
         }
 
