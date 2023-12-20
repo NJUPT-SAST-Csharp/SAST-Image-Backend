@@ -1,4 +1,7 @@
-﻿using Account.Application.Endpoints.AccountEndpoints.Authorize;
+﻿using System.Security.Claims;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Account.Application.Endpoints.AccountEndpoints.Authorize;
 using Account.Application.Endpoints.AccountEndpoints.ChangePassword;
 using Account.Application.Endpoints.AccountEndpoints.ForgetAccount.ResetPassword;
 using Account.Application.Endpoints.AccountEndpoints.ForgetAccount.SendForgetCode;
@@ -7,11 +10,7 @@ using Account.Application.Endpoints.AccountEndpoints.Login;
 using Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount;
 using Account.Application.Endpoints.AccountEndpoints.Register.SendRegistrationCode;
 using Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistrationCode;
-using Account.Application.Endpoints.UserEndpoints.ChangeProfile;
 using Response.ReponseObjects;
-using System.Security.Claims;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Account.WebAPI.Configurations
 {
@@ -51,7 +50,6 @@ namespace Account.WebAPI.Configurations
     [JsonSerializable(typeof(VerifyForgetCodeRequest))]
     [JsonSerializable(typeof(SendForgetCodeRequest))]
     [JsonSerializable(typeof(SendRegistrationCodeRequest))]
-    [JsonSerializable(typeof(ChangeProfileRequest))]
     [JsonSerializable(typeof(CreateAccountRequest))]
     [JsonSerializable(typeof(ChangePasswordRequest))]
     [JsonSerializable(typeof(DataResponse<LoginDto>))]

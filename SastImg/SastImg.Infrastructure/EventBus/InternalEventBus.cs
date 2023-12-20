@@ -1,34 +1,43 @@
 ﻿using MediatR;
-using SastImg.Application.Services.EventBus;
-using Shared.Primitives.DomainNotification;
-using Shared.Primitives.Query;
+using Primitives.Command;
+using Primitives.DomainEvent;
+using Primitives.Request;
+using Shared.Primitives.DomainEvent;
+using Shared.Primitives.Request;
 
 namespace SastImg.Infrastructure.Event
 {
-    internal class InternalEventBus : IInternalEventBus
+    internal class InternalEventBus(IMediator mediator)
+        : IQueryRequestSender,
+            IDomainEventPublisher,
+            ICommandSender
     {
-        private readonly IMediator _mediator;
+        private readonly IMediator _mediator = mediator;
 
-        public InternalEventBus(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
-        public Task PublishAsync<TNotification>(
-            TNotification notification,
+        public Task PublishAsync<TEvent>(
+            TEvent @event,
             CancellationToken cancellationToken = default
         )
-            where TNotification : IDomainNotification
+            where TEvent : IDomainEvent
         {
-            return _mediator.Publish(notification, cancellationToken);
+            return _mediator.Publish(@event, cancellationToken);
         }
 
         public Task<TResponse> RequestAsync<TResponse>(
-            IQuery<TResponse> query,
+            IQueryRequest<TResponse> request,
             CancellationToken cancellationToken = default
         )
         {
-            return _mediator.Send(query, cancellationToken);
+            return _mediator.Send(request, cancellationToken);
+        }
+
+        public Task<TResponse> SendCommandAsync<TCommand, TResponse>(
+            TCommand command,
+            CancellationToken cancellationToken = default
+        )
+            where TCommand : ICommand<TResponse>
+        {
+            return _mediator.Send(command, cancellationToken);
         }
     }
 }

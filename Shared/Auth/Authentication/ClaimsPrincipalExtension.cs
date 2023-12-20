@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Auth.Authorization;
 
 namespace Auth.Authentication
 {
@@ -59,11 +60,11 @@ namespace Auth.Authentication
             return user.TryFetchClaim("Email", out email);
         }
 
-        public static bool HasRole(this ClaimsPrincipal user, string role)
+        public static bool HasRole(this ClaimsPrincipal user, AuthorizationRole role)
         {
             foreach (var r in user.FindAll("Roles"))
             {
-                if (r is { } roleClaim && roleClaim.Value == role)
+                if (r is { } roleClaim && roleClaim.Value == role.ToString())
                     return true;
             }
             return false;
@@ -73,6 +74,12 @@ namespace Auth.Authentication
         {
             var result = user.FindFirst(claim);
             return result is not null;
+        }
+
+        public static IEnumerable<AuthorizationRole> GetRoles(this ClaimsPrincipal user)
+        {
+            return user.FindAll("Roles")
+                .Select(claim => Enum.Parse<AuthorizationRole>(claim.Value));
         }
     }
 }

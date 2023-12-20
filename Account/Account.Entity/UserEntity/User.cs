@@ -19,9 +19,10 @@ namespace Account.Entity.UserEntity
         public byte[] PasswordHash { get; private set; }
         public byte[] PasswordSalt { get; private set; }
 
-        public IReadOnlyCollection<Role> Roles => roles;
-        public Profile Profile { get; private set; }
+        public DateTime RegisteredAt { get; private init; }
+        public DateTime LoginAt { get; private set; }
 
+        public IReadOnlyCollection<Role> Roles => roles;
 
         public User(string username, string password, string email)
         {
@@ -31,12 +32,7 @@ namespace Account.Entity.UserEntity
             Email = email.ToUpperInvariant();
             PasswordSalt = Argon2Hasher.RandomSalt;
             PasswordHash = Argon2Hasher.Hash(password, PasswordSalt);
-            Profile = new(Id, username, string.Empty);
-        }
-
-        public void EditProfile(string nickname, string bio, Uri? avatar, Uri? header)
-        {
-            Profile = new(Id, nickname, bio, avatar, header);
+            RegisteredAt = DateTime.UtcNow;
         }
 
         public void ResetPassword(string password)
@@ -46,5 +42,15 @@ namespace Account.Entity.UserEntity
         }
 
         public void AddRole(Role role) => roles.Add(role);
+
+        public bool Login(string password)
+        {
+            bool isValid = Argon2Hasher.Validate(password, PasswordHash, PasswordSalt);
+            if (isValid)
+            {
+                LoginAt = DateTime.UtcNow;
+            }
+            return isValid;
+        }
     }
 }

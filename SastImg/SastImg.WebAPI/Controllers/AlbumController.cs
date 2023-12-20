@@ -36,7 +36,7 @@ namespace SastImg.WebAPI.Controllers
         )
         {
             var albums = await _request.Send(
-                new GetAlbumsQuery(User, page, userId),
+                new GetAlbumsQuery(page, userId, User),
                 cancellationToken
             );
             return Responses.Data(albums);

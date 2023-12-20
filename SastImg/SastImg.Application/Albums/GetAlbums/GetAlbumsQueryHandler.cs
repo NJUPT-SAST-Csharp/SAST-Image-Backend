@@ -1,13 +1,12 @@
-﻿using Auth.Authentication;
-using Auth.Authorization;
+﻿using Auth.Authorization;
 using SastImg.Application.Albums.Dtos;
 using SastImg.Application.Services;
-using Shared.Primitives.Query;
+using Shared.Primitives.Request;
 
 namespace SastImg.Application.Albums.GetAlbums
 {
     internal sealed class GetAlbumsQueryHandler(IQueryDatabase database, ICache cache)
-        : IQueryHandler<GetAlbumsQuery, IEnumerable<AlbumDto>>
+        : IQueryRequestHandler<GetAlbumsQuery, IEnumerable<AlbumDto>>
     {
         private readonly IQueryDatabase _database = database;
         private readonly ICache _cache = cache;
@@ -18,9 +17,42 @@ namespace SastImg.Application.Albums.GetAlbums
         )
         {
             // TODO: Reconstruct.
-            // When request is anonymous.
             IEnumerable<AlbumDto>? albums;
-            if (request.User.Identity is null || request.User.Identity.IsAuthenticated == false)
+            // When user is an auth user.
+            if (request.IsAuthenticated)
+            {
+                if (request.Roles.Any(r => r == AuthorizationRole.User))
+                {
+                    var query = GetAlbumsSqlStrategy.Common(
+                        request.Page,
+                        request.RequesterId,
+                        request.AuthorId
+                    );
+                    albums = await _database.QueryAsync<AlbumDto>(
+                        query.SqlString,
+                        query.Parameters,
+                        cancellationToken
+                    );
+                    return albums;
+                }
+                // When user is an administrator.
+                else if (request.Roles.Any(r => r == AuthorizationRole.Admin))
+                {
+                    var query = GetAlbumsSqlStrategy.Admin(request.Page, request.AuthorId);
+                    albums = await _database.QueryAsync<AlbumDto>(
+                        query.SqlString,
+                        query.Parameters,
+                        cancellationToken
+                    );
+                    return albums;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Unable to resolve identity from request.");
+                }
+            }
+            // When request is anonymous.
+            else if (request.IsAuthenticated == false)
             {
                 // Get from cache first when anonymous.
                 albums = await GetCacheAsync(request.Page, request.AuthorId);
@@ -36,36 +68,9 @@ namespace SastImg.Application.Albums.GetAlbums
                 _ = SetCacheAsync(albums, request.Page, request.AuthorId);
                 return albums;
             }
-            // When user is an administrator.
-            else if (request.User.IsInRole(AuthorizationRole.Admin.ToString()))
-            {
-                var query = GetAlbumsSqlStrategy.Admin(request.Page, request.AuthorId);
-                albums = await _database.QueryAsync<AlbumDto>(
-                    query.SqlString,
-                    query.Parameters,
-                    cancellationToken
-                );
-                return albums;
-            }
-            // When user is an auth common user.
             else
             {
-                var result = request.User.TryFetchId(out long requesterId);
-                if (!result)
-                    throw new Exception(
-                        "Successfully validated user identity but failed when fetching user id."
-                    );
-                var query = GetAlbumsSqlStrategy.Common(
-                    request.Page,
-                    requesterId,
-                    request.AuthorId
-                );
-                albums = await _database.QueryAsync<AlbumDto>(
-                    query.SqlString,
-                    query.Parameters,
-                    cancellationToken
-                );
-                return albums;
+                throw new InvalidOperationException("Unable to resolve identity from request.");
             }
         }
 

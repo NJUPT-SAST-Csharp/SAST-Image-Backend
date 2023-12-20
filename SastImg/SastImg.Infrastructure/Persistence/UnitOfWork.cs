@@ -1,14 +1,15 @@
-﻿using SastImg.Application.Services.EventBus;
+﻿using Primitives.DomainEvent;
 using SastImg.Domain;
 using Shared.Primitives.DomainEvent;
 
 namespace SastImg.Infrastructure.Persistence
 {
-    internal class UnitOfWork(SastImgDbContext dbContext, IInternalEventBus eventBus) : IUnitOfWork
+    internal class UnitOfWork(SastImgDbContext dbContext, IDomainEventPublisher eventBus)
+        : IUnitOfWork
     {
         private readonly SastImgDbContext _dbContext = dbContext;
 
-        private readonly IInternalEventBus _eventBus = eventBus;
+        private readonly IDomainEventPublisher _eventBus = eventBus;
 
         public async Task<int> CommitChangesAsync(CancellationToken cancellationToken = default)
         {

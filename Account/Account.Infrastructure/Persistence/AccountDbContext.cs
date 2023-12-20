@@ -17,15 +17,6 @@ namespace Account.Infrastructure.Persistence
 
             modelBuilder.Entity<User>().HasIndex(u => u.UsernameNormalized).IsUnique();
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
-            modelBuilder
-                .Entity<User>()
-                .HasOne(user => user.Profile)
-                .WithOne()
-                .HasForeignKey<Profile>(profile => profile.Id);
-
-            modelBuilder.Entity<Profile>().HasKey(profile => profile.Id);
-            modelBuilder.Entity<Profile>().ToTable("profiles");
-
             modelBuilder.Entity<Role>().HasIndex(r => r.Name).IsUnique();
         }
     }

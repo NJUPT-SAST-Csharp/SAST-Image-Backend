@@ -11,7 +11,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Npgsql;
+using Primitives.Command;
 using Primitives.Common.Policies;
+using Primitives.DomainEvent;
+using Primitives.Request;
 using SastImg.Application.Services;
 using SastImg.Application.Services.EventBus;
 using SastImg.Infrastructure.Cache;
@@ -92,7 +95,9 @@ namespace SastImg.Infrastructure.Extensions
         public static IServiceCollection ConfigureMediator(this IServiceCollection services)
         {
             services.AddSingleton<IExternalEventBus, ExternalEventBus>();
-            services.AddSingleton<IInternalEventBus, InternalEventBus>();
+            services.AddScoped<IQueryRequestSender, InternalEventBus>();
+            services.AddScoped<ICommandSender, InternalEventBus>();
+            services.AddScoped<IDomainEventPublisher, InternalEventBus>();
             services.AddMediatR(
                 cfg => cfg.RegisterServicesFromAssembly(Application.AssemblyReference.Assembly)
             );

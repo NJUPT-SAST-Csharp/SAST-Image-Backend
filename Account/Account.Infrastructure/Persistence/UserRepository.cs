@@ -86,19 +86,5 @@ namespace Account.Infrastructure.Persistence
                     cancellationToken
                 );
         }
-
-        public Task<User?> GetUserDetailByIdAsync(
-            long userId,
-            CancellationToken cancellationToken = default
-        )
-        {
-            return _dbContext
-                .Users
-                .Include(user => user.Profile)
-                .FirstOrDefaultAsync(
-                    user => user.Id == userId,
-                    cancellationToken: cancellationToken
-                );
-        }
     }
 }
