@@ -1,46 +1,14 @@
 ﻿namespace SastImg.Domain.Albums
 {
-    public sealed class Cover
+    public sealed class Cover(Uri? uri, long? imageId)
     {
         #region Properties
 
-        public Uri? Uri { get; private set; } = null;
-        public long ImageId { get; private set; } = 0;
-        public bool IsLatestImage { get; private set; } = true;
+        private Uri? _uri = uri;
+
+        private long? _imageId = imageId;
 
         #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// Set album's cover to a specific image in the album.
-        /// </summary>
-        /// <remarks>
-        /// The image set to cover should be in the target album.
-        /// </remarks>
-        /// <param name="imageId">
-        /// The image id set to the album cover.
-        /// </param>
-        public void SetCoverByImageId(long imageId)
-        {
-            ImageId = imageId;
-            Uri = null;
-            IsLatestImage = false;
-        }
-
-        /// <summary>
-        /// Set album's cover to a specific image with Uri.
-        /// </summary>
-        /// <param name="uri">
-        /// The image Uri set to the album cover.
-        /// </param>
-        public void SetCoverByUri(Uri uri)
-        {
-            Uri = uri;
-            ImageId = 0;
-            IsLatestImage = false;
-        }
-
-        #endregion
+        public bool IsLatestImage => _imageId is not null;
     }
 }

@@ -1,6 +1,6 @@
 ﻿using SastImg.Domain.Albums;
 
-namespace SastImg.Application.Albums.Dtos
+namespace SastImg.Application.Album.Dtos
 {
     public sealed class AlbumDto
     {

@@ -1,10 +1,10 @@
 ﻿using System.Security.Claims;
 using Auth.Authentication;
 using Auth.Authorization;
-using SastImg.Application.Albums.Dtos;
+using SastImg.Application.Album.Dtos;
 using Shared.Primitives.Request;
 
-namespace SastImg.Application.Albums.GetAlbums
+namespace SastImg.Application.Album.GetAlbums
 {
     public sealed class GetAlbumsQuery : IQueryRequest<IEnumerable<AlbumDto>>
     {
@@ -21,7 +21,7 @@ namespace SastImg.Application.Albums.GetAlbums
             }
             else
             {
-                Roles = [];
+                Roles =  [];
             }
         }
 

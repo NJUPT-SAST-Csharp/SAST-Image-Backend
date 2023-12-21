@@ -1,4 +1,4 @@
-﻿namespace SastImg.Application.Albums.GetAlbums
+﻿namespace SastImg.Application.Album.GetAlbums
 {
     internal abstract class GetAlbumsSqlStrategy
     {
@@ -19,7 +19,7 @@
         protected const string prefix =
             "SELECT "
             + "id as AlbumId, "
-            + "title as Title, "
+            + "title as _title, "
             + "cover_uri as CoverUri, "
             + "accessibility as Accessibility, "
             + "author_id as AuthorId "

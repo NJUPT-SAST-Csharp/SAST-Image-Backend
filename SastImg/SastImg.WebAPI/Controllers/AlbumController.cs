@@ -2,7 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Primitives.Common.Policies;
-using SastImg.Application.Albums.GetAlbums;
+using SastImg.Application.Album.GetAlbums;
 using Shared.Response.Builders;
 
 namespace SastImg.WebAPI.Controllers

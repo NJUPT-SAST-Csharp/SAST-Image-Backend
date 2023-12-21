@@ -1,9 +1,9 @@
 ﻿using Auth.Authorization;
-using SastImg.Application.Albums.Dtos;
+using SastImg.Application.Album.Dtos;
 using SastImg.Application.Services;
 using Shared.Primitives.Request;
 
-namespace SastImg.Application.Albums.GetAlbums
+namespace SastImg.Application.Album.GetAlbums
 {
     internal sealed class GetAlbumsQueryHandler(IQueryDatabase database, ICache cache)
         : IQueryRequestHandler<GetAlbumsQuery, IEnumerable<AlbumDto>>

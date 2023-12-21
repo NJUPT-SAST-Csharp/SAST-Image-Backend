@@ -8,9 +8,9 @@ namespace SastImg.Domain.Albums.Images
         private Image(string title, Uri uri, string description)
             : base(SnowFlakeIdGenerator.NewId)
         {
-            Title = title;
-            Uri = uri;
-            Description = description;
+            _title = title;
+            _url = uri;
+            _description = description;
         }
 
         internal static Image CreateNewImage(string title, Uri uri, string description)
@@ -20,47 +20,43 @@ namespace SastImg.Domain.Albums.Images
 
         #region Properties
 
-        public string Title { get; private set; } = string.Empty;
+        private string _title = string.Empty;
 
-        public string Description { get; private set; } = string.Empty;
+        private string _description = string.Empty;
 
-        public Uri Uri { get; private init; }
+        private readonly Uri _url;
 
-        public DateTime UploadedAt { get; } = DateTime.Now;
+        private readonly DateTime _uploadedAt = DateTime.Now;
 
-        public bool IsRemoved { get; private set; } = false;
+        private bool _isRemoved = false;
 
-        public bool IsHidden { get; private set; } = false;
+        private bool _isNsfw = false;
 
-        public int ViewCount { get; private set; } = 0;
-
-        public int CategoryId { get; private set; }
-
-        public ICollection<long> Tags { get; } = new List<long>();
+        private readonly List<long> _tags = [];
 
         #endregion
 
         #region Methods
 
-        internal void UpdateImageInfo(string title, string description)
+
+        internal void UpdateImageInfo(
+            string title,
+            string description,
+            bool isNsfw,
+            IEnumerable<long> tags
+        )
         {
-            Title = title;
-            Description = description;
+            _isNsfw = isNsfw;
+            _title = title;
+            _description = description;
+            _tags = tags.ToList();
         }
 
-        internal void SetRemoval(bool isRemoved)
-        {
-            IsRemoved = isRemoved;
-        }
+        internal void Remove() => _isRemoved = true;
 
-        internal void SetVisibility(bool isVisible)
-        {
-            IsHidden = !isVisible;
-        }
+        internal void Restore() => _isRemoved = false;
 
-        internal void AddViewCount() => ViewCount++;
-
-        internal void ChangeCategory(int id) => CategoryId = id;
+        internal void SetNsfw(bool isNsfw) => _isNsfw = isNsfw;
 
         #endregion
     }

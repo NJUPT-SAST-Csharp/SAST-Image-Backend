@@ -13,10 +13,10 @@ namespace SastImg.Domain.Albums
         private Album(long authorId, string title, string description, Accessibility accessibility)
             : base(SnowFlakeIdGenerator.NewId)
         {
-            Title = title;
-            AuthorId = authorId;
-            Description = description;
-            Accessibility = accessibility;
+            _title = title;
+            _authorId = authorId;
+            _description = description;
+            _accessibility = accessibility;
         }
 
         public static Album CreateNewAlbum(
@@ -29,82 +29,90 @@ namespace SastImg.Domain.Albums
             return new Album(authorId, title, description, accessibility);
         }
 
-        private readonly ICollection<Image> images = new List<Image>();
-
         #region Properties
 
-        public string Title { get; private set; } = string.Empty;
+        private string _title = string.Empty;
 
-        public string Description { get; private set; } = string.Empty;
+        private string _description = string.Empty;
 
-        public Accessibility Accessibility { get; private set; }
+        private int _categoryId = 0;
 
-        public bool IsRemoved { get; private set; } = false;
+        private Accessibility _accessibility;
 
-        public Cover Cover { get; } = new Cover();
+        private bool _isRemoved = false;
 
-        public DateTime CreatedAt { get; } = DateTime.Now;
+        private Cover _cover = new(null, null);
 
-        public DateTime UpdatedAt { get; private set; } = DateTime.Now;
+        private DateTime _createdAt = DateTime.Now;
 
-        public long AuthorId { get; private init; }
+        private DateTime _updatedAt = DateTime.Now;
 
-        public ICollection<long> Collaborators { get; } = new List<long>();
+        private long _authorId;
 
-        public IEnumerable<Image> Images => images;
+        private readonly List<long> _collaborators = [];
+
+        private readonly List<Image> _images = [];
 
         #endregion
 
         #region Methods
 
-        public void Remove() => IsRemoved = true;
+        public void Remove() => _isRemoved = true;
 
-        public void Restore() => IsRemoved = false;
+        public void Restore() => _isRemoved = false;
+
+        public void SetCoverAsLatestImage()
+        {
+            var image = _images.FirstOrDefault();
+            _cover = new(image?._url, image?.Id);
+        }
+
+        public void SetCoverAsContainedImage(long imageId) { }
 
         public void UpdateAlbumInfo(string title, string description, Accessibility accessibility)
         {
-            Title = title;
-            Description = description;
-            Accessibility = accessibility;
+            _title = title;
+            _description = description;
+            _accessibility = accessibility;
         }
 
         public long AddImage(string title, Uri uri, string description)
         {
             var image = Image.CreateNewImage(title, uri, description);
-            UpdatedAt = DateTime.Now;
+            _updatedAt = DateTime.Now;
+            if (_cover.IsLatestImage)
+            {
+                _cover = new(uri, image.Id);
+            }
             return image.Id;
         }
 
         public void RemoveImage(long imageId)
         {
-            var image = images.FirstOrDefault(image => image.Id == imageId);
-            image?.SetRemoval(true);
+            var image = _images.FirstOrDefault(image => image.Id == imageId);
+            image?.Remove();
         }
 
         public void RestoreImage(long imageId)
         {
-            var image = images.FirstOrDefault(image => image.Id == imageId);
-            image?.SetRemoval(false);
-        }
-
-        public void HideImage(long imageId)
-        {
-            var image = images.FirstOrDefault(image => image.Id == imageId);
-            image?.SetVisibility(false);
-        }
-
-        public void ShowImage(long imageId)
-        {
-            var image = images.FirstOrDefault(image => image.Id == imageId);
-            image?.SetVisibility(true);
+            var image = _images.FirstOrDefault(image => image.Id == imageId);
+            image?.Restore();
         }
 
         public void UpdateImage(
             long imageId,
             string title,
             string description,
+            bool isNsfw,
             IEnumerable<long> tags
-        ) { }
+        )
+        {
+            var image = _images.FirstOrDefault(image => image.Id == imageId);
+            if (image is not null)
+            {
+                image.UpdateImageInfo(title, description, isNsfw, tags);
+            }
+        }
 
         #endregion
     }
