@@ -37,6 +37,8 @@ namespace SastImg.Domain.Albums
 
         public string Description { get; private set; } = string.Empty;
 
+        public int CategoryId { get; private set; } = 0;
+
         public Accessibility Accessibility { get; private set; }
 
         public bool IsRemoved { get; private set; } = false;
@@ -90,13 +92,13 @@ namespace SastImg.Domain.Albums
         public void HideImage(long imageId)
         {
             var image = images.FirstOrDefault(image => image.Id == imageId);
-            image?.SetVisibility(false);
+            image?.SetNsfw(false);
         }
 
         public void ShowImage(long imageId)
         {
             var image = images.FirstOrDefault(image => image.Id == imageId);
-            image?.SetVisibility(true);
+            image?.SetNsfw(true);
         }
 
         public void UpdateImage(

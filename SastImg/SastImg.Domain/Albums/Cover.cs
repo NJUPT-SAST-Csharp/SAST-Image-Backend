@@ -29,10 +29,10 @@
         }
 
         /// <summary>
-        /// Set album's cover to a specific image with Uri.
+        /// Set album's cover to a specific image with Url.
         /// </summary>
         /// <param name="uri">
-        /// The image Uri set to the album cover.
+        /// The image Url set to the album cover.
         /// </param>
         public void SetCoverByUri(Uri uri)
         {

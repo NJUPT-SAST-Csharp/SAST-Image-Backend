@@ -1,4 +1,4 @@
-﻿namespace SastImg.Application.Albums.GetAlbums
+﻿namespace SastImg.Application.Album.GetAlbums
 {
     internal abstract class GetAlbumsSqlStrategy
     {

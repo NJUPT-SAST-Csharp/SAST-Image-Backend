@@ -22,7 +22,7 @@ namespace SastImg.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("SastImg.Domain.Albums.Album", b =>
+            modelBuilder.Entity("SastImg.Domain.Album.Album", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -63,7 +63,7 @@ namespace SastImg.Infrastructure.Persistence.Migrations
                     b.ToTable("albums", (string)null);
                 });
 
-            modelBuilder.Entity("SastImg.Domain.Albums.Images.Image", b =>
+            modelBuilder.Entity("SastImg.Domain.Album.Images.Image", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -85,7 +85,7 @@ namespace SastImg.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("description");
 
-                    b.Property<bool>("IsHidden")
+                    b.Property<bool>("IsNsfw")
                         .HasColumnType("boolean")
                         .HasColumnName("is_hidden");
 
@@ -98,7 +98,7 @@ namespace SastImg.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("title");
 
-                    b.Property<string>("Uri")
+                    b.Property<string>("Url")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("uri");
@@ -161,9 +161,9 @@ namespace SastImg.Infrastructure.Persistence.Migrations
                     b.ToTable("tags", (string)null);
                 });
 
-            modelBuilder.Entity("SastImg.Domain.Albums.Album", b =>
+            modelBuilder.Entity("SastImg.Domain.Album.Album", b =>
                 {
-                    b.OwnsOne("SastImg.Domain.Albums.Cover", "Cover", b1 =>
+                    b.OwnsOne("SastImg.Domain.Album.Cover", "Cover", b1 =>
                         {
                             b1.Property<long>("AlbumId")
                                 .HasColumnType("bigint")
@@ -177,7 +177,7 @@ namespace SastImg.Infrastructure.Persistence.Migrations
                                 .HasColumnType("boolean")
                                 .HasColumnName("cover_is_latest_image");
 
-                            b1.Property<string>("Uri")
+                            b1.Property<string>("Url")
                                 .HasColumnType("text")
                                 .HasColumnName("cover_uri");
 
@@ -194,15 +194,15 @@ namespace SastImg.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SastImg.Domain.Albums.Images.Image", b =>
+            modelBuilder.Entity("SastImg.Domain.Album.Images.Image", b =>
                 {
-                    b.HasOne("SastImg.Domain.Albums.Album", null)
+                    b.HasOne("SastImg.Domain.Album.Album", null)
                         .WithMany("Images")
                         .HasForeignKey("AlbumId")
                         .HasConstraintName("fk_images_albums_album_id");
                 });
 
-            modelBuilder.Entity("SastImg.Domain.Albums.Album", b =>
+            modelBuilder.Entity("SastImg.Domain.Album.Album", b =>
                 {
                     b.Navigation("Images");
                 });

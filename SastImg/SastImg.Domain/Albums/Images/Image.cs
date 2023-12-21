@@ -9,11 +9,11 @@ namespace SastImg.Domain.Albums.Images
             : base(SnowFlakeIdGenerator.NewId)
         {
             Title = title;
-            Uri = uri;
+            Url = uri;
             Description = description;
         }
 
-        internal static Image CreateNewImage(string title, Uri uri, string description)
+        public static Image CreateNewImage(string title, Uri uri, string description)
         {
             return new Image(title, uri, description);
         }
@@ -24,17 +24,13 @@ namespace SastImg.Domain.Albums.Images
 
         public string Description { get; private set; } = string.Empty;
 
-        public Uri Uri { get; private init; }
+        public Uri Url { get; private init; }
 
         public DateTime UploadedAt { get; } = DateTime.Now;
 
         public bool IsRemoved { get; private set; } = false;
 
-        public bool IsHidden { get; private set; } = false;
-
-        public int ViewCount { get; private set; } = 0;
-
-        public int CategoryId { get; private set; }
+        public bool IsNsfw { get; private set; } = false;
 
         public ICollection<long> Tags { get; } = new List<long>();
 
@@ -53,14 +49,10 @@ namespace SastImg.Domain.Albums.Images
             IsRemoved = isRemoved;
         }
 
-        internal void SetVisibility(bool isVisible)
+        internal void SetNsfw(bool isNsfw)
         {
-            IsHidden = !isVisible;
+            IsNsfw = !isNsfw;
         }
-
-        internal void AddViewCount() => ViewCount++;
-
-        internal void ChangeCategory(int id) => CategoryId = id;
 
         #endregion
     }
