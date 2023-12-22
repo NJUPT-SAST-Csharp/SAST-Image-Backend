@@ -13,7 +13,7 @@ namespace SastImg.Domain.Albums.Images
             _description = description;
         }
 
-        internal static Image CreateNewImage(string title, Uri uri, string description)
+        public static Image CreateNewImage(string title, Uri uri, string description)
         {
             return new Image(title, uri, description);
         }
