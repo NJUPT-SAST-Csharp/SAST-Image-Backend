@@ -1,9 +1,9 @@
 ﻿using Shared.Primitives;
 using Shared.Utilities;
 
-namespace SastImg.Domain.Albums.Images
+namespace SastImg.Domain
 {
-    public sealed class Image : Entity<long>
+    internal sealed class Image : Entity<long>
     {
         private Image(string title, Uri uri, string description)
             : base(SnowFlakeIdGenerator.NewId)
@@ -18,7 +18,7 @@ namespace SastImg.Domain.Albums.Images
             return new Image(title, uri, description);
         }
 
-        #region Properties
+        #region Fields
 
         private string _title = string.Empty;
 
@@ -32,7 +32,14 @@ namespace SastImg.Domain.Albums.Images
 
         private bool _isNsfw = false;
 
-        private readonly List<long> _tags = [];
+        private List<Tag> _tags = [];
+
+        #endregion
+
+        #region Properties
+        internal DateTime UploadedTime => _uploadedAt;
+
+        internal Uri ImageUrl => _url;
 
         #endregion
 
@@ -43,7 +50,7 @@ namespace SastImg.Domain.Albums.Images
             string title,
             string description,
             bool isNsfw,
-            IEnumerable<long> tags
+            IEnumerable<Tag> tags
         )
         {
             _isNsfw = isNsfw;

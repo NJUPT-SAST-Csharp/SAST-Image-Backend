@@ -1,8 +1,8 @@
-﻿using SastImg.Domain.Albums.Images;
+﻿using SastImg.Domain.Albums;
 using Shared.Primitives;
 using Shared.Utilities;
 
-namespace SastImg.Domain.Albums
+namespace SastImg.Domain
 {
     /// <summary>
     /// The aggregate root of the SastImg Domain, containing references of images and authorId (user).
@@ -29,7 +29,7 @@ namespace SastImg.Domain.Albums
             return new Album(authorId, title, description, accessibility);
         }
 
-        #region Properties
+        #region Fields
 
         private string _title = string.Empty;
 
@@ -41,7 +41,7 @@ namespace SastImg.Domain.Albums
 
         private bool _isRemoved = false;
 
-        private Cover _cover = new(null, null);
+        private Cover _cover = new(null, true);
 
         private DateTime _createdAt = DateTime.Now;
 
@@ -55,6 +55,12 @@ namespace SastImg.Domain.Albums
 
         #endregion
 
+        #region Properties
+
+        public bool IsRemoved => _isRemoved;
+
+        #endregion
+
         #region Methods
 
         public void Remove() => _isRemoved = true;
@@ -63,17 +69,24 @@ namespace SastImg.Domain.Albums
 
         public void SetCoverAsLatestImage()
         {
-            var image = _images.FirstOrDefault();
-            _cover = new(image?._url, image?.Id);
+            var image = _images.OrderBy(i => i.UploadedTime).FirstOrDefault();
+            _cover = new(image?.ImageUrl, true);
         }
 
-        public void SetCoverAsContainedImage(long imageId) { }
+        public void SetCoverAsContainedImage(long imageId)
+        {
+            var image = _images.FirstOrDefault(image => image.Id == imageId);
+            _cover = new(image?.ImageUrl, false);
+            // TODO: Raise domain event
+        }
 
         public void UpdateAlbumInfo(string title, string description, Accessibility accessibility)
         {
             _title = title;
             _description = description;
             _accessibility = accessibility;
+
+            // TODO: Raise domain event
         }
 
         public long AddImage(string title, Uri uri, string description)
@@ -82,8 +95,10 @@ namespace SastImg.Domain.Albums
             _updatedAt = DateTime.Now;
             if (_cover.IsLatestImage)
             {
-                _cover = new(uri, image.Id);
+                _cover = new(uri, true);
             }
+            // TODO: Raise domain event
+
             return image.Id;
         }
 
@@ -91,12 +106,14 @@ namespace SastImg.Domain.Albums
         {
             var image = _images.FirstOrDefault(image => image.Id == imageId);
             image?.Remove();
+            // TODO: Raise domain event
         }
 
         public void RestoreImage(long imageId)
         {
             var image = _images.FirstOrDefault(image => image.Id == imageId);
             image?.Restore();
+            // TODO: Raise domain event
         }
 
         public void UpdateImage(
@@ -110,7 +127,8 @@ namespace SastImg.Domain.Albums
             var image = _images.FirstOrDefault(image => image.Id == imageId);
             if (image is not null)
             {
-                image.UpdateImageInfo(title, description, isNsfw, tags);
+                image.UpdateImageInfo(title, description, isNsfw, []);
+                // TODO: Raise domain event
             }
         }
 
