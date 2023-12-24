@@ -1,5 +1,4 @@
-using SastImg.Domain;
-using SastImg.Domain.Albums;
+using SastImg.Domain.AlbumAggregate;
 
 namespace SastImg.Test.Domain;
 

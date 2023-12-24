@@ -1,32 +1,39 @@
-﻿using SastImg.Domain.Albums;
-using Shared.Primitives;
+﻿using Shared.Primitives;
 using Shared.Utilities;
 
-namespace SastImg.Domain
+namespace SastImg.Domain.AlbumAggregate
 {
     /// <summary>
     /// The aggregate root of the SastImg Domain, containing references of images and authorId (user).
     /// </summary>
 
-    public sealed class Album : AggregateRoot<long>
+    public sealed class Album : Entity<long>, IAggregateRoot<Album>
     {
-        private Album(long authorId, string title, string description, Accessibility accessibility)
+        private Album(
+            long authorId,
+            long categoryId,
+            string title,
+            string description,
+            Accessibility accessibility
+        )
             : base(SnowFlakeIdGenerator.NewId)
         {
             _title = title;
             _authorId = authorId;
+            _categoryId = categoryId;
             _description = description;
             _accessibility = accessibility;
         }
 
         public static Album CreateNewAlbum(
             long authorId,
+            long categoryId,
             string title,
             string description,
             Accessibility accessibility
         )
         {
-            return new Album(authorId, title, description, accessibility);
+            return new Album(authorId, categoryId, title, description, accessibility);
         }
 
         #region Fields
@@ -35,7 +42,7 @@ namespace SastImg.Domain
 
         private string _description = string.Empty;
 
-        private int _categoryId = 0;
+        private long _categoryId;
 
         private Accessibility _accessibility;
 
@@ -71,6 +78,7 @@ namespace SastImg.Domain
         {
             var image = _images.OrderBy(i => i.UploadedTime).FirstOrDefault();
             _cover = new(image?.ImageUrl, true);
+            // TODO: Raise domain event
         }
 
         public void SetCoverAsContainedImage(long imageId)
@@ -89,9 +97,10 @@ namespace SastImg.Domain
             // TODO: Raise domain event
         }
 
-        public long AddImage(string title, Uri uri, string description)
+        public long AddImage(string title, Uri uri, string description, IEnumerable<long> tags)
         {
-            var image = Image.CreateNewImage(title, uri, description);
+            var image = Image.CreateNewImage(title, uri, description, tags);
+
             _updatedAt = DateTime.Now;
             if (_cover.IsLatestImage)
             {
@@ -127,7 +136,7 @@ namespace SastImg.Domain
             var image = _images.FirstOrDefault(image => image.Id == imageId);
             if (image is not null)
             {
-                image.UpdateImageInfo(title, description, isNsfw, []);
+                image.UpdateImageInfo(title, description, isNsfw, tags);
                 // TODO: Raise domain event
             }
         }

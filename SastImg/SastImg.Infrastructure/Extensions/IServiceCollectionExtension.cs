@@ -16,7 +16,6 @@ using Primitives.Common.Policies;
 using Primitives.DomainEvent;
 using Primitives.Request;
 using SastImg.Application.Services;
-using SastImg.Application.Services.EventBus;
 using SastImg.Infrastructure.Cache;
 using SastImg.Infrastructure.Event;
 using SastImg.Infrastructure.Persistence;
@@ -94,7 +93,6 @@ namespace SastImg.Infrastructure.Extensions
 
         public static IServiceCollection ConfigureMediator(this IServiceCollection services)
         {
-            services.AddSingleton<IExternalEventBus, ExternalEventBus>();
             services.AddScoped<IQueryRequestSender, InternalEventBus>();
             services.AddScoped<ICommandSender, InternalEventBus>();
             services.AddScoped<IDomainEventPublisher, InternalEventBus>();

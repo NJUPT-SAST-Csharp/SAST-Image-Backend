@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Album\DomainEvents\" />
-    <Folder Include="Categories\DomainEvents\" />
+    <Folder Include="AlbumAggregate\Events\" />
+    <Folder Include="CategoryEntity\DomainEvents\" />
   </ItemGroup>
 
   <ItemGroup>

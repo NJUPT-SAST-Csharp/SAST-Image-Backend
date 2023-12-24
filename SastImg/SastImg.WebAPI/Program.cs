@@ -1,4 +1,5 @@
 using SastImg.Infrastructure.Extensions;
+using SastImg.WebAPI.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,8 @@ var configuration = new ConfigurationBuilder()
 
 // Configure the logger.
 builder.Logging.ConfigureLogger();
+
+builder.Services.AddExceptionHandler<BusinessRuleInvalidExceptionHandler>();
 
 // Add & Configure services.
 builder.ConfigureServices(configuration);

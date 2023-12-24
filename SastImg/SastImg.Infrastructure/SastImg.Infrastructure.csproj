@@ -39,9 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Domain\Albums\" />
     <Folder Include="Options\" />
-    <Folder Include="Persistence\Migrations\" />
   </ItemGroup>
 
 </Project>

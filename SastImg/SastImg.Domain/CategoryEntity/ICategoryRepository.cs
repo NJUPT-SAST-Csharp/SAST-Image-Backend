@@ -1,4 +1,6 @@
-﻿namespace SastImg.Domain.Categories
+﻿using SastImg.Domain.CategoryEntity;
+
+namespace SastImg.Domain.Categories
 {
     public interface ICategoryRepository
     {

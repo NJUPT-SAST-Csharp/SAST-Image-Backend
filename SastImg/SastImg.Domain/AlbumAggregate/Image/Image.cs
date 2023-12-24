@@ -1,10 +1,16 @@
-﻿using Shared.Primitives;
+﻿using SastImg.Domain.AlbumAggregate.Rules;
+using Shared.Primitives;
 using Shared.Utilities;
 
-namespace SastImg.Domain
+namespace SastImg.Domain.AlbumAggregate
 {
-    internal sealed class Image : Entity<long>
+    public sealed class Image : Entity<long>
     {
+#pragma warning disable CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑声明为可以为 null。
+        private Image()
+#pragma warning restore CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑声明为可以为 null。
+            : base(0) { }
+
         private Image(string title, Uri uri, string description)
             : base(SnowFlakeIdGenerator.NewId)
         {
@@ -13,8 +19,14 @@ namespace SastImg.Domain
             _description = description;
         }
 
-        public static Image CreateNewImage(string title, Uri uri, string description)
+        internal static Image CreateNewImage(
+            string title,
+            Uri uri,
+            string description,
+            IEnumerable<long> tags
+        )
         {
+            CheckRule(new ImageCannotOwnMoreThan5TagsRule(tags));
             return new Image(title, uri, description);
         }
 
@@ -32,7 +44,7 @@ namespace SastImg.Domain
 
         private bool _isNsfw = false;
 
-        private List<Tag> _tags = [];
+        private List<long> _tags = [];
 
         #endregion
 
@@ -50,9 +62,10 @@ namespace SastImg.Domain
             string title,
             string description,
             bool isNsfw,
-            IEnumerable<Tag> tags
+            IEnumerable<long> tags
         )
         {
+            CheckRule(new ImageCannotOwnMoreThan5TagsRule(tags));
             _isNsfw = isNsfw;
             _title = title;
             _description = description;
