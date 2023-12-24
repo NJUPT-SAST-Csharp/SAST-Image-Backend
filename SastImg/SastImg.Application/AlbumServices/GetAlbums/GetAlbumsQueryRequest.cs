@@ -1,6 +1,6 @@
 ﻿using Shared.Primitives.Request;
 
-namespace SastImg.Application.Query.Album.GetAlbums
+namespace SastImg.Application.AlbumServices.GetAlbums
 {
     public class GetAlbumsQueryRequest(int page, long authorId, RequesterInfo requester)
         : IQueryRequest<IEnumerable<AlbumDto>>

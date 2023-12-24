@@ -1,6 +1,6 @@
 ﻿using SastImg.Domain.AlbumAggregate;
 
-namespace SastImg.Application.Album.Dtos
+namespace SastImg.Application.AlbumServices.GetAlbums
 {
     public sealed class AlbumDto
     {

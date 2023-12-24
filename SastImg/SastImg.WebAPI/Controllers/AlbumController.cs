@@ -2,7 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Primitives.Common.Policies;
-using SastImg.Application.Album.GetAlbums;
+using SastImg.Application.AlbumServices.GetAlbums;
 using Shared.Response.Builders;
 
 namespace SastImg.WebAPI.Controllers
@@ -36,7 +36,7 @@ namespace SastImg.WebAPI.Controllers
         )
         {
             var albums = await _request.Send(
-                new GetAlbumsQuery(page, userId, User),
+                new GetAlbumsQueryRequest(page, userId, new(User)),
                 cancellationToken
             );
             return Responses.Data(albums);
