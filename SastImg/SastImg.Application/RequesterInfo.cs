@@ -2,7 +2,7 @@
 using Auth.Authentication;
 using Auth.Authorization;
 
-namespace SastImg.Application.Query
+namespace SastImg.Application
 {
     public sealed class RequesterInfo
     {

@@ -8,6 +8,7 @@ namespace SastImg.Infrastructure.Extensions
     {
         public static void ConfigureLogger(this ILoggingBuilder loggerBuilder)
         {
+            loggerBuilder.ClearProviders();
             var logger = new LoggerConfiguration()
                 .Enrich
                 .FromLogContext()

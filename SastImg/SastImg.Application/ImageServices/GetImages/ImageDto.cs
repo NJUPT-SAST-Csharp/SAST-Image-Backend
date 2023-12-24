@@ -1,4 +1,4 @@
-﻿namespace SastImg.Application.Image.GetImages
+﻿namespace SastImg.Application.ImageServices.GetImages
 {
     public sealed class ImageDto(long id, string title, Uri url)
     {

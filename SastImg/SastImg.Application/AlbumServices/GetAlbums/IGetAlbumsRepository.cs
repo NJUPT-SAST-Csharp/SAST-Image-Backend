@@ -1,4 +1,4 @@
-﻿namespace SastImg.Application.Query.Album.GetAlbums
+﻿namespace SastImg.Application.AlbumServices.GetAlbums
 {
     public interface IGetAlbumsRepository
     {

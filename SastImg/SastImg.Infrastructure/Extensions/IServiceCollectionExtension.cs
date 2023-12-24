@@ -15,11 +15,13 @@ using Primitives.Command;
 using Primitives.Common.Policies;
 using Primitives.DomainEvent;
 using Primitives.Request;
-using SastImg.Application.Services;
+using SastImg.Application.AlbumServices.GetAlbums;
 using SastImg.Infrastructure.Cache;
 using SastImg.Infrastructure.Event;
 using SastImg.Infrastructure.Persistence;
+using SastImg.Infrastructure.Persistence.QueryDatabase;
 using SastImg.Infrastructure.Persistence.TypeConverters;
+using SastImg.Infrastructure.QueryRepositories;
 using Shared.Response.Builders;
 using StackExchange.Redis;
 
@@ -48,7 +50,11 @@ namespace SastImg.Infrastructure.Extensions
             services.AddSingleton<DbDataSource>(
                 new NpgsqlDataSourceBuilder(connectionString).Build()
             );
-            services.AddScoped<IQueryDatabase, QueryDatabase>();
+            services.AddScoped<IDbConnectionFactory, DbConnectionFactory>(
+                _ => new DbConnectionFactory(connectionString)
+            );
+
+            services.AddScoped<IGetAlbumsRepository, AlbumQueryRepository>();
             return services;
         }
 
@@ -61,7 +67,7 @@ namespace SastImg.Infrastructure.Extensions
             services.AddSingleton<IConnectionMultiplexer>(
                 ConnectionMultiplexer.Connect(connectionString)
             );
-            services.AddScoped<ICache, RedisCache>();
+            services.AddScoped<IGetAlbumsAnonymousCache, RedisCache>();
             return services;
         }
 

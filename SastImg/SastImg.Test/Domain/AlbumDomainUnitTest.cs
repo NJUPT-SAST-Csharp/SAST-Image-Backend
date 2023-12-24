@@ -9,12 +9,13 @@ public sealed class AlbumDomainUnitTest
     public void CreateNewAlbumShouldRaiseEvent()
     {
         const long authorId = 1;
-        const string title = "fakeTitle";
-        const string description = "fakeDescription";
+        const long categoryId = 0;
+        const string title = "FakeTitle";
+        const string description = "FakeDescription";
         const Accessibility accessibility = Accessibility.Public;
         const int expected = 1;
 
-        Album album = Album.CreateNewAlbum(authorId, title, description, accessibility);
+        Album album = Album.CreateNewAlbum(authorId, categoryId, title, description, accessibility);
         Assert.AreEqual(expected, album.DomainEvents.Count);
     }
 }

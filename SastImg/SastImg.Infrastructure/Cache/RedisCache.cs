@@ -1,71 +1,84 @@
-﻿using System.Text.Json;
-using SastImg.Application.Services;
+﻿using System.Data;
+using System.Text.Json;
+using Dapper;
+using SastImg.Application.AlbumServices.GetAlbums;
+using SastImg.Infrastructure.Persistence.QueryDatabase;
 using StackExchange.Redis;
 
 namespace SastImg.Infrastructure.Cache
 {
-    internal sealed class RedisCache(IConnectionMultiplexer connectionMultiplexer) : ICache
+    internal sealed class RedisCache(
+        IConnectionMultiplexer connectionMultiplexer,
+        IDbConnectionFactory factory
+    ) : IGetAlbumsAnonymousCache
     {
-        private readonly IDatabase _database = connectionMultiplexer.GetDatabase();
+        private readonly IConnectionMultiplexer _redisConnection = connectionMultiplexer;
+        private readonly IDbConnection _connection = factory.GetConnection();
+        private const int numPerPage = 20;
 
-        public async Task<string?> StringGetAsync(string key)
+        public async Task<IEnumerable<AlbumDto>> GetAlbumsAsync(int page, long authorId)
         {
-            return await _database.StringGetAsync(key);
+            var database = _redisConnection.GetDatabase();
+
+            var values = await database.ListRangeAsync(authorId.ToString());
+
+            var albums = values
+                .Where(v => v != string.Empty)
+                .Select(v => JsonSerializer.Deserialize<AlbumDto>(v.ToString())!);
+
+            if (values.Length == 0)
+            {
+                albums = await GetAlbumsFromReposotory(authorId);
+                if (!albums.Any())
+                {
+                    _ = database.ListRightPushAsync(authorId.ToString(), string.Empty);
+                }
+                else
+                {
+                    _ = SetAlbumsAsync(albums, authorId);
+                }
+            }
+
+            int skip = page * numPerPage;
+
+            if (skip > values.Length)
+            {
+                return albums.Take(skip);
+            }
+            else
+            {
+                return albums.Skip(skip).Take(numPerPage);
+            }
         }
 
-        public async Task<TValue?> HashGetAsync<TValue>(string key, long field)
-            where TValue : class
+        public Task RemoveAlbumsAsync(long authorId)
         {
-            var json = await _database.HashGetAsync(key, field);
-            if (json.IsNull)
-                return default;
-            var result = JsonSerializer.Deserialize<TValue>(json.ToString());
-            return result;
+            var database = _redisConnection.GetDatabase();
+            return database.KeyDeleteAsync(authorId.ToString());
         }
 
-        public Task<bool> HashSetAsync<TValue>(string key, long field, TValue value)
-            where TValue : class
+        public Task SetAlbumsAsync(IEnumerable<AlbumDto> albums, long authorId)
         {
-            var json = JsonSerializer.Serialize(value);
-            return _database.HashSetAsync(key, field, json);
+            var database = _redisConnection.GetDatabase();
+            var values = albums.Select(a => (RedisValue)JsonSerializer.Serialize(a)).ToArray();
+            return database.ListRightPushAsync(authorId.ToString(), values);
         }
 
-        public Task<bool> StringSetAsync(string key, string value, TimeSpan? expiry = null)
+        private async Task<IEnumerable<AlbumDto>> GetAlbumsFromReposotory(long authorId)
         {
-            return _database.StringSetAsync(key, value, expiry ?? TimeSpan.FromMinutes(10));
-        }
+            const string sql =
+                "SELECT "
+                + "id as AlbumId, "
+                + "title as Title, "
+                + "cover_url as CoverUri, "
+                + "accessibility as Accessibility, "
+                + "author_id as AuthorId "
+                + "FROM albums "
+                + "WHERE ( accessibility = 0 AND NOT is_removed ) "
+                + "AND (@authorId = 0 OR author_id = @authorId) "
+                + "ORDER BY updated_at DESC ";
 
-        public Task HashSetAsync<TValue>(string key, IEnumerable<(long, TValue)> values)
-            where TValue : class
-        {
-            var entries = values
-                .Select(v => new HashEntry(v.Item1, JsonSerializer.Serialize(v.Item2)))
-                .ToArray();
-            return _database.HashSetAsync(key, entries);
-        }
-
-        public async Task<IEnumerable<TValue>> HashGetAsync<TValue>(string key)
-            where TValue : class
-        {
-            var data = await _database.HashGetAllAsync(key);
-            return data.Select(v => JsonSerializer.Deserialize<TValue>(v.Value.ToString())!);
-        }
-
-        public Task<bool> HashSetAsync<TValue>(string key, string field, TValue value)
-            where TValue : class
-        {
-            var json = JsonSerializer.Serialize(value);
-            return _database.HashSetAsync(key, field, json);
-        }
-
-        public async Task<TValue?> HashGetAsync<TValue>(string key, string field)
-            where TValue : class
-        {
-            var json = await _database.HashGetAsync(key, field);
-            if (json.IsNull)
-                return default;
-            var result = JsonSerializer.Deserialize<TValue>(json.ToString());
-            return result;
+            return await _connection.QueryAsync<AlbumDto>(sql, new { authorId });
         }
     }
 }

@@ -26,7 +26,7 @@ namespace SastImg.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("SastImg.Domain.AlbumAggregate.Album", b =>
+            modelBuilder.Entity("SastImg.Domain.AlbumAggregate.AlbumServices", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -139,11 +139,11 @@ namespace SastImg.Infrastructure.Persistence.Migrations
                     b.ToTable("tags", (string)null);
                 });
 
-            modelBuilder.Entity("SastImg.Domain.AlbumAggregate.Album", b =>
+            modelBuilder.Entity("SastImg.Domain.AlbumAggregate.AlbumServices", b =>
                 {
                     b.HasOne("SastImg.Domain.CategoryEntity.Category", null)
                         .WithOne()
-                        .HasForeignKey("SastImg.Domain.AlbumAggregate.Album", "_categoryId")
+                        .HasForeignKey("SastImg.Domain.AlbumAggregate.AlbumServices", "_categoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_albums_categories_category_id");
@@ -171,7 +171,7 @@ namespace SastImg.Infrastructure.Persistence.Migrations
                                 .HasConstraintName("fk_albums_albums_id");
                         });
 
-                    b.OwnsMany("SastImg.Domain.AlbumAggregate.Image", "_images", b1 =>
+                    b.OwnsMany("SastImg.Domain.AlbumAggregate.ImageServices", "_images", b1 =>
                         {
                             b1.Property<long>("album_id")
                                 .HasColumnType("bigint")
