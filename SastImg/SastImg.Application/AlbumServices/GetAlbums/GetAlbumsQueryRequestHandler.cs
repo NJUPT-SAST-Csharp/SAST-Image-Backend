@@ -17,20 +17,27 @@ namespace SastImg.Application.AlbumServices.GetAlbums
         {
             if (request.Requester.IsAuthenticated == false)
             {
-                return _cache.GetAlbumsAsync(request.Page, request.AuthorId);
+                return _cache.GetAlbumsAsync(request.Page, request.AuthorId, cancellationToken);
             }
             else
             {
                 if (request.Requester.IsAdmin)
                 {
-                    return _database.GetAlbumsByAdminAsync(request.Page, request.AuthorId);
+                    return _database.GetAlbumsByAdminAsync(
+                        request.Page,
+                        request.AuthorId,
+                        request.CategoryId,
+                        cancellationToken
+                    );
                 }
                 else
                 {
                     return _database.GetAlbumsByUserAsync(
                         request.Page,
                         request.AuthorId,
-                        request.Requester.Id
+                        request.CategoryId,
+                        request.Requester.Id,
+                        cancellationToken
                     );
                 }
             }

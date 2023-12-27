@@ -8,11 +8,16 @@ namespace Shared.Response.Builders
 {
     public static class Responses
     {
-        public static Ok<DataResponse<T>> Data<T>(T obj)
-            where T : notnull => TypedResults.Ok(new DataResponse<T>(obj));
+        public static Results<Ok<T>, NotFound> DataOrNotFound<T>(T? obj)
+        {
+            if (obj is not null)
+                return TypedResults.Ok(obj);
+            else
+                return TypedResults.NotFound();
+        }
 
-        public static Ok<DataResponse> Data([DisallowNull] object obj) =>
-            TypedResults.Ok(new DataResponse(obj));
+        public static Ok<T> Data<T>([DisallowNull] T obj)
+            where T : notnull => TypedResults.Ok(obj);
 
         public static NoContent NoContent => TypedResults.NoContent();
 

@@ -52,8 +52,8 @@ namespace Account.WebAPI.Configurations
     [JsonSerializable(typeof(SendRegistrationCodeRequest))]
     [JsonSerializable(typeof(CreateAccountRequest))]
     [JsonSerializable(typeof(ChangePasswordRequest))]
-    [JsonSerializable(typeof(DataResponse<LoginDto>))]
-    [JsonSerializable(typeof(DataResponse<VerifyForgetCodeDto>))]
-    [JsonSerializable(typeof(DataResponse<VerifyRegistrationCodeDto>))]
+    [JsonSerializable(typeof(LoginDto))]
+    [JsonSerializable(typeof(VerifyForgetCodeDto))]
+    [JsonSerializable(typeof(VerifyRegistrationCodeDto))]
     public partial class AppJsonSerializerContext : JsonSerializerContext { }
 }
