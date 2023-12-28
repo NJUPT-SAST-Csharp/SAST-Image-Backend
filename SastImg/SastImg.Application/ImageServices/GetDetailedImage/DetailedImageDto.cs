@@ -1,8 +1,8 @@
 ﻿namespace SastImg.Application.ImageServices.GetDetailedImage
 {
-    public sealed class DetailedImage
+    public sealed class DetailedImageDto
     {
-        private DetailedImage() { }
+        private DetailedImageDto() { }
 
         public required long ImageId { get; init; }
         public required string Title { get; init; }

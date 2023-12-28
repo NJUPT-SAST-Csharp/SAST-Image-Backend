@@ -7,6 +7,6 @@ namespace SastImg.Application.AlbumServices.GetAlbum
         : IQueryRequest<DetailedAlbumDto?>
     {
         public long AlbumId { get; private init; } = albumId;
-        public RequesterInfo RequesterInfo { get; private init; } = new(user);
+        public RequesterInfo Requester { get; private init; } = new(user);
     }
 }

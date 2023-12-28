@@ -29,7 +29,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "updated_at as UpdatedAt "
                 + "FROM albums "
                 + "WHERE accessibility = 0 "
-                + "AND ( NOT is_removed ) "
+                + "AND NOT is_removed "
                 + "AND ( @categoryId = 0 OR category_id = @categoryId ) "
                 + "ORDER BY updated_at DESC ";
 
@@ -109,7 +109,37 @@ namespace SastImg.Infrastructure.QueryRepositories
             );
         }
 
-        public Task<DetailedAlbumDto?> GetDetailedAlbumAsync(
+        public Task<DetailedAlbumDto?> GetDetailedAlbumByUserAsync(
+            long albumId,
+            long requesterId,
+            CancellationToken cancellationToken = default
+        )
+        {
+            const string sql =
+                "SELECT "
+                + "id as AlbumId, "
+                + "title as Title, "
+                + "description as Description, "
+                + "cover_url as CoverUri, "
+                + "accessibility as Accessibility, "
+                + "updated_at as UpdatedAt, "
+                + "author_id as AuthorId, "
+                + "is_removed as IsRemoved, "
+                + "collaborators as Collaborators, "
+                + "category_id as CategoryId "
+                + "FROM albums "
+                + "WHERE id = @albumId "
+                + "AND NOT is_removed "
+                + "AND ( accessibility <> 2 OR author_id = @requesterId OR @requesterId = ANY( collaborators ) ) "
+                + "LIMIT 1";
+
+            return _connection.QueryFirstOrDefaultAsync<DetailedAlbumDto>(
+                sql,
+                new { albumId, requesterId }
+            );
+        }
+
+        public Task<DetailedAlbumDto?> GetDetailedAlbumByAdminAsync(
             long albumId,
             CancellationToken cancellationToken = default
         )
@@ -128,8 +158,33 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "category_id as CategoryId "
                 + "FROM albums "
                 + "WHERE id = @albumId "
+                + "AND NOT is_removed "
                 + "LIMIT 1";
+            return _connection.QueryFirstOrDefaultAsync<DetailedAlbumDto>(sql, new { albumId });
+        }
 
+        public Task<DetailedAlbumDto?> GetDetailedAlbumByAnonymousAsync(
+            long albumId,
+            CancellationToken cancellationToken = default
+        )
+        {
+            const string sql =
+                "SELECT "
+                + "id as AlbumId, "
+                + "title as Title, "
+                + "description as Description, "
+                + "cover_url as CoverUri, "
+                + "accessibility as Accessibility, "
+                + "updated_at as UpdatedAt, "
+                + "author_id as AuthorId, "
+                + "is_removed as IsRemoved, "
+                + "collaborators as Collaborators, "
+                + "category_id as CategoryId "
+                + "FROM albums "
+                + "WHERE id = @albumId "
+                + "AND NOT is_removed "
+                + "AND accessibility = 0 "
+                + "LIMIT 1";
             return _connection.QueryFirstOrDefaultAsync<DetailedAlbumDto>(sql, new { albumId });
         }
     }

@@ -11,12 +11,12 @@ namespace SastImg.WebAPI.Controllers
     /// <summary>
     /// TODO: complete
     /// </summary>
-    /// <param name="request"></param>
+    /// <param name="sender"></param>
     [Route("api/[controller]")]
     [ApiController]
-    public sealed class AlbumController(ISender request) : ControllerBase
+    public sealed class AlbumController(ISender sender) : ControllerBase
     {
-        private readonly ISender _request = request;
+        private readonly ISender _sender = sender;
 
         /// <summary>
         /// TODO: complete
@@ -30,28 +30,28 @@ namespace SastImg.WebAPI.Controllers
             [Range(0, 10000)] int page = 0,
             [Range(0, long.MaxValue)] long userId = 0,
             [Range(0, long.MaxValue)] long categoryId = 0,
-            CancellationToken cancellationToken = default
+            CancellationToken cancellationToken
         )
         {
-            var albums = await _request.Send(
-                new GetAlbumsQueryRequest(page, userId, categoryId, new(User)),
+            var albums = await _sender.Send(
+                new GetAlbumsQueryRequest(page, userId, categoryId, User),
                 cancellationToken
             );
             return Responses.Data(albums);
         }
 
         /// <summary>
-        ///
+        /// TODO: complete
         /// </summary>
         /// <param name="albumId"></param>
         /// <param name="cancellationToken"></param>
         [HttpGet("{albumId}")]
         public async Task<Results<Ok<DetailedAlbumDto>, NotFound>> GetAlbum(
             [Range(0, long.MaxValue)] long albumId,
-            CancellationToken cancellationToken = default
+            CancellationToken cancellationToken
         )
         {
-            var album = await _request.Send(
+            var album = await _sender.Send(
                 new GetAlbumQueryRequest(albumId, User),
                 cancellationToken
             );

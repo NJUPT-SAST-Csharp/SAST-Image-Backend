@@ -4,7 +4,7 @@ using Auth.Authorization;
 
 namespace SastImg.Application
 {
-    public sealed class RequesterInfo
+    public readonly struct RequesterInfo
     {
         public RequesterInfo(ClaimsPrincipal user)
         {
@@ -16,8 +16,8 @@ namespace SastImg.Application
             }
         }
 
-        public bool IsAuthenticated { get; }
-        public long Id { get; }
-        public bool IsAdmin { get; }
+        public readonly bool IsAuthenticated { get; }
+        public readonly long Id { get; }
+        public readonly bool IsAdmin { get; }
     }
 }

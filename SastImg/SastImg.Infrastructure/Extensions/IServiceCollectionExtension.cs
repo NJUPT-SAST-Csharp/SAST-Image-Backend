@@ -15,6 +15,7 @@ using Primitives.Command;
 using Primitives.Common.Policies;
 using Primitives.DomainEvent;
 using Primitives.Request;
+using SastImg.Application.AlbumServices.GetAlbum;
 using SastImg.Application.AlbumServices.GetAlbums;
 using SastImg.Infrastructure.Cache;
 using SastImg.Infrastructure.Event;
@@ -55,6 +56,7 @@ namespace SastImg.Infrastructure.Extensions
             );
 
             services.AddScoped<IGetAlbumsRepository, AlbumQueryRepository>();
+            services.AddScoped<IGetAlbumRepository, AlbumQueryRepository>();
             return services;
         }
 
@@ -67,7 +69,7 @@ namespace SastImg.Infrastructure.Extensions
             services.AddSingleton<IConnectionMultiplexer>(
                 ConnectionMultiplexer.Connect(connectionString)
             );
-            services.AddScoped<IGetAlbumsAnonymousCache, RedisCache>();
+            services.AddScoped<IGetAlbumsCache, AlbumCache>();
             return services;
         }
 

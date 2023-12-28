@@ -4,22 +4,18 @@ namespace SastImg.Application.AlbumServices.GetAlbums
 {
     internal sealed class GetAlbumsQueryRequestHandler(
         IGetAlbumsRepository database,
-        IGetAlbumsAnonymousCache cache
+        IGetAlbumsCache cache
     ) : IQueryRequestHandler<GetAlbumsQueryRequest, IEnumerable<AlbumDto>>
     {
         private readonly IGetAlbumsRepository _database = database;
-        private readonly IGetAlbumsAnonymousCache _cache = cache;
+        private readonly IGetAlbumsCache _cache = cache;
 
         public Task<IEnumerable<AlbumDto>> Handle(
             GetAlbumsQueryRequest request,
             CancellationToken cancellationToken
         )
         {
-            if (request.Requester.IsAuthenticated == false)
-            {
-                return _cache.GetAlbumsAsync(request.Page, request.AuthorId, cancellationToken);
-            }
-            else
+            if (request.Requester.IsAuthenticated)
             {
                 if (request.Requester.IsAdmin)
                 {
@@ -40,6 +36,10 @@ namespace SastImg.Application.AlbumServices.GetAlbums
                         cancellationToken
                     );
                 }
+            }
+            else
+            {
+                return _cache.GetAlbumsAsync(request.Page, request.AuthorId, cancellationToken);
             }
         }
     }

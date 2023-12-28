@@ -1,6 +1,6 @@
 ﻿namespace SastImg.Application.AlbumServices.GetAlbums
 {
-    public interface IGetAlbumsAnonymousCache
+    public interface IGetAlbumsCache
     {
         public Task<IEnumerable<AlbumDto>> GetAlbumsAsync(
             int page,
