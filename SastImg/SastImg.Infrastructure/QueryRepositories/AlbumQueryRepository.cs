@@ -2,7 +2,7 @@
 using Dapper;
 using SastImg.Application.AlbumServices.GetAlbum;
 using SastImg.Application.AlbumServices.GetAlbums;
-using SastImg.Application.AlbumServices.SearchAlbum;
+using SastImg.Application.AlbumServices.SearchAlbums;
 using SastImg.Infrastructure.Persistence.QueryDatabase;
 
 namespace SastImg.Infrastructure.QueryRepositories

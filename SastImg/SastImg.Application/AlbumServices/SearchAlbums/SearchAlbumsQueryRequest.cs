@@ -3,7 +3,7 @@ using SastImg.Application.AlbumServices.GetAlbums;
 using SastImg.Application.SeedWorks;
 using Shared.Primitives.Request;
 
-namespace SastImg.Application.AlbumServices.SearchAlbum
+namespace SastImg.Application.AlbumServices.SearchAlbums
 {
     public sealed class SearchAlbumsQueryRequest(
         long categoryId,

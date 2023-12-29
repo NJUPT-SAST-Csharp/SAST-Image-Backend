@@ -1,7 +1,7 @@
 ﻿using SastImg.Application.AlbumServices.GetAlbums;
 using Shared.Primitives.Request;
 
-namespace SastImg.Application.AlbumServices.SearchAlbum
+namespace SastImg.Application.AlbumServices.SearchAlbums
 {
     internal sealed class SearchAlbumsQueryRequestHandler(ISearchAlbumsRepository repository)
         : IQueryRequestHandler<SearchAlbumsQueryRequest, IEnumerable<AlbumDto>>

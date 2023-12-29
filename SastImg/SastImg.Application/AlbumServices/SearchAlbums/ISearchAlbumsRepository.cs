@@ -1,6 +1,6 @@
 ﻿using SastImg.Application.AlbumServices.GetAlbums;
 
-namespace SastImg.Application.AlbumServices.SearchAlbum
+namespace SastImg.Application.AlbumServices.SearchAlbums
 {
     public interface ISearchAlbumsRepository
     {
