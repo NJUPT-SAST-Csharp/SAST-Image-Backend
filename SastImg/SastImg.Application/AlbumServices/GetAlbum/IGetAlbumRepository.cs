@@ -2,13 +2,13 @@
 {
     public interface IGetAlbumRepository
     {
-        Task<DetailedAlbumDto?> GetDetailedAlbumByUserAsync(
+        Task<DetailedAlbumDto?> GetAlbumByUserAsync(
             long albumId,
             long requesterId,
             CancellationToken cancellationToken = default
         );
 
-        Task<DetailedAlbumDto?> GetDetailedAlbumByAdminAsync(
+        Task<DetailedAlbumDto?> GetAlbumByAdminAsync(
             long albumId,
             CancellationToken cancellationToken = default
         );
@@ -17,8 +17,8 @@
         /// Provide album accessible to anonymous users.
         /// </summary>
         /// <remarks>Used only in cache.</remarks>
-        Task<DetailedAlbumDto?> GetDetailedAlbumByAnonymousAsync(
-            long albumId,
+        Task<DetailedAlbumDto?> GetAlbumByAnonymousAsync(
+            string albumId,
             CancellationToken cancellationToken = default
         );
     }

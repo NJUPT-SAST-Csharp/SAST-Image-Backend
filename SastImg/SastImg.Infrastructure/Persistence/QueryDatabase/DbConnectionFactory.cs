@@ -3,9 +3,7 @@ using Npgsql;
 
 namespace SastImg.Infrastructure.Persistence.QueryDatabase
 {
-    internal sealed class DbConnectionFactory(string connectionString)
-        : IDbConnectionFactory,
-            IDisposable
+    internal sealed class DbConnectionFactory(string connectionString) : IDbConnectionFactory
     {
         private readonly string _connectionString = connectionString;
         private IDbConnection? _connection = null;

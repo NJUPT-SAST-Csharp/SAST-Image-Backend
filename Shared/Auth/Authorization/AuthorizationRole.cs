@@ -2,6 +2,7 @@
 {
     public enum AuthorizationRole
     {
+        Auth,
         Anonymous,
         Admin,
         User,
