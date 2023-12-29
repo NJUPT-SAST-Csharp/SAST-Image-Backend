@@ -14,7 +14,7 @@
         );
 
         public Task<DetailedImageDto?> GetImageByAnonymousAsync(
-            string imageId,
+            long imageId,
             CancellationToken cancellationToken = default
         );
     }

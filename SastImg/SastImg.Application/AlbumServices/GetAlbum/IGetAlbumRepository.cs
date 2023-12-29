@@ -18,7 +18,7 @@
         /// </summary>
         /// <remarks>Used only in cache.</remarks>
         Task<DetailedAlbumDto?> GetAlbumByAnonymousAsync(
-            string albumId,
+            long albumId,
             CancellationToken cancellationToken = default
         );
     }

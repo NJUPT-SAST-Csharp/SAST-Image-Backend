@@ -13,10 +13,9 @@ namespace SastImg.Infrastructure.QueryRepositories
             ISearchAlbumsRepository
     {
         private readonly IDbConnection _connection = factory.GetConnection();
+        private const int numPerPage = 20;
 
         #region GetAlbums
-
-        private const int numPerPage = 20;
 
         public Task<IEnumerable<AlbumDto>> GetAlbumsAnonymousAsync(
             CancellationToken cancellationToken = default
@@ -163,7 +162,7 @@ namespace SastImg.Infrastructure.QueryRepositories
         }
 
         public Task<DetailedAlbumDto?> GetAlbumByAnonymousAsync(
-            string albumId,
+            long albumId,
             CancellationToken cancellationToken = default
         )
         {
@@ -193,20 +192,72 @@ namespace SastImg.Infrastructure.QueryRepositories
         public Task<IEnumerable<AlbumDto>> SearchAlbumsByAdminAsync(
             long categoryId,
             string title,
-            int page
+            int page,
+            CancellationToken cancellationToken = default
         )
         {
-            throw new NotImplementedException();
+            const string sql =
+                "SELECT "
+                + "id as AlbumId, "
+                + "title as Title, "
+                + "cover_url as CoverUri, "
+                + "accessibility as Accessibility, "
+                + "author_id as AuthorId, "
+                + "updated_at as UpdatedAt "
+                + "FROM albums "
+                + "WHERE ( NOT is_removed ) "
+                + "AND ( @categoryId = 0 OR category_id = @categoryId ) "
+                + "AND ( title LIKE @title ) "
+                + "ORDER BY updated_at DESC "
+                + "LIMIT @take "
+                + "OFFSET @skip";
+            return _connection.QueryAsync<AlbumDto>(
+                sql,
+                new
+                {
+                    take = numPerPage,
+                    skip = page * numPerPage,
+                    categoryId,
+                    title = $"%{title}%"
+                }
+            );
         }
 
         public Task<IEnumerable<AlbumDto>> SearchAlbumsByUserAsync(
             long categoryId,
             string title,
             int page,
-            long requesterId
+            long requesterId,
+            CancellationToken cancellationToken = default
         )
         {
-            throw new NotImplementedException();
+            const string sql =
+                "SELECT "
+                + "id as AlbumId, "
+                + "title as Title, "
+                + "cover_url as CoverUri, "
+                + "accessibility as Accessibility, "
+                + "author_id as AuthorId, "
+                + "updated_at as UpdatedAt "
+                + "FROM albums "
+                + "WHERE ( NOT is_removed ) "
+                + "AND ( @categoryId = 0 OR category_id = @categoryId ) "
+                + "AND ( accessibility <> 2 OR author_id = @requesterId OR @requesterId = ANY( collaborators ) ) "
+                + "AND ( title LIKE @title ) "
+                + "ORDER BY updated_at DESC "
+                + "LIMIT @take "
+                + "OFFSET @skip";
+            return _connection.QueryAsync<AlbumDto>(
+                sql,
+                new
+                {
+                    take = numPerPage,
+                    skip = page * numPerPage,
+                    categoryId,
+                    title = $"%{title}%",
+                    requesterId
+                }
+            );
         }
 
         #endregion

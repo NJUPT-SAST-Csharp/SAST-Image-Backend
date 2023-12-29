@@ -15,8 +15,8 @@
         );
 
         public Task<IEnumerable<ImageDto>> GetImagesByAnonymousAsync(
-            string albumId,
-            CancellationToken cancellationToken
+            long albumId,
+            CancellationToken cancellationToken = default
         );
     }
 }

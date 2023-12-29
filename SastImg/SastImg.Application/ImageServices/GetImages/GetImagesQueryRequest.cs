@@ -7,8 +7,8 @@ namespace SastImg.Application.ImageServices.GetImages
     public sealed class GetImagesQueryRequest(long albumId, int page, ClaimsPrincipal user)
         : IQueryRequest<IEnumerable<ImageDto>>
     {
-        public long AlbumId { get; } = albumId;
         public int Page { get; } = page;
+        public long AlbumId { get; } = albumId;
         public RequesterInfo Requester { get; } = new(user);
     }
 }

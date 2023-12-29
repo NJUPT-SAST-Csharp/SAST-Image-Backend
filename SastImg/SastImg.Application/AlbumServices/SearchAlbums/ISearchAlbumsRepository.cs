@@ -7,13 +7,15 @@ namespace SastImg.Application.AlbumServices.SearchAlbums
         public Task<IEnumerable<AlbumDto>> SearchAlbumsByAdminAsync(
             long categoryId,
             string title,
-            int page
+            int page,
+            CancellationToken cancellationToken = default
         );
         public Task<IEnumerable<AlbumDto>> SearchAlbumsByUserAsync(
             long categoryId,
             string title,
             int page,
-            long requesterId
+            long requesterId,
+            CancellationToken cancellationToken = default
         );
     }
 }

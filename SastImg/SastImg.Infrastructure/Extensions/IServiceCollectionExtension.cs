@@ -17,8 +17,10 @@ using Primitives.DomainEvent;
 using Primitives.Request;
 using SastImg.Application.AlbumServices.GetAlbum;
 using SastImg.Application.AlbumServices.GetAlbums;
+using SastImg.Application.AlbumServices.SearchAlbums;
 using SastImg.Application.ImageServices.GetImage;
 using SastImg.Application.ImageServices.GetImages;
+using SastImg.Application.ImageServices.SearchImages;
 using SastImg.Application.SeedWorks;
 using SastImg.Infrastructure.Event;
 using SastImg.Infrastructure.Persistence;
@@ -61,6 +63,12 @@ namespace SastImg.Infrastructure.Extensions
 
             services.AddScoped<IGetAlbumsRepository, AlbumQueryRepository>();
             services.AddScoped<IGetAlbumRepository, AlbumQueryRepository>();
+            services.AddScoped<ISearchAlbumsRepository, AlbumQueryRepository>();
+
+            services.AddScoped<IGetImagesRepository, ImageQueryRepository>();
+            services.AddScoped<IGetImageRepository, ImageQueryRepository>();
+            services.AddScoped<ISearchImagesRepository, ImageQueryRepository>();
+
             return services;
         }
 

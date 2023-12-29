@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using SastImg.Application.AlbumServices.GetAlbum;
 using SastImg.Application.AlbumServices.GetAlbums;
+using SastImg.Application.AlbumServices.SearchAlbums;
 using Shared.Response.Builders;
 
 namespace SastImg.WebAPI.Controllers
@@ -67,6 +68,7 @@ namespace SastImg.WebAPI.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpGet("search")]
+        //[EnableRateLimiting("")]
         public async Task<Ok<IEnumerable<AlbumDto>>> SearchAlbums(
             CancellationToken cancellationToken,
             [Range(0, long.MaxValue)] long categoryId,
@@ -74,8 +76,11 @@ namespace SastImg.WebAPI.Controllers
             [MaxLength(10)] string title = ""
         )
         {
-            // TODO: implement
-            return Responses.Data<IEnumerable<AlbumDto>>([]);
+            var albums = await _sender.Send(
+                new SearchAlbumsQueryRequest(categoryId, title, page, User),
+                cancellationToken
+            );
+            return Responses.Data(albums);
         }
     }
 }
