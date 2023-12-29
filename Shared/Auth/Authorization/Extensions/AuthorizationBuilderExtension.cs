@@ -22,15 +22,6 @@ namespace Auth.Authorization.Extensions
         {
             builder
                 .AddPolicy(
-                    AuthorizationRole.Auth.ToString(),
-                    policy =>
-                        policy
-                            .RequireAuthenticatedUser()
-                            .RequireClaim("Username")
-                            .RequireClaim("Roles")
-                            .RequireClaim("Id")
-                )
-                .AddPolicy(
                     AuthorizationRole.User.ToString(),
                     policy =>
                         policy

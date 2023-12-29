@@ -1,4 +1,4 @@
-﻿namespace SastImg.Application.ImageServices.GetImage
+﻿namespace SastImg.Application.ImageServices.GetDetailedImage
 {
     public sealed class DetailedImageDto
     {

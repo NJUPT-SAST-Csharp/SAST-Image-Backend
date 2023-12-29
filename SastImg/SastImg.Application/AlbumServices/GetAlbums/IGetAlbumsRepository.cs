@@ -8,18 +8,21 @@
         /// <remarks>Used only in cache.</remarks>
         /// <param name="categoryId">Get <b>all albums</b> when <c>categoryId = 0</c></param>
         public Task<IEnumerable<AlbumDto>> GetAlbumsAnonymousAsync(
+            long categoryId,
             CancellationToken cancellationToken = default
         );
 
         public Task<IEnumerable<AlbumDto>> GetAlbumsByAdminAsync(
             int page,
             long authorId,
+            long categoryId,
             CancellationToken cancellationToken = default
         );
 
         public Task<IEnumerable<AlbumDto>> GetAlbumsByUserAsync(
             int page,
             long authorId,
+            long categoryId,
             long requesterId,
             CancellationToken cancellationToken = default
         );

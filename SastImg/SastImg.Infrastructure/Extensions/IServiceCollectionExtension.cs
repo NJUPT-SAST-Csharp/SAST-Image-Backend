@@ -17,15 +17,11 @@ using Primitives.DomainEvent;
 using Primitives.Request;
 using SastImg.Application.AlbumServices.GetAlbum;
 using SastImg.Application.AlbumServices.GetAlbums;
-using SastImg.Application.ImageServices.GetImage;
-using SastImg.Application.ImageServices.GetImages;
-using SastImg.Application.SeedWorks;
+using SastImg.Infrastructure.Cache;
 using SastImg.Infrastructure.Event;
 using SastImg.Infrastructure.Persistence;
 using SastImg.Infrastructure.Persistence.QueryDatabase;
 using SastImg.Infrastructure.Persistence.TypeConverters;
-using SastImg.Infrastructure.QueryCache.AlbumCaching;
-using SastImg.Infrastructure.QueryCache.ImageCaching;
 using SastImg.Infrastructure.QueryRepositories;
 using Shared.Response.Builders;
 using StackExchange.Redis;
@@ -73,10 +69,7 @@ namespace SastImg.Infrastructure.Extensions
             services.AddSingleton<IConnectionMultiplexer>(
                 ConnectionMultiplexer.Connect(connectionString)
             );
-            services.AddScoped<ICache<IEnumerable<AlbumDto>>, GetAlbumsCache>();
-            services.AddScoped<ICache<DetailedAlbumDto>, GetAlbumCache>();
-            services.AddScoped<ICache<IEnumerable<ImageDto>>, GetImagesCache>();
-            services.AddScoped<ICache<DetailedImageDto>, GetImageCache>();
+            services.AddScoped<IGetAlbumsCache, AlbumCache>();
             return services;
         }
 
@@ -111,12 +104,9 @@ namespace SastImg.Infrastructure.Extensions
             services.AddScoped<IQueryRequestSender, InternalEventBus>();
             services.AddScoped<ICommandSender, InternalEventBus>();
             services.AddScoped<IDomainEventPublisher, InternalEventBus>();
-
-            services.AddMediatR(config =>
-            {
-                config.RegisterServicesFromAssembly(Application.AssemblyReference.Assembly);
-            });
-
+            services.AddMediatR(
+                cfg => cfg.RegisterServicesFromAssembly(Application.AssemblyReference.Assembly)
+            );
             return services;
         }
 

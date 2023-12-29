@@ -1,16 +1,14 @@
 ﻿namespace SastImg.Application.ImageServices.GetImages
 {
-    public interface IGetImagesRepository
+    public interface IGetImagesCache
     {
-        public Task<IEnumerable<ImageDto>> GetImagesByUserAsync(
+        public Task<IEnumerable<ImageDto>> GetImagesAsync(
             long albumId,
-            int page,
             CancellationToken cancellationToken = default
         );
 
-        public Task<IEnumerable<ImageDto>> GetImagesByAdminAsync(
+        public Task<IEnumerable<ImageDto>> RemoveImagesAsync(
             long albumId,
-            int page,
             CancellationToken cancellationToken = default
         );
     }

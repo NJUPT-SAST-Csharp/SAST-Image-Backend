@@ -2,9 +2,6 @@
 {
     internal enum CacheKeys
     {
-        Albums,
-        DetailedAlbums,
-        Images,
-        DetailedImages
+        Albums
     }
 }
