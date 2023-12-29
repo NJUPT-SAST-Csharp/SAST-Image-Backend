@@ -13,5 +13,10 @@
             int page,
             CancellationToken cancellationToken = default
         );
+
+        public Task<IEnumerable<ImageDto>> GetImagesByAnonymousAsync(
+            string albumId,
+            CancellationToken cancellationToken
+        );
     }
 }

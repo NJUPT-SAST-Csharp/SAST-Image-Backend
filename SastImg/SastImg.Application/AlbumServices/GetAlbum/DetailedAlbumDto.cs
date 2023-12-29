@@ -14,7 +14,6 @@ namespace SastImg.Application.AlbumServices.GetAlbum
         public required Accessibility Accessibility { get; init; }
         public required DateTime UpdatedAt { get; init; }
         public required Uri CoverUri { get; init; }
-        public required bool IsRemoved { get; init; }
         public required IEnumerable<long> Collaborators { get; init; }
     }
 }

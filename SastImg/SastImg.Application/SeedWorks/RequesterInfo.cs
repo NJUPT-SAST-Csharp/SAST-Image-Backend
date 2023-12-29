@@ -2,7 +2,7 @@
 using Auth.Authentication;
 using Auth.Authorization;
 
-namespace SastImg.Application
+namespace SastImg.Application.SeedWorks
 {
     public readonly struct RequesterInfo
     {

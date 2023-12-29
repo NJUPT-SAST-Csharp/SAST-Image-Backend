@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using SastImg.Application.ImageServices.GetDetailedImage;
+using SastImg.Application.ImageServices.GetImage;
 using SastImg.Application.ImageServices.GetImages;
 using Shared.Response.Builders;
 
@@ -21,16 +22,33 @@ namespace SastImg.WebAPI.Controllers
         /// TODO: complete
         /// </summary>
         /// <param name="albumId"></param>
+        /// <param name="page"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet]
         public async Task<Ok<IEnumerable<ImageDto>>> GetImages(
-            [Range(0, long.MaxValue)] long albumId,
-            CancellationToken cancellationToken
+            CancellationToken cancellationToken,
+            [Range(0, long.MaxValue)] long albumId = 0,
+            [Range(0, 1000)] int page = 0
         )
         {
-            var images = await _sender.Send(new GetImagesQueryRequest(albumId), cancellationToken);
+            var images = await _sender.Send(
+                new GetImagesQueryRequest(albumId, page, User),
+                cancellationToken
+            );
             return Responses.Data(images);
+        }
+
+        /// <summary>
+        /// TODO: complete
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("search")]
+        public async Task<Ok<IEnumerable<ImageDto>>> SearchImages()
+        {
+            // TODO: implement
+            return Responses.Data<IEnumerable<ImageDto>>([]);
         }
 
         /// <summary>
@@ -41,11 +59,14 @@ namespace SastImg.WebAPI.Controllers
         /// <returns></returns>
         [HttpGet("{imageId}")]
         public async Task<Results<Ok<DetailedImageDto>, NotFound>> GetImage(
-            [Range(0, long.MaxValue)] long imageId,
-            CancellationToken cancellationToken
+            CancellationToken cancellationToken,
+            [Range(0, long.MaxValue)] long imageId
         )
         {
-            var image = await _sender.Send(new GetImageQueryRequest(imageId), cancellationToken);
+            var image = await _sender.Send(
+                new GetImageQueryRequest(imageId, User),
+                cancellationToken
+            );
             return Responses.DataOrNotFound(image);
         }
     }

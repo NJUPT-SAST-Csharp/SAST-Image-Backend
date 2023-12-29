@@ -2,20 +2,23 @@
 using Dapper;
 using SastImg.Application.AlbumServices.GetAlbum;
 using SastImg.Application.AlbumServices.GetAlbums;
+using SastImg.Application.AlbumServices.SearchAlbum;
 using SastImg.Infrastructure.Persistence.QueryDatabase;
 
 namespace SastImg.Infrastructure.QueryRepositories
 {
     internal sealed class AlbumQueryRepository(IDbConnectionFactory factory)
         : IGetAlbumsRepository,
-            IGetAlbumRepository
+            IGetAlbumRepository,
+            ISearchAlbumsRepository
     {
         private readonly IDbConnection _connection = factory.GetConnection();
+
+        #region GetAlbums
 
         private const int numPerPage = 20;
 
         public Task<IEnumerable<AlbumDto>> GetAlbumsAnonymousAsync(
-            long categoryId,
             CancellationToken cancellationToken = default
         )
         {
@@ -30,16 +33,15 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "FROM albums "
                 + "WHERE accessibility = 0 "
                 + "AND NOT is_removed "
-                + "AND ( @categoryId = 0 OR category_id = @categoryId ) "
-                + "ORDER BY updated_at DESC ";
+                + "ORDER BY updated_at DESC "
+                + "LIMIT 20;";
 
-            return _connection.QueryAsync<AlbumDto>(sql, new { categoryId });
+            return _connection.QueryAsync<AlbumDto>(sql);
         }
 
         public Task<IEnumerable<AlbumDto>> GetAlbumsByAdminAsync(
             int page,
             long authorId,
-            long categoryId,
             CancellationToken cancellationToken = default
         )
         {
@@ -54,7 +56,6 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "FROM albums "
                 + "WHERE ( NOT is_removed ) "
                 + "AND ( @authorId = 0 OR author_id = @authorId ) "
-                + "AND ( @categoryId = 0 OR category_id = @categoryId ) "
                 + "ORDER BY updated_at DESC "
                 + "LIMIT @take "
                 + "OFFSET @skip";
@@ -66,7 +67,6 @@ namespace SastImg.Infrastructure.QueryRepositories
                     take = numPerPage,
                     skip = page * numPerPage,
                     authorId,
-                    categoryId
                 }
             );
         }
@@ -74,7 +74,6 @@ namespace SastImg.Infrastructure.QueryRepositories
         public Task<IEnumerable<AlbumDto>> GetAlbumsByUserAsync(
             int page,
             long authorId,
-            long categoryId,
             long requesterId,
             CancellationToken cancellationToken = default
         )
@@ -91,7 +90,6 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "WHERE ( NOT is_removed ) "
                 + "AND ( @authorId = 0 OR author_id = @authorId ) "
                 + "AND ( accessibility <> 2 OR author_id = @requesterId OR @requesterId = ANY( collaborators ) ) "
-                + "AND ( @categoryId = 0 OR category_id = @categoryId ) "
                 + "ORDER BY updated_at DESC "
                 + "LIMIT @take "
                 + "OFFSET @skip";
@@ -103,13 +101,16 @@ namespace SastImg.Infrastructure.QueryRepositories
                     take = numPerPage,
                     skip = page * numPerPage,
                     authorId,
-                    categoryId,
                     requesterId
                 }
             );
         }
 
-        public Task<DetailedAlbumDto?> GetDetailedAlbumByUserAsync(
+        #endregion
+
+        #region GetAlbum
+
+        public Task<DetailedAlbumDto?> GetAlbumByUserAsync(
             long albumId,
             long requesterId,
             CancellationToken cancellationToken = default
@@ -124,7 +125,6 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "accessibility as Accessibility, "
                 + "updated_at as UpdatedAt, "
                 + "author_id as AuthorId, "
-                + "is_removed as IsRemoved, "
                 + "collaborators as Collaborators, "
                 + "category_id as CategoryId "
                 + "FROM albums "
@@ -139,7 +139,7 @@ namespace SastImg.Infrastructure.QueryRepositories
             );
         }
 
-        public Task<DetailedAlbumDto?> GetDetailedAlbumByAdminAsync(
+        public Task<DetailedAlbumDto?> GetAlbumByAdminAsync(
             long albumId,
             CancellationToken cancellationToken = default
         )
@@ -153,7 +153,6 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "accessibility as Accessibility, "
                 + "updated_at as UpdatedAt, "
                 + "author_id as AuthorId, "
-                + "is_removed as IsRemoved, "
                 + "collaborators as Collaborators, "
                 + "category_id as CategoryId "
                 + "FROM albums "
@@ -163,8 +162,8 @@ namespace SastImg.Infrastructure.QueryRepositories
             return _connection.QueryFirstOrDefaultAsync<DetailedAlbumDto>(sql, new { albumId });
         }
 
-        public Task<DetailedAlbumDto?> GetDetailedAlbumByAnonymousAsync(
-            long albumId,
+        public Task<DetailedAlbumDto?> GetAlbumByAnonymousAsync(
+            string albumId,
             CancellationToken cancellationToken = default
         )
         {
@@ -177,7 +176,6 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "accessibility as Accessibility, "
                 + "updated_at as UpdatedAt, "
                 + "author_id as AuthorId, "
-                + "is_removed as IsRemoved, "
                 + "collaborators as Collaborators, "
                 + "category_id as CategoryId "
                 + "FROM albums "
@@ -187,5 +185,30 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "LIMIT 1";
             return _connection.QueryFirstOrDefaultAsync<DetailedAlbumDto>(sql, new { albumId });
         }
+
+        #endregion
+
+        #region SearchAlbums
+
+        public Task<IEnumerable<AlbumDto>> SearchAlbumsByAdminAsync(
+            long categoryId,
+            string title,
+            int page
+        )
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<AlbumDto>> SearchAlbumsByUserAsync(
+            long categoryId,
+            string title,
+            int page,
+            long requesterId
+        )
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }
