@@ -2,7 +2,7 @@
 
 namespace SastImg.Infrastructure.Persistence.QueryDatabase
 {
-    internal interface IDbConnectionFactory
+    internal interface IDbConnectionFactory : IDisposable
     {
         public IDbConnection GetConnection();
     }

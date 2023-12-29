@@ -1,14 +1,15 @@
-﻿using Shared.Primitives.Request;
+﻿using SastImg.Application.SeedWorks;
+using Shared.Primitives.Request;
 
 namespace SastImg.Application.AlbumServices.GetAlbum
 {
     internal sealed class GetAlbumQueryRequestHandler(
         IGetAlbumRepository repository,
-        IGetAlbumCache cache
+        ICache<DetailedAlbumDto> cache
     ) : IQueryRequestHandler<GetAlbumQueryRequest, DetailedAlbumDto?>
     {
         private readonly IGetAlbumRepository _repository = repository;
-        private readonly IGetAlbumCache _cache = cache;
+        private readonly ICache<DetailedAlbumDto> _cache = cache;
 
         public Task<DetailedAlbumDto?> Handle(
             GetAlbumQueryRequest request,
@@ -18,19 +19,21 @@ namespace SastImg.Application.AlbumServices.GetAlbum
             if (request.Requester.IsAuthenticated)
             {
                 if (request.Requester.IsAdmin)
-                    return _repository.GetDetailedAlbumByAdminAsync(
+                {
+                    return _repository.GetAlbumByAdminAsync(request.AlbumId, cancellationToken);
+                }
+                else
+                {
+                    return _repository.GetAlbumByUserAsync(
                         request.AlbumId,
+                        request.Requester.Id,
                         cancellationToken
                     );
-                return _repository.GetDetailedAlbumByUserAsync(
-                    request.AlbumId,
-                    request.Requester.Id,
-                    cancellationToken
-                );
+                }
             }
             else
             {
-                return _cache.GetAlbumAsync(request.AlbumId, cancellationToken);
+                return _cache.GetCachingAsync(request.AlbumId.ToString(), cancellationToken);
             }
         }
     }
