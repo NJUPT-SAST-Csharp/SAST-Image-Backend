@@ -2,7 +2,7 @@
 using SastImg.Domain.AlbumAggregate;
 using SastImg.Domain.CategoryEntity;
 using SastImg.Domain.TagEntity;
-using SastImg.Infrastructure.Domain.AlbumAggregate;
+using SastImg.Infrastructure.Domain.AlbumEntity;
 using SastImg.Infrastructure.Domain.CategoryAggregate;
 using SastImg.Infrastructure.Domain.TagAggregate;
 

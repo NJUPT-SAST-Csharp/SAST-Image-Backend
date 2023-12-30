@@ -13,8 +13,8 @@ using SastImg.Infrastructure.Persistence;
 namespace SastImg.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SastImgDbContext))]
-    [Migration("20231230091034_Fix1")]
-    partial class Fix1
+    [Migration("20231230135625_Fix2")]
+    partial class Fix2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -188,13 +188,13 @@ namespace SastImg.Infrastructure.Persistence.Migrations
                                 .HasColumnType("text")
                                 .HasColumnName("description");
 
-                            b1.Property<bool>("_isNsfw")
-                                .HasColumnType("boolean")
-                                .HasColumnName("is_nsfw");
-
                             b1.Property<bool>("_isRemoved")
                                 .HasColumnType("boolean")
                                 .HasColumnName("is_removed");
+
+                            b1.Property<int>("_likes")
+                                .HasColumnType("integer")
+                                .HasColumnName("likes");
 
                             b1.Property<List<long>>("_tags")
                                 .IsRequired()
@@ -216,6 +216,10 @@ namespace SastImg.Infrastructure.Persistence.Migrations
                                 .IsRequired()
                                 .HasColumnType("text")
                                 .HasColumnName("url");
+
+                            b1.Property<int>("_views")
+                                .HasColumnType("integer")
+                                .HasColumnName("views");
 
                             b1.HasKey("album_id", "Id")
                                 .HasName("pk_images");

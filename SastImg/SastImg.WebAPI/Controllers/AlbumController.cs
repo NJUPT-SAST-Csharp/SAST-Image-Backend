@@ -3,9 +3,11 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using SastImg.Application.AlbumServices.CreateAlbum;
 using SastImg.Application.AlbumServices.GetAlbum;
 using SastImg.Application.AlbumServices.GetAlbums;
 using SastImg.Application.AlbumServices.SearchAlbums;
+using SastImg.WebAPI.Requests.AlbumRequest;
 using Shared.Response.Builders;
 
 namespace SastImg.WebAPI.Controllers
@@ -28,9 +30,9 @@ namespace SastImg.WebAPI.Controllers
         /// <param name="cancellationToken">Cancellation token.</param>
         [HttpGet]
         public async Task<Ok<IEnumerable<AlbumDto>>> GetAlbums(
-            CancellationToken cancellationToken,
+            [Range(0, long.MaxValue)] long userId,
             [Range(0, 1000)] int page = 0,
-            [Range(0, long.MaxValue)] long userId = 0
+            CancellationToken cancellationToken = default
         )
         {
             var albums = await _sender.Send(
@@ -47,8 +49,8 @@ namespace SastImg.WebAPI.Controllers
         /// <param name="cancellationToken"></param>
         [HttpGet("{albumId}")]
         public async Task<Results<Ok<DetailedAlbumDto>, NotFound>> GetAlbum(
-            CancellationToken cancellationToken,
-            [Range(0, long.MaxValue)] long albumId
+            [Range(0, long.MaxValue)] long albumId,
+            CancellationToken cancellationToken = default
         )
         {
             var album = await _sender.Send(
@@ -70,10 +72,10 @@ namespace SastImg.WebAPI.Controllers
         [HttpGet("search")]
         //[EnableRateLimiting("")]
         public async Task<Ok<IEnumerable<AlbumDto>>> SearchAlbums(
-            CancellationToken cancellationToken,
             [Range(0, long.MaxValue)] long categoryId,
+            [MaxLength(10)] string title,
             [Range(0, 1000)] int page = 0,
-            [MaxLength(10)] string title = ""
+            CancellationToken cancellationToken = default
         )
         {
             var albums = await _sender.Send(
@@ -81,6 +83,30 @@ namespace SastImg.WebAPI.Controllers
                 cancellationToken
             );
             return Responses.Data(albums);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost]
+        public async Task<Ok<CreateAlbumDto>> CreateAlbum(
+            [FromBody] CreateAlbumRequest request,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var command = new CreateAlbumCommand(
+                request.Title,
+                request.Description,
+                request.CategoryId,
+                request.Accessibility,
+                User
+            );
+            var album = await _sender.Send(command, cancellationToken);
+            return Responses.Data(album);
         }
     }
 }

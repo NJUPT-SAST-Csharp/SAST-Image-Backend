@@ -23,7 +23,7 @@ namespace SastImg.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("SastImg.Domain.AlbumAggregate.Album", b =>
+            modelBuilder.Entity("SastImg.Domain.AlbumEntity.Album", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -135,7 +135,7 @@ namespace SastImg.Infrastructure.Persistence.Migrations
                     b.ToTable("tags", (string)null);
                 });
 
-            modelBuilder.Entity("SastImg.Domain.AlbumAggregate.Album", b =>
+            modelBuilder.Entity("SastImg.Domain.AlbumEntity.Album", b =>
                 {
                     b.HasOne("SastImg.Domain.CategoryEntity.Category", null)
                         .WithMany()
@@ -144,7 +144,7 @@ namespace SastImg.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_albums_categories_category_id");
 
-                    b.OwnsOne("SastImg.Domain.AlbumAggregate.Cover", "_cover", b1 =>
+                    b.OwnsOne("SastImg.Domain.AlbumEntity.Cover", "_cover", b1 =>
                         {
                             b1.Property<long>("AlbumId")
                                 .HasColumnType("bigint")
@@ -167,7 +167,7 @@ namespace SastImg.Infrastructure.Persistence.Migrations
                                 .HasConstraintName("fk_albums_albums_id");
                         });
 
-                    b.OwnsMany("SastImg.Domain.AlbumAggregate.Image", "_images", b1 =>
+                    b.OwnsMany("SastImg.Domain.AlbumEntity.Image", "_images", b1 =>
                         {
                             b1.Property<long>("album_id")
                                 .HasColumnType("bigint")
@@ -185,13 +185,13 @@ namespace SastImg.Infrastructure.Persistence.Migrations
                                 .HasColumnType("text")
                                 .HasColumnName("description");
 
-                            b1.Property<bool>("_isNsfw")
-                                .HasColumnType("boolean")
-                                .HasColumnName("is_nsfw");
-
                             b1.Property<bool>("_isRemoved")
                                 .HasColumnType("boolean")
                                 .HasColumnName("is_removed");
+
+                            b1.Property<int>("_likes")
+                                .HasColumnType("integer")
+                                .HasColumnName("likes");
 
                             b1.Property<List<long>>("_tags")
                                 .IsRequired()
@@ -213,6 +213,10 @@ namespace SastImg.Infrastructure.Persistence.Migrations
                                 .IsRequired()
                                 .HasColumnType("text")
                                 .HasColumnName("url");
+
+                            b1.Property<int>("_views")
+                                .HasColumnType("integer")
+                                .HasColumnName("views");
 
                             b1.HasKey("album_id", "Id")
                                 .HasName("pk_images");

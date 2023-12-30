@@ -1,10 +1,9 @@
 ﻿using System.Text.Json;
 using SastImg.Application.AlbumServices.GetAlbums;
 using SastImg.Application.SeedWorks;
-using SastImg.Infrastructure.Cache;
 using StackExchange.Redis;
 
-namespace SastImg.Infrastructure.QueryCache.AlbumCaching
+namespace SastImg.Infrastructure.Domain.AlbumEntity.Caching
 {
     internal sealed class GetAlbumsCache(
         IConnectionMultiplexer connectionMultiplexer,

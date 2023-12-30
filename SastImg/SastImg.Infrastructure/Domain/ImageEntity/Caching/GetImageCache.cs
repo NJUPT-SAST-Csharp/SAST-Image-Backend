@@ -1,10 +1,9 @@
 ﻿using System.Text.Json;
 using SastImg.Application.ImageServices.GetImage;
 using SastImg.Application.SeedWorks;
-using SastImg.Infrastructure.Cache;
 using StackExchange.Redis;
 
-namespace SastImg.Infrastructure.QueryCache.ImageCaching
+namespace SastImg.Infrastructure.Domain.ImageEntity.Caching
 {
     internal sealed class GetImageCache(
         IConnectionMultiplexer connection,

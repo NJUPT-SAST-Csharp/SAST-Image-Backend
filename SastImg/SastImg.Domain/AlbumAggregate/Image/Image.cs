@@ -44,6 +44,10 @@ namespace SastImg.Domain.AlbumAggregate
 
         private List<long> _tags = [];
 
+        private int _likes = 0;
+
+        private int _views = 0;
+
         #endregion
 
         #region Properties
@@ -67,6 +71,10 @@ namespace SastImg.Domain.AlbumAggregate
         internal void Remove() => _isRemoved = true;
 
         internal void Restore() => _isRemoved = false;
+
+        internal void Like() => _likes++;
+
+        internal void View() => _views++;
 
         #endregion
     }

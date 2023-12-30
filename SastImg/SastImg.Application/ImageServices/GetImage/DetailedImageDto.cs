@@ -7,6 +7,8 @@
         public required long ImageId { get; init; }
         public required string Title { get; init; }
         public required DateTime UploadedAt { get; init; }
+        public required int Views { get; init; }
+        public required int Likes { get; init; }
         public required long[] Tags { get; init; }
         public required Uri Url { get; init; }
     }

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SastImg.Domain.AlbumAggregate;
 using SastImg.Domain.CategoryEntity;
 
-namespace SastImg.Infrastructure.Domain.AlbumAggregate
+namespace SastImg.Infrastructure.Domain.AlbumEntity
 {
     public sealed class AlbumEntityTypeConfiguration : IEntityTypeConfiguration<Album>
     {
@@ -57,6 +57,8 @@ namespace SastImg.Infrastructure.Domain.AlbumAggregate
                     image.Property<Uri>("_url").HasColumnName("url");
                     image.Property<DateTime>("_uploadtedAt").HasColumnName("uploaded_at");
                     image.Property<bool>("_isRemoved").HasColumnName("is_removed");
+                    image.Property<int>("_likes").HasColumnName("likes");
+                    image.Property<int>("_views").HasColumnName("views");
 
                     image
                         .Property<List<long>>("_tags")

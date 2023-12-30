@@ -17,18 +17,23 @@ using Primitives.DomainEvent;
 using Primitives.Request;
 using SastImg.Application.AlbumServices.GetAlbum;
 using SastImg.Application.AlbumServices.GetAlbums;
+using SastImg.Application.AlbumServices.GetRemovedAlbums;
 using SastImg.Application.AlbumServices.SearchAlbums;
 using SastImg.Application.ImageServices.GetImage;
 using SastImg.Application.ImageServices.GetImages;
+using SastImg.Application.ImageServices.GetRemovedImages;
 using SastImg.Application.ImageServices.SearchImages;
 using SastImg.Application.SeedWorks;
+using SastImg.Domain;
+using SastImg.Domain.AlbumAggregate;
+using SastImg.Infrastructure.Domain.AlbumEntity;
+using SastImg.Infrastructure.Domain.AlbumEntity.Caching;
+using SastImg.Infrastructure.Domain.ImageEntity;
+using SastImg.Infrastructure.Domain.ImageEntity.Caching;
 using SastImg.Infrastructure.Event;
 using SastImg.Infrastructure.Persistence;
 using SastImg.Infrastructure.Persistence.QueryDatabase;
 using SastImg.Infrastructure.Persistence.TypeConverters;
-using SastImg.Infrastructure.QueryCache.AlbumCaching;
-using SastImg.Infrastructure.QueryCache.ImageCaching;
-using SastImg.Infrastructure.QueryRepositories;
 using Shared.Response.Builders;
 using StackExchange.Redis;
 
@@ -53,6 +58,9 @@ namespace SastImg.Infrastructure.Extensions
             {
                 options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
             });
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             SqlMapper.AddTypeHandler(new UriStringConverter());
             services.AddSingleton<DbDataSource>(
                 new NpgsqlDataSourceBuilder(connectionString).Build()
@@ -61,13 +69,16 @@ namespace SastImg.Infrastructure.Extensions
                 _ => new DbConnectionFactory(connectionString)
             );
 
+            services.AddScoped<IAlbumRepository, AlbumRepository>();
             services.AddScoped<IGetAlbumsRepository, AlbumQueryRepository>();
             services.AddScoped<IGetAlbumRepository, AlbumQueryRepository>();
             services.AddScoped<ISearchAlbumsRepository, AlbumQueryRepository>();
+            services.AddScoped<IGetRemovedAlbumsRepository, AlbumQueryRepository>();
 
             services.AddScoped<IGetImagesRepository, ImageQueryRepository>();
             services.AddScoped<IGetImageRepository, ImageQueryRepository>();
             services.AddScoped<ISearchImagesRepository, ImageQueryRepository>();
+            services.AddScoped<IGetRemovedImagesRepository, ImageQueryRepository>();
 
             return services;
         }

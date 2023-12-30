@@ -18,7 +18,7 @@ namespace SastImg.Application.ImageServices.SearchImages
                 return _repository.SearchImagesByAdminAsync(
                     request.Page,
                     request.CategoryId,
-                    new(request.Ids, request.Order),
+                    request.Order,
                     request.Tags,
                     cancellationToken
                 );
@@ -28,7 +28,7 @@ namespace SastImg.Application.ImageServices.SearchImages
                 return _repository.SearchImagesByUserAsync(
                     request.Page,
                     request.CategoryId,
-                    new(request.Ids, request.Order),
+                    request.Order,
                     request.Tags,
                     request.Requester.Id,
                     cancellationToken

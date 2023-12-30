@@ -1,5 +1,4 @@
 ﻿using SastImg.Application.ImageServices.GetImages;
-using SastImg.Infrastructure.QueryRepositories;
 
 namespace SastImg.Application.ImageServices.SearchImages
 {
@@ -8,7 +7,7 @@ namespace SastImg.Application.ImageServices.SearchImages
         public Task<IEnumerable<ImageDto>> SearchImagesByAdminAsync(
             int page,
             long categoryId,
-            OrderOptions order,
+            SearchOrder order,
             long[] tags,
             CancellationToken cancellationToken = default
         );
@@ -16,7 +15,7 @@ namespace SastImg.Application.ImageServices.SearchImages
         public Task<IEnumerable<ImageDto>> SearchImagesByUserAsync(
             int page,
             long categoryId,
-            OrderOptions order,
+            SearchOrder order,
             long[] tags,
             long requesterId,
             CancellationToken cancellationToken = default

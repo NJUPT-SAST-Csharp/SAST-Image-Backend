@@ -26,7 +26,7 @@ namespace SastImg.Infrastructure.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("SastImg.Domain.AlbumAggregate.AlbumServices", b =>
+            modelBuilder.Entity("SastImg.Domain.AlbumEntity.AlbumServices", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -139,16 +139,16 @@ namespace SastImg.Infrastructure.Persistence.Migrations
                     b.ToTable("tags", (string)null);
                 });
 
-            modelBuilder.Entity("SastImg.Domain.AlbumAggregate.AlbumServices", b =>
+            modelBuilder.Entity("SastImg.Domain.AlbumEntity.AlbumServices", b =>
                 {
                     b.HasOne("SastImg.Domain.CategoryEntity.Category", null)
                         .WithOne()
-                        .HasForeignKey("SastImg.Domain.AlbumAggregate.AlbumServices", "_categoryId")
+                        .HasForeignKey("SastImg.Domain.AlbumEntity.AlbumServices", "_categoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_albums_categories_category_id");
 
-                    b.OwnsOne("SastImg.Domain.AlbumAggregate.Cover", "_cover", b1 =>
+                    b.OwnsOne("SastImg.Domain.AlbumEntity.Cover", "_cover", b1 =>
                         {
                             b1.Property<long>("AlbumId")
                                 .HasColumnType("bigint")
@@ -171,7 +171,7 @@ namespace SastImg.Infrastructure.Persistence.Migrations
                                 .HasConstraintName("fk_albums_albums_id");
                         });
 
-                    b.OwnsMany("SastImg.Domain.AlbumAggregate.ImageServices", "_images", b1 =>
+                    b.OwnsMany("SastImg.Domain.AlbumEntity.ImageServices", "_images", b1 =>
                         {
                             b1.Property<long>("album_id")
                                 .HasColumnType("bigint")
