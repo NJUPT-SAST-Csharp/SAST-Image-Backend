@@ -33,10 +33,7 @@ namespace SastImg.Application.ImageServices.GetImage
             }
             else
             {
-                return _repository.GetImageByAnonymousAsync(
-                    request.ImageId.ToString(),
-                    cancellationToken
-                );
+                return _cache.GetCachingAsync(request.ImageId.ToString(), cancellationToken);
             }
         }
     }

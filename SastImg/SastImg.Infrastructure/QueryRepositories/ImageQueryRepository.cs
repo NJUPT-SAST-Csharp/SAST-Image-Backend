@@ -27,7 +27,6 @@ namespace SastImg.Infrastructure.QueryRepositories
                 "SELECT "
                 + "i.id AS ImageId, "
                 + "i.title AS Title, "
-                + "i.is_nsfw AS IsNsfw, "
                 + "i.uploaded_at AS UploadedAt, "
                 + "i.tags as Tags, "
                 + "i.url as Url "
@@ -50,7 +49,6 @@ namespace SastImg.Infrastructure.QueryRepositories
                 "SELECT "
                 + "i.id AS ImageId, "
                 + "i.title AS Title, "
-                + "i.is_nsfw AS IsNsfw, "
                 + "i.uploaded_at AS UploadedAt, "
                 + "i.tags as Tags, "
                 + "i.url as Url "
@@ -75,7 +73,6 @@ namespace SastImg.Infrastructure.QueryRepositories
                 "SELECT "
                 + "i.id AS ImageId, "
                 + "i.title AS Title, "
-                + "i.is_nsfw AS IsNsfw, "
                 + "i.uploaded_at AS UploadedAt, "
                 + "i.tags as Tags, "
                 + "i.url as Url "
@@ -107,7 +104,6 @@ namespace SastImg.Infrastructure.QueryRepositories
                 "SELECT "
                 + "i.id AS ImageId, "
                 + "i.title AS Title, "
-                + "i.is_nsfw AS IsNsfw, "
                 + "i.uploaded_at AS UploadedAt, "
                 + "i.url as Url "
                 + "FROM images AS i "
@@ -139,7 +135,6 @@ namespace SastImg.Infrastructure.QueryRepositories
                 "SELECT "
                 + "i.id AS ImageId, "
                 + "i.title AS Title, "
-                + "i.is_nsfw AS IsNsfw, "
                 + "i.uploaded_at AS UploadedAt, "
                 + "i.url as Url "
                 + "FROM images AS i "
@@ -149,7 +144,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "AND NOT i.is_removed "
                 + "AND NOT a.is_removed "
                 + "AND a.accessibility = 0 "
-                + "ORDER BY i.uploaded_at DESC"
+                + "ORDER BY i.uploaded_at DESC "
                 + "LIMIT @take";
 
             return _connection.QueryAsync<ImageDto>(sql, new { albumId, take = numPerPage });
@@ -165,7 +160,6 @@ namespace SastImg.Infrastructure.QueryRepositories
                 "SELECT "
                 + "i.id AS ImageId, "
                 + "i.title AS Title, "
-                + "i.is_nsfw AS IsNsfw, "
                 + "i.uploaded_at AS UploadedAt, "
                 + "i.url as Url "
                 + "FROM images AS i "
@@ -196,8 +190,8 @@ namespace SastImg.Infrastructure.QueryRepositories
 
         public Task<IEnumerable<ImageDto>> SearchImagesByAdminAsync(
             int page,
-            SearchOrder order,
             long categoryId,
+            OrderOptions order,
             long[] tags,
             CancellationToken cancellationToken = default
         )
@@ -207,8 +201,8 @@ namespace SastImg.Infrastructure.QueryRepositories
 
         public Task<IEnumerable<ImageDto>> SearchImagesByUserAsync(
             int page,
-            SearchOrder order,
             long categoryId,
+            OrderOptions order,
             long[] tags,
             long requesterId,
             CancellationToken cancellationToken = default

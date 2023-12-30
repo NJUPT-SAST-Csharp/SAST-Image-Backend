@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using SastImg.Application.ImageServices.GetImage;
 using SastImg.Application.ImageServices.GetImages;
+using SastImg.Application.ImageServices.SearchImages;
 using Shared.Response.Builders;
 
 namespace SastImg.WebAPI.Controllers
@@ -12,7 +13,7 @@ namespace SastImg.WebAPI.Controllers
     /// <summary>
     /// TODO: complete
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("api")]
     [ApiController]
     public sealed class ImageController(ISender sender) : ControllerBase
     {
@@ -25,17 +26,18 @@ namespace SastImg.WebAPI.Controllers
         /// <param name="page"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet("images/{albumId}")]
         public async Task<Ok<IEnumerable<ImageDto>>> GetImages(
-            CancellationToken cancellationToken,
             [Range(0, long.MaxValue)] long albumId = 0,
-            [Range(0, 1000)] int page = 0
+            [Range(0, 1000)] int page = 0,
+            CancellationToken cancellationToken = default
         )
         {
             var images = await _sender.Send(
                 new GetImagesQueryRequest(albumId, page, User),
                 cancellationToken
             );
+
             return Responses.Data(images);
         }
 
@@ -44,11 +46,20 @@ namespace SastImg.WebAPI.Controllers
         /// </summary>
         /// <returns></returns>
         [Authorize]
-        [HttpGet("search")]
-        public async Task<Ok<IEnumerable<ImageDto>>> SearchImages()
+        [HttpGet("images")]
+        public async Task<Ok<IEnumerable<ImageDto>>> SearchImages(
+            [MaxLength(5)] [Range(0, long.MaxValue)] long[] tags,
+            [Range(0, long.MaxValue)] long categoryId = 0,
+            [Range(0, 1000)] int page = 0,
+            SearchOrder order = SearchOrder.ByDate,
+            CancellationToken cancellationToken = default
+        )
         {
-            // TODO: implement
-            return Responses.Data<IEnumerable<ImageDto>>([]);
+            var images = await _sender.Send(
+                new SearchImagesQueryRequest(page, order, categoryId, tags, User),
+                cancellationToken
+            );
+            return Responses.Data(images);
         }
 
         /// <summary>
@@ -57,10 +68,10 @@ namespace SastImg.WebAPI.Controllers
         /// <param name="imageId"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        [HttpGet("{imageId}")]
+        [HttpGet("image/{imageId}")]
         public async Task<Results<Ok<DetailedImageDto>, NotFound>> GetImage(
-            CancellationToken cancellationToken,
-            [Range(0, long.MaxValue)] long imageId
+            [Range(0, long.MaxValue)] long imageId,
+            CancellationToken cancellationToken
         )
         {
             var image = await _sender.Send(

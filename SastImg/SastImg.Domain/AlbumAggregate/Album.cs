@@ -129,14 +129,13 @@ namespace SastImg.Domain.AlbumAggregate
             long imageId,
             string title,
             string description,
-            bool isNsfw,
             IEnumerable<long> tags
         )
         {
             var image = _images.FirstOrDefault(image => image.Id == imageId);
             if (image is not null)
             {
-                image.UpdateImageInfo(title, description, isNsfw, tags);
+                image.UpdateImageInfo(title, description, tags);
                 // TODO: Raise domain event
             }
         }

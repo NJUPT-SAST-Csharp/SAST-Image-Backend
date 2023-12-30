@@ -6,7 +6,6 @@
 
         public required long ImageId { get; init; }
         public required string Title { get; init; }
-        public required bool IsNsfw { get; init; }
         public required DateTime UploadedAt { get; init; }
         public required Uri Url { get; init; }
     }

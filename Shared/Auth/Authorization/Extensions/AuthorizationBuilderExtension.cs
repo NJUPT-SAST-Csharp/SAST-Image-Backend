@@ -21,7 +21,7 @@ namespace Auth.Authorization.Extensions
         public static AuthorizationBuilder AddBasicPolicies(this AuthorizationBuilder builder)
         {
             builder
-                .AddPolicy(
+                .AddDefaultPolicy(
                     AuthorizationRole.Auth.ToString(),
                     policy =>
                         policy

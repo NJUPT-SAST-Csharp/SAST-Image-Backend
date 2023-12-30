@@ -18,5 +18,7 @@ namespace SastImg.Application.ImageServices.SearchImages
         public long CategoryId { get; } = categoryId;
         public long[] Tags { get; } = tags;
         public RequesterInfo Requester { get; } = new(user);
+
+        public long[] Ids { get; set; } = [];
     }
 }

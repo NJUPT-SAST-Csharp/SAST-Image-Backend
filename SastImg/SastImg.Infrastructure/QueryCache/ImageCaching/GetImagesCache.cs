@@ -27,7 +27,10 @@ namespace SastImg.Infrastructure.QueryCache.ImageCaching
             var value = await _database.HashGetAsync(CacheKeys.Images.ToString(), key);
             if (value.IsNull)
             {
-                var images = await _repository.GetImagesByAnonymousAsync(key, cancellationToken);
+                var images = await _repository.GetImagesByAnonymousAsync(
+                    long.Parse(key),
+                    cancellationToken
+                );
                 _ = ResetCachingAsync(key, images, cancellationToken);
                 return images;
             }

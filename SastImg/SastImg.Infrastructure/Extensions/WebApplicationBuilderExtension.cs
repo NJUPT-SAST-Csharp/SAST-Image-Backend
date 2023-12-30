@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Auth.Authentication.Extensions;
+using Auth.Authorization.Extensions;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,6 +52,21 @@ namespace SastImg.Infrastructure.Extensions
                             }
                         );
                 });
+
+            builder
+                .Services
+                .ConfigureJwtAuthentication(options =>
+                {
+                    options.SecKey =
+                        configuration["Authentication:SecKey"]
+                        ?? throw new NullReferenceException("Couldn't find 'SecKey'.");
+                    options.Algorithms =
+                    [
+                        configuration["Authentication:Algorithm"]
+                            ?? throw new NullReferenceException("Couldn't find 'Algorithm'.")
+                    ];
+                });
+            builder.Services.AddAuthorizationBuilder().AddBasicPolicies();
         }
     }
 }

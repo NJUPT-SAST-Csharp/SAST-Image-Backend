@@ -207,7 +207,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "FROM albums "
                 + "WHERE ( NOT is_removed ) "
                 + "AND ( @categoryId = 0 OR category_id = @categoryId ) "
-                + "AND ( title LIKE @title ) "
+                + "AND ( @title = '' or title ILIKE @title ) "
                 + "ORDER BY updated_at DESC "
                 + "LIMIT @take "
                 + "OFFSET @skip";
@@ -243,7 +243,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "WHERE ( NOT is_removed ) "
                 + "AND ( @categoryId = 0 OR category_id = @categoryId ) "
                 + "AND ( accessibility <> 2 OR author_id = @requesterId OR @requesterId = ANY( collaborators ) ) "
-                + "AND ( title LIKE @title ) "
+                + "AND ( @title = '' OR title ILIKE @title ) "
                 + "ORDER BY updated_at DESC "
                 + "LIMIT @take "
                 + "OFFSET @skip";

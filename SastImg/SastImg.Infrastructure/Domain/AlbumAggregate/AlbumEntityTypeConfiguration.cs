@@ -24,13 +24,13 @@ namespace SastImg.Infrastructure.Domain.AlbumAggregate
             builder.Property<DateTime>("_updatedAt").HasColumnName("updated_at");
             builder.Property<long>("_authorId").HasColumnName("author_id");
 
-            builder.HasOne<Category>().WithOne().HasForeignKey<Album>("_categoryId");
+            builder.HasOne<Category>().WithMany().HasForeignKey("_categoryId");
 
             builder
                 .Property<List<long>>("_collaborators")
                 .HasColumnName("collaborators")
                 .IsUnicode(false)
-                .HasMaxLength(512);
+                .HasMaxLength(256);
 
             builder.OwnsOne<Cover>(
                 "_cover",
@@ -57,13 +57,12 @@ namespace SastImg.Infrastructure.Domain.AlbumAggregate
                     image.Property<Uri>("_url").HasColumnName("url");
                     image.Property<DateTime>("_uploadtedAt").HasColumnName("uploaded_at");
                     image.Property<bool>("_isRemoved").HasColumnName("is_removed");
-                    image.Property<bool>("_isNsfw").HasColumnName("is_nsfw");
 
                     image
                         .Property<List<long>>("_tags")
                         .HasColumnName("tags")
                         .IsUnicode(false)
-                        .HasMaxLength(512);
+                        .HasMaxLength(256);
                 }
             );
         }

@@ -42,8 +42,6 @@ namespace SastImg.Domain.AlbumAggregate
 
         private bool _isRemoved = false;
 
-        private bool _isNsfw = false;
-
         private List<long> _tags = [];
 
         #endregion
@@ -58,15 +56,9 @@ namespace SastImg.Domain.AlbumAggregate
         #region Methods
 
 
-        internal void UpdateImageInfo(
-            string title,
-            string description,
-            bool isNsfw,
-            IEnumerable<long> tags
-        )
+        internal void UpdateImageInfo(string title, string description, IEnumerable<long> tags)
         {
             CheckRule(new ImageCannotOwnMoreThan5TagsRule(tags));
-            _isNsfw = isNsfw;
             _title = title;
             _description = description;
             _tags = tags.ToList();
@@ -75,8 +67,6 @@ namespace SastImg.Domain.AlbumAggregate
         internal void Remove() => _isRemoved = true;
 
         internal void Restore() => _isRemoved = false;
-
-        internal void SetNsfw(bool isNsfw) => _isNsfw = isNsfw;
 
         #endregion
     }

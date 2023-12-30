@@ -28,7 +28,10 @@ namespace SastImg.Infrastructure.QueryCache.ImageCaching
 
             if (value.IsNull)
             {
-                var image = await _repository.GetImageByAnonymousAsync(key, cancellationToken);
+                var image = await _repository.GetImageByAnonymousAsync(
+                    long.Parse(key),
+                    cancellationToken
+                );
                 _ = ResetCachingAsync(key, image, cancellationToken);
                 return image;
             }
@@ -47,7 +50,8 @@ namespace SastImg.Infrastructure.QueryCache.ImageCaching
             CancellationToken cancellationToken = default
         )
         {
-            throw new NotImplementedException();
+            string caching = value is null ? string.Empty : JsonSerializer.Serialize(value);
+            return _database.HashSetAsync(CacheKeys.DetailedImages.ToString(), key, caching);
         }
     }
 }
