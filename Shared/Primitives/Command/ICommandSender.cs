@@ -2,10 +2,11 @@
 {
     public interface ICommandSender
     {
-        public Task<TResponse> SendCommandAsync<TCommand, TResponse>(
-            TCommand command,
+        public Task<TResponse> CommandAsync<TResponse>(
+            ICommand<TResponse> command,
             CancellationToken cancellationToken = default
-        )
-            where TCommand : ICommand<TResponse>;
+        );
+
+        public Task CommandAsync(ICommand command, CancellationToken cancellationToken = default);
     }
 }

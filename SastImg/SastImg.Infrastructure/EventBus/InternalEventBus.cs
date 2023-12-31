@@ -23,7 +23,7 @@ namespace SastImg.Infrastructure.Event
             return _mediator.Publish(@event, cancellationToken);
         }
 
-        public Task<TResponse> RequestAsync<TResponse>(
+        public Task<TResponse> QueryAsync<TResponse>(
             IQueryRequest<TResponse> request,
             CancellationToken cancellationToken = default
         )
@@ -31,11 +31,15 @@ namespace SastImg.Infrastructure.Event
             return _mediator.Send(request, cancellationToken);
         }
 
-        public Task<TResponse> SendCommandAsync<TCommand, TResponse>(
-            TCommand command,
+        public Task<TResponse> CommandAsync<TResponse>(
+            ICommand<TResponse> command,
             CancellationToken cancellationToken = default
         )
-            where TCommand : ICommand<TResponse>
+        {
+            return _mediator.Send(command, cancellationToken);
+        }
+
+        public Task CommandAsync(ICommand command, CancellationToken cancellationToken = default)
         {
             return _mediator.Send(command, cancellationToken);
         }

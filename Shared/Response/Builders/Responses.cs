@@ -1,8 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Response.ReponseObjects;
 using Response.ResponseObjects;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Shared.Response.Builders
 {
@@ -49,5 +49,8 @@ namespace Shared.Response.Builders
 
         public static Conflict<ConflictResponse> Conflict(IDictionary<string, string> conflicts) =>
             TypedResults.Conflict(new ConflictResponse(conflicts));
+
+        public static Created<T> Created<T>(T data)
+            where T : notnull => TypedResults.Created(string.Empty, data);
     }
 }

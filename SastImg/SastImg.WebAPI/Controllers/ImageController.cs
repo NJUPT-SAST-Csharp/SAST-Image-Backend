@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Primitives.Command;
+using Primitives.Request;
 using SastImg.Application.ImageServices.GetImage;
 using SastImg.Application.ImageServices.GetImages;
+using SastImg.Application.ImageServices.GetRemovedImages;
 using SastImg.Application.ImageServices.SearchImages;
 using Shared.Response.Builders;
 
@@ -15,9 +17,13 @@ namespace SastImg.WebAPI.Controllers
     /// </summary>
     [Route("api")]
     [ApiController]
-    public sealed class ImageController(ISender sender) : ControllerBase
+    public sealed class ImageController(
+        IQueryRequestSender querySender,
+        ICommandSender commandSender
+    ) : ControllerBase
     {
-        private readonly ISender _sender = sender;
+        private readonly IQueryRequestSender _querySender = querySender;
+        private readonly ICommandSender _commandSender = commandSender;
 
         /// <summary>
         /// TODO: complete
@@ -33,7 +39,7 @@ namespace SastImg.WebAPI.Controllers
             CancellationToken cancellationToken = default
         )
         {
-            var images = await _sender.Send(
+            var images = await _querySender.QueryAsync(
                 new GetImagesQueryRequest(albumId, page, User),
                 cancellationToken
             );
@@ -55,7 +61,7 @@ namespace SastImg.WebAPI.Controllers
             CancellationToken cancellationToken = default
         )
         {
-            var images = await _sender.Send(
+            var images = await _querySender.QueryAsync(
                 new SearchImagesQueryRequest(page, order, categoryId, tags, User),
                 cancellationToken
             );
@@ -74,11 +80,30 @@ namespace SastImg.WebAPI.Controllers
             CancellationToken cancellationToken
         )
         {
-            var image = await _sender.Send(
+            var image = await _querySender.QueryAsync(
                 new GetImageQueryRequest(imageId, User),
                 cancellationToken
             );
             return Responses.DataOrNotFound(image);
+        }
+
+        /// <summary>
+        /// TODO: complete
+        /// </summary>
+        /// <param name="authorId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpGet("images/removed")]
+        public async Task<Ok<IEnumerable<ImageDto>>> GetRemovedImages(
+            [Range(0, long.MaxValue)] long authorId = 0,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var images = await _querySender.QueryAsync(
+                new GetRemovedImagesQueryRequest(authorId, User),
+                cancellationToken
+            );
+            return Responses.Data(images);
         }
     }
 }

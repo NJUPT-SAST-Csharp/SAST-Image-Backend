@@ -4,7 +4,7 @@ namespace Primitives.Request
 {
     public interface IQueryRequestSender
     {
-        public Task<TResponse> RequestAsync<TResponse>(
+        public Task<TResponse> QueryAsync<TResponse>(
             IQueryRequest<TResponse> request,
             CancellationToken cancellationToken = default
         );

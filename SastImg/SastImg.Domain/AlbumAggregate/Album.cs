@@ -1,4 +1,6 @@
-﻿using Shared.Primitives;
+﻿using SastImg.Domain.AlbumAggregate.Events;
+using SastImg.Domain.AlbumAggregate.ImageEntity;
+using Shared.Primitives;
 using Shared.Utilities;
 
 namespace SastImg.Domain.AlbumAggregate
@@ -33,7 +35,9 @@ namespace SastImg.Domain.AlbumAggregate
             Accessibility accessibility
         )
         {
-            return new Album(authorId, categoryId, title, description, accessibility);
+            var album = new Album(authorId, categoryId, title, description, accessibility);
+            album.AddDomainEvent(new CreateAlbumDomainEvent(album.Id, authorId));
+            return album;
         }
 
         #region Fields
@@ -56,7 +60,7 @@ namespace SastImg.Domain.AlbumAggregate
 
         private long _authorId;
 
-        private readonly List<long> _collaborators = [];
+        private readonly long[] _collaborators = [];
 
         private readonly List<Image> _images = [];
 
@@ -97,7 +101,7 @@ namespace SastImg.Domain.AlbumAggregate
             // TODO: Raise domain event
         }
 
-        public long AddImage(string title, Uri uri, string description, IEnumerable<long> tags)
+        public long AddImage(string title, Uri uri, string description, long[] tags)
         {
             var image = Image.CreateNewImage(title, uri, description, tags);
 
@@ -125,12 +129,7 @@ namespace SastImg.Domain.AlbumAggregate
             // TODO: Raise domain event
         }
 
-        public void UpdateImage(
-            long imageId,
-            string title,
-            string description,
-            IEnumerable<long> tags
-        )
+        public void UpdateImage(long imageId, string title, string description, long[] tags)
         {
             var image = _images.FirstOrDefault(image => image.Id == imageId);
             if (image is not null)

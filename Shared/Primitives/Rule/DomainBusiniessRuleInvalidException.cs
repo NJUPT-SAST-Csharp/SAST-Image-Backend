@@ -1,4 +1,4 @@
-﻿namespace Primitives.Rules
+﻿namespace Primitives.Rule
 {
     public sealed class DomainBusinessRuleInvalidException(IDomainBusinessRule brokenRule)
         : Exception(brokenRule.Message)

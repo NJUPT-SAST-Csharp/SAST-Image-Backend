@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
-using Primitives.Rules;
+using Primitives.Rule;
 using Response.ReponseObjects;
 
 namespace SastImg.WebAPI.Configurations

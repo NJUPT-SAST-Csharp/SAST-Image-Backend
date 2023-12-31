@@ -9,6 +9,7 @@
         public required DateTime UploadedAt { get; init; }
         public required int Views { get; init; }
         public required int Likes { get; init; }
+        public required bool IsRemoved { get; init; }
         public required long[] Tags { get; init; }
         public required Uri Url { get; init; }
     }

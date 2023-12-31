@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SastImg.Domain.AlbumAggregate;
+using SastImg.Domain.AlbumAggregate.ImageEntity;
 using SastImg.Domain.CategoryEntity;
 
 namespace SastImg.Infrastructure.Domain.AlbumEntity
@@ -27,7 +28,7 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
             builder.HasOne<Category>().WithMany().HasForeignKey("_categoryId");
 
             builder
-                .Property<List<long>>("_collaborators")
+                .Property<long[]>("_collaborators")
                 .HasColumnName("collaborators")
                 .IsUnicode(false)
                 .HasMaxLength(256);
@@ -61,7 +62,7 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
                     image.Property<int>("_views").HasColumnName("views");
 
                     image
-                        .Property<List<long>>("_tags")
+                        .Property<long[]>("_tags")
                         .HasColumnName("tags")
                         .IsUnicode(false)
                         .HasMaxLength(256);
