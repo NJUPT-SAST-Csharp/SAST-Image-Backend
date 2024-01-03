@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Primitives.Command;
 using SastImg.Application.SeedWorks;
-using SastImg.Domain.AlbumAggregate;
+using SastImg.Domain.AlbumAggregate.AlbumEntity;
 
 namespace SastImg.Application.AlbumServices.CreateAlbum
 {

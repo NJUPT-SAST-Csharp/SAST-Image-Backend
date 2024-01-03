@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SastImg.Domain.AlbumAggregate;
+using SastImg.Domain.AlbumAggregate.AlbumEntity;
 using SastImg.Domain.AlbumAggregate.ImageEntity;
 using SastImg.Domain.CategoryEntity;
 

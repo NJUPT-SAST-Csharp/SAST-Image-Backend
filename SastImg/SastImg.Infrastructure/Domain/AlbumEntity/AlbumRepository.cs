@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SastImg.Domain.AlbumAggregate;
+using SastImg.Domain.AlbumAggregate.AlbumEntity;
 using SastImg.Infrastructure.Persistence;
 
 namespace SastImg.Infrastructure.Domain.AlbumEntity

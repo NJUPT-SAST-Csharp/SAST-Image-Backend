@@ -8,8 +8,8 @@
 
   <ItemGroup>
     <Folder Include="AlbumAggregate\ImageEntity\Events\" />
-    <Folder Include="AlbumAggregate\Rules\" />
-    <Folder Include="CategoryEntity\DomainEvents\" />
+    <Folder Include="AlbumAggregate\AlbumEntity\Rules\" />
+    <Folder Include="CategoryEntity\Events\" />
   </ItemGroup>
 
   <ItemGroup>

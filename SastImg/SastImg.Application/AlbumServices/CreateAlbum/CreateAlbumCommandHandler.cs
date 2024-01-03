@@ -1,6 +1,7 @@
 ﻿using Primitives.Command;
 using SastImg.Domain;
 using SastImg.Domain.AlbumAggregate;
+using SastImg.Domain.AlbumAggregate.AlbumEntity;
 
 namespace SastImg.Application.AlbumServices.CreateAlbum
 {

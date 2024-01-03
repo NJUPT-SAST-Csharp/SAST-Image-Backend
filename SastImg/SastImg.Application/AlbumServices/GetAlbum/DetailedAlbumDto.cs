@@ -1,4 +1,4 @@
-﻿using SastImg.Domain.AlbumAggregate;
+﻿using SastImg.Domain.AlbumAggregate.AlbumEntity;
 
 namespace SastImg.Application.AlbumServices.GetAlbum
 {

@@ -1,9 +1,9 @@
-﻿using Primitives.DomainEvent;
+﻿using Shared.Primitives.DomainEvent;
 
-namespace SastImg.Domain.AlbumAggregate.Events
+namespace SastImg.Domain.AlbumAggregate.AlbumEntity.Events
 {
     public sealed class AddImageDomainEvent(long albumId, long authorId, long imageId)
-        : DomainEventBase
+        : IDomainEvent
     {
         public long AlbumId { get; } = albumId;
         public long AuthorId { get; } = authorId;

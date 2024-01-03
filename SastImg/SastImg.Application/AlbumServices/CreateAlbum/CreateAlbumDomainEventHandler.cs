@@ -1,5 +1,5 @@
 ﻿using Primitives.DomainEvent;
-using SastImg.Domain.AlbumAggregate.Events;
+using SastImg.Domain.AlbumAggregate.AlbumEntity.Events;
 
 namespace SastImg.Application.AlbumServices.CreateAlbum
 {

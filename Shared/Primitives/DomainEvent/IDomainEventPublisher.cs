@@ -5,7 +5,7 @@ namespace Primitives.DomainEvent
     public interface IDomainEventPublisher
     {
         public Task PublishAsync<TEvent>(
-            TEvent @event,
+            TEvent domainEvent,
             CancellationToken cancellationToken = default
         )
             where TEvent : IDomainEvent;

@@ -1,9 +1,9 @@
-﻿using Shared.Primitives;
+﻿using Primitives.Entity;
 using Shared.Utilities;
 
 namespace SastImg.Domain.TagEntity
 {
-    public sealed class Tag : Entity<long>
+    public sealed class Tag : EntityBase<long>
     {
         private Tag(string name)
             : base(SnowFlakeIdGenerator.NewId)

@@ -1,15 +1,11 @@
-﻿using SastImg.Domain.AlbumAggregate.ImageEntity.Rules;
-using Shared.Primitives;
+﻿using Primitives.Entity;
+using SastImg.Domain.AlbumAggregate.ImageEntity.Rules;
 using Shared.Utilities;
 
 namespace SastImg.Domain.AlbumAggregate.ImageEntity;
 
-public sealed class Image : Entity<long>
+public sealed class Image : EntityBase<long>
 {
-#pragma warning disable CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑声明为可以为 null。
-    private Image()
-        : base(0) { }
-
     private Image(string title, Uri uri, string description, long[] tags)
         : base(SnowFlakeIdGenerator.NewId)
     {

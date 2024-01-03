@@ -1,15 +1,16 @@
-﻿using SastImg.Domain.AlbumAggregate.Events;
+﻿using Primitives.Entity;
+using SastImg.Domain.AlbumAggregate.AlbumEntity.Events;
 using SastImg.Domain.AlbumAggregate.ImageEntity;
 using Shared.Primitives;
 using Shared.Utilities;
 
-namespace SastImg.Domain.AlbumAggregate
+namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 {
     /// <summary>
-    /// The aggregate root of the SastImg Domain, containing references of images and authorId (user).
+    /// The aggregate root of the Album/Image aggregate, containing reference of images.
     /// </summary>
 
-    public sealed class Album : Entity<long>, IAggregateRoot<Album>
+    public sealed class Album : EntityBase<long>, IAggregateRoot<Album>
     {
         private Album(
             long authorId,

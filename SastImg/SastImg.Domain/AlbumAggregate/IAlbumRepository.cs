@@ -1,4 +1,6 @@
-﻿namespace SastImg.Domain.AlbumAggregate
+﻿using SastImg.Domain.AlbumAggregate.AlbumEntity;
+
+namespace SastImg.Domain.AlbumAggregate
 {
     public interface IAlbumRepository
     {

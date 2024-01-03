@@ -1,4 +1,4 @@
-using SastImg.Domain.AlbumAggregate;
+using SastImg.Domain.AlbumAggregate.AlbumEntity;
 
 namespace SastImg.Test.Domain;
 
@@ -6,7 +6,7 @@ namespace SastImg.Test.Domain;
 public sealed class AlbumDomainUnitTest
 {
     [TestMethod]
-    public void CreateNewAlbumShouldRaiseEvent()
+    public void Create_NewAlbum_RaiseEvent()
     {
         const long authorId = 1;
         const long categoryId = 0;

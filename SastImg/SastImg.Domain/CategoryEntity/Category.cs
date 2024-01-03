@@ -1,9 +1,9 @@
-﻿using Shared.Primitives;
+﻿using Primitives.Entity;
 using Shared.Utilities;
 
 namespace SastImg.Domain.CategoryEntity
 {
-    public sealed class Category : Entity<long>
+    public sealed class Category : EntityBase<long>
     {
         private Category(string name, string description)
             : base(SnowFlakeIdGenerator.NewId)

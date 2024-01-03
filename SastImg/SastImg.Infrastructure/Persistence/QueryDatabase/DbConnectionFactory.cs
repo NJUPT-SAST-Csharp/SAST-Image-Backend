@@ -21,6 +21,7 @@ namespace SastImg.Infrastructure.Persistence.QueryDatabase
             if (_connection is null || _connection.State != ConnectionState.Open)
             {
                 _connection = new NpgsqlConnection(_connectionString);
+                _connection.Open();
             }
             return _connection;
         }

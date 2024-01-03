@@ -14,11 +14,8 @@ namespace SastImg.Infrastructure.Persistence
 
         public async Task<int> CommitChangesAsync(CancellationToken cancellationToken = default)
         {
-            using var trans = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
-
             var domainEntities = _dbContext
-                .ChangeTracker
-                .Entries<IDomainEventContainer>()
+                .ChangeTracker.Entries<IDomainEventContainer>()
                 .Where(x => x.Entity.DomainEvents.Count > 0)
                 .Select(x => x.Entity)
                 .ToList();

@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Primitives\Primitives.csproj" />
+    <ProjectReference Include="..\..\Shared\Utilities\Utilities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="UserAggregate\" />
+  </ItemGroup>
+
 </Project>
