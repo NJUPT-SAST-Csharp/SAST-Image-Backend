@@ -98,6 +98,11 @@ namespace Account.Infrastructure.Configurations
                     VerifyRegistrationCodeRequestValidator
                 >()
                 .RegisterEndpointResolver<
+                    CreateAccountRequest,
+                    CreateAccountEndpointHandler,
+                    CreateAccountValidator
+                >()
+                .RegisterEndpointResolver<
                     SendForgetCodeRequest,
                     SendForgetCodeEndpointHandler,
                     SendForgetCodeRequestValidator
@@ -116,11 +121,6 @@ namespace Account.Infrastructure.Configurations
                     AuthorizeRequest,
                     AuthorizeEndpointHandler,
                     AuthorizeRequestValidator
-                >()
-                .RegisterAuthEndpointResolver<
-                    CreateAccountRequest,
-                    CreateAccountEndpointHandler,
-                    CreateAccountValidator
                 >()
                 .RegisterAuthEndpointResolver<
                     ChangePasswordRequest,
@@ -161,12 +161,9 @@ namespace Account.Infrastructure.Configurations
                 options.UseLoggerFactory(
                     new LoggerFactory().AddSerilog(
                         new LoggerConfiguration()
-                            .Enrich
-                            .FromLogContext()
-                            .WriteTo
-                            .Console()
-                            .MinimumLevel
-                            .Warning()
+                            .Enrich.FromLogContext()
+                            .WriteTo.Console()
+                            .MinimumLevel.Warning()
                             .CreateLogger()
                     )
                 );

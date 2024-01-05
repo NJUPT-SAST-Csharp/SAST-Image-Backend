@@ -45,10 +45,7 @@ namespace Account.WebAPI.Endpoints
 
             registration.AddPost<SendRegistrationCodeRequest>("/sendCode");
             registration.AddPost<VerifyRegistrationCodeRequest>("/verify");
-            registration.AddPost<CreateAccountRequest>(
-                "/createAccount",
-                AuthorizationRole.Registrant
-            );
+            registration.AddPost<CreateAccountRequest>("/createAccount");
         }
 
         private static void MapForget(RouteGroupBuilder builder)

@@ -31,9 +31,9 @@ namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.ResetPass
 
             user.ResetPassword(request.Password);
 
-            _ = _unit.SaveChangesAsync();
+            await _unit.SaveChangesAsync();
 
-            _ = _cache.DeleteCodeAsync(CodeCacheKey.ForgetAccount, request.Email);
+            await _cache.DeleteCodeAsync(CodeCacheKey.ForgetAccount, request.Email);
 
             return Responses.NoContent;
         }

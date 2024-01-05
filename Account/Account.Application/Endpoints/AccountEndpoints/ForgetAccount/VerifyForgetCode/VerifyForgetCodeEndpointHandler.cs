@@ -27,11 +27,11 @@ namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.VerifyFor
                 return Responses.BadRequest("Something went wrong.");
             }
 
-            _ = _cache.DeleteCodeAsync(CodeCacheKey.Registration, request.Email);
+            await _cache.DeleteCodeAsync(CodeCacheKey.Registration, request.Email);
 
             var code = Random.Shared.Next(100000, 999999);
 
-            _ = _cache.StoreCodeAsync(CodeCacheKey.ForgetAccount, request.Email, code);
+            await _cache.StoreCodeAsync(CodeCacheKey.ForgetAccount, request.Email, code);
 
             return Responses.Data(new VerifyForgetCodeDto(user.Username, code));
         }

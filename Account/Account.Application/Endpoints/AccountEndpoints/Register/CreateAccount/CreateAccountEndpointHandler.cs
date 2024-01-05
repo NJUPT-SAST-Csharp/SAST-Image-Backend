@@ -1,30 +1,23 @@
 ﻿using Account.Application.SeedWorks;
+using Account.Application.Services;
 using Account.Entity.UserEntity;
 using Account.Entity.UserEntity.Repositories;
-using Auth.Authentication;
 using Microsoft.AspNetCore.Http;
 using Shared.Response.Builders;
-using System.Security.Claims;
 
 namespace Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount
 {
     public sealed class CreateAccountEndpointHandler(
-        IUserCommandRepository repository,
-        IUserCheckRepository checker
-    ) : IAuthEndpointHandler<CreateAccountRequest>
+        IAuthCodeCache cache,
+        IUserCommandRepository repository
+    ) : IEndpointHandler<CreateAccountRequest>
     {
-        private readonly IUserCheckRepository _checker = checker;
+        private readonly IAuthCodeCache _cache = cache;
         private readonly IUserCommandRepository _repository = repository;
 
-        public async Task<IResult> Handle(CreateAccountRequest request, ClaimsPrincipal user)
+        public async Task<IResult> Handle(CreateAccountRequest request)
         {
-            var isValid = user.TryFetchEmail(out var email);
-            if (isValid == false || await _checker.CheckEmailExistenceAsync(email!))
-            {
-                return Responses.ValidationFailure("Email", "Duplicated email");
-            }
-
-            User newAccount = new(request.Username, request.Password, email!);
+            User newAccount = new(request.Username, request.Password, request.Email);
 
             var result = await _repository.CreateUserAsync(newAccount);
 
@@ -32,6 +25,8 @@ namespace Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount
             {
                 return Responses.BadRequest("Something went wrong.");
             }
+
+            await _cache.DeleteCodeAsync(CodeCacheKey.Registration, request.Email);
 
             return Responses.NoContent;
         }

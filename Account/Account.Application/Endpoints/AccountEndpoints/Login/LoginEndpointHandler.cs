@@ -43,7 +43,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.Login
                 user.Roles.Select(r => r.Name)
             );
 
-            _ = _unit.SaveChangesAsync();
+            await _unit.SaveChangesAsync();
 
             return Responses.Data(new LoginDto(jwt));
         }

@@ -40,13 +40,16 @@ namespace Account.Infrastructure.Persistence
         {
             try
             {
+                user.AddRole(
+                    await _dbContext.Roles.SingleAsync(r => r.Name == "User", cancellationToken)
+                );
                 await _dbContext.Users.AddAsync(user, cancellationToken);
                 var result = await _dbContext.SaveChangesAsync(cancellationToken);
                 return result > 0;
             }
             catch (Exception ex)
             {
-                _logger.LogError("Add user failed for {exception}", ex.ToString());
+                _logger.LogError("Add user failed for {exception}", ex.InnerException);
                 return false;
             }
         }

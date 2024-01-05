@@ -1,11 +1,11 @@
-﻿using Account.Application.SeedWorks;
+﻿using System.Security.Claims;
+using Account.Application.SeedWorks;
 using Account.Application.Services;
 using Account.Entity.UserEntity.Repositories;
 using Auth.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Shared.Response.Builders;
-using System.Security.Claims;
 using Utilities;
 
 namespace Account.Application.Endpoints.AccountEndpoints.ChangePassword
@@ -36,7 +36,10 @@ namespace Account.Application.Endpoints.AccountEndpoints.ChangePassword
                 return Responses.BadRequest("Something went wrong.");
             }
 
-            var formerPasswordHash = await Argon2Hasher.HashAsync(request.FormerPassword, targetUser.PasswordSalt);
+            var formerPasswordHash = await Argon2Hasher.HashAsync(
+                request.FormerPassword,
+                targetUser.PasswordSalt
+            );
 
             if (formerPasswordHash.SequenceEqual(targetUser.PasswordHash) == false)
             {
@@ -45,7 +48,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.ChangePassword
 
             targetUser.ResetPassword(request.NewPassword);
 
-            _ = _unit.SaveChangesAsync();
+            await _unit.SaveChangesAsync();
 
             _logger.LogInformation(
                 "User [{username}] password has been changed.",
