@@ -33,7 +33,7 @@ namespace SastImg.WebAPI.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet("images/{albumId}")]
-        public async Task<Ok<IEnumerable<ImageDto>>> GetImages(
+        public async Task<Ok<IEnumerable<AlbumImageDto>>> GetImages(
             [Range(0, long.MaxValue)] long albumId = 0,
             [Range(0, 1000)] int page = 0,
             CancellationToken cancellationToken = default
@@ -53,7 +53,7 @@ namespace SastImg.WebAPI.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpGet("images")]
-        public async Task<Ok<IEnumerable<ImageDto>>> SearchImages(
+        public async Task<Ok<IEnumerable<SearchedImageDto>>> SearchImages(
             [MaxLength(5)] [Range(0, long.MaxValue)] long[] tags,
             [Range(0, long.MaxValue)] long categoryId = 0,
             [Range(0, 1000)] int page = 0,
@@ -94,7 +94,7 @@ namespace SastImg.WebAPI.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet("images/removed")]
-        public async Task<Ok<IEnumerable<ImageDto>>> GetRemovedImages(
+        public async Task<Ok<IEnumerable<AlbumImageDto>>> GetRemovedImages(
             [Range(0, long.MaxValue)] long authorId = 0,
             CancellationToken cancellationToken = default
         )

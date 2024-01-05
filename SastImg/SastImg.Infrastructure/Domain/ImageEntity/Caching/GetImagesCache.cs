@@ -8,7 +8,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity.Caching
     internal sealed class GetImagesCache(
         IConnectionMultiplexer connection,
         IGetImagesRepository repository
-    ) : ICache<IEnumerable<ImageDto>>
+    ) : ICache<IEnumerable<AlbumImageDto>>
     {
         private readonly IDatabase _database = connection.GetDatabase();
         private readonly IGetImagesRepository _repository = repository;
@@ -18,7 +18,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity.Caching
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<ImageDto>?> GetCachingAsync(
+        public async Task<IEnumerable<AlbumImageDto>?> GetCachingAsync(
             string key,
             CancellationToken cancellationToken = default
         )
@@ -34,13 +34,13 @@ namespace SastImg.Infrastructure.Domain.ImageEntity.Caching
                 return images;
             }
 
-            return JsonSerializer.Deserialize<IEnumerable<ImageDto>>(value!)
+            return JsonSerializer.Deserialize<IEnumerable<AlbumImageDto>>(value!)
                 ?? throw new JsonException("Couldn't deserialize the albums string.");
         }
 
         public Task ResetCachingAsync(
             string key,
-            IEnumerable<ImageDto>? value,
+            IEnumerable<AlbumImageDto>? value,
             CancellationToken cancellationToken = default
         )
         {

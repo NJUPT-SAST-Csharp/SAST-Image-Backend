@@ -61,23 +61,25 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
         private long _authorId;
 
-        private readonly long[] _collaborators = [];
+        private long[] _collaborators = [];
 
         private readonly List<Image> _images = [];
 
         #endregion
 
-        #region Properties
-
-        public bool IsRemoved => _isRemoved;
-
-        #endregion
-
         #region Methods
 
-        public void Remove() => _isRemoved = true;
+        public void RemoveAlbum()
+        {
+            _isRemoved = true;
+            // TODO: Raise domain event.
+        }
 
-        public void Restore() => _isRemoved = false;
+        public void RestoreAlbum()
+        {
+            _isRemoved = false;
+            // TODO: Raise domain event.
+        }
 
         public void SetCoverAsLatestImage()
         {
@@ -93,41 +95,52 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             // TODO: Raise domain event
         }
 
-        public void UpdateAlbumInfo(string title, string description, Accessibility accessibility)
+        public void UpdateAlbumInfo(string title, string description)
         {
             _title = title;
             _description = description;
-            _accessibility = accessibility;
+        }
 
-            // TODO: Raise domain event
+        public void ChangeAccessiblity(Accessibility accessibility)
+        {
+            if (_accessibility != Accessibility.Private && accessibility == Accessibility.Private)
+            {
+                // TODO: Raise domain event
+            }
+            _accessibility = accessibility;
         }
 
         public long AddImage(string title, Uri uri, string description, long[] tags)
         {
             var image = Image.CreateNewImage(title, uri, description, tags);
 
-            _updatedAt = DateTime.Now;
+            _updatedAt = DateTime.UtcNow;
             if (_cover.IsLatestImage)
             {
                 _cover = new(uri, true);
             }
             // TODO: Raise domain event
-
             return image.Id;
         }
 
         public void RemoveImage(long imageId)
         {
             var image = _images.FirstOrDefault(image => image.Id == imageId);
-            image?.Remove();
-            // TODO: Raise domain event
+            if (image is not null)
+            {
+                image.Remove();
+                // TODO: Raise domain event
+            }
         }
 
         public void RestoreImage(long imageId)
         {
             var image = _images.FirstOrDefault(image => image.Id == imageId);
-            image?.Restore();
-            // TODO: Raise domain event
+            if (image is not null)
+            {
+                image.Restore();
+                // TODO: Raise domain event
+            }
         }
 
         public void UpdateImage(long imageId, string title, string description, long[] tags)

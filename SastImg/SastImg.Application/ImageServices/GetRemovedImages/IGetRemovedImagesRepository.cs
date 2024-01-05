@@ -4,12 +4,12 @@ namespace SastImg.Application.ImageServices.GetRemovedImages
 {
     public interface IGetRemovedImagesRepository
     {
-        public Task<IEnumerable<ImageDto>> GetImagesByUserAsync(
+        public Task<IEnumerable<AlbumImageDto>> GetImagesByUserAsync(
             long requesterId,
             CancellationToken cancellationToken = default
         );
 
-        public Task<IEnumerable<ImageDto>> GetImagesByAdminAsync(
+        public Task<IEnumerable<AlbumImageDto>> GetImagesByAdminAsync(
             long authorId,
             CancellationToken cancellationToken = default
         );

@@ -5,7 +5,7 @@ using Response.ReponseObjects;
 
 namespace Response.Extensions
 {
-    public static class RouteHandlerBuilderExtension
+    public static class RouteHandlerBuilderExtensions
     {
         public static RouteHandlerBuilder WithValidationFailureResponse(
             this RouteHandlerBuilder builder

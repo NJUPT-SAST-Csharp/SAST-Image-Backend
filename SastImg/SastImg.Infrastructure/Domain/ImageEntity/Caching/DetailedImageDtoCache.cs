@@ -5,7 +5,7 @@ using StackExchange.Redis;
 
 namespace SastImg.Infrastructure.Domain.ImageEntity.Caching
 {
-    internal sealed class GetImageCache(
+    internal sealed class DetailedImageDtoCache(
         IConnectionMultiplexer connection,
         IGetImageRepository repository
     ) : ICache<DetailedImageDto>

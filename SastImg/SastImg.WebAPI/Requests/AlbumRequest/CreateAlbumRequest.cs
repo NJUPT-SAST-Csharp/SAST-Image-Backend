@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using SastImg.Domain.AlbumAggregate.AlbumEntity;
 
 namespace SastImg.WebAPI.Requests.AlbumRequest
 {
@@ -28,7 +29,6 @@ namespace SastImg.WebAPI.Requests.AlbumRequest
         /// <summary>
         /// TODO: complete
         /// </summary>
-        [Range(0, 2)]
-        public readonly int Accessibility { get; }
+        public readonly Accessibility Accessibility { get; }
     }
 }

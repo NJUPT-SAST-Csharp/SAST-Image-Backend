@@ -4,11 +4,11 @@ using Shared.Primitives.Request;
 namespace SastImg.Application.ImageServices.GetRemovedImages
 {
     internal class GetRemovedImagesQueryRequestHandler(IGetRemovedImagesRepository repository)
-        : IQueryRequestHandler<GetRemovedImagesQueryRequest, IEnumerable<ImageDto>>
+        : IQueryRequestHandler<GetRemovedImagesQueryRequest, IEnumerable<AlbumImageDto>>
     {
         private readonly IGetRemovedImagesRepository _repository = repository;
 
-        public Task<IEnumerable<ImageDto>> Handle(
+        public Task<IEnumerable<AlbumImageDto>> Handle(
             GetRemovedImagesQueryRequest request,
             CancellationToken cancellationToken
         )

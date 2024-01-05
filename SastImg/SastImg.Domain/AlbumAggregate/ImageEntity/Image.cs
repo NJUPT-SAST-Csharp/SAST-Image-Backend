@@ -6,6 +6,9 @@ namespace SastImg.Domain.AlbumAggregate.ImageEntity;
 
 public sealed class Image : EntityBase<long>
 {
+    private Image()
+        : base(SnowFlakeIdGenerator.NewId) { }
+
     private Image(string title, Uri uri, string description, long[] tags)
         : base(SnowFlakeIdGenerator.NewId)
     {
@@ -35,10 +38,6 @@ public sealed class Image : EntityBase<long>
 
     private long[] _tags = [];
 
-    private int _likes = 0;
-
-    private int _views = 0;
-
     #endregion
 
     #region Properties
@@ -62,10 +61,6 @@ public sealed class Image : EntityBase<long>
     internal void Remove() => _isRemoved = true;
 
     internal void Restore() => _isRemoved = false;
-
-    internal void Like() => _likes++;
-
-    internal void View() => _views++;
 
     #endregion
 }

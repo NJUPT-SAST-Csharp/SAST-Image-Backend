@@ -2,19 +2,19 @@
 {
     public interface IGetImagesRepository
     {
-        public Task<IEnumerable<ImageDto>> GetImagesByUserAsync(
+        public Task<IEnumerable<AlbumImageDto>> GetImagesByUserAsync(
             long albumId,
             int page,
             CancellationToken cancellationToken = default
         );
 
-        public Task<IEnumerable<ImageDto>> GetImagesByAdminAsync(
+        public Task<IEnumerable<AlbumImageDto>> GetImagesByAdminAsync(
             long albumId,
             int page,
             CancellationToken cancellationToken = default
         );
 
-        public Task<IEnumerable<ImageDto>> GetImagesByAnonymousAsync(
+        public Task<IEnumerable<AlbumImageDto>> GetImagesByAnonymousAsync(
             long albumId,
             CancellationToken cancellationToken = default
         );

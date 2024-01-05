@@ -1,13 +1,12 @@
 ﻿using Primitives.Entity;
 using Shared.Primitives;
-using Shared.Utilities;
 using SNS.Domain.AlbumEntity;
 using SNS.Domain.CommentEntity;
 using SNS.Domain.ImageEntity;
 
 namespace SNS.Domain.UserEntity
 {
-    public sealed class User() : EntityBase<long>(SnowFlakeIdGenerator.NewId), IAggregateRoot<User>
+    public sealed class User() : EntityBase<long>(default), IAggregateRoot<User>
     {
         private string _username;
         private string _nickname;

@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Primitives.Rule;
-using Response.ReponseObjects;
 
 namespace SastImg.WebAPI.Configurations
 {
     /// <summary>
     /// TODO: complete
     /// </summary>
-    public class BusinessRuleInvalidExceptionHandler : IExceptionHandler
+    public class DomainBusinessRuleInvalidExceptionHandler : IExceptionHandler
     {
         /// <summary>
         /// TODO: complete
@@ -20,8 +21,8 @@ namespace SastImg.WebAPI.Configurations
         {
             if (exception is DomainBusinessRuleInvalidException ruleInvalidException)
             {
-                httpContext.Response.WriteAsJsonAsync<BadRequestResponse>(
-                    new(ruleInvalidException.Message, ruleInvalidException.Details),
+                httpContext.Response.WriteAsJsonAsync<BadRequestObjectResult>(
+                    new(new { ruleInvalidException.Message, ruleInvalidException.Details }),
                     cancellationToken
                 );
                 return ValueTask.FromResult(true);

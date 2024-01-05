@@ -15,6 +15,8 @@ using Primitives.Command;
 using Primitives.Common.Policies;
 using Primitives.DomainEvent;
 using Primitives.Request;
+using Response.ExceptionHandlers;
+using Response.Extensions;
 using SastImg.Application.AlbumServices.GetAlbum;
 using SastImg.Application.AlbumServices.GetAlbums;
 using SastImg.Application.AlbumServices.GetRemovedAlbums;
@@ -28,6 +30,7 @@ using SastImg.Application.SeedWorks;
 using SastImg.Application.TagServices;
 using SastImg.Domain;
 using SastImg.Domain.AlbumAggregate;
+using SastImg.Infrastructure.Domain;
 using SastImg.Infrastructure.Domain.AlbumEntity;
 using SastImg.Infrastructure.Domain.AlbumEntity.Caching;
 using SastImg.Infrastructure.Domain.CategoryEntity;
@@ -38,6 +41,7 @@ using SastImg.Infrastructure.Event;
 using SastImg.Infrastructure.Persistence;
 using SastImg.Infrastructure.Persistence.QueryDatabase;
 using SastImg.Infrastructure.Persistence.TypeConverters;
+using SastImg.WebAPI.Configurations;
 using Shared.Response.Builders;
 using StackExchange.Redis;
 
@@ -102,8 +106,18 @@ namespace SastImg.Infrastructure.Extensions
             );
             services.AddScoped<ICache<IEnumerable<AlbumDto>>, GetAlbumsCache>();
             services.AddScoped<ICache<DetailedAlbumDto>, GetAlbumCache>();
-            services.AddScoped<ICache<IEnumerable<ImageDto>>, GetImagesCache>();
-            services.AddScoped<ICache<DetailedImageDto>, GetImageCache>();
+            services.AddScoped<ICache<IEnumerable<AlbumImageDto>>, GetImagesCache>();
+            services.AddScoped<ICache<DetailedImageDto>, DetailedImageDtoCache>();
+            return services;
+        }
+
+        public static IServiceCollection ConfigureExceptionHandlers(
+            this IServiceCollection services
+        )
+        {
+            services.AddExceptionHandler<DbNotFoundExceptionHandler>();
+            services.AddExceptionHandler<DomainBusinessRuleInvalidExceptionHandler>();
+            services.AddDefaultExceptionHandler();
             return services;
         }
 

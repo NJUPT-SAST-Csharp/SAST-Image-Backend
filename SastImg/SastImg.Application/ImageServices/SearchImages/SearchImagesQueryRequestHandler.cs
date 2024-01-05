@@ -1,14 +1,13 @@
-﻿using SastImg.Application.ImageServices.GetImages;
-using Shared.Primitives.Request;
+﻿using Shared.Primitives.Request;
 
 namespace SastImg.Application.ImageServices.SearchImages
 {
     internal sealed class SearchImagesQueryRequestHandler(ISearchImagesRepository repository)
-        : IQueryRequestHandler<SearchImagesQueryRequest, IEnumerable<ImageDto>>
+        : IQueryRequestHandler<SearchImagesQueryRequest, IEnumerable<SearchedImageDto>>
     {
         private readonly ISearchImagesRepository _repository = repository;
 
-        public Task<IEnumerable<ImageDto>> Handle(
+        public Task<IEnumerable<SearchedImageDto>> Handle(
             SearchImagesQueryRequest request,
             CancellationToken cancellationToken
         )
@@ -18,7 +17,6 @@ namespace SastImg.Application.ImageServices.SearchImages
                 return _repository.SearchImagesByAdminAsync(
                     request.Page,
                     request.CategoryId,
-                    request.Order,
                     request.Tags,
                     cancellationToken
                 );
@@ -28,7 +26,6 @@ namespace SastImg.Application.ImageServices.SearchImages
                 return _repository.SearchImagesByUserAsync(
                     request.Page,
                     request.CategoryId,
-                    request.Order,
                     request.Tags,
                     request.Requester.Id,
                     cancellationToken

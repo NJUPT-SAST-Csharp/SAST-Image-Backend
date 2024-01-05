@@ -14,7 +14,6 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
             builder.HasKey(x => x.Id);
 
             builder.Ignore(album => album.DomainEvents);
-            builder.Ignore(album => album.IsRemoved);
 
             builder.Property<string>("_title").HasColumnName("title");
             builder.Property<string>("_description").HasColumnName("description");
@@ -47,19 +46,16 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
                 image =>
                 {
                     image.ToTable("images");
+                    image.WithOwner().HasForeignKey("album_id");
 
                     image.Ignore("UploadtedTime");
                     image.Ignore("ImageUrl");
-
-                    image.WithOwner().HasForeignKey("album_id");
 
                     image.Property<string>("_title").HasColumnName("title");
                     image.Property<string>("_description").HasColumnName("description");
                     image.Property<Uri>("_url").HasColumnName("url");
                     image.Property<DateTime>("_uploadtedAt").HasColumnName("uploaded_at");
                     image.Property<bool>("_isRemoved").HasColumnName("is_removed");
-                    image.Property<int>("_likes").HasColumnName("likes");
-                    image.Property<int>("_views").HasColumnName("views");
 
                     image
                         .Property<long[]>("_tags")

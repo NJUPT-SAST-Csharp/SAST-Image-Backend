@@ -116,7 +116,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
 
         #region GetImages
 
-        public Task<IEnumerable<ImageDto>> GetImagesByAdminAsync(
+        public Task<IEnumerable<AlbumImageDto>> GetImagesByAdminAsync(
             long albumId,
             int page,
             CancellationToken cancellationToken = default
@@ -137,7 +137,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 + "ORDER BY i.uploaded_at DESC "
                 + "LIMIT @take "
                 + "OFFSET @skip";
-            return _connection.QueryAsync<ImageDto>(
+            return _connection.QueryAsync<AlbumImageDto>(
                 sql,
                 new
                 {
@@ -148,7 +148,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
             );
         }
 
-        public Task<IEnumerable<ImageDto>> GetImagesByAnonymousAsync(
+        public Task<IEnumerable<AlbumImageDto>> GetImagesByAnonymousAsync(
             long albumId,
             CancellationToken cancellationToken = default
         )
@@ -169,7 +169,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 + "ORDER BY i.uploaded_at DESC "
                 + "LIMIT @take";
 
-            return _connection.QueryAsync<ImageDto>(
+            return _connection.QueryAsync<AlbumImageDto>(
                 sql,
                 new
                 {
@@ -180,7 +180,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
             );
         }
 
-        public Task<IEnumerable<ImageDto>> GetImagesByUserAsync(
+        public Task<IEnumerable<AlbumImageDto>> GetImagesByUserAsync(
             long albumId,
             int page,
             CancellationToken cancellationToken = default
@@ -202,7 +202,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 + "LIMIT @take "
                 + "OFFSET @skip";
 
-            return _connection.QueryAsync<ImageDto>(
+            return _connection.QueryAsync<AlbumImageDto>(
                 sql,
                 new
                 {
@@ -218,61 +218,14 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
 
         #region SearchImages
 
-        public Task<IEnumerable<ImageDto>> SearchImagesByAdminAsync(
+        public Task<IEnumerable<SearchedImageDto>> SearchImagesByAdminAsync(
             int page,
             long categoryId,
-            SearchOrder order,
             long[] tags,
             CancellationToken cancellationToken = default
         )
         {
-            const string prefix =
-                "SELECT "
-                + "i.id AS ImageId, "
-                + "i.title AS Title, "
-                + "i.album_id AS AlbumId, "
-                + "i.url as Url "
-                + "FROM images AS i "
-                + "INNER JOIN albums AS a ON a.id = i.album_id "
-                + "WHERE a.id = @albumId "
-                + "AND NOT i.is_removed "
-                + "AND NOT a.is_removed "
-                + "AND i.tags @> @tags ";
-
-            const string suffix = "LIMIT @take OFFSET @skip";
-
-            string orderStr = order switch
-            {
-                SearchOrder.ByDate => "ORDERBY i.uploaded_at DESC ",
-                SearchOrder.ByLikes => "ORDERBY i.likes DESC ",
-                SearchOrder.ByViews => "ORDERBY i.views DESC ",
-                _ => throw new ArgumentOutOfRangeException(nameof(order))
-            };
-
-            string sql = prefix + orderStr + suffix;
-
-            return _connection.QueryAsync<ImageDto>(
-                sql,
-                new
-                {
-                    albumId = categoryId,
-                    tags,
-                    take = numPerPage,
-                    skip = page * numPerPage
-                }
-            );
-        }
-
-        public Task<IEnumerable<ImageDto>> SearchImagesByUserAsync(
-            int page,
-            long categoryId,
-            SearchOrder order,
-            long[] tags,
-            long requesterId,
-            CancellationToken cancellationToken = default
-        )
-        {
-            const string prefix =
+            const string sql =
                 "SELECT "
                 + "i.id AS ImageId, "
                 + "i.title AS Title, "
@@ -284,21 +237,46 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 + "AND NOT i.is_removed "
                 + "AND NOT a.is_removed "
                 + "AND i.tags @> @tags "
-                + "AND ( a.accessibility <> @PRIVATE OR a.author_id = @requesterId OR @requesterId = ANY( a.collaborators ) ) ";
+                + "ORDERBY i.uploaded_at DESC "
+                + "LIMIT @take OFFSET @skip";
 
-            const string suffix = "LIMIT @take OFFSET @skip";
+            return _connection.QueryAsync<SearchedImageDto>(
+                sql,
+                new
+                {
+                    albumId = categoryId,
+                    tags,
+                    take = numPerPage,
+                    skip = page * numPerPage
+                }
+            );
+        }
 
-            string orderStr = order switch
-            {
-                SearchOrder.ByDate => "ORDERBY i.uploaded_at DESC ",
-                SearchOrder.ByLikes => "ORDERBY i.likes DESC ",
-                SearchOrder.ByViews => "ORDERBY i.views DESC ",
-                _ => throw new ArgumentOutOfRangeException(nameof(order))
-            };
+        public Task<IEnumerable<SearchedImageDto>> SearchImagesByUserAsync(
+            int page,
+            long categoryId,
+            long[] tags,
+            long requesterId,
+            CancellationToken cancellationToken = default
+        )
+        {
+            const string sql =
+                "SELECT "
+                + "i.id AS ImageId, "
+                + "i.title AS Title, "
+                + "i.album_id AS AlbumId, "
+                + "i.url as Url "
+                + "FROM images AS i "
+                + "INNER JOIN albums AS a ON a.id = i.album_id "
+                + "WHERE a.id = @albumId "
+                + "AND NOT i.is_removed "
+                + "AND NOT a.is_removed "
+                + "AND i.tags @> @tags "
+                + "AND ( a.accessibility <> @PRIVATE OR a.author_id = @requesterId OR @requesterId = ANY( a.collaborators ) ) "
+                + "ORDERBY i.uploaded_at DESC "
+                + "LIMIT @take OFFSET @skip";
 
-            string sql = prefix + orderStr + suffix;
-
-            return _connection.QueryAsync<ImageDto>(
+            return _connection.QueryAsync<SearchedImageDto>(
                 sql,
                 new
                 {
@@ -316,7 +294,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
 
         #region GetRemovedImages
 
-        public Task<IEnumerable<ImageDto>> GetImagesByUserAsync(
+        public Task<IEnumerable<AlbumImageDto>> GetImagesByUserAsync(
             long requesterId,
             CancellationToken cancellationToken = default
         )
@@ -334,10 +312,10 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 + "AND i.is_removed "
                 + "ORDER BY a.updated_at DESC";
 
-            return _connection.QueryAsync<ImageDto>(sql, new { authorId = requesterId });
+            return _connection.QueryAsync<AlbumImageDto>(sql, new { authorId = requesterId });
         }
 
-        public Task<IEnumerable<ImageDto>> GetImagesByAdminAsync(
+        public Task<IEnumerable<AlbumImageDto>> GetImagesByAdminAsync(
             long authorId,
             CancellationToken cancellationToken = default
         )
@@ -355,7 +333,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 + "AND i.is_removed "
                 + "ORDER BY a.updated_at DESC";
 
-            return _connection.QueryAsync<ImageDto>(sql, new { authorId });
+            return _connection.QueryAsync<AlbumImageDto>(sql, new { authorId });
         }
 
         #endregion
