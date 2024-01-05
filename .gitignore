@@ -498,3 +498,4 @@ SastImgAPI/appsettings.Development.json
 /Account/Account.Infrastructure/Persistence/Migrations/AccountDbContextModelSnapshot.cs
 /Account/Account.Infrastructure/Persistence/Migrations/20231208080113_Init.cs
 /Account/Account.Infrastructure/Persistence/Migrations/20231208080113_Init.Designer.cs
+/.editorconfig
