@@ -10,8 +10,4 @@
     <ProjectReference Include="..\..\Shared\Primitives\Primitives.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="UserAggregate\" />
-  </ItemGroup>
-
 </Project>

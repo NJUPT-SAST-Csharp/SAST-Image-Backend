@@ -4,7 +4,7 @@ using SNS.Domain.AlbumEntity;
 using SNS.Domain.CommentEntity;
 using SNS.Domain.ImageEntity;
 
-namespace SNS.Domain.UserEntity
+namespace SNS.Domain.UserAggregate.UserEntity
 {
     public sealed class User() : EntityBase<long>(default), IAggregateRoot<User>
     {

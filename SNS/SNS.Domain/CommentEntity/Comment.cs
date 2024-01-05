@@ -1,4 +1,10 @@
-﻿namespace SNS.Domain.CommentEntity
+﻿using Primitives.Entity;
+
+namespace SNS.Domain.CommentEntity
 {
-    public sealed class Comment { }
+    public sealed class Comment : EntityBase<long>
+    {
+        private Comment()
+            : base(default) { }
+    }
 }
