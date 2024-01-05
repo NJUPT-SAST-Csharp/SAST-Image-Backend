@@ -1,12 +1,15 @@
-﻿namespace SastImg.Application.AlbumServices.GetAlbums
+﻿using System.Text.Json.Serialization;
+
+namespace SastImg.Application.AlbumServices.GetAlbums
 {
     public sealed class AlbumDto
     {
+        [JsonConstructor]
         private AlbumDto() { }
 
-        public required long AlbumId { get; init; }
-        public required long CategoryId { get; init; }
-        public required string Title { get; init; }
-        public required Uri CoverUri { get; init; }
+        public long AlbumId { get; init; }
+        public long CategoryId { get; init; }
+        public string Title { get; init; }
+        public Uri CoverUri { get; init; }
     };
 }

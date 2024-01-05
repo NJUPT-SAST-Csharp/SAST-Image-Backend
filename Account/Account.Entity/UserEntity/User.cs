@@ -6,11 +6,9 @@ namespace Account.Entity.UserEntity
 {
     public sealed class User
     {
-#pragma warning disable CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑声明为可以为 null。
         private User() { }
-#pragma warning restore CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑声明为可以为 null。
 
-        private readonly List<Role> roles = [];
+        private readonly List<Role> _roles = [];
 
         public long Id { get; private set; }
         public string Username { get; private set; }
@@ -22,7 +20,7 @@ namespace Account.Entity.UserEntity
         public DateTime RegisteredAt { get; private init; }
         public DateTime LoginAt { get; private set; }
 
-        public IReadOnlyCollection<Role> Roles => roles;
+        public IReadOnlyCollection<Role> Roles => _roles;
 
         public User(string username, string password, string email)
         {
@@ -41,7 +39,7 @@ namespace Account.Entity.UserEntity
             Argon2Hasher.Hash(password, PasswordSalt);
         }
 
-        public void AddRole(Role role) => roles.Add(role);
+        public void AddRole(Role role) => _roles.Add(role);
 
         public bool Login(string password)
         {

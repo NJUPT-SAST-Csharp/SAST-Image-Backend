@@ -33,9 +33,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 + "i.uploaded_at AS UploadedAt, "
                 + "i.is_removed as IsRemoved, "
                 + "i.tags as Tags, "
-                + "i.url as Url, "
-                + "i.views as Views, "
-                + "i.likes as Likes "
+                + "i.url as Url "
                 + "FROM images AS i "
                 + "INNER JOIN albums AS a "
                 + "ON i.album_id = a.id "
@@ -57,9 +55,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 + "i.uploaded_at AS UploadedAt, "
                 + "i.is_removed as IsRemoved, "
                 + "i.tags as Tags, "
-                + "i.url as Url, "
-                + "i.views as Views, "
-                + "i.likes as Likes "
+                + "i.url as Url "
                 + "FROM images AS i "
                 + "INNER JOIN albums AS a "
                 + "ON i.album_id = a.id "
@@ -87,9 +83,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 + "i.uploaded_at AS UploadedAt, "
                 + "i.is_removed as IsRemoved, "
                 + "i.tags as Tags, "
-                + "i.url as Url, "
-                + "i.views as Views, "
-                + "i.likes as Likes "
+                + "i.url as Url "
                 + "FROM images AS i "
                 + "INNER JOIN albums AS a "
                 + "ON i.album_id = a.id "
@@ -175,7 +169,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 {
                     albumId,
                     take = numPerPage,
-                    PRIVATE = Accessibility.Public
+                    PUBLIC = Accessibility.Public
                 }
             );
         }
@@ -237,7 +231,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 + "AND NOT i.is_removed "
                 + "AND NOT a.is_removed "
                 + "AND i.tags @> @tags "
-                + "ORDERBY i.uploaded_at DESC "
+                + "ORDER BY i.uploaded_at DESC "
                 + "LIMIT @take OFFSET @skip";
 
             return _connection.QueryAsync<SearchedImageDto>(
@@ -273,7 +267,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 + "AND NOT a.is_removed "
                 + "AND i.tags @> @tags "
                 + "AND ( a.accessibility <> @PRIVATE OR a.author_id = @requesterId OR @requesterId = ANY( a.collaborators ) ) "
-                + "ORDERBY i.uploaded_at DESC "
+                + "ORDER BY i.uploaded_at DESC "
                 + "LIMIT @take OFFSET @skip";
 
             return _connection.QueryAsync<SearchedImageDto>(

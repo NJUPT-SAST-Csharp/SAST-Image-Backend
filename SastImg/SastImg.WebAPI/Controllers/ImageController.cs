@@ -54,7 +54,7 @@ namespace SastImg.WebAPI.Controllers
         [Authorize]
         [HttpGet("images")]
         public async Task<Ok<IEnumerable<SearchedImageDto>>> SearchImages(
-            [MaxLength(5)] [Range(0, long.MaxValue)] long[] tags,
+            [FromQuery] [MaxLength(5)] long[] tags,
             [Range(0, long.MaxValue)] long categoryId = 0,
             [Range(0, 1000)] int page = 0,
             SearchOrder order = SearchOrder.ByDate,

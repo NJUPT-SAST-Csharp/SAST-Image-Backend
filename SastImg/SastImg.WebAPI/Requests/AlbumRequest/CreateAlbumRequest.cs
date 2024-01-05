@@ -12,23 +12,23 @@ namespace SastImg.WebAPI.Requests.AlbumRequest
         /// TODO: complete
         /// </summary>
         [MaxLength(20)]
-        public readonly string Title { get; }
+        public readonly string Title { get; init; }
 
         /// <summary>
         /// TODO: complete
         /// </summary>
         [MaxLength(100)]
-        public readonly string Description { get; }
+        public readonly string Description { get; init; }
 
         /// <summary>
         /// TODO: complete
         /// </summary>
         [Range(0, long.MaxValue)]
-        public readonly long CategoryId { get; }
+        public readonly long CategoryId { get; init; }
 
         /// <summary>
         /// TODO: complete
         /// </summary>
-        public readonly Accessibility Accessibility { get; }
+        public readonly Accessibility Accessibility { get; init; }
     }
 }

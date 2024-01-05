@@ -4,13 +4,11 @@
     {
         private DetailedImageDto() { }
 
-        public required long ImageId { get; init; }
-        public required string Title { get; init; }
-        public required DateTime UploadedAt { get; init; }
-        public required int Views { get; init; }
-        public required int Likes { get; init; }
-        public required bool IsRemoved { get; init; }
-        public required long[] Tags { get; init; }
-        public required Uri Url { get; init; }
+        public long ImageId { get; init; }
+        public string Title { get; init; }
+        public DateTime UploadedAt { get; init; }
+        public bool IsRemoved { get; init; }
+        public long[] Tags { get; init; }
+        public Uri Url { get; init; }
     }
 }

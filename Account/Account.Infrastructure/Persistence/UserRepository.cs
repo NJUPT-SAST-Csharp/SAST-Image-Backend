@@ -19,8 +19,7 @@ namespace Account.Infrastructure.Persistence
         )
         {
             return _dbContext
-                .Users
-                .Select(u => u.Email)
+                .Users.Select(u => u.Email)
                 .AnyAsync(e => e == email.ToUpperInvariant(), cancellationToken);
         }
 
@@ -30,8 +29,7 @@ namespace Account.Infrastructure.Persistence
         )
         {
             return _dbContext
-                .Users
-                .Select(u => u.UsernameNormalized)
+                .Users.Select(u => u.UsernameNormalized)
                 .AnyAsync(name => name == username.ToUpperInvariant(), cancellationToken);
         }
 
@@ -59,7 +57,7 @@ namespace Account.Infrastructure.Persistence
         )
         {
             return _dbContext
-                .Users
+                .Users.Include(u => u.Roles)
                 .FirstOrDefaultAsync(
                     user => user.Email == email.ToUpperInvariant(),
                     cancellationToken
@@ -71,7 +69,9 @@ namespace Account.Infrastructure.Persistence
             CancellationToken cancellationToken = default
         )
         {
-            return _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+            return _dbContext
+                .Users.Include(u => u.Roles)
+                .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
         }
 
         public Task<User?> GetUserByUsernameAsync(
@@ -80,7 +80,7 @@ namespace Account.Infrastructure.Persistence
         )
         {
             return _dbContext
-                .Users
+                .Users.Include(u => u.Roles)
                 .FirstOrDefaultAsync(
                     u => u.UsernameNormalized == username.ToUpperInvariant(),
                     cancellationToken

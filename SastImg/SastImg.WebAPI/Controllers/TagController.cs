@@ -66,7 +66,7 @@ namespace SastImg.WebAPI.Controllers
         [Authorize]
         [HttpGet("tags")]
         public async Task<Ok<IEnumerable<TagDto>>> GetTags(
-            [MaxLength(5)] [Range(0, long.MaxValue)] long[] tagIds,
+            [FromQuery] long[] tagIds,
             CancellationToken cancellationToken
         )
         {

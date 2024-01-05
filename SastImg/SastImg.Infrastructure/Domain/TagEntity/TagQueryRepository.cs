@@ -13,7 +13,7 @@ namespace SastImg.Infrastructure.Domain.TagEntity
             CancellationToken cancellationToken = default
         )
         {
-            const string sql = "SELECT " + "id AS Id, " + "name AS Name " + "from tags";
+            const string sql = "SELECT " + "id AS Id, " + "name AS Name " + "FROM tags";
 
             return _connection.QueryAsync<TagDto>(sql);
         }
@@ -25,13 +25,10 @@ namespace SastImg.Infrastructure.Domain.TagEntity
         {
             const string sql =
                 "SELECT "
-                + "t.id AS Id, "
-                + "t.name AS Name "
-                + "FROM tags AS t "
-                + "INNER JOIN unnest( @array ) "
-                + "WITH ORDINALITY AS arr(id, ord) "
-                + "ON t.id = arr.id "
-                + "ORDER BY arr.ord;";
+                + "id AS Id, "
+                + "name AS Name "
+                + "FROM tags "
+                + "WHERE id = ANY ( @array ) ";
             return _connection.QueryAsync<TagDto>(sql, new { array = ids });
         }
 
@@ -43,8 +40,8 @@ namespace SastImg.Infrastructure.Domain.TagEntity
             const string sql =
                 "SELECT "
                 + "id AS Id, "
-                + "name AS Name, "
-                + "from tags "
+                + "name AS Name "
+                + "FROM tags "
                 + "WHERE name ILIKE @name";
             return _connection.QueryAsync<TagDto>(sql, new { name = $"%{name}%" });
         }
