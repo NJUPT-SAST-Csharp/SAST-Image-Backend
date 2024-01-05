@@ -11,6 +11,32 @@ namespace Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount
         {
             ClassLevelCascadeMode = CascadeMode.Stop;
 
+            RuleFor(a => a.Code)
+                .Cascade(CascadeMode.Stop)
+                .InclusiveBetween(100000, 999999)
+                .MustAsync(
+                    (request, code, cancellationToken) =>
+                        cache.VerifyCodeAsync(
+                            CodeCacheKey.Registration,
+                            request.Email,
+                            code,
+                            cancellationToken
+                        )
+                )
+                .WithMessage("Incorrect code.");
+
+            RuleFor(r => r.Email)
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                .MaximumLength(50)
+                .EmailAddress()
+                .MustAsync(
+                    async (email, cancellationToken) =>
+                        await checker.CheckEmailExistenceAsync(email, cancellationToken) == false
+                )
+                .WithErrorCode(StatusCodes.Status409Conflict.ToString())
+                .WithMessage("Duplicated email.");
+
             RuleFor(a => a.Password).NotEmpty().Length(6, 30);
 
             RuleFor(a => a.Username)

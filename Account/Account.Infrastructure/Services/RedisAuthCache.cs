@@ -1,37 +1,29 @@
 ﻿using Account.Application.Services;
-using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 
 namespace Account.Infrastructure.Services
 {
-    internal sealed class RedisAuthCache(
-        IConnectionMultiplexer connection,
-        ILogger<RedisAuthCache> logger
-    ) : IAuthCodeCache
+    internal sealed class RedisAuthCache(IConnectionMultiplexer connection) : IAuthCodeCache
     {
-        private readonly ILogger<RedisAuthCache> _logger = logger;
         private readonly IDatabase _database = connection.GetDatabase();
 
         public Task StoreCodeAsync(
-            CodeCaheKey purpose,
+            CodeCacheKey purpose,
             string email,
             int code,
             TimeSpan expiry,
             CancellationToken cancellationToken = default
         )
         {
-            return _database
-                .HashSetAsync(purpose.ToString(), email.ToUpperInvariant(), code)
-                .ContinueWith(async t =>
-                {
-                    await Task.Delay(expiry);
-                    _logger.LogInformation("Registration code {code} has expired.", code);
-                    _ = _database.HashDeleteAsync(purpose.ToString(), email);
-                });
+            return _database.StringSetAsync(
+                string.Concat(purpose.ToString(), email.ToUpperInvariant()),
+                code,
+                expiry
+            );
         }
 
         public Task StoreCodeAsync(
-            CodeCaheKey purpose,
+            CodeCacheKey purpose,
             string email,
             int code,
             CancellationToken cancellationToken = default
@@ -41,32 +33,33 @@ namespace Account.Infrastructure.Services
                 purpose,
                 email.ToUpperInvariant(),
                 code,
-                TimeSpan.FromMinutes(5),
+                TimeSpan.FromMinutes(10),
                 cancellationToken
             );
         }
 
         public Task<bool> DeleteCodeAsync(
-            CodeCaheKey purpose,
+            CodeCacheKey purpose,
             string email,
             CancellationToken cancellationToken = default
         )
         {
-            return _database.HashDeleteAsync(purpose.ToString(), email.ToUpperInvariant());
+            return _database.KeyDeleteAsync(
+                string.Concat(purpose.ToString(), email.ToUpperInvariant())
+            );
         }
 
         public async Task<bool> VerifyCodeAsync(
-            CodeCaheKey purpose,
+            CodeCacheKey purpose,
             string email,
             int code,
             CancellationToken cancellationToken = default
         )
         {
-            var cacheCode = await _database.HashGetAsync(
-                purpose.ToString(),
-                email.ToUpperInvariant()
+            var cacheCode = await _database.StringGetAsync(
+                string.Concat(purpose.ToString(), email.ToUpperInvariant())
             );
-            if (cacheCode.IsNull)
+            if (cacheCode.IsNullOrEmpty)
                 return false;
             else
                 return cacheCode == code;

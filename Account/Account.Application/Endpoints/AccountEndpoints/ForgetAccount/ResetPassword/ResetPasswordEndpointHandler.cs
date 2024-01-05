@@ -33,7 +33,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.ResetPass
 
             _ = _unit.SaveChangesAsync();
 
-            _ = _cache.DeleteCodeAsync(CodeCaheKey.ForgetAccount, request.Email);
+            _ = _cache.DeleteCodeAsync(CodeCacheKey.ForgetAccount, request.Email);
 
             return Responses.NoContent;
         }

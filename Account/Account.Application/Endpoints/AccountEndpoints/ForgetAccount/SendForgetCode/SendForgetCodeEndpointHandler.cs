@@ -19,7 +19,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.SendForge
             {
                 return Responses.BadRequest("Something went wrong.");
             }
-            _ = _cache.StoreCodeAsync(CodeCaheKey.ForgetAccount, request.Email, code);
+            _ = _cache.StoreCodeAsync(CodeCacheKey.ForgetAccount, request.Email, code);
             return Responses.NoContent;
         }
     }

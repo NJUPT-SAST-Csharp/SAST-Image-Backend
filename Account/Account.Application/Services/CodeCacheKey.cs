@@ -1,6 +1,6 @@
 ﻿namespace Account.Application.Services
 {
-    public enum CodeCaheKey
+    public enum CodeCacheKey
     {
         Registration,
         ForgetAccount

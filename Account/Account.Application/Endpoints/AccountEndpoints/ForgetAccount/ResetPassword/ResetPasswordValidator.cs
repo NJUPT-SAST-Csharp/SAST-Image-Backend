@@ -26,7 +26,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.ResetPass
                 .MustAsync(
                     (request, code, cancellationToken) =>
                         cache.VerifyCodeAsync(
-                            CodeCaheKey.ForgetAccount,
+                            CodeCacheKey.ForgetAccount,
                             request.Email,
                             code,
                             cancellationToken

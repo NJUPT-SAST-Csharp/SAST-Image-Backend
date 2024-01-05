@@ -3,7 +3,7 @@
     public interface IAuthCodeCache
     {
         public Task StoreCodeAsync(
-            CodeCaheKey purpose,
+            CodeCacheKey purpose,
             string email,
             int code,
             TimeSpan expiry,
@@ -11,21 +11,21 @@
         );
 
         public Task StoreCodeAsync(
-            CodeCaheKey purpose,
+            CodeCacheKey purpose,
             string email,
             int code,
             CancellationToken cancellationToken = default
         );
 
         public Task<bool> VerifyCodeAsync(
-            CodeCaheKey purpose,
+            CodeCacheKey purpose,
             string email,
             int code,
             CancellationToken cancellationToken = default
         );
 
         public Task<bool> DeleteCodeAsync(
-            CodeCaheKey purpose,
+            CodeCacheKey purpose,
             string email,
             CancellationToken cancellationToken = default
         );

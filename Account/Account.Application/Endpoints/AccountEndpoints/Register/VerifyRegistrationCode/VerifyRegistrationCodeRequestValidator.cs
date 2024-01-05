@@ -33,7 +33,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistra
                 .MustAsync(
                     (v, code, cancellationToken) =>
                         cache.VerifyCodeAsync(
-                            CodeCaheKey.Registration,
+                            CodeCacheKey.Registration,
                             v.Email,
                             code,
                             cancellationToken

@@ -18,7 +18,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.VerifyFor
                 .MustAsync(
                     (request, code, cancellationToken) =>
                         cache.VerifyCodeAsync(
-                            CodeCaheKey.ForgetAccount,
+                            CodeCacheKey.ForgetAccount,
                             request.Email,
                             code,
                             cancellationToken

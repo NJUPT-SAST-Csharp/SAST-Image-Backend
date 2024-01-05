@@ -32,7 +32,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.Register.SendRegistrati
                 return Responses.BadRequest("Something went wrong.");
             }
 
-            _ = _cache.StoreCodeAsync(CodeCaheKey.Registration, request.Email, code);
+            _ = _cache.StoreCodeAsync(CodeCacheKey.Registration, request.Email, code);
             return Responses.NoContent;
         }
     }
