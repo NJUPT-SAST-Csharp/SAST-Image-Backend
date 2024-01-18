@@ -1,8 +1,7 @@
 ﻿using Primitives.Entity;
 using Shared.Primitives;
 using SNS.Domain.AlbumEntity;
-using SNS.Domain.CommentEntity;
-using SNS.Domain.ImageEntity;
+using SNS.Domain.ImageAggregate.ImageEntity;
 
 namespace SNS.Domain.UserAggregate.UserEntity
 {
@@ -16,7 +15,6 @@ namespace SNS.Domain.UserAggregate.UserEntity
         private readonly List<User> _followers;
         private readonly List<Album> _subscribing;
         private readonly List<Image> _favorites;
-        private readonly List<Comment> _comments;
 
         public void AddFollowing(User user)
         {
