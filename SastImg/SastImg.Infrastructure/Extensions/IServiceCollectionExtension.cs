@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Reflection;
 using System.Threading.RateLimiting;
 using Dapper;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Npgsql;
 using Primitives.Command;
-using Primitives.Common.Policies;
 using Primitives.DomainEvent;
 using Primitives.Request;
 using Response.ExceptionHandlers;
@@ -118,32 +116,6 @@ namespace SastImg.Infrastructure.Extensions
             services.AddExceptionHandler<DbNotFoundExceptionHandler>();
             services.AddExceptionHandler<DomainBusinessRuleInvalidExceptionHandler>();
             services.AddDefaultExceptionHandler();
-            return services;
-        }
-
-        public static IServiceCollection ConfigureRateLimiter(
-            this IServiceCollection services,
-            IConfiguration configuration
-        )
-        {
-            // Concurrency Limiter
-            services.AddRateLimiter(options =>
-            {
-                options.OnRejected += RateLimitOnRejected;
-                options.AddConcurrencyLimiter(
-                    RateLimiterPolicyNames.Concurrency,
-                    options =>
-                    {
-                        var value = configuration
-                            .GetSection(nameof(RateLimiter))
-                            .GetSection(RateLimiterPolicyNames.Concurrency)
-                            .Get<ConcurrencyLimiterOptions>()!;
-                        options.PermitLimit = value.PermitLimit;
-                        options.QueueLimit = value.QueueLimit;
-                        options.QueueProcessingOrder = value.QueueProcessingOrder;
-                    }
-                );
-            });
             return services;
         }
 

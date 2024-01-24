@@ -1,11 +1,9 @@
 ﻿using Auth.Authentication.Extensions;
 using Auth.Authorization.Extensions;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Primitives.Common.Policies;
 
 namespace SastImg.Infrastructure.Extensions
 {
@@ -31,23 +29,9 @@ namespace SastImg.Infrastructure.Extensions
                         )
                 )
                 .ConfigureMediator()
-                .ConfigureExceptionHandlers()
-                .ConfigureRateLimiter(builder.Configuration);
-
+                .ConfigureExceptionHandlers();
             builder.Services.ConfigureSwagger();
-            builder.Services.AddControllers(options =>
-            {
-                options.CacheProfiles.Add(
-                    ResponseCachePolicyNames.Default,
-                    new()
-                    {
-                        Duration = configuration
-                            .GetSection("Cache")
-                            .GetValue<int>("ResponseCacheDuration"),
-                        Location = ResponseCacheLocation.Any
-                    }
-                );
-            });
+            builder.Services.AddControllers();
 
             builder.Services.ConfigureJwtAuthentication(options =>
             {
