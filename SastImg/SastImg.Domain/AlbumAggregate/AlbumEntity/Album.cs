@@ -55,9 +55,9 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
         private Cover _cover = new(null, true);
 
-        private DateTime _createdAt = DateTime.Now;
+        private DateTime _createdAt = DateTime.UtcNow;
 
-        private DateTime _updatedAt = DateTime.Now;
+        private DateTime _updatedAt = DateTime.UtcNow;
 
         private long _authorId;
 

@@ -32,7 +32,7 @@ public sealed class Image : EntityBase<long>
 
     private readonly Uri _url;
 
-    private readonly DateTime _uploadedAt = DateTime.Now;
+    private readonly DateTime _uploadedAt = DateTime.UtcNow;
 
     private bool _isRemoved = false;
 

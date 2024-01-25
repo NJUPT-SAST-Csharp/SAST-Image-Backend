@@ -11,8 +11,8 @@ namespace SNS.Domain.ImageAggregate.ImageEntity
             _albumId = albumId;
         }
 
-        private long _albumId;
-        private long _authorId;
+        private readonly long _albumId;
+        private readonly long _authorId;
         private int _likes;
 
         public static Image CreateNewImage(long imageId, long authorId, long albumId)
