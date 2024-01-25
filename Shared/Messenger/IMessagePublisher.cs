@@ -1,4 +1,4 @@
-﻿namespace Primitives.Message
+﻿namespace Messenger
 {
     public interface IMessagePublisher
     {

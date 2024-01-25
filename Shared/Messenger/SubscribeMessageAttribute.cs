@@ -1,8 +1,8 @@
 ﻿using DotNetCore.CAP;
 
-namespace Primitives.Message
+namespace Messenger
 {
-    public sealed class SubscribeAttribute(string name, bool isPartial = false)
+    public sealed class SubscribeMessageAttribute(string name, bool isPartial = false)
         : CapSubscribeAttribute(name, isPartial)
     {
         public override string ToString()
