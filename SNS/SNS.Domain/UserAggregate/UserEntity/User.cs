@@ -5,7 +5,7 @@ using SNS.Domain.ImageAggregate.ImageEntity;
 
 namespace SNS.Domain.UserAggregate.UserEntity
 {
-    public sealed class User() : EntityBase<long>(default), IAggregateRoot<User>
+    public sealed class User : EntityBase<UserId>, IAggregateRoot<User>
     {
         private string _username;
         private string _nickname;
