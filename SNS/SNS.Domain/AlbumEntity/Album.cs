@@ -1,5 +1,5 @@
 ﻿using Primitives.Entity;
-using SNS.Domain.UserAggregate.UserEntity;
+using SNS.Domain.UserEntity;
 
 namespace SNS.Domain.AlbumEntity
 {

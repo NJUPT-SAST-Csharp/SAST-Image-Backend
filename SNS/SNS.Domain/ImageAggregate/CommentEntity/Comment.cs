@@ -1,7 +1,7 @@
 ﻿using Primitives.Entity;
 using Shared.Utilities;
 using SNS.Domain.ImageAggregate.ImageEntity;
-using SNS.Domain.UserAggregate.UserEntity;
+using SNS.Domain.UserEntity;
 
 namespace SNS.Domain.ImageAggregate.CommentEntity
 {
