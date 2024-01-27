@@ -2,9 +2,9 @@
 
 namespace SNS.Domain.ImageAggregate
 {
-    public interface IImageDomainService
+    public interface IImageRepository
     {
-        public Task<ImageId> CreateNewImageAsync(
+        public Task<ImageId> AddNewImageAsync(
             Image image,
             CancellationToken cancellationToken = default
         );
