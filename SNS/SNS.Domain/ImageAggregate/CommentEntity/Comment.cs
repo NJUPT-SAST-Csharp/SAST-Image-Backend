@@ -21,7 +21,7 @@ namespace SNS.Domain.ImageAggregate.CommentEntity
         private readonly string _content;
         private readonly DateTime _commentAt;
 
-        public static Comment CreateNewComment(ImageId imageId, UserId authorId, string content)
+        internal static Comment CreateNewComment(ImageId imageId, UserId authorId, string content)
         {
             return new Comment(imageId, authorId, content);
         }

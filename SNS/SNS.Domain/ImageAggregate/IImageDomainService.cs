@@ -5,9 +5,12 @@ namespace SNS.Domain.ImageAggregate
     public interface IImageDomainService
     {
         public Task<ImageId> CreateNewImageAsync(
-            long imageId,
-            long authorId,
-            long albumId,
+            Image image,
+            CancellationToken cancellationToken = default
+        );
+
+        public Task<Image> GetImageByIdAsync(
+            ImageId id,
             CancellationToken cancellationToken = default
         );
     }

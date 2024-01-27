@@ -16,14 +16,14 @@ namespace SNS.Domain.UserAggregate.UserEntity
         private readonly List<Album> _subscribing;
         private readonly List<Image> _favorites;
 
-        public void AddFollowing(User user)
+        public void Follow(User user)
         {
             _following.Add(user);
         }
 
-        public void AddFollower(User user)
+        public void Unfollow(User user)
         {
-            _followers.Add(user);
+            _following.Remove(user);
         }
     }
 }
