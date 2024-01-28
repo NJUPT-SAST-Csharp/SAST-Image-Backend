@@ -4,10 +4,10 @@ namespace SNS.WebAPI.Messages
 {
     public readonly struct AddImageMessage : IMessage
     {
-        public long ImageId { get; private init; }
+        public readonly long ImageId { get; private init; }
 
-        public long AuthorId { get; private init; }
+        public readonly long AuthorId { get; private init; }
 
-        public long AlbumId { get; private init; }
+        public readonly long AlbumId { get; private init; }
     }
 }
