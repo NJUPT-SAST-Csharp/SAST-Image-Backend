@@ -1,16 +1,24 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Messenger;
 using Microsoft.AspNetCore.Mvc;
+using Primitives.Command;
+using SNS.Application.ImageServices.AddImage;
+using SNS.WebAPI.Messages;
 
 namespace SNS.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public sealed class ImageController : ControllerBase
+    public sealed class ImageController(ICommandSender commandSender) : ControllerBase
     {
+        private readonly ICommandSender _commandSender = commandSender;
+
         [NonAction]
-        public async Task<Results<Ok, NoContent>> AddNewImageAsync()
+        [SubscribeMessage("Image.Add")]
+        public async Task AddNewImage(AddImageMessage message)
         {
-            return Results.Ok();
+            await _commandSender.CommandAsync(
+                new AddImageCommand(message.ImageId, message.AuthorId, message.AlbumId)
+            );
         }
     }
 }

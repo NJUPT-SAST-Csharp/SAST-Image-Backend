@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Response\Response.csproj" />
+    <ProjectReference Include="..\SNS.Application\SNS.Application.csproj" />
   </ItemGroup>
 
 </Project>

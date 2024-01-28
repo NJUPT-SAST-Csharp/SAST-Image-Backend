@@ -10,4 +10,10 @@
     <Folder Include="AlbumServices\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Messenger\Messenger.csproj" />
+    <ProjectReference Include="..\..\Shared\Primitives\Primitives.csproj" />
+    <ProjectReference Include="..\SNS.Domain\SNS.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
