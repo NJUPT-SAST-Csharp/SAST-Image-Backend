@@ -19,7 +19,12 @@ namespace SastImg.Application.AlbumServices.UpdateAlbumInfo
         {
             var album = await _repository.GetAlbumAsync(request.AlbumId, cancellationToken);
 
-            album.UpdateAlbumInfo(request.Title, request.Description);
+            album.UpdateAlbumInfo(
+                request.Title,
+                request.Description,
+                request.CategoryId,
+                request.Accessibility
+            );
 
             await _unitOfWork.CommitChangesAsync(cancellationToken);
         }

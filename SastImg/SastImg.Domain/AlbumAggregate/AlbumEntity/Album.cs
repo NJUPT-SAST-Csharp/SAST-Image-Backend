@@ -95,18 +95,16 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             // TODO: Raise domain event
         }
 
-        public void UpdateAlbumInfo(string title, string description)
+        public void UpdateAlbumInfo(
+            string title,
+            string description,
+            long categoryId,
+            Accessibility accessibility
+        )
         {
             _title = title;
             _description = description;
-        }
-
-        public void ChangeAccessiblity(Accessibility accessibility)
-        {
-            if (_accessibility != Accessibility.Private && accessibility == Accessibility.Private)
-            {
-                // TODO: Raise domain event
-            }
+            _categoryId = categoryId;
             _accessibility = accessibility;
         }
 

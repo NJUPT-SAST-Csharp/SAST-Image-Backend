@@ -8,6 +8,7 @@ using SastImg.Application.AlbumServices.CreateAlbum;
 using SastImg.Application.AlbumServices.GetAlbum;
 using SastImg.Application.AlbumServices.GetAlbums;
 using SastImg.Application.AlbumServices.SearchAlbums;
+using SastImg.Application.AlbumServices.UpdateAlbumInfo;
 using SastImg.WebAPI.Requests.AlbumRequest;
 using Shared.Response.Builders;
 
@@ -111,6 +112,32 @@ namespace SastImg.WebAPI.Controllers
             );
             var album = await _commandSender.CommandAsync(command, cancellationToken);
             return Responses.Created(album);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="albumId"></param>
+        /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPut("album/{albumId}")]
+        public async Task<NoContent> UpdateAlbum(
+            [FromRoute] [Range(0, long.MaxValue)] long albumId,
+            [FromBody] UpdateAlbumRequest request,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var command = new UpdateAlbumInfoCommand(
+                albumId,
+                request.Title,
+                request.Description,
+                request.CategoryId,
+                User
+            );
+            await _commandSender.CommandAsync(command, cancellationToken);
+            return Responses.NoContent;
         }
     }
 }
