@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using Dapper;
 using SastImg.Application.TagServices;
+using SastImg.Domain.TagEntity;
 using SastImg.Infrastructure.Persistence.QueryDatabase;
 
 namespace SastImg.Infrastructure.Domain.TagEntity
@@ -19,7 +20,7 @@ namespace SastImg.Infrastructure.Domain.TagEntity
         }
 
         public Task<IEnumerable<TagDto>> GetTagsAsync(
-            long[] ids,
+            TagId[] ids,
             CancellationToken cancellationToken = default
         )
         {
@@ -29,7 +30,7 @@ namespace SastImg.Infrastructure.Domain.TagEntity
                 + "name AS Name "
                 + "FROM tags "
                 + "WHERE id = ANY ( @array ) ";
-            return _connection.QueryAsync<TagDto>(sql, new { array = ids });
+            return _connection.QueryAsync<TagDto>(sql, new { array = ids.Select(id => id.Value) });
         }
 
         public Task<IEnumerable<TagDto>> SearchTagsAsync(

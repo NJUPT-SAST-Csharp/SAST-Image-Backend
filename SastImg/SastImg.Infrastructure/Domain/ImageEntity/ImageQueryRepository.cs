@@ -4,7 +4,11 @@ using SastImg.Application.ImageServices.GetImage;
 using SastImg.Application.ImageServices.GetImages;
 using SastImg.Application.ImageServices.GetRemovedImages;
 using SastImg.Application.ImageServices.SearchImages;
+using SastImg.Domain;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
+using SastImg.Domain.AlbumAggregate.ImageEntity;
+using SastImg.Domain.CategoryEntity;
+using SastImg.Domain.TagEntity;
 using SastImg.Infrastructure.Persistence.QueryDatabase;
 
 namespace SastImg.Infrastructure.Domain.ImageEntity
@@ -22,7 +26,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
         #region GetImage
 
         public Task<DetailedImageDto?> GetImageByAdminAsync(
-            long imageId,
+            ImageId imageId,
             CancellationToken cancellationToken = default
         )
         {
@@ -40,11 +44,14 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 + "WHERE i.id = @imageId "
                 + "AND NOT a.is_removed "
                 + "LIMIT 1";
-            return _connection.QueryFirstOrDefaultAsync<DetailedImageDto>(sql, new { imageId });
+            return _connection.QueryFirstOrDefaultAsync<DetailedImageDto>(
+                sql,
+                new { imageId = imageId.Value }
+            );
         }
 
         public Task<DetailedImageDto?> GetImageByAnonymousAsync(
-            long imageId,
+            ImageId imageId,
             CancellationToken cancellationToken = default
         )
         {
@@ -66,13 +73,13 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 + "LIMIT 1";
             return _connection.QueryFirstOrDefaultAsync<DetailedImageDto>(
                 sql,
-                new { imageId, PUBLIC = Accessibility.Public }
+                new { imageId = imageId.Value, PUBLIC = Accessibility.Public }
             );
         }
 
         public Task<DetailedImageDto?> GetImageByUserAsync(
-            long imageId,
-            long requesterId,
+            ImageId imageId,
+            UserId requesterId,
             CancellationToken cancellationToken = default
         )
         {
@@ -99,8 +106,8 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 sql,
                 new
                 {
-                    imageId,
-                    requesterId,
+                    imageId = imageId.Value,
+                    requesterId = requesterId.Value,
                     PRIVATE = Accessibility.Private
                 }
             );
@@ -111,7 +118,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
         #region GetImages
 
         public Task<IEnumerable<AlbumImageDto>> GetImagesByAdminAsync(
-            long albumId,
+            AlbumId albumId,
             int page,
             CancellationToken cancellationToken = default
         )
@@ -135,7 +142,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 sql,
                 new
                 {
-                    albumId,
+                    albumId = albumId.Value,
                     take = numPerPage,
                     skip = page * numPerPage
                 }
@@ -143,7 +150,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
         }
 
         public Task<IEnumerable<AlbumImageDto>> GetImagesByAnonymousAsync(
-            long albumId,
+            AlbumId albumId,
             CancellationToken cancellationToken = default
         )
         {
@@ -167,7 +174,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 sql,
                 new
                 {
-                    albumId,
+                    albumId = albumId.Value,
                     take = numPerPage,
                     PUBLIC = Accessibility.Public
                 }
@@ -175,7 +182,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
         }
 
         public Task<IEnumerable<AlbumImageDto>> GetImagesByUserAsync(
-            long albumId,
+            AlbumId albumId,
             int page,
             CancellationToken cancellationToken = default
         )
@@ -200,7 +207,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 sql,
                 new
                 {
-                    albumId,
+                    albumId = albumId.Value,
                     take = numPerPage,
                     skip = page * numPerPage,
                     PRIVATE = Accessibility.Private
@@ -214,8 +221,8 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
 
         public Task<IEnumerable<SearchedImageDto>> SearchImagesByAdminAsync(
             int page,
-            long categoryId,
-            long[] tags,
+            CategoryId categoryId,
+            TagId[] tags,
             CancellationToken cancellationToken = default
         )
         {
@@ -238,8 +245,8 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 sql,
                 new
                 {
-                    albumId = categoryId,
-                    tags,
+                    albumId = categoryId.Value,
+                    tags = tags.Select(t => t.Value),
                     take = numPerPage,
                     skip = page * numPerPage
                 }
@@ -248,9 +255,9 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
 
         public Task<IEnumerable<SearchedImageDto>> SearchImagesByUserAsync(
             int page,
-            long categoryId,
-            long[] tags,
-            long requesterId,
+            CategoryId categoryId,
+            TagId[] tags,
+            UserId requesterId,
             CancellationToken cancellationToken = default
         )
         {
@@ -274,9 +281,9 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 sql,
                 new
                 {
-                    albumId = categoryId,
-                    tags,
-                    requesterId,
+                    albumId = categoryId.Value,
+                    tags = tags.Select(t => t.Value),
+                    requesterId = requesterId.Value,
                     take = numPerPage,
                     skip = page * numPerPage,
                     PRIVATE = Accessibility.Private
@@ -289,7 +296,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
         #region GetRemovedImages
 
         public Task<IEnumerable<AlbumImageDto>> GetImagesByUserAsync(
-            long requesterId,
+            UserId requesterId,
             CancellationToken cancellationToken = default
         )
         {
@@ -306,11 +313,11 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 + "AND i.is_removed "
                 + "ORDER BY a.updated_at DESC";
 
-            return _connection.QueryAsync<AlbumImageDto>(sql, new { authorId = requesterId });
+            return _connection.QueryAsync<AlbumImageDto>(sql, new { authorId = requesterId.Value });
         }
 
         public Task<IEnumerable<AlbumImageDto>> GetImagesByAdminAsync(
-            long authorId,
+            UserId authorId,
             CancellationToken cancellationToken = default
         )
         {
@@ -327,7 +334,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity
                 + "AND i.is_removed "
                 + "ORDER BY a.updated_at DESC";
 
-            return _connection.QueryAsync<AlbumImageDto>(sql, new { authorId });
+            return _connection.QueryAsync<AlbumImageDto>(sql, new { authorId = authorId.Value });
         }
 
         #endregion

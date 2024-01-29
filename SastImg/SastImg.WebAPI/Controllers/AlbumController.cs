@@ -134,6 +134,7 @@ namespace SastImg.WebAPI.Controllers
                 request.Title,
                 request.Description,
                 request.CategoryId,
+                request.Accessibility,
                 User
             );
             await _commandSender.CommandAsync(command, cancellationToken);

@@ -2,6 +2,7 @@
 using Primitives.Command;
 using SastImg.Application.SeedWorks;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
+using SastImg.Domain.CategoryEntity;
 
 namespace SastImg.Application.AlbumServices.UpdateAlbumInfo
 {
@@ -14,10 +15,10 @@ namespace SastImg.Application.AlbumServices.UpdateAlbumInfo
         ClaimsPrincipal user
     ) : ICommand
     {
-        public long AlbumId { get; } = albumId;
+        public AlbumId AlbumId { get; } = new(albumId);
         public string Title { get; } = title;
         public string Description { get; } = description;
-        public long CategoryId { get; } = categoryId;
+        public CategoryId CategoryId { get; } = new(categoryId);
         public Accessibility Accessibility { get; } = accessibility;
         public RequesterInfo Requester { get; } = new(user);
     }

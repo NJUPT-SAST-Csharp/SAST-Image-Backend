@@ -1,4 +1,6 @@
-﻿namespace SastImg.Application.AlbumServices.GetAlbums
+﻿using SastImg.Domain;
+
+namespace SastImg.Application.AlbumServices.GetAlbums
 {
     public interface IGetAlbumsRepository
     {
@@ -13,14 +15,14 @@
 
         public Task<IEnumerable<AlbumDto>> GetAlbumsByAdminAsync(
             int page,
-            long authorId,
+            UserId authorId,
             CancellationToken cancellationToken = default
         );
 
         public Task<IEnumerable<AlbumDto>> GetAlbumsByUserAsync(
             int page,
-            long authorId,
-            long requesterId,
+            UserId authorId,
+            UserId requesterId,
             CancellationToken cancellationToken = default
         );
     }

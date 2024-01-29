@@ -2,6 +2,7 @@
 using Primitives.Command;
 using SastImg.Application.SeedWorks;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
+using SastImg.Domain.CategoryEntity;
 
 namespace SastImg.Application.AlbumServices.CreateAlbum
 {
@@ -15,7 +16,7 @@ namespace SastImg.Application.AlbumServices.CreateAlbum
     {
         public string Title { get; } = title;
         public string Description { get; } = description;
-        public long CategoryId { get; } = categoryId;
+        public CategoryId CategoryId { get; } = new(categoryId);
         public Accessibility Accessibility { get; } = accessibility;
         public RequesterInfo Requester { get; } = new(user);
     }

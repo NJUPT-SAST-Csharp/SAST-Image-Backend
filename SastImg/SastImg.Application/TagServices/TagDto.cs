@@ -1,10 +1,13 @@
-﻿namespace SastImg.Application.TagServices
+﻿using System.Text.Json.Serialization;
+
+namespace SastImg.Application.TagServices
 {
     public sealed class TagDto
     {
+        [JsonConstructor]
         private TagDto() { }
 
-        public required long Id { get; init; }
-        public required string Name { get; init; }
+        public long Id { get; init; }
+        public string Name { get; init; }
     }
 }

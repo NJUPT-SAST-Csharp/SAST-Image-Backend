@@ -1,6 +1,7 @@
 ﻿using Primitives.Entity;
 using SastImg.Domain.AlbumAggregate.AlbumEntity.Events;
 using SastImg.Domain.AlbumAggregate.ImageEntity;
+using SastImg.Domain.CategoryEntity;
 using Shared.Primitives;
 using Shared.Utilities;
 
@@ -10,16 +11,16 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
     /// The aggregate root of the Album/Image aggregate, containing reference of images.
     /// </summary>
 
-    public sealed class Album : EntityBase<long>, IAggregateRoot<Album>
+    public sealed class Album : EntityBase<AlbumId>, IAggregateRoot<Album>
     {
         private Album(
-            long authorId,
-            long categoryId,
+            UserId authorId,
+            CategoryId categoryId,
             string title,
             string description,
             Accessibility accessibility
         )
-            : base(SnowFlakeIdGenerator.NewId)
+            : base(new(SnowFlakeIdGenerator.NewId))
         {
             _title = title;
             _authorId = authorId;
@@ -29,8 +30,8 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
         }
 
         public static Album CreateNewAlbum(
-            long authorId,
-            long categoryId,
+            UserId authorId,
+            CategoryId categoryId,
             string title,
             string description,
             Accessibility accessibility
@@ -47,7 +48,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
         private string _description = string.Empty;
 
-        private long _categoryId;
+        private CategoryId _categoryId;
 
         private Accessibility _accessibility;
 
@@ -59,9 +60,9 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
         private DateTime _updatedAt = DateTime.UtcNow;
 
-        private long _authorId;
+        private UserId _authorId;
 
-        private long[] _collaborators = [];
+        private UserId[] _collaborators = [];
 
         private readonly List<Image> _images = [];
 
@@ -84,11 +85,14 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
         public void SetCoverAsLatestImage()
         {
             var image = _images.OrderBy(i => i.UploadedTime).FirstOrDefault();
-            _cover = new(image?.ImageUrl, true);
-            // TODO: Raise domain event
+            if (image is not null)
+            {
+                _cover = new(image?.ImageUrl, true);
+                // TODO: Raise domain event
+            }
         }
 
-        public void SetCoverAsContainedImage(long imageId)
+        public void SetCoverAsContainedImage(ImageId imageId)
         {
             var image = _images.FirstOrDefault(image => image.Id == imageId);
             _cover = new(image?.ImageUrl, false);
@@ -98,7 +102,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
         public void UpdateAlbumInfo(
             string title,
             string description,
-            long categoryId,
+            CategoryId categoryId,
             Accessibility accessibility
         )
         {
@@ -108,7 +112,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             _accessibility = accessibility;
         }
 
-        public long AddImage(string title, Uri uri, string description, long[] tags)
+        public ImageId AddImage(string title, Uri uri, string description, long[] tags)
         {
             var image = Image.CreateNewImage(title, uri, description, tags);
 
@@ -121,7 +125,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             return image.Id;
         }
 
-        public void RemoveImage(long imageId)
+        public void RemoveImage(ImageId imageId)
         {
             var image = _images.FirstOrDefault(image => image.Id == imageId);
             if (image is not null)
@@ -131,7 +135,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             }
         }
 
-        public void RestoreImage(long imageId)
+        public void RestoreImage(ImageId imageId)
         {
             var image = _images.FirstOrDefault(image => image.Id == imageId);
             if (image is not null)
@@ -141,7 +145,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             }
         }
 
-        public void UpdateImage(long imageId, string title, string description, long[] tags)
+        public void UpdateImage(ImageId imageId, string title, string description, long[] tags)
         {
             var image = _images.FirstOrDefault(image => image.Id == imageId);
             if (image is not null)

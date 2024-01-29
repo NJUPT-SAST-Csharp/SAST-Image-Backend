@@ -1,4 +1,5 @@
 ﻿using SastImg.Application.ImageServices.GetImages;
+using SastImg.Domain;
 using Shared.Primitives.Request;
 
 namespace SastImg.Application.ImageServices.GetRemovedImages
@@ -15,7 +16,7 @@ namespace SastImg.Application.ImageServices.GetRemovedImages
         {
             if (request.Requester.IsAdmin)
             {
-                long id = request.AuthorId == 0 ? request.Requester.Id : request.AuthorId;
+                UserId id = request.AuthorId.Value == 0 ? request.Requester.Id : request.AuthorId;
                 return _repository.GetImagesByAdminAsync(id, cancellationToken);
             }
             else

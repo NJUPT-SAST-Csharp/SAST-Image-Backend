@@ -1,4 +1,6 @@
-﻿namespace SastImg.Application.TagServices
+﻿using SastImg.Domain.TagEntity;
+
+namespace SastImg.Application.TagServices
 {
     public interface ITagQueryRepository
     {
@@ -7,7 +9,7 @@
         );
 
         public Task<IEnumerable<TagDto>> GetTagsAsync(
-            long[] ids,
+            TagId[] ids,
             CancellationToken cancellationToken = default
         );
 

@@ -1,7 +1,10 @@
-﻿namespace SastImg.Application.ImageServices.GetImage
+﻿using System.Text.Json.Serialization;
+
+namespace SastImg.Application.ImageServices.GetImage
 {
     public sealed class DetailedImageDto
     {
+        [JsonConstructor]
         private DetailedImageDto() { }
 
         public long ImageId { get; init; }

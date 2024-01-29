@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using SastImg.Application.AlbumServices.GetAlbums;
 using SastImg.Application.SeedWorks;
+using SastImg.Domain.CategoryEntity;
 using Shared.Primitives.Request;
 
 namespace SastImg.Application.AlbumServices.SearchAlbums
@@ -14,7 +15,7 @@ namespace SastImg.Application.AlbumServices.SearchAlbums
     {
         public int Page { get; } = page;
         public string Title { get; } = title;
-        public long CategoryId { get; } = categoryId;
+        public CategoryId CategoryId { get; } = new(categoryId);
         public RequesterInfo Requester { get; } = new(user);
     }
 }

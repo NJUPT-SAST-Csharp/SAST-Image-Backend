@@ -28,7 +28,7 @@ namespace SastImg.Infrastructure.Domain.ImageEntity.Caching
             if (value.IsNull)
             {
                 var image = await _repository.GetImageByAnonymousAsync(
-                    long.Parse(key),
+                    new(long.Parse(key)),
                     cancellationToken
                 );
                 _ = ResetCachingAsync(key, image, cancellationToken);

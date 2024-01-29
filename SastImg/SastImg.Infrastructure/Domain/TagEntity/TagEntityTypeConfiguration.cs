@@ -10,6 +10,7 @@ namespace SastImg.Infrastructure.Domain.TagAggregate
         {
             builder.ToTable("tags");
             builder.HasKey(x => x.Id);
+            builder.Property(x => x.Id).HasConversion(x => x.Value, x => new(x));
 
             builder.HasIndex("_name").IsUnique();
             builder.Property<string>("_name").HasColumnName("name");

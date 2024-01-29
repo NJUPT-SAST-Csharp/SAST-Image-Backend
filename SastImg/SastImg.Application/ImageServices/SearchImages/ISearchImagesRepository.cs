@@ -1,19 +1,23 @@
-﻿namespace SastImg.Application.ImageServices.SearchImages
+﻿using SastImg.Domain;
+using SastImg.Domain.CategoryEntity;
+using SastImg.Domain.TagEntity;
+
+namespace SastImg.Application.ImageServices.SearchImages
 {
     public interface ISearchImagesRepository
     {
         public Task<IEnumerable<SearchedImageDto>> SearchImagesByAdminAsync(
             int page,
-            long categoryId,
-            long[] tags,
+            CategoryId categoryId,
+            TagId[] tags,
             CancellationToken cancellationToken = default
         );
 
         public Task<IEnumerable<SearchedImageDto>> SearchImagesByUserAsync(
             int page,
-            long categoryId,
-            long[] tags,
-            long requesterId,
+            CategoryId categoryId,
+            TagId[] tags,
+            UserId requesterId,
             CancellationToken cancellationToken = default
         );
     }

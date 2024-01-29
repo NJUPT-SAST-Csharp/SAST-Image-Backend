@@ -1,15 +1,18 @@
-﻿namespace SastImg.Application.AlbumServices.GetAlbum
+﻿using SastImg.Domain;
+using SastImg.Domain.AlbumAggregate.AlbumEntity;
+
+namespace SastImg.Application.AlbumServices.GetAlbum
 {
     public interface IGetAlbumRepository
     {
         Task<DetailedAlbumDto?> GetAlbumByUserAsync(
-            long albumId,
-            long requesterId,
+            AlbumId albumId,
+            UserId requesterId,
             CancellationToken cancellationToken = default
         );
 
         Task<DetailedAlbumDto?> GetAlbumByAdminAsync(
-            long albumId,
+            AlbumId albumId,
             CancellationToken cancellationToken = default
         );
 
@@ -18,7 +21,7 @@
         /// </summary>
         /// <remarks>Used only in cache.</remarks>
         Task<DetailedAlbumDto?> GetAlbumByAnonymousAsync(
-            long albumId,
+            AlbumId albumId,
             CancellationToken cancellationToken = default
         );
     }

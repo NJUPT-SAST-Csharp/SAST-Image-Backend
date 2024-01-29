@@ -1,20 +1,22 @@
-﻿using SastImg.Domain.AlbumAggregate.AlbumEntity;
+﻿using System.Text.Json.Serialization;
+using SastImg.Domain.AlbumAggregate.AlbumEntity;
 
 namespace SastImg.Application.AlbumServices.GetAlbum
 {
     public sealed class DetailedAlbumDto
     {
+        [JsonConstructor]
         private DetailedAlbumDto() { }
 
-        public required long AlbumId { get; init; }
-        public required long AuthorId { get; init; }
-        public required long CategoryId { get; init; }
-        public required string Title { get; init; }
-        public required string Description { get; init; }
-        public required Accessibility Accessibility { get; init; }
-        public required DateTime UpdatedAt { get; init; }
-        public required bool IsRemoved { get; init; }
-        public required Uri CoverUri { get; init; }
-        public required long[] Collaborators { get; init; }
+        public long AlbumId { get; init; }
+        public long AuthorId { get; init; }
+        public long CategoryId { get; init; }
+        public string Title { get; init; }
+        public string Description { get; init; }
+        public Accessibility Accessibility { get; init; }
+        public DateTime UpdatedAt { get; init; }
+        public bool IsRemoved { get; init; }
+        public Uri CoverUri { get; init; }
+        public long[] Collaborators { get; init; }
     }
 }

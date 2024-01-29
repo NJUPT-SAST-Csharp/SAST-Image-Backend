@@ -1,20 +1,23 @@
-﻿namespace SastImg.Application.ImageServices.GetImage
+﻿using SastImg.Domain;
+using SastImg.Domain.AlbumAggregate.ImageEntity;
+
+namespace SastImg.Application.ImageServices.GetImage
 {
     public interface IGetImageRepository
     {
         public Task<DetailedImageDto?> GetImageByUserAsync(
-            long imageId,
-            long requesterId,
+            ImageId imageId,
+            UserId requesterId,
             CancellationToken cancellationToken = default
         );
 
         public Task<DetailedImageDto?> GetImageByAdminAsync(
-            long imageId,
+            ImageId imageId,
             CancellationToken cancellationToken = default
         );
 
         public Task<DetailedImageDto?> GetImageByAnonymousAsync(
-            long imageId,
+            ImageId imageId,
             CancellationToken cancellationToken = default
         );
     }

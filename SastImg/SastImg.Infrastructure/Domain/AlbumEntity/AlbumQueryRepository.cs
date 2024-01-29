@@ -4,7 +4,9 @@ using SastImg.Application.AlbumServices.GetAlbum;
 using SastImg.Application.AlbumServices.GetAlbums;
 using SastImg.Application.AlbumServices.GetRemovedAlbums;
 using SastImg.Application.AlbumServices.SearchAlbums;
+using SastImg.Domain;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
+using SastImg.Domain.CategoryEntity;
 using SastImg.Infrastructure.Persistence.QueryDatabase;
 
 namespace SastImg.Infrastructure.Domain.AlbumEntity
@@ -44,7 +46,7 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
 
         public Task<IEnumerable<AlbumDto>> GetAlbumsByAdminAsync(
             int page,
-            long authorId,
+            UserId authorId,
             CancellationToken cancellationToken = default
         )
         {
@@ -67,15 +69,15 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
                 {
                     take = numPerPage,
                     skip = page * numPerPage,
-                    authorId,
+                    authorId = authorId.Value,
                 }
             );
         }
 
         public Task<IEnumerable<AlbumDto>> GetAlbumsByUserAsync(
             int page,
-            long authorId,
-            long requesterId,
+            UserId authorId,
+            UserId requesterId,
             CancellationToken cancellationToken = default
         )
         {
@@ -99,8 +101,8 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
                 {
                     take = numPerPage,
                     skip = page * numPerPage,
-                    authorId,
-                    requesterId,
+                    authorId = authorId.Value,
+                    requesterId = requesterId.Value,
                     PRIVATE = Accessibility.Private
                 }
             );
@@ -111,8 +113,8 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
         #region GetAlbum
 
         public Task<DetailedAlbumDto?> GetAlbumByUserAsync(
-            long albumId,
-            long requesterId,
+            AlbumId albumId,
+            UserId requesterId,
             CancellationToken cancellationToken = default
         )
         {
@@ -141,15 +143,15 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
                 sql,
                 new
                 {
-                    albumId,
-                    requesterId,
+                    albumId = albumId.Value,
+                    requesterId = requesterId.Value,
                     PRIVATE = Accessibility.Private
                 }
             );
         }
 
         public Task<DetailedAlbumDto?> GetAlbumByAdminAsync(
-            long albumId,
+            AlbumId albumId,
             CancellationToken cancellationToken = default
         )
         {
@@ -168,11 +170,14 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
                 + "FROM albums "
                 + "WHERE id = @albumId "
                 + "LIMIT 1";
-            return _connection.QueryFirstOrDefaultAsync<DetailedAlbumDto>(sql, new { albumId });
+            return _connection.QueryFirstOrDefaultAsync<DetailedAlbumDto>(
+                sql,
+                new { albumId = albumId.Value }
+            );
         }
 
         public Task<DetailedAlbumDto?> GetAlbumByAnonymousAsync(
-            long albumId,
+            AlbumId albumId,
             CancellationToken cancellationToken = default
         )
         {
@@ -195,7 +200,7 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
                 + "LIMIT 1";
             return _connection.QueryFirstOrDefaultAsync<DetailedAlbumDto>(
                 sql,
-                new { albumId, PUBLIC = Accessibility.Public }
+                new { albumId = albumId.Value, PUBLIC = Accessibility.Public }
             );
         }
 
@@ -204,7 +209,7 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
         #region SearchAlbums
 
         public Task<IEnumerable<AlbumDto>> SearchAlbumsByAdminAsync(
-            long categoryId,
+            CategoryId categoryId,
             string title,
             int page,
             CancellationToken cancellationToken = default
@@ -229,17 +234,17 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
                 {
                     take = numPerPage,
                     skip = page * numPerPage,
-                    categoryId,
+                    categoryId = categoryId.Value,
                     title = $"%{title}%"
                 }
             );
         }
 
         public Task<IEnumerable<AlbumDto>> SearchAlbumsByUserAsync(
-            long categoryId,
+            CategoryId categoryId,
             string title,
             int page,
-            long requesterId,
+            UserId requesterId,
             CancellationToken cancellationToken = default
         )
         {
@@ -264,9 +269,9 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
                 {
                     take = numPerPage,
                     skip = page * numPerPage,
-                    categoryId,
+                    categoryId = categoryId.Value,
                     title = $"%{title}%",
-                    requesterId,
+                    requesterId = requesterId.Value,
                     PRIVATE = Accessibility.Private
                 }
             );
@@ -277,7 +282,7 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
         #region GetRemovedAlbums
 
         public Task<IEnumerable<AlbumDto>> GetAlbumsByAdminAsync(
-            long authorId,
+            UserId authorId,
             CancellationToken cancellationToken = default
         )
         {
@@ -292,11 +297,11 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
                 + "AND author_id = @authorId "
                 + "ORDER BY updated_at DESC";
 
-            return _connection.QueryAsync<AlbumDto>(sql, new { authorId });
+            return _connection.QueryAsync<AlbumDto>(sql, new { authorId = authorId.Value });
         }
 
         public Task<IEnumerable<AlbumDto>> GetAlbumsByUserAsync(
-            long requesterId,
+            UserId requesterId,
             CancellationToken cancellationToken = default
         )
         {
@@ -311,7 +316,7 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
                 + "AND author_id = @authorId "
                 + "ORDER BY updated_at DESC";
 
-            return _connection.QueryAsync<AlbumDto>(sql, new { authorId = requesterId });
+            return _connection.QueryAsync<AlbumDto>(sql, new { authorId = requesterId.Value });
         }
 
         #endregion

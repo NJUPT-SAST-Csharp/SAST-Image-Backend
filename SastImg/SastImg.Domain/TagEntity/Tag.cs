@@ -3,10 +3,10 @@ using Shared.Utilities;
 
 namespace SastImg.Domain.TagEntity
 {
-    public sealed class Tag : EntityBase<long>
+    public sealed class Tag : EntityBase<TagId>
     {
         private Tag(string name)
-            : base(SnowFlakeIdGenerator.NewId)
+            : base(new(SnowFlakeIdGenerator.NewId))
         {
             _name = name;
         }

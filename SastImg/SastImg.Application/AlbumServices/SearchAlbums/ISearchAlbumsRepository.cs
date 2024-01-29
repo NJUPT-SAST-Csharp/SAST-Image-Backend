@@ -1,20 +1,22 @@
 ﻿using SastImg.Application.AlbumServices.GetAlbums;
+using SastImg.Domain;
+using SastImg.Domain.CategoryEntity;
 
 namespace SastImg.Application.AlbumServices.SearchAlbums
 {
     public interface ISearchAlbumsRepository
     {
         public Task<IEnumerable<AlbumDto>> SearchAlbumsByAdminAsync(
-            long categoryId,
+            CategoryId categoryId,
             string title,
             int page,
             CancellationToken cancellationToken = default
         );
         public Task<IEnumerable<AlbumDto>> SearchAlbumsByUserAsync(
-            long categoryId,
+            CategoryId categoryId,
             string title,
             int page,
-            long requesterId,
+            UserId requesterId,
             CancellationToken cancellationToken = default
         );
     }

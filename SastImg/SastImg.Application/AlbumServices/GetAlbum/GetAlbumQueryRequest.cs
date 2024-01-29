@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using SastImg.Application.SeedWorks;
+using SastImg.Domain.AlbumAggregate.AlbumEntity;
 using Shared.Primitives.Request;
 
 namespace SastImg.Application.AlbumServices.GetAlbum
@@ -7,7 +8,7 @@ namespace SastImg.Application.AlbumServices.GetAlbum
     public sealed class GetAlbumQueryRequest(long albumId, ClaimsPrincipal user)
         : IQueryRequest<DetailedAlbumDto?>
     {
-        public long AlbumId { get; private init; } = albumId;
+        public AlbumId AlbumId { get; private init; } = new(albumId);
         public RequesterInfo Requester { get; private init; } = new(user);
     }
 }

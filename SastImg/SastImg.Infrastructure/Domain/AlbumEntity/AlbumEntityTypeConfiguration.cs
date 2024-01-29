@@ -12,6 +12,7 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
         {
             builder.ToTable("albums");
             builder.HasKey(x => x.Id);
+            builder.Property(x => x.Id).HasConversion(x => x.Value, x => new(x));
 
             builder.Ignore(album => album.DomainEvents);
 
@@ -45,6 +46,9 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
                 "_images",
                 image =>
                 {
+                    image.HasKey(x => x.Id);
+                    image.Property(x => x.Id).HasConversion(x => x.Value, x => new(x));
+
                     image.ToTable("images");
                     image.WithOwner().HasForeignKey("album_id");
 

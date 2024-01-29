@@ -28,7 +28,7 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity.Caching
             if (value.IsNullOrEmpty)
             {
                 var album = await _repository.GetAlbumByAnonymousAsync(
-                    long.Parse(key),
+                    new(long.Parse(key)),
                     cancellationToken
                 );
                 _ = ResetCachingAsync(key, album, cancellationToken);

@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using SastImg.Application.SeedWorks;
+using SastImg.Domain;
 using Shared.Primitives.Request;
 
 namespace SastImg.Application.AlbumServices.GetAlbums
@@ -8,7 +9,7 @@ namespace SastImg.Application.AlbumServices.GetAlbums
         : IQueryRequest<IEnumerable<AlbumDto>>
     {
         public int Page { get; } = page;
-        public long AuthorId { get; } = authorId;
+        public UserId AuthorId { get; } = new(authorId);
         public RequesterInfo Requester { get; } = new(user);
     }
 }

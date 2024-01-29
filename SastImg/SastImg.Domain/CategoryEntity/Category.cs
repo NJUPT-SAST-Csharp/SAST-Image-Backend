@@ -3,10 +3,10 @@ using Shared.Utilities;
 
 namespace SastImg.Domain.CategoryEntity
 {
-    public sealed class Category : EntityBase<long>
+    public sealed class Category : EntityBase<CategoryId>
     {
         private Category(string name, string description)
-            : base(SnowFlakeIdGenerator.NewId)
+            : base(new(SnowFlakeIdGenerator.NewId))
         {
             _name = name;
             _description = description;

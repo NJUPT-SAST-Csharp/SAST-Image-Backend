@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Auth.Authentication;
 using Auth.Authorization;
+using SastImg.Domain;
 
 namespace SastImg.Application.SeedWorks
 {
@@ -9,7 +10,7 @@ namespace SastImg.Application.SeedWorks
         public RequesterInfo(ClaimsPrincipal user)
         {
             IsAuthenticated = user.TryFetchId(out long id);
-            Id = id;
+            Id = new(id);
             if (IsAuthenticated)
             {
                 IsAdmin = user.HasRole(AuthorizationRole.Admin);
@@ -17,7 +18,7 @@ namespace SastImg.Application.SeedWorks
         }
 
         public readonly bool IsAuthenticated { get; }
-        public readonly long Id { get; }
+        public readonly UserId Id { get; }
         public readonly bool IsAdmin { get; }
     }
 }

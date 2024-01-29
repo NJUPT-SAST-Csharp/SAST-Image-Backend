@@ -1,9 +1,10 @@
-﻿using Shared.Primitives.Request;
+﻿using SastImg.Domain.TagEntity;
+using Shared.Primitives.Request;
 
 namespace SastImg.Application.TagServices.GetTags
 {
     public sealed class GetTagsQueryRequest(long[] tagIds) : IQueryRequest<IEnumerable<TagDto>>
     {
-        public long[] TagIds { get; } = tagIds;
+        public TagId[] TagIds { get; } = tagIds.Select(id => new TagId(id)).ToArray();
     }
 }

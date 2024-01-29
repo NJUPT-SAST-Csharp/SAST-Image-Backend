@@ -9,7 +9,7 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
     {
         private readonly SastImgDbContext _context = context;
 
-        public async Task<long> AddAlbumAsync(
+        public async Task<AlbumId> AddAlbumAsync(
             Album album,
             CancellationToken cancellationToken = default
         )
@@ -18,7 +18,7 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
             return a.Entity.Id;
         }
 
-        public Task<Album> GetAlbumAsync(long id, CancellationToken cancellationToken = default)
+        public Task<Album> GetAlbumAsync(AlbumId id, CancellationToken cancellationToken = default)
         {
             var album = _context.Albums.SingleAsync(a => a.Id == id, cancellationToken);
             return album;

@@ -4,13 +4,13 @@ using Shared.Utilities;
 
 namespace SastImg.Domain.AlbumAggregate.ImageEntity;
 
-public sealed class Image : EntityBase<long>
+public sealed class Image : EntityBase<ImageId>
 {
     private Image()
-        : base(SnowFlakeIdGenerator.NewId) { }
+        : base(default) { }
 
     private Image(string title, Uri uri, string description, long[] tags)
-        : base(SnowFlakeIdGenerator.NewId)
+        : base(new(SnowFlakeIdGenerator.NewId))
     {
         _title = title;
         _url = uri;

@@ -1,5 +1,7 @@
 ﻿using System.Security.Claims;
 using SastImg.Application.SeedWorks;
+using SastImg.Domain.CategoryEntity;
+using SastImg.Domain.TagEntity;
 using Shared.Primitives.Request;
 
 namespace SastImg.Application.ImageServices.SearchImages
@@ -14,8 +16,8 @@ namespace SastImg.Application.ImageServices.SearchImages
     {
         public int Page { get; } = page;
         public SearchOrder Order { get; } = order;
-        public long CategoryId { get; } = categoryId;
-        public long[] Tags { get; } = tags;
+        public CategoryId CategoryId { get; } = new(categoryId);
+        public TagId[] Tags { get; } = tags.Select(t => new TagId(t)).ToArray();
         public RequesterInfo Requester { get; } = new(user);
     }
 }
