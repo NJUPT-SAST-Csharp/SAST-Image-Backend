@@ -2,15 +2,17 @@
 
 namespace SastImg.Application.TagServices.GetAllTags
 {
-    internal sealed class GetAllTagsQueryHandler
+    internal sealed class GetAllTagsQueryHandler(ITagQueryRepository repository)
         : IQueryRequestHandler<GetAllTagsQuery, IEnumerable<TagDto>>
     {
+        private readonly ITagQueryRepository _repository = repository;
+
         public Task<IEnumerable<TagDto>> Handle(
             GetAllTagsQuery request,
             CancellationToken cancellationToken
         )
         {
-            throw new NotImplementedException();
+            return _repository.GetAllTagsAsync(cancellationToken);
         }
     }
 }
