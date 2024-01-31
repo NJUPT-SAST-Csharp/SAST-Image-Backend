@@ -16,9 +16,10 @@ namespace Exceptions.ExceptionHandlers
             httpContext.Response.WriteAsJsonAsync(
                 new ProblemDetails()
                 {
-                    Status = StatusCodes.Status400BadRequest,
+                    Status = StatusCodes.Status500InternalServerError,
                     Detail = exception.Message,
-                    Title = "Unhandled Bad Request",
+                    Title = "Unhandled Unknown Exception",
+                    Type = "https://datatracker.ietf.org/doc/html/rfc9110#section-15.6.1"
                 },
                 cancellationToken
             );

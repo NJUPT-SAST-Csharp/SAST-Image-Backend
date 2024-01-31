@@ -30,9 +30,7 @@ namespace Account.WebAPI.Endpoints
             var account = builder.MapGroup("/account");
 
             account.AddPost<AuthorizeRequest>("/authorize", AuthorizationRole.Admin);
-
             account.AddPost<LoginRequest>("/login");
-
             account.AddPut<ChangePasswordRequest>("/changePassword", AuthorizationRole.User);
 
             MapRegistration(account);

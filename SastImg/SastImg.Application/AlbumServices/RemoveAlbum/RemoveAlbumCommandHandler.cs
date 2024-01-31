@@ -1,4 +1,5 @@
-﻿using Primitives.Command;
+﻿using Exceptions.Exceptions;
+using Primitives.Command;
 using SastImg.Domain;
 using SastImg.Domain.AlbumAggregate;
 
@@ -21,6 +22,7 @@ namespace SastImg.Application.AlbumServices.RemoveAlbum
                 album.Remove();
                 await _unitOfWork.CommitChangesAsync(cancellationToken);
             }
+            throw new NoPermissionException();
         }
     }
 }

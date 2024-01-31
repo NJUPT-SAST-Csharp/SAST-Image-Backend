@@ -19,9 +19,10 @@ namespace Exceptions.ExceptionHandlers
                 httpContext.Response.WriteAsJsonAsync(
                     new ProblemDetails()
                     {
-                        Detail = exception.Message,
+                        Status = StatusCodes.Status403Forbidden,
                         Title = "No Permission",
-                        Status = StatusCodes.Status403Forbidden
+                        Detail = exception.Message,
+                        Type = "https://tools.ietf.org/html/rfc9110#section-15.5.4",
                     },
                     cancellationToken
                 );

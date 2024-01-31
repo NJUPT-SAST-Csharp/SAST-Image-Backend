@@ -37,8 +37,9 @@ namespace Exceptions.ExceptionHandlers
                     new ProblemDetails()
                     {
                         Status = StatusCodes.Status404NotFound,
-                        Detail = exception.Message,
                         Title = "Not Found",
+                        Detail = exception.Message,
+                        Type = "https://tools.ietf.org/html/rfc9110#section-15.5.5",
                     },
                     cancellationToken
                 );
