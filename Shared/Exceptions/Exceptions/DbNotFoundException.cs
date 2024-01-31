@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace Response.Exceptions
+namespace Exceptions.Exceptions
 {
     public sealed class DbNotFoundException(string entityName, string id) : Exception
     {

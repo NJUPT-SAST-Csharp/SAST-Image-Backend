@@ -1,10 +1,8 @@
 ﻿using System.Data.Common;
-using System.Globalization;
 using System.Reflection;
-using System.Threading.RateLimiting;
 using Dapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.RateLimiting;
+using Exceptions.ExceptionHandlers;
+using Exceptions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,8 +11,6 @@ using Npgsql;
 using Primitives.Command;
 using Primitives.DomainEvent;
 using Primitives.Request;
-using Response.ExceptionHandlers;
-using Response.Extensions;
 using SastImg.Application.AlbumServices.GetAlbum;
 using SastImg.Application.AlbumServices.GetAlbums;
 using SastImg.Application.AlbumServices.GetRemovedAlbums;
@@ -40,7 +36,6 @@ using SastImg.Infrastructure.Persistence;
 using SastImg.Infrastructure.Persistence.QueryDatabase;
 using SastImg.Infrastructure.Persistence.TypeConverters;
 using SastImg.WebAPI.Configurations;
-using Shared.Response.Builders;
 using StackExchange.Redis;
 
 namespace SastImg.Infrastructure.Extensions
@@ -114,6 +109,7 @@ namespace SastImg.Infrastructure.Extensions
         )
         {
             services.AddExceptionHandler<DbNotFoundExceptionHandler>();
+            services.AddExceptionHandler<NoPermissionExceptionHandler>();
             services.AddExceptionHandler<DomainBusinessRuleInvalidExceptionHandler>();
             services.AddDefaultExceptionHandler();
             return services;
@@ -159,30 +155,6 @@ namespace SastImg.Infrastructure.Extensions
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
             return services;
-        }
-
-        /// <summary>
-        /// Triggered when reaching the rate limiter's max, containing the response content.
-        /// </summary>
-        private static ValueTask RateLimitOnRejected(
-            OnRejectedContext context,
-            CancellationToken cancellationToken
-        )
-        {
-            if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
-            {
-                context.HttpContext.Response.Headers.RetryAfter = (
-                    (int)retryAfter.TotalSeconds
-                ).ToString(NumberFormatInfo.InvariantInfo);
-            }
-
-            context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
-            context.HttpContext.Response.WriteAsJsonAsync(
-                Responses.TooManyRequests,
-                cancellationToken
-            );
-
-            return ValueTask.CompletedTask;
         }
     }
 }

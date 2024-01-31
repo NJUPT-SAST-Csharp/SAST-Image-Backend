@@ -15,22 +15,21 @@ namespace SastImg.Infrastructure.Extensions
         )
         {
             builder.Services.TryAddSingleton(configuration);
-            builder
-                .Services.ConfigureOptions(builder.Configuration)
-                .AddLogging()
-                .ConfigureDatabase(
-                    configuration.GetConnectionString("SastimgDb")
-                        ?? throw new Exception("The connection string \"SastimgDb\" is null.")
-                )
-                .ConfigureCache(
-                    configuration.GetConnectionString("DistributedCache")
-                        ?? throw new Exception(
-                            "The connection string \"DistributedCache\" is null."
-                        )
-                )
-                .ConfigureMediator()
-                .ConfigureExceptionHandlers();
+            builder.Services.ConfigureOptions(builder.Configuration);
+            builder.Services.AddLogging();
+            builder.Services.ConfigureDatabase(
+                configuration.GetConnectionString("SastimgDb")
+                    ?? throw new Exception("The connection string \"SastimgDb\" is null.")
+            );
+            builder.Services.ConfigureCache(
+                configuration.GetConnectionString("DistributedCache")
+                    ?? throw new Exception("The connection string \"DistributedCache\" is null.")
+            );
+            builder.Services.ConfigureMediator();
+            builder.Services.ConfigureExceptionHandlers();
+
             builder.Services.ConfigureSwagger();
+
             builder.Services.AddControllers();
 
             builder.Services.ConfigureJwtAuthentication(options =>

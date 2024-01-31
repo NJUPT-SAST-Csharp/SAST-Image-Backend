@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Response\Response.csproj" />
+    <ProjectReference Include="..\..\Shared\Exceptions\Exceptions.csproj" />
     <ProjectReference Include="..\SastImg.Application\SastImg.Application.csproj" />
 	<ProjectReference Include="..\SastImg.Domain\SastImg.Domain.csproj" />
   </ItemGroup>

@@ -62,6 +62,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notifications.WebAPI", "Not
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Messenger", "Shared\Messenger\Messenger.csproj", "{C8EB102B-9CA0-4503-A577-9BD354D14EE7}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Exceptions", "Shared\Exceptions\Exceptions.csproj", "{7609CBDA-DB77-4A40-AE3F-9919AA09EEFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -156,6 +158,10 @@ Global
 		{C8EB102B-9CA0-4503-A577-9BD354D14EE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8EB102B-9CA0-4503-A577-9BD354D14EE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8EB102B-9CA0-4503-A577-9BD354D14EE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7609CBDA-DB77-4A40-AE3F-9919AA09EEFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7609CBDA-DB77-4A40-AE3F-9919AA09EEFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7609CBDA-DB77-4A40-AE3F-9919AA09EEFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7609CBDA-DB77-4A40-AE3F-9919AA09EEFC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -183,6 +189,7 @@ Global
 		{D9158DE7-BB75-4102-A728-D8A2A702C502} = {7FC8DD5C-0644-4338-9C01-BAF459EC3668}
 		{821EEB52-AFF6-414A-A22C-B596C2C258D7} = {7FC8DD5C-0644-4338-9C01-BAF459EC3668}
 		{C8EB102B-9CA0-4503-A577-9BD354D14EE7} = {62F54EB9-A9EE-4956-8FA2-534C755263C9}
+		{7609CBDA-DB77-4A40-AE3F-9919AA09EEFC} = {62F54EB9-A9EE-4956-8FA2-534C755263C9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DEF9C9F4-A717-4AEF-BE30-DF9F13D3C94E}

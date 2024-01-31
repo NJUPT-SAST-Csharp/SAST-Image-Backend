@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using Response.ReponseObjects;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Response.ExceptionHandlers
+namespace Exceptions.ExceptionHandlers
 {
     public sealed class DefaultExceptionHandler : IExceptionHandler
     {
@@ -12,8 +12,14 @@ namespace Response.ExceptionHandlers
             CancellationToken cancellationToken
         )
         {
+            httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
             httpContext.Response.WriteAsJsonAsync(
-                new BadRequestResponse("Bad Request", exception.Message),
+                new ProblemDetails()
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Detail = exception.Message,
+                    Title = "Unhandled Bad Request",
+                },
                 cancellationToken
             );
             return ValueTask.FromResult(true);
