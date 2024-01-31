@@ -1,5 +1,6 @@
 ﻿using Primitives.Entity;
 using SastImg.Domain.AlbumAggregate.ImageEntity.Rules;
+using SastImg.Domain.TagEntity;
 using Shared.Utilities;
 
 namespace SastImg.Domain.AlbumAggregate.ImageEntity;
@@ -9,7 +10,7 @@ public sealed class Image : EntityBase<ImageId>
     private Image()
         : base(default) { }
 
-    private Image(string title, Uri uri, string description, long[] tags)
+    private Image(string title, Uri uri, string description, TagId[] tags)
         : base(new(SnowFlakeIdGenerator.NewId))
     {
         _title = title;
@@ -18,7 +19,7 @@ public sealed class Image : EntityBase<ImageId>
         _tags = tags;
     }
 
-    internal static Image CreateNewImage(string title, Uri uri, string description, long[] tags)
+    internal static Image CreateNewImage(string title, Uri uri, string description, TagId[] tags)
     {
         CheckRule(new ImageOwnNotMoreThan5TagsRule(tags));
         return new Image(title, uri, description, tags);
@@ -36,7 +37,7 @@ public sealed class Image : EntityBase<ImageId>
 
     private bool _isRemoved = false;
 
-    private long[] _tags = [];
+    private TagId[] _tags = [];
 
     #endregion
 
@@ -50,7 +51,7 @@ public sealed class Image : EntityBase<ImageId>
     #region Methods
 
 
-    internal void UpdateImageInfo(string title, string description, long[] tags)
+    internal void UpdateImageInfo(string title, string description, TagId[] tags)
     {
         CheckRule(new ImageOwnNotMoreThan5TagsRule(tags));
         _title = title;

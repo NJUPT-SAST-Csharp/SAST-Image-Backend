@@ -1,8 +1,9 @@
 ﻿using Primitives.Rule;
+using SastImg.Domain.TagEntity;
 
 namespace SastImg.Domain.AlbumAggregate.ImageEntity.Rules
 {
-    internal sealed class ImageOwnNotMoreThan5TagsRule(long[] tags) : IDomainBusinessRule
+    internal sealed class ImageOwnNotMoreThan5TagsRule(TagId[] tags) : IDomainBusinessRule
     {
         public bool IsBroken => tags.Length > 5;
 

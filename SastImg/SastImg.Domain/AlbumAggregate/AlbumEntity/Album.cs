@@ -2,6 +2,7 @@
 using SastImg.Domain.AlbumAggregate.AlbumEntity.Events;
 using SastImg.Domain.AlbumAggregate.ImageEntity;
 using SastImg.Domain.CategoryEntity;
+using SastImg.Domain.TagEntity;
 using Shared.Primitives;
 using Shared.Utilities;
 
@@ -118,7 +119,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             _accessibility = accessibility;
         }
 
-        public ImageId AddImage(string title, Uri uri, string description, long[] tags)
+        public ImageId AddImage(string title, Uri uri, string description, TagId[] tags)
         {
             var image = Image.CreateNewImage(title, uri, description, tags);
 
@@ -151,7 +152,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             }
         }
 
-        public void UpdateImage(ImageId imageId, string title, string description, long[] tags)
+        public void UpdateImage(ImageId imageId, string title, string description, TagId[] tags)
         {
             var image = _images.FirstOrDefault(image => image.Id == imageId);
             if (image is not null)
