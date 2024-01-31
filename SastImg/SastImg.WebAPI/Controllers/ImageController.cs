@@ -40,7 +40,7 @@ namespace SastImg.WebAPI.Controllers
         )
         {
             var images = await _querySender.QueryAsync(
-                new GetImagesQueryRequest(albumId, page, User),
+                new GetImagesQuery(albumId, page, User),
                 cancellationToken
             );
 
@@ -62,7 +62,7 @@ namespace SastImg.WebAPI.Controllers
         )
         {
             var images = await _querySender.QueryAsync(
-                new SearchImagesQueryRequest(page, order, categoryId, tags, User),
+                new SearchImagesQuery(page, order, categoryId, tags, User),
                 cancellationToken
             );
             return Responses.Data(images);
@@ -81,7 +81,7 @@ namespace SastImg.WebAPI.Controllers
         )
         {
             var image = await _querySender.QueryAsync(
-                new GetImageQueryRequest(imageId, User),
+                new GetImageQuery(imageId, User),
                 cancellationToken
             );
             return Responses.DataOrNotFound(image);
@@ -100,7 +100,7 @@ namespace SastImg.WebAPI.Controllers
         )
         {
             var images = await _querySender.QueryAsync(
-                new GetRemovedImagesQueryRequest(authorId, User),
+                new GetRemovedImagesQuery(authorId, User),
                 cancellationToken
             );
             return Responses.Data(images);

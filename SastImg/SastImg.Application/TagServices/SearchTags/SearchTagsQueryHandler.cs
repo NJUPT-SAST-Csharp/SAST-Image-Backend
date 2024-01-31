@@ -2,13 +2,13 @@
 
 namespace SastImg.Application.TagServices.SearchTags
 {
-    internal class SearchTagsQueryRequestHandler(ITagQueryRepository repository)
-        : IQueryRequestHandler<SearchTagsQueryRequest, IEnumerable<TagDto>>
+    internal class SearchTagsQueryHandler(ITagQueryRepository repository)
+        : IQueryRequestHandler<SearchTagsQuery, IEnumerable<TagDto>>
     {
         private readonly ITagQueryRepository _repository = repository;
 
         public Task<IEnumerable<TagDto>> Handle(
-            SearchTagsQueryRequest request,
+            SearchTagsQuery request,
             CancellationToken cancellationToken
         )
         {

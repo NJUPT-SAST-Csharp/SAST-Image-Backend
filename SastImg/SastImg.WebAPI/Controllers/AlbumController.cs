@@ -42,7 +42,7 @@ namespace SastImg.WebAPI.Controllers
         )
         {
             var albums = await _querySender.QueryAsync(
-                new GetAlbumsQueryRequest(page, userId, User),
+                new GetAlbumsQuery(page, userId, User),
                 cancellationToken
             );
             return Responses.Data(albums);
@@ -60,7 +60,7 @@ namespace SastImg.WebAPI.Controllers
         )
         {
             var album = await _querySender.QueryAsync(
-                new GetAlbumQueryRequest(albumId, User),
+                new GetAlbumQuery(albumId, User),
                 cancellationToken
             );
             return Responses.DataOrNotFound(album);
@@ -85,7 +85,7 @@ namespace SastImg.WebAPI.Controllers
         )
         {
             var albums = await _querySender.QueryAsync(
-                new SearchAlbumsQueryRequest(categoryId, title, page, User),
+                new SearchAlbumsQuery(categoryId, title, page, User),
                 cancellationToken
             );
             return Responses.Data(albums);

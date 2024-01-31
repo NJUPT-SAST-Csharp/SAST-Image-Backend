@@ -30,10 +30,7 @@ namespace SastImg.WebAPI.Controllers
         [HttpGet("tags/all")]
         public async Task<Ok<IEnumerable<TagDto>>> GetAllTags(CancellationToken cancellationToken)
         {
-            var tags = await _querySender.QueryAsync(
-                new GetAllTagsQueryRequest(),
-                cancellationToken
-            );
+            var tags = await _querySender.QueryAsync(new GetAllTagsQuery(), cancellationToken);
             return Responses.Data(tags);
         }
 
@@ -51,7 +48,7 @@ namespace SastImg.WebAPI.Controllers
         )
         {
             var tagsDto = await _querySender.QueryAsync(
-                new SearchTagsQueryRequest(name),
+                new SearchTagsQuery(name),
                 cancellationToken
             );
             return Responses.Data(tagsDto);
@@ -71,7 +68,7 @@ namespace SastImg.WebAPI.Controllers
         )
         {
             var tagsDto = await _querySender.QueryAsync(
-                new GetTagsQueryRequest(tagIds),
+                new GetTagsQuery(tagIds),
                 cancellationToken
             );
             return Responses.Data(tagsDto);

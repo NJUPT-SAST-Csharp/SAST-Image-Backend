@@ -3,16 +3,16 @@ using Shared.Primitives.Query;
 
 namespace SastImg.Application.ImageServices.GetImages
 {
-    public sealed class GetImageCache(
+    public sealed class GetImagesQueryHandler(
         IGetImagesRepository repository,
         ICache<IEnumerable<AlbumImageDto>> cache
-    ) : IQueryRequestHandler<GetImagesQueryRequest, IEnumerable<AlbumImageDto>>
+    ) : IQueryRequestHandler<GetImagesQuery, IEnumerable<AlbumImageDto>>
     {
         private readonly IGetImagesRepository _repository = repository;
         private readonly ICache<IEnumerable<AlbumImageDto>> _cache = cache;
 
         public Task<IEnumerable<AlbumImageDto>> Handle(
-            GetImagesQueryRequest request,
+            GetImagesQuery request,
             CancellationToken cancellationToken
         )
         {

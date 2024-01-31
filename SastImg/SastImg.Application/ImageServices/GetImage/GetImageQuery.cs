@@ -5,7 +5,7 @@ using Shared.Primitives.Query;
 
 namespace SastImg.Application.ImageServices.GetImage
 {
-    public sealed class GetImageQueryRequest(long imageId, ClaimsPrincipal user)
+    public sealed class GetImageQuery(long imageId, ClaimsPrincipal user)
         : IQueryRequest<DetailedImageDto?>
     {
         public ImageId ImageId { get; } = new(imageId);

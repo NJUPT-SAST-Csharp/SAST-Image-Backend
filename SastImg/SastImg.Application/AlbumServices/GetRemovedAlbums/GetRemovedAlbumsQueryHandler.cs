@@ -4,13 +4,13 @@ using Shared.Primitives.Query;
 
 namespace SastImg.Application.AlbumServices.GetRemovedAlbums
 {
-    public sealed class GetRemovedAlbumsQueryRequestHandler(IGetRemovedAlbumsRepository repository)
-        : IQueryRequestHandler<GetRemovedAlbumsQueryRequest, IEnumerable<AlbumDto>>
+    public sealed class GetRemovedAlbumsQueryHandler(IGetRemovedAlbumsRepository repository)
+        : IQueryRequestHandler<GetRemovedAlbumsQuery, IEnumerable<AlbumDto>>
     {
         private readonly IGetRemovedAlbumsRepository _repository = repository;
 
         public Task<IEnumerable<AlbumDto>> Handle(
-            GetRemovedAlbumsQueryRequest request,
+            GetRemovedAlbumsQuery request,
             CancellationToken cancellationToken
         )
         {

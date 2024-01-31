@@ -3,16 +3,16 @@ using Shared.Primitives.Query;
 
 namespace SastImg.Application.AlbumServices.GetAlbum
 {
-    internal sealed class GetAlbumQueryRequestHandler(
+    internal sealed class GetAlbumQueryHandler(
         IGetAlbumRepository repository,
         ICache<DetailedAlbumDto> cache
-    ) : IQueryRequestHandler<GetAlbumQueryRequest, DetailedAlbumDto?>
+    ) : IQueryRequestHandler<GetAlbumQuery, DetailedAlbumDto?>
     {
         private readonly IGetAlbumRepository _repository = repository;
         private readonly ICache<DetailedAlbumDto> _cache = cache;
 
         public Task<DetailedAlbumDto?> Handle(
-            GetAlbumQueryRequest request,
+            GetAlbumQuery request,
             CancellationToken cancellationToken
         )
         {

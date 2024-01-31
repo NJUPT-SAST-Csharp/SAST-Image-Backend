@@ -2,13 +2,13 @@
 
 namespace SastImg.Application.CategoryServices.GetAllCategory
 {
-    public sealed class GetAllCategoryQueryRequestHandler(ICategoryQueryRepository repository)
-        : IQueryRequestHandler<GetAllCategoryQueryRequest, IEnumerable<CategoryDto>>
+    public sealed class GetAllCategoryQueryHandler(ICategoryQueryRepository repository)
+        : IQueryRequestHandler<GetAllCategoryQuery, IEnumerable<CategoryDto>>
     {
         private readonly ICategoryQueryRepository _repository = repository;
 
         public Task<IEnumerable<CategoryDto>> Handle(
-            GetAllCategoryQueryRequest request,
+            GetAllCategoryQuery request,
             CancellationToken cancellationToken
         )
         {

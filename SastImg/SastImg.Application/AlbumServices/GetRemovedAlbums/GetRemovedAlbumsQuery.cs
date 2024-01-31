@@ -6,7 +6,7 @@ using Shared.Primitives.Query;
 
 namespace SastImg.Application.AlbumServices.GetRemovedAlbums
 {
-    public sealed class GetRemovedAlbumsQueryRequest(long authorId, ClaimsPrincipal user)
+    public sealed class GetRemovedAlbumsQuery(long authorId, ClaimsPrincipal user)
         : IQueryRequest<IEnumerable<AlbumDto>>
     {
         public UserId AuthorId { get; } = new(authorId);

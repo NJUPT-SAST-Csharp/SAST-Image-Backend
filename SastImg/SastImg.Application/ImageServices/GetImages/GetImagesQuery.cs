@@ -5,7 +5,7 @@ using Shared.Primitives.Query;
 
 namespace SastImg.Application.ImageServices.GetImages
 {
-    public sealed class GetImagesQueryRequest(long albumId, int page, ClaimsPrincipal user)
+    public sealed class GetImagesQuery(long albumId, int page, ClaimsPrincipal user)
         : IQueryRequest<IEnumerable<AlbumImageDto>>
     {
         public int Page { get; } = page;

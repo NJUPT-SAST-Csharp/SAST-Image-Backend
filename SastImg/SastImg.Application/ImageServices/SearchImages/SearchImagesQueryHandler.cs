@@ -2,13 +2,13 @@
 
 namespace SastImg.Application.ImageServices.SearchImages
 {
-    internal sealed class SearchImagesQueryRequestHandler(ISearchImagesRepository repository)
-        : IQueryRequestHandler<SearchImagesQueryRequest, IEnumerable<SearchedImageDto>>
+    internal sealed class SearchImagesQueryHandler(ISearchImagesRepository repository)
+        : IQueryRequestHandler<SearchImagesQuery, IEnumerable<SearchedImageDto>>
     {
         private readonly ISearchImagesRepository _repository = repository;
 
         public Task<IEnumerable<SearchedImageDto>> Handle(
-            SearchImagesQueryRequest request,
+            SearchImagesQuery request,
             CancellationToken cancellationToken
         )
         {

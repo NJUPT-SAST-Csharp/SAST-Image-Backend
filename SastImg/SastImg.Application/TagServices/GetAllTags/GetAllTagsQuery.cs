@@ -2,5 +2,5 @@
 
 namespace SastImg.Application.TagServices.GetAllTags
 {
-    public sealed class GetAllTagsQueryRequest : IQueryRequest<IEnumerable<TagDto>> { }
+    public sealed class GetAllTagsQuery : IQueryRequest<IEnumerable<TagDto>> { }
 }

@@ -6,7 +6,7 @@ using Shared.Primitives.Query;
 
 namespace SastImg.Application.ImageServices.SearchImages
 {
-    public sealed class SearchImagesQueryRequest(
+    public sealed class SearchImagesQuery(
         int page,
         SearchOrder order,
         long categoryId,

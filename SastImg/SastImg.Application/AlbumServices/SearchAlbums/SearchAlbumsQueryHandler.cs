@@ -3,13 +3,13 @@ using Shared.Primitives.Query;
 
 namespace SastImg.Application.AlbumServices.SearchAlbums
 {
-    internal sealed class SearchAlbumsQueryRequestHandler(ISearchAlbumsRepository repository)
-        : IQueryRequestHandler<SearchAlbumsQueryRequest, IEnumerable<AlbumDto>>
+    internal sealed class SearchAlbumsQueryHandler(ISearchAlbumsRepository repository)
+        : IQueryRequestHandler<SearchAlbumsQuery, IEnumerable<AlbumDto>>
     {
         private readonly ISearchAlbumsRepository _repository = repository;
 
         public Task<IEnumerable<AlbumDto>> Handle(
-            SearchAlbumsQueryRequest request,
+            SearchAlbumsQuery request,
             CancellationToken cancellationToken
         )
         {
