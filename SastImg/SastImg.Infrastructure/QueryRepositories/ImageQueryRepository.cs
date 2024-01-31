@@ -11,7 +11,7 @@ using SastImg.Domain.CategoryEntity;
 using SastImg.Domain.TagEntity;
 using SastImg.Infrastructure.Persistence.QueryDatabase;
 
-namespace SastImg.Infrastructure.Domain.ImageEntity
+namespace SastImg.Infrastructure.QueryRepositories
 {
     internal sealed class ImageQueryRepository(IDbConnectionFactory factory)
         : IGetImageRepository,

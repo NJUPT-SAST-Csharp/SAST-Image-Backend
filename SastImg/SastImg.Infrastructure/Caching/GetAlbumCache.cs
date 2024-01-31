@@ -3,7 +3,7 @@ using SastImg.Application.AlbumServices.GetAlbum;
 using SastImg.Application.SeedWorks;
 using StackExchange.Redis;
 
-namespace SastImg.Infrastructure.Domain.AlbumEntity.Caching
+namespace SastImg.Infrastructure.Caching
 {
     internal sealed class GetAlbumCache(
         IConnectionMultiplexer connection,

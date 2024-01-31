@@ -4,7 +4,7 @@ using SastImg.Application.CategoryServices;
 using SastImg.Application.CategoryServices.GetAllCategory;
 using SastImg.Infrastructure.Persistence.QueryDatabase;
 
-namespace SastImg.Infrastructure.Domain.CategoryEntity
+namespace SastImg.Infrastructure.QueryRepositories
 {
     internal sealed class CategoryQueryRepository(IDbConnectionFactory factory)
         : ICategoryQueryRepository

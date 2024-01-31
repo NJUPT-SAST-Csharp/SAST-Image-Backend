@@ -3,7 +3,7 @@ using SastImg.Application.ImageServices.GetImage;
 using SastImg.Application.SeedWorks;
 using StackExchange.Redis;
 
-namespace SastImg.Infrastructure.Domain.ImageEntity.Caching
+namespace SastImg.Infrastructure.Caching
 {
     internal sealed class DetailedImageDtoCache(
         IConnectionMultiplexer connection,

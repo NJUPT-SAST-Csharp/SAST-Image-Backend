@@ -3,7 +3,7 @@ using SastImg.Domain.AlbumAggregate;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
 using SastImg.Infrastructure.Persistence;
 
-namespace SastImg.Infrastructure.Domain.AlbumEntity
+namespace SastImg.Infrastructure.DomainRepositories
 {
     internal class AlbumRepository(SastImgDbContext context) : IAlbumRepository
     {

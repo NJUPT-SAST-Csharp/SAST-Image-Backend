@@ -1,4 +1,4 @@
-﻿namespace SastImg.Infrastructure.Domain
+﻿namespace SastImg.Infrastructure.Caching
 {
     internal enum CacheKeys
     {

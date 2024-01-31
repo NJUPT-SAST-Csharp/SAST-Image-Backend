@@ -1,10 +1,9 @@
 ﻿using System.Data;
 using Primitives.DomainEvent;
 using SastImg.Domain;
-using SastImg.Infrastructure.Persistence;
 using Shared.Primitives.DomainEvent;
 
-namespace SastImg.Infrastructure.Domain
+namespace SastImg.Infrastructure.Persistence
 {
     internal class UnitOfWork(SastImgDbContext dbContext, IDomainEventPublisher eventBus)
         : IUnitOfWork

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SastImg.Domain.CategoryEntity;
 
-namespace SastImg.Infrastructure.Domain.CategoryAggregate
+namespace SastImg.Infrastructure.Persistence.EntityTypeConfigurations
 {
     internal class CategoryEntityTypeConfiguration : IEntityTypeConfiguration<Category>
     {

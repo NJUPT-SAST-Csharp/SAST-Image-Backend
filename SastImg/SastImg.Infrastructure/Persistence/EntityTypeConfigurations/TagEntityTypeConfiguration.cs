@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SastImg.Domain.TagEntity;
 
-namespace SastImg.Infrastructure.Domain.TagAggregate
+namespace SastImg.Infrastructure.Persistence.EntityTypeConfigurations
 {
     internal class TagEntityTypeConfiguration : IEntityTypeConfiguration<Tag>
     {

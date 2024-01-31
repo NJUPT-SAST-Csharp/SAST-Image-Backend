@@ -9,7 +9,7 @@ using SastImg.Domain.AlbumAggregate.AlbumEntity;
 using SastImg.Domain.CategoryEntity;
 using SastImg.Infrastructure.Persistence.QueryDatabase;
 
-namespace SastImg.Infrastructure.Domain.AlbumEntity
+namespace SastImg.Infrastructure.QueryRepositories
 {
     internal sealed class AlbumQueryRepository(IDbConnectionFactory factory)
         : IGetAlbumsRepository,

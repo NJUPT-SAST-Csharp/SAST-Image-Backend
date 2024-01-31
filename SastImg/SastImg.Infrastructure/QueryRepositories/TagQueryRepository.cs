@@ -4,7 +4,7 @@ using SastImg.Application.TagServices;
 using SastImg.Domain.TagEntity;
 using SastImg.Infrastructure.Persistence.QueryDatabase;
 
-namespace SastImg.Infrastructure.Domain.TagEntity
+namespace SastImg.Infrastructure.QueryRepositories
 {
     internal class TagQueryRepository(IDbConnectionFactory factory) : ITagQueryRepository
     {
