@@ -22,11 +22,11 @@ namespace SastImg.WebAPI.Controllers
     [ApiController]
     public sealed class AlbumController(
         IQueryRequestSender querySender,
-        ICommandSender commandSender
+        ICommandRequestSender commandSender
     ) : ControllerBase
     {
         private readonly IQueryRequestSender _querySender = querySender;
-        private readonly ICommandSender _commandSender = commandSender;
+        private readonly ICommandRequestSender _commandSender = commandSender;
 
         /// <summary>
         /// TODO: complete

@@ -13,7 +13,7 @@ namespace SastImg.Application.AlbumServices.UpdateAlbumInfo
         long categoryId,
         Accessibility accessibility,
         ClaimsPrincipal user
-    ) : ICommand
+    ) : ICommandRequest
     {
         public AlbumId AlbumId { get; } = new(albumId);
         public string Title { get; } = title;

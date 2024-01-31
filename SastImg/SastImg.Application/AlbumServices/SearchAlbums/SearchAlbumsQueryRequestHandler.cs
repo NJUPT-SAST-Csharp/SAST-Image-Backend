@@ -1,5 +1,5 @@
 ﻿using SastImg.Application.AlbumServices.GetAlbums;
-using Shared.Primitives.Request;
+using Shared.Primitives.Query;
 
 namespace SastImg.Application.AlbumServices.SearchAlbums
 {

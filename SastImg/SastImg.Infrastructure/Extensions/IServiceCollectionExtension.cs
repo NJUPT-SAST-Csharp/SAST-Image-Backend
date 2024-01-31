@@ -122,7 +122,7 @@ namespace SastImg.Infrastructure.Extensions
         public static IServiceCollection ConfigureMediator(this IServiceCollection services)
         {
             services.AddScoped<IQueryRequestSender, InternalEventBus>();
-            services.AddScoped<ICommandSender, InternalEventBus>();
+            services.AddScoped<ICommandRequestSender, InternalEventBus>();
             services.AddScoped<IDomainEventPublisher, InternalEventBus>();
 
             services.AddMediatR(config =>

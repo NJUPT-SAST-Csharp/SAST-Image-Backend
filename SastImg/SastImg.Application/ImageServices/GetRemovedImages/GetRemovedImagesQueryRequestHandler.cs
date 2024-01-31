@@ -1,6 +1,6 @@
 ﻿using SastImg.Application.ImageServices.GetImages;
 using SastImg.Domain;
-using Shared.Primitives.Request;
+using Shared.Primitives.Query;
 
 namespace SastImg.Application.ImageServices.GetRemovedImages
 {

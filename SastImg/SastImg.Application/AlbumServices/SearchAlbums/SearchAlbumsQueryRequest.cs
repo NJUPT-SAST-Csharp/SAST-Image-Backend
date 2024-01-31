@@ -2,7 +2,7 @@
 using SastImg.Application.AlbumServices.GetAlbums;
 using SastImg.Application.SeedWorks;
 using SastImg.Domain.CategoryEntity;
-using Shared.Primitives.Request;
+using Shared.Primitives.Query;
 
 namespace SastImg.Application.AlbumServices.SearchAlbums
 {

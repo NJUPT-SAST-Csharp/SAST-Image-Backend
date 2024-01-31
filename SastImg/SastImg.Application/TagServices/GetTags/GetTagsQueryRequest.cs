@@ -1,5 +1,5 @@
 ﻿using SastImg.Domain.TagEntity;
-using Shared.Primitives.Request;
+using Shared.Primitives.Query;
 
 namespace SastImg.Application.TagServices.GetTags
 {

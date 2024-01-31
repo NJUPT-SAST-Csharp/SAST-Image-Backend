@@ -8,9 +8,9 @@ namespace SNS.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public sealed class ImageController(ICommandSender commandSender) : ControllerBase
+    public sealed class ImageController(ICommandRequestSender commandSender) : ControllerBase
     {
-        private readonly ICommandSender _commandSender = commandSender;
+        private readonly ICommandRequestSender _commandSender = commandSender;
 
         [NonAction]
         [SubscribeMessage("Image.Add")]

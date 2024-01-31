@@ -8,7 +8,7 @@ namespace SastImg.Application.AlbumServices.CreateAlbum
     public sealed class CreateAlbumCommandHandler(
         IUnitOfWork unitOfWork,
         IAlbumRepository repository
-    ) : ICommandHandler<CreateAlbumCommand, CreateAlbumDto>
+    ) : ICommandRequestHandler<CreateAlbumCommand, CreateAlbumDto>
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IAlbumRepository _repository = repository;

@@ -3,14 +3,14 @@ using Primitives.Command;
 using Primitives.DomainEvent;
 using Primitives.Request;
 using Shared.Primitives.DomainEvent;
-using Shared.Primitives.Request;
+using Shared.Primitives.Query;
 
 namespace SastImg.Infrastructure.Event
 {
     internal class InternalEventBus(IMediator mediator)
         : IQueryRequestSender,
             IDomainEventPublisher,
-            ICommandSender
+            ICommandRequestSender
     {
         private readonly IMediator _mediator = mediator;
 
@@ -32,14 +32,17 @@ namespace SastImg.Infrastructure.Event
         }
 
         public Task<TResponse> CommandAsync<TResponse>(
-            ICommand<TResponse> command,
+            ICommandRequest<TResponse> command,
             CancellationToken cancellationToken = default
         )
         {
             return _mediator.Send(command, cancellationToken);
         }
 
-        public Task CommandAsync(ICommand command, CancellationToken cancellationToken = default)
+        public Task CommandAsync(
+            ICommandRequest command,
+            CancellationToken cancellationToken = default
+        )
         {
             return _mediator.Send(command, cancellationToken);
         }

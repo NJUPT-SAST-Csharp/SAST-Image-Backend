@@ -7,7 +7,7 @@ namespace SastImg.Application.AlbumServices.UpdateAlbumInfo
     public sealed class UpdateAlbumInfoCommandHandler(
         IAlbumRepository respository,
         IUnitOfWork unitOfWork
-    ) : ICommandHandler<UpdateAlbumInfoCommand>
+    ) : ICommandRequestHandler<UpdateAlbumInfoCommand>
     {
         private readonly IAlbumRepository _repository = respository;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;

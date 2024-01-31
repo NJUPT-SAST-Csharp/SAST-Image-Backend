@@ -1,4 +1,4 @@
-﻿using Shared.Primitives.Request;
+﻿using Shared.Primitives.Query;
 
 namespace SastImg.Application.CategoryServices.GetAllCategory
 {

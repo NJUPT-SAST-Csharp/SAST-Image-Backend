@@ -12,7 +12,7 @@ namespace SastImg.Application.AlbumServices.CreateAlbum
         long categoryId,
         Accessibility accessibility,
         ClaimsPrincipal user
-    ) : ICommand<CreateAlbumDto>
+    ) : ICommandRequest<CreateAlbumDto>
     {
         public string Title { get; } = title;
         public string Description { get; } = description;

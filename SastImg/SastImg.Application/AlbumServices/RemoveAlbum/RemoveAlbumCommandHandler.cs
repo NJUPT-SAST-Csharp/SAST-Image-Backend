@@ -7,7 +7,7 @@ namespace SastImg.Application.AlbumServices.RemoveAlbum
     internal sealed class RemoveAlbumCommandHandler(
         IAlbumRepository repository,
         IUnitOfWork unitOfWork
-    ) : ICommandHandler<RemoveAlbumCommand>
+    ) : ICommandRequestHandler<RemoveAlbumCommand>
     {
         private readonly IAlbumRepository _repository = repository;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;

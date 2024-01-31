@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using SastImg.Application.SeedWorks;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
-using Shared.Primitives.Request;
+using Shared.Primitives.Query;
 
 namespace SastImg.Application.AlbumServices.GetAlbum
 {

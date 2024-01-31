@@ -5,7 +5,7 @@ using SNS.Domain.UserEntity;
 
 namespace SNS.Application.ImageServices.AddImage
 {
-    public sealed class AddImageCommand(long imageId, long authorId, long albumId) : ICommand
+    public sealed class AddImageCommand(long imageId, long authorId, long albumId) : ICommandRequest
     {
         public ImageId ImageId { get; } = new(imageId);
         public UserId AuthorId { get; } = new(authorId);

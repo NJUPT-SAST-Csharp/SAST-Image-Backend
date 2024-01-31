@@ -2,7 +2,7 @@
 using SastImg.Application.SeedWorks;
 using SastImg.Domain.CategoryEntity;
 using SastImg.Domain.TagEntity;
-using Shared.Primitives.Request;
+using Shared.Primitives.Query;
 
 namespace SastImg.Application.ImageServices.SearchImages
 {
