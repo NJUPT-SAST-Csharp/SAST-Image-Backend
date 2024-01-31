@@ -14,6 +14,8 @@ namespace SastImg.Infrastructure.Extensions
                 app.UseSwaggerUI();
             }
 
+            app.UseExceptionHandler(op => { });
+
             app.UseAuthorization();
 
             app.UseResponseCaching();
