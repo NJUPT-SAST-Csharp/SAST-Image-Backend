@@ -10,7 +10,7 @@ using Microsoft.OpenApi.Models;
 using Npgsql;
 using Primitives.Command;
 using Primitives.DomainEvent;
-using Primitives.Request;
+using Primitives.Query;
 using SastImg.Application.AlbumServices.GetAlbum;
 using SastImg.Application.AlbumServices.GetAlbums;
 using SastImg.Application.AlbumServices.GetRemovedAlbums;

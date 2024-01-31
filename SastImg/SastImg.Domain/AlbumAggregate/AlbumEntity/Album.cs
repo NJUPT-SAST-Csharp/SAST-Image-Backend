@@ -69,9 +69,9 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
         #endregion
 
-        public UserId AuthorId => _authorId;
-
         #region Methods
+
+        public bool IsOwnedBy(UserId userId) => _authorId == userId;
 
         public void Remove()
         {

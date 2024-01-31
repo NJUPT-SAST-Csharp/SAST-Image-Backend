@@ -3,25 +3,25 @@ using Primitives.Command;
 using SastImg.Domain;
 using SastImg.Domain.AlbumAggregate;
 
-namespace SastImg.Application.AlbumServices.RemoveAlbum
+namespace SastImg.Application.AlbumServices.RestoreAlbum
 {
-    internal sealed class RemoveAlbumCommandHandler(
+    internal sealed class RestoreAlbumCommandHandler(
         IAlbumRepository repository,
         IUnitOfWork unitOfWork
-    ) : ICommandRequestHandler<RemoveAlbumCommand>
+    ) : ICommandRequestHandler<RestoreAlbumCommand>
     {
         private readonly IAlbumRepository _repository = repository;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-        public async Task Handle(RemoveAlbumCommand request, CancellationToken cancellationToken)
+        public async Task Handle(RestoreAlbumCommand request, CancellationToken cancellationToken)
         {
             var album = await _repository.GetAlbumAsync(request.AlbumId, cancellationToken);
-
-            if (request.RequesterInfo.IsAdmin || album.IsOwnedBy(request.RequesterInfo.Id))
+            if (request.Requester.IsAdmin || album.IsOwnedBy(request.Requester.Id))
             {
-                album.Remove();
+                album.Restore();
                 await _unitOfWork.CommitChangesAsync(cancellationToken);
             }
+
             throw new NoPermissionException();
         }
     }

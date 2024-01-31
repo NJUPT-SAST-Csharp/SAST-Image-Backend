@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Primitives.Command;
 using Primitives.DomainEvent;
-using Primitives.Request;
+using Primitives.Query;
 using Shared.Primitives.DomainEvent;
 using Shared.Primitives.Query;
 

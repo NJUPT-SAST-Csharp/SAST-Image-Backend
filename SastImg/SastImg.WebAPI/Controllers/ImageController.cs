@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Primitives.Command;
-using Primitives.Request;
+using Primitives.Query;
 using SastImg.Application.ImageServices.GetImage;
 using SastImg.Application.ImageServices.GetImages;
 using SastImg.Application.ImageServices.GetRemovedImages;

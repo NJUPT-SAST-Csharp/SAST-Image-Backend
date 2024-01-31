@@ -3,11 +3,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Primitives.Command;
-using Primitives.Request;
+using Primitives.Query;
 using SastImg.Application.AlbumServices.CreateAlbum;
 using SastImg.Application.AlbumServices.GetAlbum;
 using SastImg.Application.AlbumServices.GetAlbums;
 using SastImg.Application.AlbumServices.RemoveAlbum;
+using SastImg.Application.AlbumServices.RestoreAlbum;
 using SastImg.Application.AlbumServices.SearchAlbums;
 using SastImg.Application.AlbumServices.UpdateAlbumInfo;
 using SastImg.WebAPI.Requests.AlbumRequest;
@@ -157,6 +158,26 @@ namespace SastImg.WebAPI.Controllers
         {
             await _commandSender.CommandAsync(
                 new RemoveAlbumCommand(albumId, User),
+                cancellationToken
+            );
+            return Responses.NoContent;
+        }
+
+        /// <summary>
+        /// TODO: complete
+        /// </summary>
+        /// <param name="albumId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPut("album/{albumId}/restore")]
+        public async Task<NoContent> RestoreAlbum(
+            [FromRoute] [Range(0, long.MaxValue)] long albumId,
+            CancellationToken cancellationToken = default
+        )
+        {
+            await _commandSender.CommandAsync(
+                new RestoreAlbumCommand(albumId, User),
                 cancellationToken
             );
             return Responses.NoContent;

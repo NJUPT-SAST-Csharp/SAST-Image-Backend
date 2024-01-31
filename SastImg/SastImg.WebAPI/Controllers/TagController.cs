@@ -3,7 +3,7 @@ using Auth.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Primitives.Request;
+using Primitives.Query;
 using SastImg.Application.TagServices;
 using SastImg.Application.TagServices.GetAllTags;
 using SastImg.Application.TagServices.GetTags;
