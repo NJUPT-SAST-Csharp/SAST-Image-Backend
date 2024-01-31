@@ -11,6 +11,7 @@ using SastImg.Application.AlbumServices.RemoveAlbum;
 using SastImg.Application.AlbumServices.RestoreAlbum;
 using SastImg.Application.AlbumServices.SearchAlbums;
 using SastImg.Application.AlbumServices.UpdateAlbumInfo;
+using SastImg.Application.AlbumServices.UpdateCollaborators;
 using SastImg.WebAPI.Requests.AlbumRequest;
 using Shared.Response.Builders;
 
@@ -125,9 +126,9 @@ namespace SastImg.WebAPI.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpPut("album/{albumId}")]
-        public async Task<NoContent> UpdateAlbum(
+        public async Task<NoContent> UpdateAlbumInfo(
             [FromRoute] [Range(0, long.MaxValue)] long albumId,
-            [FromBody] UpdateAlbumRequest request,
+            [FromBody] UpdateAlbumInfoRequest request,
             CancellationToken cancellationToken = default
         )
         {
@@ -150,7 +151,7 @@ namespace SastImg.WebAPI.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpDelete("album/{albumId}")]
+        [HttpPut("album/{albumId}/remove")]
         public async Task<NoContent> RemoveAlbum(
             [FromRoute] [Range(0, long.MaxValue)] long albumId,
             CancellationToken cancellationToken = default
@@ -178,6 +179,28 @@ namespace SastImg.WebAPI.Controllers
         {
             await _commandSender.CommandAsync(
                 new RestoreAlbumCommand(albumId, User),
+                cancellationToken
+            );
+            return Responses.NoContent;
+        }
+
+        /// <summary>
+        /// TODO: complete
+        /// </summary>
+        /// <param name="albumId"></param>
+        /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPut("album/{albumId}/collaborators")]
+        public async Task<NoContent> UpdateCollaborators(
+            [FromRoute] [Range(0, long.MaxValue)] long albumId,
+            [FromBody] UpdateCollaboratorsRequest request,
+            CancellationToken cancellationToken = default
+        )
+        {
+            await _commandSender.CommandAsync(
+                new UpdateCollaboratorsCommand(albumId, request.Collaborators, User),
                 cancellationToken
             );
             return Responses.NoContent;

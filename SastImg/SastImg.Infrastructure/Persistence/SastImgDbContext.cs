@@ -3,8 +3,7 @@ using SastImg.Domain.AlbumAggregate.AlbumEntity;
 using SastImg.Domain.CategoryEntity;
 using SastImg.Domain.TagEntity;
 using SastImg.Infrastructure.Domain.AlbumEntity;
-using SastImg.Infrastructure.Domain.CategoryAggregate;
-using SastImg.Infrastructure.Domain.TagAggregate;
+using SastImg.Infrastructure.Persistence.EntityTypeConfigurations;
 
 namespace SastImg.Infrastructure.Persistence
 {

@@ -6,7 +6,7 @@ namespace SastImg.WebAPI.Requests.AlbumRequest
     /// <summary>
     /// TODO: complete
     /// </summary>
-    public readonly struct UpdateAlbumRequest
+    public readonly struct UpdateAlbumInfoRequest
     {
         /// <summary>
         /// TODO: complete

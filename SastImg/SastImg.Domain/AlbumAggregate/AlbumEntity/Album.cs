@@ -69,9 +69,17 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
         #endregion
 
-        #region Methods
+        #region Properties
 
         public bool IsOwnedBy(UserId userId) => _authorId == userId;
+
+        public bool IsManagedBy(UserId userId) =>
+            _authorId == userId || _collaborators.Contains(userId);
+
+        #endregion
+
+        #region Methods
+
 
         public void Remove()
         {
@@ -160,6 +168,12 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
                 image.UpdateImageInfo(title, description, tags);
                 // TODO: Raise domain event
             }
+        }
+
+        public void UpdateCollaborators(UserId[] collaborators)
+        {
+            _collaborators = collaborators;
+            //TODO: Raise domain event
         }
 
         #endregion
