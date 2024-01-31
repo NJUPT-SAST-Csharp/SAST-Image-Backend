@@ -7,6 +7,7 @@ using Primitives.Request;
 using SastImg.Application.AlbumServices.CreateAlbum;
 using SastImg.Application.AlbumServices.GetAlbum;
 using SastImg.Application.AlbumServices.GetAlbums;
+using SastImg.Application.AlbumServices.RemoveAlbum;
 using SastImg.Application.AlbumServices.SearchAlbums;
 using SastImg.Application.AlbumServices.UpdateAlbumInfo;
 using SastImg.WebAPI.Requests.AlbumRequest;
@@ -115,7 +116,7 @@ namespace SastImg.WebAPI.Controllers
         }
 
         /// <summary>
-        ///
+        /// TODO: complete
         /// </summary>
         /// <param name="albumId"></param>
         /// <param name="request"></param>
@@ -138,6 +139,26 @@ namespace SastImg.WebAPI.Controllers
                 User
             );
             await _commandSender.CommandAsync(command, cancellationToken);
+            return Responses.NoContent;
+        }
+
+        /// <summary>
+        /// TODO: complete
+        /// </summary>
+        /// <param name="albumId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpDelete("album/{albumId}")]
+        public async Task<NoContent> RemoveAlbum(
+            [FromRoute] [Range(0, long.MaxValue)] long albumId,
+            CancellationToken cancellationToken = default
+        )
+        {
+            await _commandSender.CommandAsync(
+                new RemoveAlbumCommand(albumId, User),
+                cancellationToken
+            );
             return Responses.NoContent;
         }
     }

@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="AlbumAggregate\ImageEntity\Events\" />
     <Folder Include="AlbumAggregate\AlbumEntity\Rules\" />
+    <Folder Include="AlbumAggregate\ImageEntity\Events\" />
     <Folder Include="CategoryEntity\Events\" />
   </ItemGroup>
 

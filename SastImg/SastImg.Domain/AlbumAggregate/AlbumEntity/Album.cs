@@ -68,16 +68,22 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
         #endregion
 
+        public UserId AuthorId => _authorId;
+
         #region Methods
 
-        public void RemoveAlbum()
+        public void Remove()
         {
+            if (_isRemoved)
+                return;
             _isRemoved = true;
             // TODO: Raise domain event.
         }
 
-        public void RestoreAlbum()
+        public void Restore()
         {
+            if (_isRemoved == false)
+                return;
             _isRemoved = false;
             // TODO: Raise domain event.
         }

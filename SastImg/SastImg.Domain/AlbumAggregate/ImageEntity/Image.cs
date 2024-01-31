@@ -20,7 +20,7 @@ public sealed class Image : EntityBase<ImageId>
 
     internal static Image CreateNewImage(string title, Uri uri, string description, long[] tags)
     {
-        CheckRule(new ImageCannotOwnMoreThan5TagsRule(tags));
+        CheckRule(new ImageOwnNotMoreThan5TagsRule(tags));
         return new Image(title, uri, description, tags);
     }
 
@@ -52,7 +52,7 @@ public sealed class Image : EntityBase<ImageId>
 
     internal void UpdateImageInfo(string title, string description, long[] tags)
     {
-        CheckRule(new ImageCannotOwnMoreThan5TagsRule(tags));
+        CheckRule(new ImageOwnNotMoreThan5TagsRule(tags));
         _title = title;
         _description = description;
         _tags = tags;
