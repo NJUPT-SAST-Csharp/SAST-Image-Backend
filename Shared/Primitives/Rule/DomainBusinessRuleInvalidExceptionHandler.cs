@@ -21,8 +21,15 @@ namespace SastImg.WebAPI.Configurations
         {
             if (exception is DomainBusinessRuleInvalidException ruleInvalidException)
             {
-                httpContext.Response.WriteAsJsonAsync<BadRequestObjectResult>(
-                    new(new { ruleInvalidException.Message, ruleInvalidException.Details }),
+                httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+                httpContext.Response.WriteAsJsonAsync<ProblemDetails>(
+                    new()
+                    {
+                        Status = StatusCodes.Status400BadRequest,
+                        Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+                        Title = "Bad Request",
+                        Detail = ruleInvalidException.Details
+                    },
                     cancellationToken
                 );
                 return ValueTask.FromResult(true);
