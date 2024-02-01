@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Messenger;
 using Microsoft.AspNetCore.Mvc;
 
 namespace SNS.WebAPI.Controllers
@@ -7,5 +7,8 @@ namespace SNS.WebAPI.Controllers
     [ApiController]
     public class AlbumController : ControllerBase
     {
+        [NonAction]
+        [SubscribeMessage("")]
+        public Task AlbumCreated() { }
     }
 }

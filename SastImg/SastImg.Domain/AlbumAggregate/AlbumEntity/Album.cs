@@ -39,7 +39,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
         )
         {
             var album = new Album(authorId, categoryId, title, description, accessibility);
-            album.AddDomainEvent(new CreateAlbumDomainEvent(album.Id, authorId));
+            album.AddDomainEvent(new AlbumCreatedDomainEvent(album.Id, authorId));
             return album;
         }
 

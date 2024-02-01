@@ -4,9 +4,12 @@ using SastImg.Domain.AlbumAggregate.AlbumEntity.Events;
 namespace SastImg.Application.AlbumServices.CreateAlbum
 {
     internal sealed class CreateAlbumDomainEventHandler
-        : IDomainEventHandler<CreateAlbumDomainEvent>
+        : IDomainEventHandler<AlbumCreatedDomainEvent>
     {
-        public Task Handle(CreateAlbumDomainEvent notification, CancellationToken cancellationToken)
+        public Task Handle(
+            AlbumCreatedDomainEvent notification,
+            CancellationToken cancellationToken
+        )
         {
             throw new NotImplementedException();
         }

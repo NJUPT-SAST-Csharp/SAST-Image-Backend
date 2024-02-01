@@ -8,7 +8,7 @@ namespace SNS.Domain.AlbumEntity
         private Album(AlbumId albumId)
             : base(albumId) { }
 
-        private readonly List<UserId> _subscribers;
+        private readonly ICollection<UserId> _subscribers;
 
         public static Album CreateNewAlbum(long albumId)
         {

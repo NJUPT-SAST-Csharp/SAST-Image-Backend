@@ -2,9 +2,8 @@
 
 namespace SastImg.Domain.AlbumAggregate.AlbumEntity.Events
 {
-    public sealed class CreateAlbumDomainEvent(AlbumId albumId, UserId authorId) : IDomainEvent
+    public sealed class AlbumRestoredDomainEvent(AlbumId albumId) : IDomainEvent
     {
         public AlbumId AlbumId { get; } = albumId;
-        public UserId AuthorId { get; } = authorId;
     }
 }
