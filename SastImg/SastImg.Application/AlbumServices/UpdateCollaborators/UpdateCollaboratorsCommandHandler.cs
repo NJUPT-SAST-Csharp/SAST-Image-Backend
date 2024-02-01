@@ -25,8 +25,10 @@ namespace SastImg.Application.AlbumServices.UpdateCollaborators
                 album.UpdateCollaborators(request.Collaborators);
                 await _unitOfWork.CommitChangesAsync(cancellationToken);
             }
-
-            throw new NoPermissionException();
+            else
+            {
+                throw new NoPermissionException();
+            }
         }
     }
 }

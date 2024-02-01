@@ -22,7 +22,10 @@ namespace SastImg.Application.AlbumServices.RemoveAlbum
                 album.Remove();
                 await _unitOfWork.CommitChangesAsync(cancellationToken);
             }
-            throw new NoPermissionException();
+            else
+            {
+                throw new NoPermissionException();
+            }
         }
     }
 }
