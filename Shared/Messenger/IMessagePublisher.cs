@@ -7,6 +7,7 @@
         /// </summary>
         /// <param name="message">Message to be sent to MQ.</param>
         public Task<bool> PublishAsync<TMessage>(
+            string channel,
             TMessage message,
             CancellationToken cancellationToken = default
         )

@@ -17,6 +17,7 @@ namespace SastImg.Infrastructure.Persistence
                 cancellationToken
             );
 
+            // First SaveChangesAsync() call is to save the changes made by the command handlers
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             var domainEntities = _dbContext
@@ -36,10 +37,13 @@ namespace SastImg.Infrastructure.Persistence
 
             var tasks = domainEvents.Select(e => _eventBus.PublishAsync(e));
 
+            // Where domain event handlers are executed
             await Task.WhenAll(tasks);
 
+            // Second SaveChangesAsync() call is to save the changes made by the domain event handlers
             await _dbContext.SaveChangesAsync(cancellationToken);
 
+            // Commit the transaction
             await transaction.CommitAsync(cancellationToken);
         }
     }
