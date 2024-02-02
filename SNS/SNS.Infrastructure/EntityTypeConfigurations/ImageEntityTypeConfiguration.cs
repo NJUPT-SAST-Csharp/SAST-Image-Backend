@@ -37,6 +37,8 @@ namespace SNS.Infrastructure.EntityTypeConfigurations
                         right.HasOne<Image>().WithMany("_likedBy").HasForeignKey(x => x.ImageId),
                     like =>
                     {
+                        like.ToTable("likes");
+
                         like.Property(x => x.UserId)
                             .HasColumnName("liker_id")
                             .HasConversion(x => x.Value, x => new UserId(x));
@@ -57,6 +59,8 @@ namespace SNS.Infrastructure.EntityTypeConfigurations
                             .HasForeignKey(x => x.ImageId),
                     fav =>
                     {
+                        fav.ToTable("favourites");
+
                         fav.Property(x => x.UserId)
                             .HasColumnName("favouriter_id")
                             .HasConversion(x => x.Value, x => new UserId(x));

@@ -43,7 +43,7 @@ namespace SNS.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "user_user",
+                name: "followers",
                 columns: table => new
                 {
                     follower = table.Column<long>(type: "bigint", nullable: false),
@@ -51,15 +51,15 @@ namespace SNS.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_user_user", x => new { x.follower, x.following });
+                    table.PrimaryKey("pk_followers", x => new { x.follower, x.following });
                     table.ForeignKey(
-                        name: "fk_user_user_users_follower",
+                        name: "fk_followers_users_follower",
                         column: x => x.follower,
                         principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_user_user_users_following",
+                        name: "fk_followers_users_following",
                         column: x => x.following,
                         principalTable: "users",
                         principalColumn: "id",
@@ -143,7 +143,7 @@ namespace SNS.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "favourite",
+                name: "favourites",
                 columns: table => new
                 {
                     image_id = table.Column<long>(type: "bigint", nullable: false),
@@ -151,15 +151,15 @@ namespace SNS.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_favourite", x => new { x.image_id, x.favouriter_id });
+                    table.PrimaryKey("pk_favourites", x => new { x.image_id, x.favouriter_id });
                     table.ForeignKey(
-                        name: "fk_favourite_images_image_id",
+                        name: "fk_favourites_images_image_id",
                         column: x => x.image_id,
                         principalTable: "images",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_favourite_users_favouriter_id",
+                        name: "fk_favourites_users_favouriter_id",
                         column: x => x.favouriter_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -167,7 +167,7 @@ namespace SNS.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "like",
+                name: "likes",
                 columns: table => new
                 {
                     image_id = table.Column<long>(type: "bigint", nullable: false),
@@ -175,15 +175,15 @@ namespace SNS.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_like", x => new { x.image_id, x.liker_id });
+                    table.PrimaryKey("pk_likes", x => new { x.image_id, x.liker_id });
                     table.ForeignKey(
-                        name: "fk_like_images_image_id",
+                        name: "fk_likes_images_image_id",
                         column: x => x.image_id,
                         principalTable: "images",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_like_users_liker_id",
+                        name: "fk_likes_users_liker_id",
                         column: x => x.liker_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -206,9 +206,14 @@ namespace SNS.Infrastructure.Persistence.Migrations
                 column: "image_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_favourite_user_id",
-                table: "favourite",
+                name: "ix_favourites_user_id",
+                table: "favourites",
                 column: "favouriter_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_followers_following",
+                table: "followers",
+                column: "following");
 
             migrationBuilder.CreateIndex(
                 name: "ix_images__album_id",
@@ -221,19 +226,14 @@ namespace SNS.Infrastructure.Persistence.Migrations
                 column: "author_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_like_user_id",
-                table: "like",
+                name: "ix_likes_user_id",
+                table: "likes",
                 column: "liker_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_subscriber_album_id",
                 table: "subscriber",
                 column: "album_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_user_user_following",
-                table: "user_user",
-                column: "following");
         }
 
         /// <inheritdoc />
@@ -243,16 +243,16 @@ namespace SNS.Infrastructure.Persistence.Migrations
                 name: "comments");
 
             migrationBuilder.DropTable(
-                name: "favourite");
+                name: "favourites");
 
             migrationBuilder.DropTable(
-                name: "like");
+                name: "followers");
+
+            migrationBuilder.DropTable(
+                name: "likes");
 
             migrationBuilder.DropTable(
                 name: "subscriber");
-
-            migrationBuilder.DropTable(
-                name: "user_user");
 
             migrationBuilder.DropTable(
                 name: "images");

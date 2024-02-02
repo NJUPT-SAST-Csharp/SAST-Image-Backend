@@ -12,7 +12,7 @@ using SNS.Infrastructure.Persistence;
 namespace SNS.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SNSDbContext))]
-    [Migration("20240202131139_Fix1")]
+    [Migration("20240202141627_Fix1")]
     partial class Fix1
     {
         /// <inheritdoc />
@@ -55,12 +55,12 @@ namespace SNS.Infrastructure.Persistence.Migrations
                         .HasColumnName("album_id");
 
                     b.HasKey("SubscriberId")
-                        .HasName("pk_subscriber");
+                        .HasName("pk_subscribers");
 
                     b.HasIndex("AlbumId")
-                        .HasDatabaseName("ix_subscriber_album_id");
+                        .HasDatabaseName("ix_subscribers_album_id");
 
-                    b.ToTable("subscriber", (string)null);
+                    b.ToTable("subscribers", (string)null);
                 });
 
             modelBuilder.Entity("SNS.Domain.ImageAggregate.ImageEntity.Favourite", b =>
@@ -74,12 +74,12 @@ namespace SNS.Infrastructure.Persistence.Migrations
                         .HasColumnName("favouriter_id");
 
                     b.HasKey("ImageId", "UserId")
-                        .HasName("pk_favourite");
+                        .HasName("pk_favourites");
 
                     b.HasIndex("UserId")
-                        .HasDatabaseName("ix_favourite_user_id");
+                        .HasDatabaseName("ix_favourites_user_id");
 
-                    b.ToTable("favourite", (string)null);
+                    b.ToTable("favourites", (string)null);
                 });
 
             modelBuilder.Entity("SNS.Domain.ImageAggregate.ImageEntity.Image", b =>
@@ -119,12 +119,12 @@ namespace SNS.Infrastructure.Persistence.Migrations
                         .HasColumnName("liker_id");
 
                     b.HasKey("ImageId", "UserId")
-                        .HasName("pk_like");
+                        .HasName("pk_likes");
 
                     b.HasIndex("UserId")
-                        .HasDatabaseName("ix_like_user_id");
+                        .HasDatabaseName("ix_likes_user_id");
 
-                    b.ToTable("like", (string)null);
+                    b.ToTable("likes", (string)null);
                 });
 
             modelBuilder.Entity("SNS.Domain.UserEntity.User", b =>
@@ -185,14 +185,14 @@ namespace SNS.Infrastructure.Persistence.Migrations
                         .HasForeignKey("AlbumId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_subscriber_albums_album_id");
+                        .HasConstraintName("fk_subscribers_albums_album_id");
 
                     b.HasOne("SNS.Domain.UserEntity.User", null)
                         .WithMany()
                         .HasForeignKey("SubscriberId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_subscriber_users_subscriber_id");
+                        .HasConstraintName("fk_subscribers_users_subscriber_id");
                 });
 
             modelBuilder.Entity("SNS.Domain.ImageAggregate.ImageEntity.Favourite", b =>
@@ -202,14 +202,14 @@ namespace SNS.Infrastructure.Persistence.Migrations
                         .HasForeignKey("ImageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_favourite_images_image_id");
+                        .HasConstraintName("fk_favourites_images_image_id");
 
                     b.HasOne("SNS.Domain.UserEntity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_favourite_users_favouriter_id");
+                        .HasConstraintName("fk_favourites_users_favouriter_id");
                 });
 
             modelBuilder.Entity("SNS.Domain.ImageAggregate.ImageEntity.Image", b =>
@@ -285,14 +285,14 @@ namespace SNS.Infrastructure.Persistence.Migrations
                         .HasForeignKey("ImageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_like_images_image_id");
+                        .HasConstraintName("fk_likes_images_image_id");
 
                     b.HasOne("SNS.Domain.UserEntity.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_like_users_liker_id");
+                        .HasConstraintName("fk_likes_users_liker_id");
                 });
 
             modelBuilder.Entity("UserUser", b =>

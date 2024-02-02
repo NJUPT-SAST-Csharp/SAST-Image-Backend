@@ -32,6 +32,8 @@ namespace SNS.Infrastructure.EntityTypeConfigurations
                     r => r.HasOne<Album>().WithMany("_subscribers").HasForeignKey(o => o.AlbumId),
                     sub =>
                     {
+                        sub.ToTable("subscribers");
+
                         sub.Property(s => s.SubscriberId)
                             .HasColumnName("subscriber_id")
                             .HasConversion(id => id.Value, id => new UserId(id));
