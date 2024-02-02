@@ -4,7 +4,7 @@ using SastImg.Domain.AlbumAggregate.AlbumEntity;
 
 namespace SastImg.Application.AlbumServices.CreateAlbum
 {
-    public readonly struct AlbumCreatedMessage(in UserId authorId, in AlbumId albumId) : IMessage
+    internal readonly struct AlbumCreatedMessage(UserId authorId, AlbumId albumId) : IMessage
     {
         public readonly long AuthorId { get; } = authorId.Value;
         public readonly long AlbumId { get; } = albumId.Value;

@@ -8,6 +8,9 @@ namespace SNS.Domain.ImageAggregate.ImageEntity
 {
     public sealed class Image : EntityBase<ImageId>, IAggregateRoot<Image>
     {
+        private Image()
+            : base(default) { }
+
         private Image(ImageId imageId, UserId authorId, AlbumId albumId)
             : base(imageId)
         {
@@ -15,9 +18,10 @@ namespace SNS.Domain.ImageAggregate.ImageEntity
             _albumId = albumId;
         }
 
-        private readonly List<UserId> _likedBy = [];
-        private readonly List<UserId> _favouritedBy = [];
+        private readonly List<Like> _likedBy = [];
+        private readonly List<Favourite> _favouritedBy = [];
         private readonly List<Comment> _comments = [];
+
         private readonly AlbumId _albumId;
         private readonly UserId _authorId;
 
@@ -28,7 +32,7 @@ namespace SNS.Domain.ImageAggregate.ImageEntity
 
         public CommentId AddComment(UserId commenter, string content)
         {
-            var comment = Comment.CreateNewComment(Id, commenter, content);
+            var comment = Comment.CreateNewComment(commenter, content);
             _comments.Add(comment);
             return comment.Id;
         }

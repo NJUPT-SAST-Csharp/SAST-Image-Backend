@@ -26,6 +26,8 @@ namespace SastImg.Infrastructure.Extensions
                     ?? throw new Exception("The connection string \"DistributedCache\" is null.")
             );
             builder.Services.ConfigureMediator();
+            builder.Services.ConfigureEventBus();
+
             builder.Services.ConfigureExceptionHandlers();
 
             builder.Services.ConfigureSwagger();

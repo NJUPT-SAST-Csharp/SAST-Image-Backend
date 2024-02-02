@@ -1,5 +1,6 @@
 ﻿using Messenger;
 using Microsoft.AspNetCore.Mvc;
+using SNS.WebAPI.Messages;
 
 namespace SNS.WebAPI.Controllers
 {
@@ -8,7 +9,7 @@ namespace SNS.WebAPI.Controllers
     public class AlbumController : ControllerBase
     {
         [NonAction]
-        [SubscribeMessage("")]
-        public Task AlbumCreated() { }
+        [SubscribeMessage("sastimg.album.created")]
+        public async Task AlbumCreated(AlbumCreatedMessage message) { }
     }
 }

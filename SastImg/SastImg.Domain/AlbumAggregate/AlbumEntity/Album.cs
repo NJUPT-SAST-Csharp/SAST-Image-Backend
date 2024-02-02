@@ -65,7 +65,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
         private UserId[] _collaborators = [];
 
-        private readonly List<Image> _images = [];
+        private readonly IList<Image> _images = [];
 
         #endregion
 

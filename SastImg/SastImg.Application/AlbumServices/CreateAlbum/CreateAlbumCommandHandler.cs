@@ -5,7 +5,7 @@ using SastImg.Domain.AlbumAggregate.AlbumEntity;
 
 namespace SastImg.Application.AlbumServices.CreateAlbum
 {
-    public sealed class CreateAlbumCommandHandler(
+    internal sealed class CreateAlbumCommandHandler(
         IUnitOfWork unitOfWork,
         IAlbumRepository repository
     ) : ICommandRequestHandler<CreateAlbumCommand, CreateAlbumDto>

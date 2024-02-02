@@ -5,24 +5,31 @@ namespace SNS.Domain.AlbumEntity
 {
     public sealed class Album : EntityBase<AlbumId>
     {
-        private Album(AlbumId albumId)
-            : base(albumId) { }
+        private Album()
+            : base(default) { }
 
-        private readonly ICollection<UserId> _subscribers;
-
-        public static Album CreateNewAlbum(long albumId)
+        private Album(AlbumId albumId, UserId authorId)
+            : base(albumId)
         {
-            return new Album(new(albumId));
+            _authorId = authorId;
+        }
+
+        private readonly UserId _authorId;
+        private readonly IList<Subscriber> _subscribers;
+
+        public static Album CreateNewAlbum(AlbumId albumId, UserId authorId)
+        {
+            return new Album(albumId, authorId);
         }
 
         public void AddSubscriber(UserId subscriberId)
         {
-            _subscribers.Add(subscriberId);
+            _subscribers.Add(new(Id, subscriberId));
         }
 
         public void RemoveSubscriber(UserId subscriberId)
         {
-            _subscribers.Remove(subscriberId);
+            _subscribers.Remove(_subscribers.SingleOrDefault(s => s.SubscriberId == subscriberId)!);
         }
     }
 }

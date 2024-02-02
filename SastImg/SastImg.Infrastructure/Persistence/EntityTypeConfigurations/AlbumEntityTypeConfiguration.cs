@@ -1,8 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using SastImg.Domain;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
 using SastImg.Domain.AlbumAggregate.ImageEntity;
 using SastImg.Domain.CategoryEntity;
+using SastImg.Domain.TagEntity;
 
 namespace SastImg.Infrastructure.Domain.AlbumEntity
 {
@@ -18,20 +21,29 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
 
             builder.Property<string>("_title").HasColumnName("title");
             builder.Property<string>("_description").HasColumnName("description");
-            builder.Property<long>("_categoryId").HasColumnName("category_id");
             builder.Property<Accessibility>("_accessibility").HasColumnName("accessibility");
             builder.Property<bool>("_isRemoved").HasColumnName("is_removed");
             builder.Property<DateTime>("_createdAt").HasColumnName("created_at");
             builder.Property<DateTime>("_updatedAt").HasColumnName("updated_at");
-            builder.Property<long>("_authorId").HasColumnName("author_id");
+            builder
+                .Property<CategoryId>("_categoryId")
+                .HasColumnName("category_id")
+                .HasConversion(x => x.Value, x => new CategoryId(x));
+            builder
+                .Property<UserId>("_authorId")
+                .HasColumnName("author_id")
+                .HasConversion(x => x.Value, x => new UserId(x));
+            builder
+                .PrimitiveCollection<UserId[]>("_collaborators")
+                .HasColumnName("collaborators")
+                .ElementType(
+                    e =>
+                        e.HasConversion(
+                            new ValueConverter<UserId, long>(id => id.Value, id => new UserId(id))
+                        )
+                );
 
             builder.HasOne<Category>().WithMany().HasForeignKey("_categoryId");
-
-            builder
-                .Property<long[]>("_collaborators")
-                .HasColumnName("collaborators")
-                .IsUnicode(false)
-                .HasMaxLength(256);
 
             builder.OwnsOne<Cover>(
                 "_cover",
@@ -47,7 +59,10 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
                 image =>
                 {
                     image.HasKey(x => x.Id);
-                    image.Property(x => x.Id).HasConversion(x => x.Value, x => new(x));
+                    image
+                        .Property(x => x.Id)
+                        .HasColumnName("id")
+                        .HasConversion(x => x.Value, x => new(x));
 
                     image.ToTable("images");
                     image.WithOwner().HasForeignKey("album_id");
@@ -62,10 +77,17 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
                     image.Property<bool>("_isRemoved").HasColumnName("is_removed");
 
                     image
-                        .Property<long[]>("_tags")
+                        .PrimitiveCollection<TagId[]>("_tags")
                         .HasColumnName("tags")
-                        .IsUnicode(false)
-                        .HasMaxLength(256);
+                        .ElementType(
+                            e =>
+                                e.HasConversion(
+                                    new ValueConverter<TagId, long>(
+                                        id => id.Value,
+                                        id => new TagId(id)
+                                    )
+                                )
+                        );
                 }
             );
         }

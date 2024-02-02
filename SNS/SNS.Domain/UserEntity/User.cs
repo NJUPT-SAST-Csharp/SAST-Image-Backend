@@ -4,13 +4,16 @@ namespace SNS.Domain.UserEntity
 {
     public sealed class User : EntityBase<UserId>
     {
+        private User()
+            : base(default) { }
+
         private User(UserId userId)
             : base(userId) { }
 
         private string _nickname = "SASTer";
         private string _biography = string.Empty;
 
-        private readonly List<User> _following;
+        private readonly IList<User> _following = [];
 
         public static User CreateNewUser(long userId)
         {

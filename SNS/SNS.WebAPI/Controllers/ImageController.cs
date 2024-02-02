@@ -14,7 +14,7 @@ namespace SNS.WebAPI.Controllers
 
         [NonAction]
         [SubscribeMessage("Image.Add")]
-        public async Task AddNewImage(AddImageMessage message)
+        public async Task AddNewImage(ImageAddedMessage message)
         {
             await _commandSender.CommandAsync(
                 new AddImageCommand(message.ImageId, message.AuthorId, message.AlbumId)

@@ -3,6 +3,7 @@ using System.Reflection;
 using Dapper;
 using Exceptions.ExceptionHandlers;
 using Exceptions.Extensions;
+using Messenger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +28,7 @@ using SastImg.Domain.AlbumAggregate;
 using SastImg.Infrastructure.Caching;
 using SastImg.Infrastructure.DomainRepositories;
 using SastImg.Infrastructure.Event;
+using SastImg.Infrastructure.EventBus;
 using SastImg.Infrastructure.Persistence;
 using SastImg.Infrastructure.Persistence.QueryDatabase;
 using SastImg.Infrastructure.Persistence.TypeConverters;
@@ -108,6 +110,25 @@ namespace SastImg.Infrastructure.Extensions
             services.AddExceptionHandler<NoPermissionExceptionHandler>();
             services.AddExceptionHandler<DomainBusinessRuleInvalidExceptionHandler>();
             services.AddDefaultExceptionHandler();
+            return services;
+        }
+
+        public static IServiceCollection ConfigureEventBus(this IServiceCollection services)
+        {
+            services.AddCap(x =>
+            {
+                x.UseEntityFramework<SastImgDbContext>();
+                x.UseRabbitMQ(options =>
+                {
+                    options.HostName = "localhost";
+                    options.UserName = "Jagdender";
+                    options.Password = "150524";
+                    options.Port = 5672;
+                    options.VirtualHost = "/";
+                });
+            });
+            services.AddScoped<IMessagePublisher, ExternalEventBus>();
+
             return services;
         }
 
