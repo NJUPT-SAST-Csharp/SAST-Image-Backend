@@ -25,9 +25,9 @@ namespace SNS.Domain.ImageAggregate.ImageEntity
         private readonly AlbumId _albumId;
         private readonly UserId _authorId;
 
-        public static Image CreateNewImage(long imageId, UserId authorId, AlbumId albumId)
+        public static Image CreateNewImage(ImageId imageId, UserId authorId, AlbumId albumId)
         {
-            return new Image(new(imageId), authorId, albumId);
+            return new Image(imageId, authorId, albumId);
         }
 
         public CommentId AddComment(UserId commenter, string content)

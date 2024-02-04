@@ -15,9 +15,9 @@ namespace SNS.Domain.UserEntity
 
         private readonly IList<User> _following = [];
 
-        public static User CreateNewUser(long userId)
+        public static User CreateNewUser(UserId userId)
         {
-            var user = new User(new(userId));
+            var user = new User(userId);
             return user;
         }
 
