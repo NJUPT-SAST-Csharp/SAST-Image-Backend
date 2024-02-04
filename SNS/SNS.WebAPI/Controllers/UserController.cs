@@ -13,7 +13,7 @@ namespace SNS.WebAPI.Controllers
         private readonly ICommandRequestSender _commandSender = commandSender;
 
         [NonAction]
-        [SubscribeMessage("sastimg.user.created")]
+        [SubscribeMessage("account.user.created")]
         public async Task UserCreated(
             UserCreatedMessage message,
             CancellationToken cancellationToken = default

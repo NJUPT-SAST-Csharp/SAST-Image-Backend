@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Auth\Auth.csproj" />
+    <ProjectReference Include="..\..\Shared\Messenger\Messenger.csproj" />
     <ProjectReference Include="..\..\Shared\Response\Response.csproj" />
     <ProjectReference Include="..\..\Shared\Utilities\Utilities.csproj" />
     <ProjectReference Include="..\Account.Entity\Account.Entity.csproj" />

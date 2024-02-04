@@ -12,11 +12,13 @@ using Account.Application.SeedWorks;
 using Account.Application.Services;
 using Account.Entity.RoleEntity.Repositories;
 using Account.Entity.UserEntity.Repositories;
+using Account.Infrastructure.EventBus;
 using Account.Infrastructure.Persistence;
 using Account.Infrastructure.Services;
 using Auth.Authentication.Extensions;
 using Auth.Authorization.Extensions;
 using FluentValidation;
+using Messenger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,7 +50,8 @@ namespace Account.Infrastructure.Configurations
                         ?? throw new NullReferenceException(
                             "Couldn't find the cache connection string."
                         )
-                );
+                )
+                .AddEventBus(configuration);
 
             services.AddScoped<ITokenSender, EmailTokenSender>();
             services.AddScoped<IJwtProvider, JwtProvider>();
@@ -186,6 +189,28 @@ namespace Account.Infrastructure.Configurations
                 ConnectionMultiplexer.Connect(connectionString)
             );
             services.AddScoped<IAuthCodeCache, RedisAuthCache>();
+            return services;
+        }
+
+        private static IServiceCollection AddEventBus(
+            this IServiceCollection services,
+            IConfiguration configuration
+        )
+        {
+            services.AddCap(x =>
+            {
+                x.UseEntityFramework<AccountDbContext>();
+                x.UseRabbitMQ(options =>
+                {
+                    options.HostName = "localhost";
+                    options.UserName = "Jagdender";
+                    options.Password = "150524";
+                    options.Port = 5672;
+                    options.VirtualHost = "/";
+                });
+            });
+
+            services.AddScoped<IMessagePublisher, ExternalEventBus>();
             return services;
         }
 
