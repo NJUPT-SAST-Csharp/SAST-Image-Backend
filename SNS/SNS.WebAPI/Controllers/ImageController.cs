@@ -14,10 +14,14 @@ namespace SNS.WebAPI.Controllers
 
         [NonAction]
         [SubscribeMessage("sastimg.image.added")]
-        public async Task AddNewImage(ImageAddedMessage message)
+        public async Task AddNewImage(
+            ImageAddedMessage message,
+            CancellationToken cancellationToken = default
+        )
         {
             await _commandSender.CommandAsync(
-                new AddImageCommand(message.ImageId, message.AuthorId, message.AlbumId)
+                new AddImageCommand(message.ImageId, message.AuthorId, message.AlbumId),
+                cancellationToken
             );
         }
     }
