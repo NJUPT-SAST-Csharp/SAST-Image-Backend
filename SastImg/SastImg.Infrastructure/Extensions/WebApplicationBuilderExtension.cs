@@ -9,24 +9,23 @@ namespace SastImg.Infrastructure.Extensions
 {
     public static class WebApplicationBuilderExtension
     {
-        public static void ConfigureServices(
-            this WebApplicationBuilder builder,
-            IConfigurationRoot configuration
-        )
+        public static void ConfigureServices(this WebApplicationBuilder builder)
         {
+            var configuration = builder.Configuration;
+
             builder.Services.TryAddSingleton(configuration);
-            builder.Services.ConfigureOptions(builder.Configuration);
+
+            builder.Services.ConfigureOptions(configuration);
+
             builder.Services.AddLogging();
-            builder.Services.ConfigureDatabase(
-                configuration.GetConnectionString("SastimgDb")
-                    ?? throw new Exception("The connection string \"SastimgDb\" is null.")
-            );
-            builder.Services.ConfigureCache(
-                configuration.GetConnectionString("DistributedCache")
-                    ?? throw new Exception("The connection string \"DistributedCache\" is null.")
-            );
+
+            builder.Services.ConfigureDatabase(configuration.GetConnectionString("SastimgDb")!);
+
+            builder.Services.ConfigureCache(configuration.GetConnectionString("DistributedCache")!);
+
             builder.Services.ConfigureMediator();
-            builder.Services.ConfigureEventBus();
+
+            builder.Services.ConfigureEventBus(configuration);
 
             builder.Services.ConfigureExceptionHandlers();
 
@@ -36,14 +35,8 @@ namespace SastImg.Infrastructure.Extensions
 
             builder.Services.ConfigureJwtAuthentication(options =>
             {
-                options.SecKey =
-                    configuration["Authentication:SecKey"]
-                    ?? throw new NullReferenceException("Couldn't find 'SecKey'.");
-                options.Algorithms =
-                [
-                    configuration["Authentication:Algorithm"]
-                        ?? throw new NullReferenceException("Couldn't find 'Algorithm'.")
-                ];
+                options.SecKey = configuration["Authentication:SecKey"]!;
+                options.Algorithms = [configuration["Authentication:Algorithm"]!];
             });
             builder.Services.AddAuthorizationBuilder().AddBasicPolicies();
         }

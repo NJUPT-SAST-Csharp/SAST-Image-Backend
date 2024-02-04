@@ -3,8 +3,9 @@ using SastImg.Infrastructure.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure the config provider.
-var configuration = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json")
+builder
+    .Configuration.AddJsonFile("appsettings.json")
+    .AddJsonFile("appsettings.Development.json")
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json")
     .Build();
 
@@ -12,7 +13,7 @@ var configuration = new ConfigurationBuilder()
 builder.Logging.ConfigureLogger();
 
 // Add & Configure services.
-builder.ConfigureServices(configuration);
+builder.ConfigureServices();
 
 // Build the web application.
 var app = builder.Build();

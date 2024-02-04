@@ -11,7 +11,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.ConfigureMediator();
-builder.Services.ConfigureDbContext();
+builder.Services.ConfigureEventBus(builder.Configuration);
+builder.Services.ConfigureDbContext(builder.Configuration.GetConnectionString("SNSDb")!);
 builder.Services.ConfigureRepositories();
 
 var app = builder.Build();

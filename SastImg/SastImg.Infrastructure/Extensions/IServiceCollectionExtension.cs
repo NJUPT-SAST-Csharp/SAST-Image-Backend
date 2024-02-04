@@ -113,20 +113,25 @@ namespace SastImg.Infrastructure.Extensions
             return services;
         }
 
-        public static IServiceCollection ConfigureEventBus(this IServiceCollection services)
+        public static IServiceCollection ConfigureEventBus(
+            this IServiceCollection services,
+            IConfiguration configuration
+        )
         {
+            var config = configuration.GetSection("EventBus");
+
             services.AddCap(x =>
             {
                 x.UseEntityFramework<SastImgDbContext>();
                 x.UseRabbitMQ(options =>
                 {
-                    options.HostName = "localhost";
-                    options.UserName = "Jagdender";
-                    options.Password = "150524";
-                    options.Port = 5672;
-                    options.VirtualHost = "/";
+                    options.Port = config.GetValue<int>("Port");
+                    options.HostName = config["HostName"]!;
+                    options.UserName = config["UserName"]!;
+                    options.Password = config["Password"]!;
                 });
             });
+
             services.AddScoped<IMessagePublisher, ExternalEventBus>();
 
             return services;

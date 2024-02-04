@@ -197,16 +197,17 @@ namespace Account.Infrastructure.Configurations
             IConfiguration configuration
         )
         {
+            var config = configuration.GetSection("EventBus");
+
             services.AddCap(x =>
             {
                 x.UseEntityFramework<AccountDbContext>();
                 x.UseRabbitMQ(options =>
                 {
-                    options.HostName = "localhost";
-                    options.UserName = "Jagdender";
-                    options.Password = "150524";
-                    options.Port = 5672;
-                    options.VirtualHost = "/";
+                    options.HostName = config["HostName"]!;
+                    options.UserName = config["UserName"]!;
+                    options.Password = config["Password"]!;
+                    options.Port = config.GetValue<int>("Port");
                 });
             });
 
