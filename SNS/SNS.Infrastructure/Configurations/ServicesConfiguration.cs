@@ -4,6 +4,7 @@ using Primitives.Command;
 using Primitives.DomainEvent;
 using Primitives.Query;
 using SNS.Domain.UserEntity;
+using SNS.Infrastructure.DomainRepositories;
 using SNS.Infrastructure.EventBus;
 using SNS.Infrastructure.Persistence;
 

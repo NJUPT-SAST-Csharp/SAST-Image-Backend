@@ -8,10 +8,5 @@ namespace SNS.Domain.ImageAggregate
             Image image,
             CancellationToken cancellationToken = default
         );
-
-        public Task<Image> GetImageByIdAsync(
-            ImageId id,
-            CancellationToken cancellationToken = default
-        );
     }
 }

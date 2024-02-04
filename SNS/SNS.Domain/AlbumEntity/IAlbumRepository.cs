@@ -2,12 +2,8 @@
 {
     public interface IAlbumRepository
     {
-        public Task<Album> AddNewAlbumAsync(
+        public Task<AlbumId> AddNewAlbumAsync(
             Album album,
-            CancellationToken cancellationToken = default
-        );
-        public Task<Album> GetAlbumByIdAsync(
-            AlbumId albumId,
             CancellationToken cancellationToken = default
         );
     }

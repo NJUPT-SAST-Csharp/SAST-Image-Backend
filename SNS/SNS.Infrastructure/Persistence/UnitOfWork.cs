@@ -2,11 +2,13 @@
 
 namespace SNS.Infrastructure.Persistence
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork(SNSDbContext context) : IUnitOfWork
     {
-        public Task CommitChangesAsync(CancellationToken cancellationToken = default)
+        private readonly SNSDbContext _context = context;
+
+        public async Task CommitChangesAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }
