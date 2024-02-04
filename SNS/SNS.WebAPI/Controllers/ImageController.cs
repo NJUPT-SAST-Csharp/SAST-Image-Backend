@@ -13,7 +13,7 @@ namespace SNS.WebAPI.Controllers
         private readonly ICommandRequestSender _commandSender = commandSender;
 
         [NonAction]
-        [SubscribeMessage("Image.Add")]
+        [SubscribeMessage("sastimg.image.added")]
         public async Task AddNewImage(ImageAddedMessage message)
         {
             await _commandSender.CommandAsync(
