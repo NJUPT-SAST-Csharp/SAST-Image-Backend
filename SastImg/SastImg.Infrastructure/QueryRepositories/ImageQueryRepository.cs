@@ -297,6 +297,7 @@ namespace SastImg.Infrastructure.QueryRepositories
 
         public Task<IEnumerable<AlbumImageDto>> GetImagesByUserAsync(
             UserId requesterId,
+            AlbumId albumId,
             CancellationToken cancellationToken = default
         )
         {
@@ -309,15 +310,19 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "FROM images AS i "
                 + "INNER JOIN albums AS a ON a.id = i.album_id "
                 + "WHERE a.author_id = @authorId "
+                + "AND a.id = @albumId"
                 + "AND NOT a.is_removed "
                 + "AND i.is_removed "
                 + "ORDER BY a.updated_at DESC";
 
-            return _connection.QueryAsync<AlbumImageDto>(sql, new { authorId = requesterId.Value });
+            return _connection.QueryAsync<AlbumImageDto>(
+                sql,
+                new { authorId = requesterId.Value, albumId = albumId.Value }
+            );
         }
 
         public Task<IEnumerable<AlbumImageDto>> GetImagesByAdminAsync(
-            UserId authorId,
+            AlbumId albumId,
             CancellationToken cancellationToken = default
         )
         {
@@ -328,13 +333,11 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "i.album_id AS AlbumId, "
                 + "i.url as Url "
                 + "FROM images AS i "
-                + "INNER JOIN albums AS a ON a.id = i.album_id "
-                + "WHERE a.author_id = @authorId "
-                + "AND NOT a.is_removed "
+                + "WHERE i.album_id = @albumId "
                 + "AND i.is_removed "
                 + "ORDER BY a.updated_at DESC";
 
-            return _connection.QueryAsync<AlbumImageDto>(sql, new { authorId = authorId.Value });
+            return _connection.QueryAsync<AlbumImageDto>(sql, new { albumId = albumId.Value });
         }
 
         #endregion

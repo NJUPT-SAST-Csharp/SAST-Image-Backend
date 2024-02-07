@@ -93,18 +93,18 @@ namespace SastImg.WebAPI.Controllers
         /// <summary>
         /// TODO: complete
         /// </summary>
-        /// <param name="authorId"></param>
+        /// <param name="albumId"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpGet("images/removed")]
+        [HttpGet("album/{albumId}/removed")]
         public async Task<Ok<IEnumerable<AlbumImageDto>>> GetRemovedImages(
-            [Range(0, long.MaxValue)] long authorId = 0,
+            [Range(0, long.MaxValue)] long albumId = 0,
             CancellationToken cancellationToken = default
         )
         {
             var images = await _querySender.QueryAsync(
-                new GetRemovedImagesQuery(authorId, User),
+                new GetRemovedImagesQuery(albumId, User),
                 cancellationToken
             );
             return Responses.Data(images);

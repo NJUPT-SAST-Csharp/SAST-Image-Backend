@@ -1,15 +1,15 @@
 ﻿using System.Security.Claims;
 using SastImg.Application.ImageServices.GetImages;
 using SastImg.Application.SeedWorks;
-using SastImg.Domain;
+using SastImg.Domain.AlbumAggregate.AlbumEntity;
 using Shared.Primitives.Query;
 
 namespace SastImg.Application.ImageServices.GetRemovedImages
 {
-    public sealed class GetRemovedImagesQuery(long authorId, ClaimsPrincipal user)
+    public sealed class GetRemovedImagesQuery(long albumId, ClaimsPrincipal user)
         : IQueryRequest<IEnumerable<AlbumImageDto>>
     {
-        public UserId AuthorId { get; } = new(authorId);
+        public AlbumId AlbumId { get; } = new(albumId);
         public RequesterInfo Requester { get; } = new(user);
     }
 }

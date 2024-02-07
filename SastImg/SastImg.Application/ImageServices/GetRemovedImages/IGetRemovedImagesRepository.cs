@@ -1,5 +1,6 @@
 ﻿using SastImg.Application.ImageServices.GetImages;
 using SastImg.Domain;
+using SastImg.Domain.AlbumAggregate.AlbumEntity;
 
 namespace SastImg.Application.ImageServices.GetRemovedImages
 {
@@ -7,11 +8,12 @@ namespace SastImg.Application.ImageServices.GetRemovedImages
     {
         public Task<IEnumerable<AlbumImageDto>> GetImagesByUserAsync(
             UserId requesterId,
+            AlbumId albumId,
             CancellationToken cancellationToken = default
         );
 
         public Task<IEnumerable<AlbumImageDto>> GetImagesByAdminAsync(
-            UserId authorId,
+            AlbumId authorId,
             CancellationToken cancellationToken = default
         );
     }
