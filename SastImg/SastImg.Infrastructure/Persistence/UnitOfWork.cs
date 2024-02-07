@@ -1,6 +1,6 @@
 ﻿using System.Data;
+using Primitives;
 using Primitives.DomainEvent;
-using SastImg.Domain;
 using Shared.Primitives.DomainEvent;
 
 namespace SastImg.Infrastructure.Persistence

@@ -1,5 +1,5 @@
-﻿using Primitives.Command;
-using SastImg.Domain;
+﻿using Primitives;
+using Primitives.Command;
 using SastImg.Domain.AlbumAggregate;
 
 namespace SastImg.Application.AlbumServices.UpdateAlbumInfo
