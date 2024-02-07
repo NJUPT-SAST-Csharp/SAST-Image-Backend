@@ -4,17 +4,14 @@ using SastImg.Application.SeedWorks;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
 using SastImg.Domain.AlbumAggregate.ImageEntity;
 
-namespace SastImg.Application.ImageServices.RemoveImages
+namespace SastImg.Application.ImageServices.RemoveImage
 {
-    public sealed class RemoveImagesCommand(
-        long albumId,
-        IEnumerable<long> imageIds,
-        ClaimsPrincipal user
-    ) : ICommandRequest
+    public sealed class RemoveImageCommand(long albumId, long imageId, ClaimsPrincipal user)
+        : ICommandRequest
     {
         public AlbumId AlbumId { get; } = new(albumId);
 
-        public IEnumerable<ImageId> ImageIds { get; } = imageIds.Select(id => new ImageId(id));
+        public ImageId ImageId { get; } = new(imageId);
 
         public RequesterInfo Requester { get; } = new(user);
     }

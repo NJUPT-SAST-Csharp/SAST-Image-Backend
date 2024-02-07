@@ -78,7 +78,6 @@ namespace SastImg.WebAPI.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpGet("albums/search")]
-        //[EnableRateLimiting("")]
         public async Task<Ok<IEnumerable<AlbumDto>>> SearchAlbums(
             [Range(0, long.MaxValue)] long categoryId,
             [MaxLength(12)] string title,

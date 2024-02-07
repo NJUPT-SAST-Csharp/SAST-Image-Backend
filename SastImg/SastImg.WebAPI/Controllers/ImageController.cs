@@ -8,6 +8,7 @@ using SastImg.Application.ImageServices.AddImage;
 using SastImg.Application.ImageServices.GetImage;
 using SastImg.Application.ImageServices.GetImages;
 using SastImg.Application.ImageServices.GetRemovedImages;
+using SastImg.Application.ImageServices.RemoveImage;
 using SastImg.Application.ImageServices.SearchImages;
 using SastImg.WebAPI.Requests.ImageRequest;
 using Shared.Response.Builders;
@@ -34,7 +35,7 @@ namespace SastImg.WebAPI.Controllers
         /// <param name="page"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        [HttpGet("images/{albumId}")]
+        [HttpGet("album/{albumId}/images")]
         public async Task<Ok<IEnumerable<AlbumImageDto>>> GetImages(
             [Range(0, long.MaxValue)] long albumId = 0,
             [Range(0, 1000)] int page = 0,
@@ -54,7 +55,7 @@ namespace SastImg.WebAPI.Controllers
         /// </summary>
         /// <returns></returns>
         [Authorize]
-        [HttpGet("images")]
+        [HttpGet("images/search")]
         public async Task<Ok<IEnumerable<SearchedImageDto>>> SearchImages(
             [FromQuery] [MaxLength(5)] long[] tags,
             [Range(0, long.MaxValue)] long categoryId = 0,
@@ -112,13 +113,30 @@ namespace SastImg.WebAPI.Controllers
         /// <summary>
         /// TODO: complete
         /// </summary>
+        /// <param name="albumId"></param>
+        /// <param name="imageId"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPut("album/{albumId}/remove/{imageId}")]
+        public async Task<NoContent> RemoveImage(
+            [Range(0, long.MaxValue)] long albumId,
+            [Range(0, long.MaxValue)] long imageId
+        )
+        {
+            await _commandSender.CommandAsync(new RemoveImageCommand(albumId, imageId, User));
+            return Responses.NoContent;
+        }
+
+        /// <summary>
+        /// TODO: complete
+        /// </summary>
         /// <param name="request"></param>
         /// <param name="albumId"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpPost("images/{albumId}")]
-        public async Task<Ok<ImageInfo>> AddImagesAsync(
+        [HttpPost("album/{albumId}/add")]
+        public async Task<Ok<ImageInfo>> AddImageAsync(
             [FromForm] AddImageRequest request,
             [FromRoute] [Range(0, long.MaxValue)] long albumId,
             CancellationToken cancellationToken = default
