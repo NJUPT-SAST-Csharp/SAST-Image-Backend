@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Primitives.Command;
 using Primitives.Query;
+using SastImg.Application.ImageServices.AddImage;
 using SastImg.Application.ImageServices.GetImage;
 using SastImg.Application.ImageServices.GetImages;
 using SastImg.Application.ImageServices.GetRemovedImages;
 using SastImg.Application.ImageServices.SearchImages;
+using SastImg.WebAPI.Requests.ImageRequest;
 using Shared.Response.Builders;
 
 namespace SastImg.WebAPI.Controllers
@@ -93,6 +95,7 @@ namespace SastImg.WebAPI.Controllers
         /// <param name="authorId"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpGet("images/removed")]
         public async Task<Ok<IEnumerable<AlbumImageDto>>> GetRemovedImages(
             [Range(0, long.MaxValue)] long authorId = 0,
@@ -104,6 +107,35 @@ namespace SastImg.WebAPI.Controllers
                 cancellationToken
             );
             return Responses.Data(images);
+        }
+
+        /// <summary>
+        /// TODO: complete
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="albumId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("images/{albumId}")]
+        public async Task<Ok<ImageInfo>> AddImagesAsync(
+            [FromForm] AddImageRequest request,
+            [FromRoute] [Range(0, long.MaxValue)] long albumId,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var response = await _commandSender.CommandAsync(
+                new AddImageCommand(
+                    request.Title,
+                    request.Description,
+                    request.Tags,
+                    request.Image,
+                    albumId,
+                    User
+                ),
+                cancellationToken
+            );
+            return Responses.Data(response);
         }
     }
 }

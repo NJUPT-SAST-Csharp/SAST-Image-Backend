@@ -136,7 +136,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             {
                 _cover = new(uri, true);
             }
-            // TODO: Raise domain event
+            image.AddDomainEvent(new ImageAddedDomainEvent(Id, _authorId, image.Id));
             return image.Id;
         }
 

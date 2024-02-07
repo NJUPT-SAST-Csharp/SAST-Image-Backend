@@ -39,6 +39,7 @@
     <ProjectReference Include="..\..\Shared\Exceptions\Exceptions.csproj" />
     <ProjectReference Include="..\SastImg.Application\SastImg.Application.csproj" />
 	<ProjectReference Include="..\SastImg.Domain\SastImg.Domain.csproj" />
+	<ProjectReference Include="..\SastImg.Storage\SastImg.Storage.csproj" />
   </ItemGroup>
 
 </Project>

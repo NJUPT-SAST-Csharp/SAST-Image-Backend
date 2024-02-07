@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using SastImg.Storage.Configurations;
 
 namespace SastImg.Infrastructure.Extensions
 {
@@ -26,6 +27,8 @@ namespace SastImg.Infrastructure.Extensions
             builder.Services.ConfigureMediator();
 
             builder.Services.ConfigureEventBus(configuration);
+
+            builder.Services.ConfigureStorage(configuration);
 
             builder.Services.ConfigureExceptionHandlers();
 

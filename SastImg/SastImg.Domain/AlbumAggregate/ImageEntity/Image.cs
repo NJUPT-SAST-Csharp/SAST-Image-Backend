@@ -22,7 +22,8 @@ public sealed class Image : EntityBase<ImageId>
     internal static Image CreateNewImage(string title, Uri uri, string description, TagId[] tags)
     {
         CheckRule(new ImageOwnNotMoreThan5TagsRule(tags));
-        return new Image(title, uri, description, tags);
+        Image image = new(title, uri, description, tags);
+        return image;
     }
 
     #region Fields

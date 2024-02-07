@@ -16,7 +16,7 @@ namespace SastImg.Application.AlbumServices.CreateAlbum
         {
             await _messenger.PublishAsync(
                 "sastimg.album.created",
-                new AlbumCreatedMessage(notification.AuthorId, notification.AlbumId),
+                new AlbumCreatedMessage(notification),
                 cancellationToken
             );
         }

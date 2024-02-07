@@ -15,8 +15,6 @@
 
   <ItemGroup>
     <Folder Include="CategoryServices\CreateCategory\" />
-    <Folder Include="ImageServices\AddImage\" />
-    <Folder Include="ImageServices\RemoveImages\" />
   </ItemGroup>
 
 </Project>

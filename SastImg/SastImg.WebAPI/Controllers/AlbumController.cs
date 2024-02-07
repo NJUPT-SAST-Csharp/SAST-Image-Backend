@@ -81,7 +81,7 @@ namespace SastImg.WebAPI.Controllers
         //[EnableRateLimiting("")]
         public async Task<Ok<IEnumerable<AlbumDto>>> SearchAlbums(
             [Range(0, long.MaxValue)] long categoryId,
-            [MaxLength(10)] string title,
+            [MaxLength(12)] string title,
             [Range(0, 1000)] int page = 0,
             CancellationToken cancellationToken = default
         )

@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SastImg.Application.ImageServices.AddImage;
 using SastImg.Storage.Implements;
 using SastImg.Storage.Options;
-using SastImg.Storage.Services;
 
 namespace SastImg.Storage.Configurations
 {
@@ -14,8 +14,7 @@ namespace SastImg.Storage.Configurations
         )
         {
             services.AddSingleton<IOssClientFactory, OssClientFactory>();
-            services.AddScoped<IImageClient, ImageClient>();
-
+            services.AddScoped<IImageStorageClient, ImageClient>();
             services.Configure<OssOptions>(configuration.GetRequiredSection(OssOptions.Position));
             return services;
         }

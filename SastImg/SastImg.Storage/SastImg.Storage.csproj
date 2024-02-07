@@ -13,4 +13,8 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SastImg.Application\SastImg.Application.csproj" />
+  </ItemGroup>
+
 </Project>

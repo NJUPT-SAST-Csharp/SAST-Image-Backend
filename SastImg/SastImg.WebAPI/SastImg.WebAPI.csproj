@@ -24,7 +24,6 @@
 
   <ItemGroup>
     <Folder Include="logs\" />
-    <Folder Include="Requests\ImageRequest\" />
   </ItemGroup>
 
 </Project>
