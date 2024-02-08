@@ -13,8 +13,4 @@
     <ProjectReference Include="..\SastImg.Domain\SastImg.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="CategoryServices\CreateCategory\" />
-  </ItemGroup>
-
 </Project>
