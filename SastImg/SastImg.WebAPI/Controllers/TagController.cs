@@ -3,11 +3,14 @@ using Auth.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Primitives.Command;
 using Primitives.Query;
 using SastImg.Application.TagServices;
+using SastImg.Application.TagServices.CreateTag;
 using SastImg.Application.TagServices.GetAllTags;
 using SastImg.Application.TagServices.GetTags;
 using SastImg.Application.TagServices.SearchTags;
+using SastImg.WebAPI.Requests.TagRequest;
 using Shared.Response.Builders;
 
 namespace SastImg.WebAPI.Controllers
@@ -17,9 +20,11 @@ namespace SastImg.WebAPI.Controllers
     /// </summary>
     [Route("api")]
     [ApiController]
-    public class TagController(IQueryRequestSender querySender) : ControllerBase
+    public class TagController(IQueryRequestSender querySender, ICommandRequestSender commandSender)
+        : ControllerBase
     {
         private readonly IQueryRequestSender _querySender = querySender;
+        private readonly ICommandRequestSender _commandSender = commandSender;
 
         /// <summary>
         /// TODO: complete
@@ -72,6 +77,26 @@ namespace SastImg.WebAPI.Controllers
                 cancellationToken
             );
             return Responses.Data(tagsDto);
+        }
+
+        /// <summary>
+        /// TODO: complete
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("tag")]
+        public async Task<Created<TagDto>> CreateTag(
+            [FromBody] CreateTagRequest request,
+            CancellationToken cancellationToken
+        )
+        {
+            var tagDto = await _commandSender.CommandAsync(
+                new CreateTagCommand(request.Name),
+                cancellationToken
+            );
+            return Responses.Created(tagDto);
         }
     }
 }

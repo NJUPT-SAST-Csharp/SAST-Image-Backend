@@ -13,6 +13,6 @@ namespace SastImg.Domain.TagEntity
 
         private readonly string _name;
 
-        internal static Tag CreateNewTag(string name) => new(name);
+        public static Tag CreateNewTag(string name) => new(name);
     }
 }

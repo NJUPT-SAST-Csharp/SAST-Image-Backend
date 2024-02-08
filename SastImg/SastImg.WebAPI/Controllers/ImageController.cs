@@ -138,7 +138,7 @@ namespace SastImg.WebAPI.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpPost("album/{albumId}/add")]
-        public async Task<Ok<ImageInfoDto>> AddImageAsync(
+        public async Task<Created<ImageInfoDto>> AddImageAsync(
             [FromForm] AddImageRequest request,
             [FromRoute] [Range(0, long.MaxValue)] long albumId,
             CancellationToken cancellationToken = default
@@ -153,7 +153,7 @@ namespace SastImg.WebAPI.Controllers
                 User
             );
             var response = await _commandSender.CommandAsync(command, cancellationToken);
-            return Responses.Data(response);
+            return Responses.Created(response);
         }
     }
 }
