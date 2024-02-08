@@ -27,6 +27,7 @@ using SastImg.Application.SeedWorks;
 using SastImg.Application.TagServices;
 using SastImg.Domain.AlbumAggregate;
 using SastImg.Domain.Categories;
+using SastImg.Domain.TagEntity;
 using SastImg.Infrastructure.Caching;
 using SastImg.Infrastructure.DomainRepositories;
 using SastImg.Infrastructure.Event;
@@ -81,6 +82,7 @@ namespace SastImg.Infrastructure.Extensions
             services.AddScoped<ISearchImagesRepository, ImageQueryRepository>();
             services.AddScoped<IGetRemovedImagesRepository, ImageQueryRepository>();
 
+            services.AddScoped<ITagRepository, TagRepository>();
             services.AddScoped<ITagQueryRepository, TagQueryRepository>();
 
             services.AddScoped<ICategoryRepository, CategoryRepository>();
