@@ -15,7 +15,7 @@ namespace SastImg.Application.AlbumServices.UpdateCollaborators
         public AlbumId AlbumId { get; } = new(albumId);
 
         public UserId[] Collaborators { get; } =
-            collaborators.Select(id => new UserId(id)).ToArray();
+            Array.ConvertAll(collaborators, c => new UserId(c));
 
         public RequesterInfo Requester { get; } = new(user);
     }
