@@ -206,6 +206,13 @@ namespace SastImg.WebAPI.Controllers
             return Responses.NoContent;
         }
 
+        /// <summary>
+        /// TODO: complete
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="page"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [Authorize]
         [HttpGet("user/{userId}/albums/removed")]
         public async Task<Ok<IEnumerable<AlbumDto>>> GetRemovedAlbums(
