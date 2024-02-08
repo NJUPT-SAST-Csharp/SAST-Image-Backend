@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Primitives.Command;
+using Primitives.Query;
 using SastImg.Application.CategoryServices.CreateCategory;
+using SastImg.Application.CategoryServices.GetAllCategory;
 using SastImg.WebAPI.Requests.CategoryRequest;
 using Shared.Response.Builders;
 
@@ -14,9 +16,13 @@ namespace SastImg.WebAPI.Controllers
     /// </summary>
     [Route("api")]
     [ApiController]
-    public class CategoryController(ICommandRequestSender commandSender) : ControllerBase
+    public class CategoryController(
+        ICommandRequestSender commandSender,
+        IQueryRequestSender querySender
+    ) : ControllerBase
     {
         private readonly ICommandRequestSender _commandSender = commandSender;
+        private readonly IQueryRequestSender _querySender = querySender;
 
         /// <summary>
         /// TODO: complete
@@ -28,7 +34,7 @@ namespace SastImg.WebAPI.Controllers
         [HttpPost("category")]
         public async Task<NoContent> CreateCategory(
             [FromBody] CreateCategoryRequest request,
-            CancellationToken cancellationToken
+            CancellationToken cancellationToken = default
         )
         {
             await _commandSender.CommandAsync(
@@ -37,6 +43,18 @@ namespace SastImg.WebAPI.Controllers
             );
 
             return Responses.NoContent;
+        }
+
+        [HttpGet("categories")]
+        public async Task<Ok<IEnumerable<CategoryDto>>> GetAllCategories(
+            CancellationToken cancellationToken = default
+        )
+        {
+            var categories = await _querySender.QueryAsync(
+                new GetAllCategoriesQuery(),
+                cancellationToken
+            );
+            return Responses.Data(categories);
         }
     }
 }

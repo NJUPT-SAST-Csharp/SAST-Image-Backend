@@ -1,4 +1,4 @@
-﻿using SastImg.Application.CategoryServices.GetAllCategories;
+﻿using SastImg.Application.CategoryServices.GetAllCategory;
 
 namespace SastImg.Application.CategoryServices
 {

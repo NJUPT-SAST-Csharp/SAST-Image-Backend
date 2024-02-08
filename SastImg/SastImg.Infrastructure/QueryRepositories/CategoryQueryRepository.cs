@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Dapper;
 using SastImg.Application.CategoryServices;
-using SastImg.Application.CategoryServices.GetAllCategories;
+using SastImg.Application.CategoryServices.GetAllCategory;
 using SastImg.Infrastructure.Persistence.QueryDatabase;
 
 namespace SastImg.Infrastructure.QueryRepositories
