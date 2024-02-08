@@ -2,5 +2,5 @@
 
 namespace SastImg.Application.CategoryServices.GetAllCategory
 {
-    public sealed class GetAllCategoryQuery : IQueryRequest<IEnumerable<CategoryDto>> { }
+    public sealed class GetAllCategoriesQuery : IQueryRequest<IEnumerable<CategoryDto>> { }
 }
