@@ -3,7 +3,7 @@ using SastImg.Domain.TagEntity;
 
 namespace SastImg.Domain.AlbumAggregate.ImageEntity.Rules
 {
-    internal sealed class ImageOwnNotMoreThan5TagsRule(TagId[] tags) : IDomainBusinessRule
+    internal readonly struct ImageOwnNotMoreThan5TagsRule(TagId[] tags) : IDomainBusinessRule
     {
         public bool IsBroken => tags.Length > 5;
 

@@ -39,7 +39,7 @@ public abstract class EntityBase<T> : IEquatable<EntityBase<T>>, IDomainEventCon
         return Equals(obj as EntityBase<T>);
     }
 
-    protected static void CheckRule(IDomainBusinessRule rule)
+    protected static void CheckRule(in IDomainBusinessRule rule)
     {
         if (rule.IsBroken)
         {
