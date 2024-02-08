@@ -6,6 +6,7 @@
         DetailedAlbums,
         Images,
         DetailedImages,
+        Categories,
         Likes,
         Views,
     }

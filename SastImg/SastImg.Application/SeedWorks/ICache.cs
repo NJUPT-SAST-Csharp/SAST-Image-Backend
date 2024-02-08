@@ -8,7 +8,7 @@
 
         public Task ResetCachingAsync(
             string key,
-            T? value,
+            T value,
             CancellationToken cancellationToken = default
         );
     }
