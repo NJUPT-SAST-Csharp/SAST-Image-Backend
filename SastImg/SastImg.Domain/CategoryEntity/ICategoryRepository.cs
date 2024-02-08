@@ -9,11 +9,6 @@ namespace SastImg.Domain.Categories
             CancellationToken cancellationToken = default
         );
 
-        public Task DeleteCategoryByIdAsync(
-            CategoryId id,
-            CancellationToken cancellationToken = default
-        );
-
         public Task<Category> GetCatogoryByIdAsync(
             CategoryId id,
             CancellationToken cancellationToken = default

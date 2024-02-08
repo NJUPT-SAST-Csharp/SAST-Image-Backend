@@ -18,6 +18,7 @@ using SastImg.Application.AlbumServices.GetAlbums;
 using SastImg.Application.AlbumServices.GetRemovedAlbums;
 using SastImg.Application.AlbumServices.SearchAlbums;
 using SastImg.Application.CategoryServices;
+using SastImg.Application.CategoryServices.GetAllCategory;
 using SastImg.Application.ImageServices.GetImage;
 using SastImg.Application.ImageServices.GetImages;
 using SastImg.Application.ImageServices.GetRemovedImages;
@@ -25,6 +26,7 @@ using SastImg.Application.ImageServices.SearchImages;
 using SastImg.Application.SeedWorks;
 using SastImg.Application.TagServices;
 using SastImg.Domain.AlbumAggregate;
+using SastImg.Domain.Categories;
 using SastImg.Infrastructure.Caching;
 using SastImg.Infrastructure.DomainRepositories;
 using SastImg.Infrastructure.Event;
@@ -81,6 +83,7 @@ namespace SastImg.Infrastructure.Extensions
 
             services.AddScoped<ITagQueryRepository, TagQueryRepository>();
 
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ICategoryQueryRepository, CategoryQueryRepository>();
 
             return services;
@@ -99,6 +102,7 @@ namespace SastImg.Infrastructure.Extensions
             services.AddScoped<ICache<DetailedAlbumDto>, GetAlbumCache>();
             services.AddScoped<ICache<IEnumerable<AlbumImageDto>>, GetImagesCache>();
             services.AddScoped<ICache<DetailedImageDto>, DetailedImageDtoCache>();
+            services.AddScoped<ICache<IEnumerable<CategoryDto>>, GetAllCategoriesCache>();
             return services;
         }
 
