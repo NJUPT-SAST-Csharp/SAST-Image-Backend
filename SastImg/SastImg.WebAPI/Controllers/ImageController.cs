@@ -75,10 +75,12 @@ namespace SastImg.WebAPI.Controllers
         /// TODO: complete
         /// </summary>
         /// <param name="imageId"></param>
+        /// <param name="albumId"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        [HttpGet("image/{imageId}")]
+        [HttpGet("album/{albumId}/image/{imageId}")]
         public async Task<Results<Ok<DetailedImageDto>, NotFound>> GetImage(
+            [Range(0, long.MaxValue)] long albumId,
             [Range(0, long.MaxValue)] long imageId,
             CancellationToken cancellationToken
         )
@@ -97,7 +99,7 @@ namespace SastImg.WebAPI.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpGet("album/{albumId}/removed")]
+        [HttpGet("album/{albumId}/images/removed")]
         public async Task<Ok<IEnumerable<AlbumImageDto>>> GetRemovedImages(
             [Range(0, long.MaxValue)] long albumId = 0,
             CancellationToken cancellationToken = default
@@ -117,7 +119,7 @@ namespace SastImg.WebAPI.Controllers
         /// <param name="imageId"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpPut("album/{albumId}/remove/{imageId}")]
+        [HttpPut("album/{albumId}/image/{imageId}/remove")]
         public async Task<NoContent> RemoveImage(
             [Range(0, long.MaxValue)] long albumId,
             [Range(0, long.MaxValue)] long imageId

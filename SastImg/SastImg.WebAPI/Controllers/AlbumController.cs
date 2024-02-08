@@ -7,6 +7,7 @@ using Primitives.Query;
 using SastImg.Application.AlbumServices.CreateAlbum;
 using SastImg.Application.AlbumServices.GetAlbum;
 using SastImg.Application.AlbumServices.GetAlbums;
+using SastImg.Application.AlbumServices.GetRemovedAlbums;
 using SastImg.Application.AlbumServices.RemoveAlbum;
 using SastImg.Application.AlbumServices.RestoreAlbum;
 using SastImg.Application.AlbumServices.SearchAlbums;
@@ -36,7 +37,7 @@ namespace SastImg.WebAPI.Controllers
         /// <param name="page"></param>
         /// <param name="userId"></param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        [HttpGet("albums")]
+        [HttpGet("user/{userId}/albums")]
         public async Task<Ok<IEnumerable<AlbumDto>>> GetAlbums(
             [Range(0, long.MaxValue)] long userId,
             [Range(0, 1000)] int page = 0,
@@ -203,6 +204,21 @@ namespace SastImg.WebAPI.Controllers
                 cancellationToken
             );
             return Responses.NoContent;
+        }
+
+        [Authorize]
+        [HttpGet("user/{userId}/albums/removed")]
+        public async Task<Ok<IEnumerable<AlbumDto>>> GetRemovedAlbums(
+            [Range(0, long.MaxValue)] long userId,
+            [Range(0, 1000)] int page = 0,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var albums = await _querySender.QueryAsync(
+                new GetRemovedAlbumsQuery(userId, User),
+                cancellationToken
+            );
+            return Responses.Data(albums);
         }
     }
 }
