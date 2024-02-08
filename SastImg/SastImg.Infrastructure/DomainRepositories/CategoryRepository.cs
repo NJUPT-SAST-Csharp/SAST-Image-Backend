@@ -18,7 +18,7 @@ namespace SastImg.Infrastructure.DomainRepositories
             return entity.Entity.Id;
         }
 
-        public async Task<Category> GetCatogoryByIdAsync(
+        public async Task<Category> GetCatogoryAsync(
             CategoryId id,
             CancellationToken cancellationToken = default
         )

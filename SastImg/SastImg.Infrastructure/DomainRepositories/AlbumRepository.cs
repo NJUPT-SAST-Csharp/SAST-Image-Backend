@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Exceptions.Exceptions;
+using Microsoft.EntityFrameworkCore;
 using SastImg.Domain.AlbumAggregate;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
 using SastImg.Infrastructure.Persistence;
@@ -18,9 +19,20 @@ namespace SastImg.Infrastructure.DomainRepositories
             return a.Entity.Id;
         }
 
-        public Task<Album> GetAlbumAsync(AlbumId id, CancellationToken cancellationToken = default)
+        public async Task<Album> GetAlbumAsync(
+            AlbumId id,
+            CancellationToken cancellationToken = default
+        )
         {
-            var album = _context.Albums.SingleAsync(a => a.Id == id, cancellationToken);
+            var album = await _context
+                .Albums.Include("_images")
+                .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
+
+            if (album is null)
+            {
+                throw new DbNotFoundException(nameof(Album), id.Value.ToString());
+            }
+
             return album;
         }
     }

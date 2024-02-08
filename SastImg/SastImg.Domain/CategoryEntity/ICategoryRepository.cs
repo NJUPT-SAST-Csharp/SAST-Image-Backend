@@ -9,7 +9,7 @@ namespace SastImg.Domain.Categories
             CancellationToken cancellationToken = default
         );
 
-        public Task<Category> GetCatogoryByIdAsync(
+        public Task<Category> GetCatogoryAsync(
             CategoryId id,
             CancellationToken cancellationToken = default
         );
