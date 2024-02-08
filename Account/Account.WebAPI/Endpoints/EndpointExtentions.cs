@@ -69,5 +69,24 @@ namespace Account.WebAPI.Endpoints
                 .AddValidator<TRequest>()
                 .RequireAuthorization(role.ToString());
         }
+
+        public static RouteHandlerBuilder AddGet<TRequest>(
+            this RouteGroupBuilder builder,
+            string route,
+            AuthorizationRole role
+        )
+            where TRequest : struct, IRequest
+        {
+            return builder
+                .MapGet(
+                    route,
+                    (
+                        [FromServices] IAuthEndpointHandler<TRequest> handler,
+                        [AsParameters] TRequest request,
+                        ClaimsPrincipal user
+                    ) => handler.Handle(request, user)
+                )
+                .RequireAuthorization(role.ToString());
+        }
     }
 }

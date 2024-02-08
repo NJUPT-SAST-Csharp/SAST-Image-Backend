@@ -10,6 +10,7 @@ using Account.Application.Endpoints.AccountEndpoints.Login;
 using Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount;
 using Account.Application.Endpoints.AccountEndpoints.Register.SendRegistrationCode;
 using Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistrationCode;
+using Account.Application.Endpoints.UserEndpoints.Query;
 using Response.ReponseObjects;
 
 namespace Account.WebAPI.Configurations
@@ -55,5 +56,7 @@ namespace Account.WebAPI.Configurations
     [JsonSerializable(typeof(LoginDto))]
     [JsonSerializable(typeof(VerifyForgetCodeDto))]
     [JsonSerializable(typeof(VerifyRegistrationCodeDto))]
+    [JsonSerializable(typeof(QueryUserRequest))]
+    [JsonSerializable(typeof(QueryUserDto))]
     public partial class AppJsonSerializerContext : JsonSerializerContext { }
 }

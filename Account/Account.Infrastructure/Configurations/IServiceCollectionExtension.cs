@@ -8,6 +8,7 @@ using Account.Application.Endpoints.AccountEndpoints.Login;
 using Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount;
 using Account.Application.Endpoints.AccountEndpoints.Register.SendRegistrationCode;
 using Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistrationCode;
+using Account.Application.Endpoints.UserEndpoints.Query;
 using Account.Application.SeedWorks;
 using Account.Application.Services;
 using Account.Entity.RoleEntity.Repositories;
@@ -129,6 +130,11 @@ namespace Account.Infrastructure.Configurations
                     ChangePasswordRequest,
                     ChangePasswordEndpointHandler,
                     ChangePasswordRequestValidator
+                >()
+                .RegisterAuthEndpointResolver<
+                    QueryUserRequest,
+                    QueryUserEndpointHandler,
+                    QueryUserRequestValidator
                 >();
             return services;
         }
