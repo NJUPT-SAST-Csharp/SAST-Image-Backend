@@ -11,12 +11,12 @@ namespace SastImg.Application.CategoryServices.GetAllCategory
         private readonly ICategoryQueryRepository _repository = repository;
         private readonly ICache<IEnumerable<CategoryDto>> _cache = cache;
 
-        public async Task<IEnumerable<CategoryDto>> Handle(
+        public Task<IEnumerable<CategoryDto>> Handle(
             GetAllCategoriesQuery request,
             CancellationToken cancellationToken
         )
         {
-            return (await _cache.GetCachingAsync(string.Empty, cancellationToken))!;
+            return _cache.GetCachingAsync(string.Empty, cancellationToken)!;
         }
     }
 }
