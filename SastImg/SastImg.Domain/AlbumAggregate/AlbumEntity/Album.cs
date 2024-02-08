@@ -1,5 +1,6 @@
 ﻿using Primitives.Entity;
 using SastImg.Domain.AlbumAggregate.AlbumEntity.Events;
+using SastImg.Domain.AlbumAggregate.AlbumEntity.Rules;
 using SastImg.Domain.AlbumAggregate.ImageEntity;
 using SastImg.Domain.CategoryEntity;
 using SastImg.Domain.TagEntity;
@@ -159,6 +160,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
         public void RestoreImage(ImageId imageId)
         {
+            CheckRule(new RestoreImageOnlyWhenAlbumNotRemovedRule(_isRemoved));
             var image = _images.FirstOrDefault(image => image.Id == imageId);
             if (image is not null)
             {
