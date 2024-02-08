@@ -1,4 +1,5 @@
-﻿using Primitives;
+﻿using Exceptions.Exceptions;
+using Primitives;
 using Primitives.Command;
 using SastImg.Domain.AlbumAggregate;
 
@@ -16,9 +17,15 @@ namespace SastImg.Application.ImageServices.RemoveImage
         {
             var album = await _repository.GetAlbumAsync(request.AlbumId, cancellationToken);
 
-            album.RemoveImage(request.ImageId);
-
-            await _unitOfWork.CommitChangesAsync(cancellationToken);
+            if (request.Requester.IsAdmin || album.IsManagedBy(request.Requester.Id))
+            {
+                album.RemoveImage(request.ImageId);
+                await _unitOfWork.CommitChangesAsync(cancellationToken);
+            }
+            else
+            {
+                throw new NoPermissionException();
+            }
         }
     }
 }

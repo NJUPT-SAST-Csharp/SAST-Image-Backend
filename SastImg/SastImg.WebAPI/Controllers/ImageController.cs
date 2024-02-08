@@ -136,23 +136,21 @@ namespace SastImg.WebAPI.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpPost("album/{albumId}/add")]
-        public async Task<Ok<ImageInfo>> AddImageAsync(
+        public async Task<Ok<ImageInfoDto>> AddImageAsync(
             [FromForm] AddImageRequest request,
             [FromRoute] [Range(0, long.MaxValue)] long albumId,
             CancellationToken cancellationToken = default
         )
         {
-            var response = await _commandSender.CommandAsync(
-                new AddImageCommand(
-                    request.Title,
-                    request.Description,
-                    request.Tags,
-                    request.Image,
-                    albumId,
-                    User
-                ),
-                cancellationToken
+            using var command = new AddImageCommand(
+                request.Title,
+                request.Description,
+                request.Tags,
+                request.Image,
+                albumId,
+                User
             );
+            var response = await _commandSender.CommandAsync(command, cancellationToken);
             return Responses.Data(response);
         }
     }

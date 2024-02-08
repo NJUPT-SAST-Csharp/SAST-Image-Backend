@@ -14,7 +14,7 @@ namespace SastImg.Application.ImageServices.AddImage
         IFormFile file,
         long albumId,
         ClaimsPrincipal user
-    ) : ICommandRequest<ImageInfo>, IDisposable
+    ) : ICommandRequest<ImageInfoDto>, IDisposable
     {
         public Stream ImageFile { get; } = file.OpenReadStream();
 

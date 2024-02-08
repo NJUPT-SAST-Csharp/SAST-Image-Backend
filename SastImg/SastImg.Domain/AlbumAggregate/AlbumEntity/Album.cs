@@ -86,6 +86,10 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             if (_isRemoved)
                 return;
             _isRemoved = true;
+            foreach (var image in _images)
+            {
+                image.Remove();
+            }
             // TODO: Raise domain event.
         }
 
@@ -94,6 +98,10 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             if (_isRemoved == false)
                 return;
             _isRemoved = false;
+            foreach (var image in _images)
+            {
+                image.Restore();
+            }
             // TODO: Raise domain event.
         }
 
@@ -146,7 +154,6 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             if (image is not null)
             {
                 image.Remove();
-                // TODO: Raise domain event
             }
         }
 
@@ -156,7 +163,6 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             if (image is not null)
             {
                 image.Restore();
-                // TODO: Raise domain event
             }
         }
 
