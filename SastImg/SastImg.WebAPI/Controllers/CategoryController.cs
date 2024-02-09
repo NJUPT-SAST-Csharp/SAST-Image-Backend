@@ -45,6 +45,11 @@ namespace SastImg.WebAPI.Controllers
             return Responses.NoContent;
         }
 
+        /// <summary>
+        /// TODO: complete
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpGet("categories")]
         public async Task<Ok<IEnumerable<CategoryDto>>> GetAllCategories(
             CancellationToken cancellationToken = default

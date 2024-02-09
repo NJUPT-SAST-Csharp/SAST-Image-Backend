@@ -60,9 +60,17 @@ public sealed class Image : EntityBase<ImageId>
         _tags = tags;
     }
 
-    internal void Remove() => _isRemoved = true;
+    internal void Remove()
+    {
+        if (_isRemoved == false)
+            _isRemoved = true;
+    }
 
-    internal void Restore() => _isRemoved = false;
+    internal void Restore()
+    {
+        if (_isRemoved == true)
+            _isRemoved = false;
+    }
 
     #endregion
 }

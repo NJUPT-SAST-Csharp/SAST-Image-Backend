@@ -15,7 +15,13 @@ public sealed class AlbumDomainUnitTest
         const Accessibility accessibility = Accessibility.Public;
         const int expected = 1;
 
-        Album album = Album.CreateNewAlbum(authorId, categoryId, title, description, accessibility);
+        Album album = Album.CreateNewAlbum(
+            new(authorId),
+            new(categoryId),
+            title,
+            description,
+            accessibility
+        );
         Assert.AreEqual(expected, album.DomainEvents.Count);
     }
 }
