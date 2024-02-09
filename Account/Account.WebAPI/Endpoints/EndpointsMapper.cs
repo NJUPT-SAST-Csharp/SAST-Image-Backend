@@ -33,7 +33,7 @@ namespace Account.WebAPI.Endpoints
 
         private static void MapAccount(RouteGroupBuilder builder)
         {
-            var account = builder.MapGroup("/account");
+            var account = builder;
 
             account.AddPost<AuthorizeRequest>("/authorize", AuthorizationRole.Admin);
             account.AddPost<LoginRequest>("/login");
