@@ -18,9 +18,10 @@ namespace Account.Infrastructure.Persistence
             CancellationToken cancellationToken = default
         )
         {
-            return _dbContext
-                .Roles
-                .FirstOrDefaultAsync(r => r.Name == name.ToUpperInvariant(), cancellationToken);
+            return _dbContext.Roles.FirstOrDefaultAsync(
+                r => r.NormalizedName == name.ToUpperInvariant(),
+                cancellationToken
+            );
         }
     }
 }
