@@ -1,11 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace SNS.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/sns")]
     [ApiController]
-    public class CommentController : ControllerBase
-    {
-    }
+    public class CommentController : ControllerBase { }
 }

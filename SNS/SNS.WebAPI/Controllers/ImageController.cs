@@ -6,7 +6,7 @@ using SNS.WebAPI.Messages;
 
 namespace SNS.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/sns")]
     [ApiController]
     public sealed class ImageController(ICommandRequestSender commandSender) : ControllerBase
     {

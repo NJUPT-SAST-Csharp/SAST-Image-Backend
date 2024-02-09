@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Account.Application.Endpoints.AccountEndpoints.Authorize;
+﻿using Account.Application.Endpoints.AccountEndpoints.Authorize;
 using Account.Application.Endpoints.AccountEndpoints.ChangePassword;
 using Account.Application.Endpoints.AccountEndpoints.ForgetAccount.ResetPassword;
 using Account.Application.Endpoints.AccountEndpoints.ForgetAccount.SendForgetCode;
@@ -17,10 +16,7 @@ namespace Account.WebAPI.Endpoints
     {
         internal static WebApplication MapEndpoints(this WebApplication app)
         {
-            var api = app.MapGroup("/api");
-
-            api.MapPost("/test", (ClaimsPrincipal user) => user.Identity)
-                .RequireAuthorization(AuthorizationRole.User.ToString());
+            var api = app.MapGroup("/api/account");
 
             MapAccount(api);
             MapUser(api);

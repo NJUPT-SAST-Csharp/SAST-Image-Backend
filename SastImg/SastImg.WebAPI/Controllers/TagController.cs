@@ -18,7 +18,7 @@ namespace SastImg.WebAPI.Controllers
     /// <summary>
     /// TODO: complete
     /// </summary>
-    [Route("api")]
+    [Route("api/sastimg")]
     [ApiController]
     public class TagController(IQueryRequestSender querySender, ICommandRequestSender commandSender)
         : ControllerBase

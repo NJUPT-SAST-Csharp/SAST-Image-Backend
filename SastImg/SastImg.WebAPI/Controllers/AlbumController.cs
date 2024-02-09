@@ -21,7 +21,7 @@ namespace SastImg.WebAPI.Controllers
     /// <summary>
     /// TODO: complete
     /// </summary>
-    [Route("api")]
+    [Route("api/sastimg")]
     [ApiController]
     public sealed class AlbumController(
         IQueryRequestSender querySender,
