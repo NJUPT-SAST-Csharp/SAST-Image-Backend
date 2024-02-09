@@ -12,8 +12,13 @@ namespace SNS.Infrastructure.DomainRepositories
             CancellationToken cancellationToken = default
         )
         {
-            var u = await _context.Users.AddAsync(user, cancellationToken);
-            return u.Entity.Id;
+            var check = await _context.Users.FindAsync([user.Id], cancellationToken);
+
+            if (check is not null)
+                return check.Id;
+
+            var newUser = await _context.Users.AddAsync(user, cancellationToken);
+            return newUser.Entity.Id;
         }
     }
 }

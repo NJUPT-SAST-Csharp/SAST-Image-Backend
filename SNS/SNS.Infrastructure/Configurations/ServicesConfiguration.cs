@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Primitives;
 using Primitives.Command;
 using Primitives.DomainEvent;
 using Primitives.Query;
-using SNS.Application.SeedWorks;
 using SNS.Domain.AlbumEntity;
 using SNS.Domain.ImageAggregate;
 using SNS.Domain.UserEntity;

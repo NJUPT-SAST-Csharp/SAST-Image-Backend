@@ -1,4 +1,4 @@
-﻿using SNS.Application.SeedWorks;
+﻿using Primitives;
 
 namespace SNS.Infrastructure.Persistence
 {
