@@ -16,10 +16,11 @@ using Shared.Response.Builders;
 namespace SastImg.WebAPI.Controllers
 {
     /// <summary>
-    /// TODO: complete
+    /// Controller for tag related operations.
     /// </summary>
-    [Route("api/sastimg")]
     [ApiController]
+    [Route("api/sastimg")]
+    [Produces("application/json")]
     public class TagController(IQueryRequestSender querySender, ICommandRequestSender commandSender)
         : ControllerBase
     {
@@ -27,12 +28,17 @@ namespace SastImg.WebAPI.Controllers
         private readonly ICommandRequestSender _commandSender = commandSender;
 
         /// <summary>
-        /// TODO: complete
+        /// Get All Tags
         /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <remarks>
+        /// <para>Get all tags</para>
+        /// <para>Admin authorization is required</para>
+        /// </remarks>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <response code="200">The tags</response>
         [Authorize(nameof(AuthorizationRole.Admin))]
         [HttpGet("tags/all")]
+        [ProducesResponseType<IEnumerable<TagDto>>(StatusCodes.Status200OK)]
         public async Task<Ok<IEnumerable<TagDto>>> GetAllTags(CancellationToken cancellationToken)
         {
             var tags = await _querySender.QueryAsync(new GetAllTagsQuery(), cancellationToken);
@@ -40,13 +46,14 @@ namespace SastImg.WebAPI.Controllers
         }
 
         /// <summary>
-        /// TODO: complete
+        /// Search Tags
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="name">The tag name(Support approximate search)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <response code="200">The tags</response>
         [Authorize]
         [HttpGet("tags/search")]
+        [ProducesResponseType<IEnumerable<TagDto>>(StatusCodes.Status200OK)]
         public async Task<Ok<IEnumerable<TagDto>>> SearchTags(
             [MaxLength(10)] string name,
             CancellationToken cancellationToken
@@ -60,13 +67,21 @@ namespace SastImg.WebAPI.Controllers
         }
 
         /// <summary>
-        /// TODO: complete
+        /// Get Tags by Ids
         /// </summary>
-        /// <param name="tagIds"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <remarks>
+        /// <para>
+        /// Get tags by ids <br/>
+        /// This endpoint is used to get tag's info when displaying images.
+        /// </para>
+        /// <para>Authorization is required</para>
+        /// </remarks>
+        /// <param name="tagIds">The tags' ids (up to 5)</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <response code="200">The tags</response>
         [Authorize]
         [HttpGet("tags")]
+        [ProducesResponseType<IEnumerable<TagDto>>(StatusCodes.Status200OK)]
         public async Task<Ok<IEnumerable<TagDto>>> GetTags(
             [FromQuery] long[] tagIds,
             CancellationToken cancellationToken
@@ -80,13 +95,18 @@ namespace SastImg.WebAPI.Controllers
         }
 
         /// <summary>
-        /// TODO: complete
+        /// Create Tag
         /// </summary>
-        /// <param name="request"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <remarks>
+        /// <para>Create a new tag</para>
+        /// <para>Authorization is required</para>
+        /// </remarks>
+        /// <param name="request">The new tag info</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <response code="201">The tag is created successfully</response>
         [Authorize]
         [HttpPost("tag")]
+        [ProducesResponseType<TagDto>(StatusCodes.Status201Created)]
         public async Task<Created<TagDto>> CreateTag(
             [FromBody] CreateTagRequest request,
             CancellationToken cancellationToken
