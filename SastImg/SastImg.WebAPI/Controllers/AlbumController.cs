@@ -58,7 +58,7 @@ namespace SastImg.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Get Album by AlbumId
+        /// Get Detailed Album
         /// </summary>
         /// <remarks>
         /// Get detailed information of the specific album.
