@@ -85,7 +85,7 @@ namespace SastImg.WebAPI.Controllers
         /// Search Albums
         /// </summary>
         /// <remarks>
-        /// <para>Search albums by category and title.</para>
+        /// Search albums by category and title.
         /// <para>Authorization is required.</para>
         /// </remarks>
         /// <param name="categoryId">The category albums belong to.</param>
@@ -114,7 +114,7 @@ namespace SastImg.WebAPI.Controllers
         /// Create Album
         /// </summary>
         /// <remarks>
-        /// <para>Create a new album.</para>
+        /// Create a new album.
         /// <para>Authorization is required.</para>
         /// </remarks>
         /// <param name="request">New album info</param>
@@ -143,7 +143,7 @@ namespace SastImg.WebAPI.Controllers
         /// Update Album Info
         /// </summary>
         /// <remarks>
-        /// <para>Update the album's title, description, category, and accessibility.</para>
+        /// Update the album's title, description, category, and accessibility.
         /// <para>Authorization is required.</para>
         /// </remarks>
         /// <param name="albumId">The album to be updated</param>
@@ -175,8 +175,9 @@ namespace SastImg.WebAPI.Controllers
         /// Remove Album
         /// </summary>
         /// <remarks>
-        /// <para>Remove the album.</para>
-        /// <para>Date can be restored in a period of time.</para>
+        /// Remove the album.
+        /// Data can be restored in a period of time
+        /// until server deletes them permanently.
         /// <para>Authorization is required.</para>
         /// </remarks>
         /// <param name="albumId">The album to be removed.</param>
@@ -201,7 +202,7 @@ namespace SastImg.WebAPI.Controllers
         /// Restore Album
         /// </summary>
         /// <remarks>
-        /// <para>Restore a removed album.</para>
+        /// Restore a removed album.
         /// <para>Authorization is required.</para>
         /// </remarks>
         /// <param name="albumId">The album to be restored</param>
@@ -226,7 +227,7 @@ namespace SastImg.WebAPI.Controllers
         /// Update Album Collaborators
         /// </summary>
         /// <remarks>
-        /// <para>Update the album's collaborators.</para>
+        /// Update the album's collaborators.
         /// <para>Authorization is required.</para>
         /// </remarks>
         /// <param name="albumId">The album id.</param>
@@ -253,7 +254,7 @@ namespace SastImg.WebAPI.Controllers
         /// Get Removed Albums
         /// </summary>
         /// <remarks>
-        /// <para>Get the removed albums of the specific user.</para>
+        /// Get the removed albums of the specific user.
         /// <para>Authorization is required.</para>
         /// </remarks>
         /// <param name="userId">User that removed albums authored by</param>

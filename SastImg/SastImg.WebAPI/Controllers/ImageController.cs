@@ -59,7 +59,7 @@ namespace SastImg.WebAPI.Controllers
         /// Search Images
         /// </summary>
         /// <remarks>
-        /// <para>Search images by a series of params.</para>
+        /// Search images by a series of params.
         /// <para>Authorization is required</para>
         /// </remarks>
         /// <param name="tags">Tags that images have</param>
@@ -124,10 +124,8 @@ namespace SastImg.WebAPI.Controllers
         /// Get Removed Images
         /// </summary>
         /// <remarks>
-        /// <para>
-        /// Get removed images in a specific album<br/>
+        /// Get removed images in a specific album.
         /// The album must not be removed.
-        /// </para>
         /// <para>Authorization is required</para>
         /// </remarks>
         /// <param name="albumId">Album that removed images belong to</param>
@@ -152,7 +150,9 @@ namespace SastImg.WebAPI.Controllers
         /// Remove Image
         /// </summary>
         /// <remarks>
-        /// <para>Remove an image from an album</para>
+        /// Remove an image from an album.
+        /// Data can be restored in a period of time
+        /// until server deletes them permanently.
         /// <para>Authorization is required</para>
         /// </remarks>
         /// <param name="albumId">Album that the image to be removed belongs to</param>
@@ -174,7 +174,7 @@ namespace SastImg.WebAPI.Controllers
         /// Add Image
         /// </summary>
         /// <remarks>
-        /// <para>Add a new image to an album</para>
+        /// Add a new image to an album
         /// <para>Authorization is required</para>
         /// </remarks>
         /// <param name="request">The new image info.</param>

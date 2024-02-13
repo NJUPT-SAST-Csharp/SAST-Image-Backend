@@ -31,7 +31,7 @@ namespace SastImg.WebAPI.Controllers
         /// Get All Tags
         /// </summary>
         /// <remarks>
-        /// <para>Get all tags</para>
+        /// Get all tags
         /// <para>Admin authorization is required</para>
         /// </remarks>
         /// <param name="cancellationToken">Cancellation token</param>
@@ -49,7 +49,7 @@ namespace SastImg.WebAPI.Controllers
         /// Search Tags
         /// </summary>
         /// <remarks>
-        /// <para>Search tags by name</para>
+        /// Search tags by name
         /// <para>Authorization is required</para>
         /// </remarks>
         /// <param name="name">The tag name(Support approximate search)</param>
@@ -74,10 +74,8 @@ namespace SastImg.WebAPI.Controllers
         /// Get Tags by Ids
         /// </summary>
         /// <remarks>
-        /// <para>
-        /// Get tags by ids <br/>
+        /// Get tags by ids.
         /// This endpoint is used to get tag's info when displaying images.
-        /// </para>
         /// <para>Authorization is required</para>
         /// </remarks>
         /// <param name="tagIds">The tags' ids (up to 5)</param>
@@ -102,7 +100,7 @@ namespace SastImg.WebAPI.Controllers
         /// Create Tag
         /// </summary>
         /// <remarks>
-        /// <para>Create a new tag</para>
+        /// Create a new tag.
         /// <para>Authorization is required</para>
         /// </remarks>
         /// <param name="request">The new tag info</param>

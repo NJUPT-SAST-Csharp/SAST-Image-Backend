@@ -29,7 +29,7 @@ namespace SastImg.WebAPI.Controllers
         /// Create Category
         /// </summary>
         /// <remarks>
-        /// <para>Create a new category</para>
+        /// Create a new category
         /// <para>Admin authorization is required</para>
         /// </remarks>
         /// <param name="request">The new category info</param>
