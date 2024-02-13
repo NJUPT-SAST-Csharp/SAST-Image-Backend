@@ -12,10 +12,11 @@ using Shared.Response.Builders;
 namespace SastImg.WebAPI.Controllers
 {
     /// <summary>
-    /// TODO: complete
+    /// Controller for category related operations.
     /// </summary>
-    [Route("api/sastimg")]
     [ApiController]
+    [Route("api/sastimg")]
+    [Produces("application/json")]
     public class CategoryController(
         ICommandRequestSender commandSender,
         IQueryRequestSender querySender
@@ -25,13 +26,18 @@ namespace SastImg.WebAPI.Controllers
         private readonly IQueryRequestSender _querySender = querySender;
 
         /// <summary>
-        /// TODO: complete
+        /// Create Category
         /// </summary>
-        /// <param name="request"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <remarks>
+        /// <para>Create a new category</para>
+        /// <para>Admin authorization is required</para>
+        /// </remarks>
+        /// <param name="request">The new category info</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <response code="204">The category is created</response>
         [Authorize(nameof(AuthorizationRole.Admin))]
         [HttpPost("category")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<NoContent> CreateCategory(
             [FromBody] CreateCategoryRequest request,
             CancellationToken cancellationToken = default
@@ -41,16 +47,19 @@ namespace SastImg.WebAPI.Controllers
                 new CreateCategoryCommand(request.Name, request.Description),
                 cancellationToken
             );
-
             return Responses.NoContent;
         }
 
         /// <summary>
-        /// TODO: complete
+        /// Get All Categories
         /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <remarks>
+        /// Get all categories
+        /// </remarks>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <response code="200">The categories</response>
         [HttpGet("categories")]
+        [ProducesResponseType<IEnumerable<CategoryDto>>(StatusCodes.Status200OK)]
         public async Task<Ok<IEnumerable<CategoryDto>>> GetAllCategories(
             CancellationToken cancellationToken = default
         )
