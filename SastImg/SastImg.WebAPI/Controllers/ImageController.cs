@@ -183,8 +183,9 @@ namespace SastImg.WebAPI.Controllers
         /// <response code="201">The image is added successfully</response>
         [Authorize]
         [HttpPost("album/{albumId}/add")]
+        [Produces("application/json", "multipart/form-data")]
         [ProducesResponseType<ImageInfoDto>(StatusCodes.Status201Created)]
-        public async Task<Created<ImageInfoDto>> AddImageAsync(
+        public async Task<Created<ImageInfoDto>> AddImage(
             [FromForm] AddImageRequest request,
             [FromRoute] [Range(0, long.MaxValue)] long albumId,
             CancellationToken cancellationToken = default
