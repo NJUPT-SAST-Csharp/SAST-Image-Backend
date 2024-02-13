@@ -85,14 +85,14 @@ namespace SastImg.WebAPI.Controllers
         /// Search Albums
         /// </summary>
         /// <remarks>
-        /// <para>Search albums by category and title (order by update time descending).</para>
+        /// <para>Search albums by category and title.</para>
         /// <para>Authorization is required.</para>
         /// </remarks>
         /// <param name="categoryId">The category albums belong to.</param>
         /// <param name="page">24 albums per page.</param>
-        /// <param name="title">Support for approximate search</param>
+        /// <param name="title">The album title(Support approximate search)</param>
         /// <param name="cancellationToken">Cancellation token</param>
-        /// <response code="200">The albums</response>
+        /// <response code="200">The albums(order by update time descending)</response>
         [Authorize]
         [HttpGet("albums/search")]
         [ProducesResponseType<IEnumerable<AlbumDto>>(StatusCodes.Status200OK)]

@@ -48,6 +48,10 @@ namespace SastImg.WebAPI.Controllers
         /// <summary>
         /// Search Tags
         /// </summary>
+        /// <remarks>
+        /// <para>Search tags by name</para>
+        /// <para>Authorization is required</para>
+        /// </remarks>
         /// <param name="name">The tag name(Support approximate search)</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <response code="200">The tags</response>
