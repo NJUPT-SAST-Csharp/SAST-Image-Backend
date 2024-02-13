@@ -4,6 +4,6 @@ namespace SastImg.Application.AlbumServices.CreateAlbum
 {
     public sealed class CreateAlbumDto(AlbumId id)
     {
-        public AlbumId Id { get; } = id;
+        public long Id { get; } = id.Value;
     }
 }
