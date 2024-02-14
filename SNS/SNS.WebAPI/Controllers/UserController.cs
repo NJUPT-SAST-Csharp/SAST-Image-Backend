@@ -1,8 +1,13 @@
 ﻿using Messenger;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Primitives.Command;
+using Shared.Response.Builders;
 using SNS.Application.UserServices.AddUser;
+using SNS.Application.UserServices.UpdateProfile;
 using SNS.WebAPI.Messages;
+using SNS.WebAPI.Requests;
 
 namespace SNS.WebAPI.Controllers
 {
@@ -24,5 +29,23 @@ namespace SNS.WebAPI.Controllers
                 cancellationToken
             );
         }
+
+        [Authorize]
+        [HttpPut("user/profile")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<NoContent> UpdateProfile(
+            [FromBody] UpdateProfileRequest request,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var command = new UpdateProfileCommand(request.Nickname, request.Biography, User);
+
+            await _commandSender.CommandAsync(command, cancellationToken);
+
+            return Responses.NoContent;
+        }
+
+        [Authorize]
+        [HttpPut("user/avatar")]
     }
 }

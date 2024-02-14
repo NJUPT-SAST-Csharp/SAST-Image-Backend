@@ -6,5 +6,10 @@
             User user,
             CancellationToken cancellationToken = default
         );
+
+        public Task<User> GetUserAsync(
+            UserId userId,
+            CancellationToken cancellationToken = default
+        );
     }
 }

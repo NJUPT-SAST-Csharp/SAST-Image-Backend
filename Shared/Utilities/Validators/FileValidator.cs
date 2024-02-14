@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
-namespace SastImg.WebAPI.Validators
+namespace Utilities.Validators
 {
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property, AllowMultiple = false)]
-    internal sealed class FileValidator(int maxMB) : ValidationAttribute
+    public sealed class FileValidator(int maxMB) : ValidationAttribute
     {
         private readonly int _maxMB = maxMB;
 

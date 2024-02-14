@@ -1,4 +1,6 @@
-﻿using SNS.Domain.UserEntity;
+﻿using Exceptions.Exceptions;
+using Microsoft.EntityFrameworkCore;
+using SNS.Domain.UserEntity;
 using SNS.Infrastructure.Persistence;
 
 namespace SNS.Infrastructure.DomainRepositories
@@ -19,6 +21,21 @@ namespace SNS.Infrastructure.DomainRepositories
 
             var newUser = await _context.Users.AddAsync(user, cancellationToken);
             return newUser.Entity.Id;
+        }
+
+        public async Task<User> GetUserAsync(
+            UserId userId,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var user = await _context
+                .Users.Include("_following")
+                .FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
+            if (user is null)
+            {
+                throw new DbNotFoundException(nameof(User), userId.Value.ToString());
+            }
+            return user;
         }
     }
 }

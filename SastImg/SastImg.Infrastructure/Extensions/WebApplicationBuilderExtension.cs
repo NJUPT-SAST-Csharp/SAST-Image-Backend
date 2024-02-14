@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using SastImg.Storage.Configurations;
 
 namespace SastImg.Infrastructure.Extensions
@@ -13,6 +14,11 @@ namespace SastImg.Infrastructure.Extensions
         public static void ConfigureServices(this WebApplicationBuilder builder)
         {
             var configuration = builder.Configuration;
+
+            if (builder.Environment.IsDevelopment())
+            {
+                builder.Services.ConfigureSwagger();
+            }
 
             builder.Services.TryAddSingleton(configuration);
 
@@ -31,8 +37,6 @@ namespace SastImg.Infrastructure.Extensions
             builder.Services.ConfigureStorage(configuration);
 
             builder.Services.ConfigureExceptionHandlers();
-
-            builder.Services.ConfigureSwagger();
 
             builder.Services.AddControllers();
 

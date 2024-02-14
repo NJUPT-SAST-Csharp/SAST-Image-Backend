@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using SastImg.WebAPI.Validators;
+using Utilities.Validators;
 
 namespace SastImg.WebAPI.Requests.ImageRequest
 {
