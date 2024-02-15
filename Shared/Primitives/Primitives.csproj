@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DotNetCore.CAP" Version="8.0.0" />
+    <PackageReference Include="DotNetCore.CAP" Version="8.0.1" />
     <PackageReference Include="MediatR" Version="12.2.0" />
-	<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1" />
+	<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.2" />
   </ItemGroup>
 
 </Project>

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using SastImg.Storage.Configurations;
+using Shared.Storage.Configurations;
 
 namespace SastImg.Infrastructure.Extensions
 {
