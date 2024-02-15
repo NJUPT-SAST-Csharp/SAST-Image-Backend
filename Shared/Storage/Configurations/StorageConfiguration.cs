@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SastImg.Application.ImageServices.AddImage;
 using Shared.Storage.Implements;
 using Shared.Storage.Options;
+using Storage.Clients;
 
 namespace Shared.Storage.Configurations
 {
@@ -15,7 +16,9 @@ namespace Shared.Storage.Configurations
         {
             services.AddSingleton<IOssClientFactory, OssClientFactory>();
             services.AddScoped<IImageStorageClient, ImageClient>();
-            services.Configure<OssOptions>(configuration.GetRequiredSection(OssOptions.Position));
+            services.Configure<ImageOssOptions>(
+                configuration.GetRequiredSection(ImageOssOptions.Position)
+            );
             return services;
         }
 

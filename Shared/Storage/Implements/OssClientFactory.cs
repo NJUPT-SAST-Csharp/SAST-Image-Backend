@@ -8,7 +8,7 @@ namespace Shared.Storage.Implements
     {
         private readonly OssClient _client;
 
-        public OssClientFactory(IOptions<OssOptions> options)
+        public OssClientFactory(IOptions<ImageOssOptions> options)
         {
             var value = options.Value;
             _client = new(value.Endpoint, value.AccessKeyId, value.AccessKeySecret);
