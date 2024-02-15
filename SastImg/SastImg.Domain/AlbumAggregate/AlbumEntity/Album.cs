@@ -108,12 +108,13 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
         public void SetCoverAsLatestImage()
         {
-            var image = _images.OrderByDescending(i => i.UploadedTime).FirstOrDefault();
-            if (image is not null)
-            {
-                _cover = new(image?.ImageUrl, true);
-                // TODO: Raise domain event
-            }
+            var image = _images
+                .Where(image => image.IsRemoved == false)
+                .OrderByDescending(i => i.UploadedTime)
+                .FirstOrDefault();
+
+            _cover = new(image?.ImageUrl, true);
+            // TODO: Raise domain event
         }
 
         public void SetCoverAsContainedImage(ImageId imageId)
@@ -155,6 +156,10 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             if (image is not null)
             {
                 image.Remove();
+                if (image.ImageUrl.Equals(_cover.Url))
+                {
+                    _cover = _cover with { Url = null };
+                }
             }
         }
 
@@ -165,10 +170,14 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             if (image is not null)
             {
                 image.Restore();
+                if (_cover.IsLatestImage)
+                {
+                    SetCoverAsLatestImage();
+                }
             }
         }
 
-        public void UpdateImage(ImageId imageId, string title, string description, TagId[] tags)
+        public void UpdateImageInfo(ImageId imageId, string title, string description, TagId[] tags)
         {
             var image = _images.FirstOrDefault(image => image.Id == imageId);
             if (image is not null)

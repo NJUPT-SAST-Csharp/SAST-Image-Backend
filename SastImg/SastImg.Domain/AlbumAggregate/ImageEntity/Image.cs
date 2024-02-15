@@ -47,6 +47,8 @@ public sealed class Image : EntityBase<ImageId>
 
     internal Uri ImageUrl => _url;
 
+    internal bool IsRemoved => _isRemoved;
+
     #endregion
 
     #region Methods
