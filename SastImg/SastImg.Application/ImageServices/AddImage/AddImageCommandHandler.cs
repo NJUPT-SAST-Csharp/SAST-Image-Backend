@@ -30,11 +30,7 @@ namespace SastImg.Application.ImageServices.AddImage
                 throw new NoPermissionException();
             }
 
-            var url = await _client.UploadImageAsync(
-                request.FileName,
-                request.ImageFile,
-                cancellationToken
-            );
+            var url = await _client.UploadImageAsync(request.ImageFile, cancellationToken);
 
             album.AddImage(request.Title, url, request.Description, request.Tags);
 

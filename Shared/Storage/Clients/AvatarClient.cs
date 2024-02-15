@@ -1,8 +1,8 @@
 ﻿using Aliyun.OSS;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Shared.Storage.Implements;
 using SNS.Application.UserServices.UpdateAvatar;
-using SNS.Domain.UserEntity;
 using Storage.Options;
 
 namespace Storage.Clients
@@ -16,28 +16,35 @@ namespace Storage.Clients
         private readonly AvatarOssOptions _options = options.Value;
 
         public async Task<Uri> UploadAvatarAsync(
-            UserId userId,
-            Stream stream,
+            IFormFile file,
             CancellationToken cancellationToken = default
         )
         {
-            string key = userId.Value.ToString();
+            string key =
+                "avatars/"
+                + DateTime.UtcNow.ToString("yyyyMMdd")
+                + Path.GetRandomFileName().Replace(".", "")
+                + Path.GetExtension(file.FileName);
 
-            IAsyncResult start(AsyncCallback callBack, object? o) =>
-                _client.BeginPutObject(_options.BucketName, key, stream, callBack, o);
-            PutObjectResult end(IAsyncResult result) => _client.EndPutObject(result);
+            using (Stream stream = file.OpenReadStream())
+            {
+                IAsyncResult start(AsyncCallback callBack, object? o) =>
+                    _client.BeginPutObject(_options.BucketName, key, stream, callBack, o);
 
-            await Task.Factory.FromAsync(start, end, null);
+                PutObjectResult end(IAsyncResult result) => _client.EndPutObject(result);
+
+                await Task.Factory.FromAsync(start, end, null);
+            }
 
             return new Uri(GetImageUrl(key));
         }
 
-        private string GetImageUrl(string fileName)
+        private string GetImageUrl(string key)
         {
             return _options.Endpoint.Insert(
                     _options.Endpoint.IndexOf('/') + 2,
                     _options.BucketName + '.'
-                ) + $"/{fileName}";
+                ) + $"/{key}";
         }
     }
 }

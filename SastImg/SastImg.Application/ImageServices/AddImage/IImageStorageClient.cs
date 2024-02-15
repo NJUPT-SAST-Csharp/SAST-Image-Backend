@@ -1,10 +1,11 @@
-﻿namespace SastImg.Application.ImageServices.AddImage
+﻿using Microsoft.AspNetCore.Http;
+
+namespace SastImg.Application.ImageServices.AddImage
 {
     public interface IImageStorageClient
     {
         public Task<Uri> UploadImageAsync(
-            string fileName,
-            Stream stream,
+            IFormFile file,
             CancellationToken cancellationToken = default
         );
     }
