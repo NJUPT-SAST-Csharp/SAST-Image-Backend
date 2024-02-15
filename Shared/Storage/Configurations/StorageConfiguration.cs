@@ -8,7 +8,7 @@ namespace Shared.Storage.Configurations
 {
     public static class StorageConfiguration
     {
-        public static IServiceCollection ConfigureStorage(
+        public static IServiceCollection ConfigureImageStorage(
             this IServiceCollection services,
             IConfiguration configuration
         )
@@ -16,6 +16,16 @@ namespace Shared.Storage.Configurations
             services.AddSingleton<IOssClientFactory, OssClientFactory>();
             services.AddScoped<IImageStorageClient, ImageClient>();
             services.Configure<OssOptions>(configuration.GetRequiredSection(OssOptions.Position));
+            return services;
+        }
+
+        public static IServiceCollection ConfigureHeaderStorage(this IServiceCollection services)
+        {
+            return services;
+        }
+
+        public static IServiceCollection ConfigureAvatarStorage(this IServiceCollection services)
+        {
             return services;
         }
     }

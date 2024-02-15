@@ -108,7 +108,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
         public void SetCoverAsLatestImage()
         {
-            var image = _images.OrderBy(i => i.UploadedTime).FirstOrDefault();
+            var image = _images.OrderByDescending(i => i.UploadedTime).FirstOrDefault();
             if (image is not null)
             {
                 _cover = new(image?.ImageUrl, true);

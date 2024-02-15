@@ -34,7 +34,7 @@ namespace SastImg.Infrastructure.Extensions
 
             builder.Services.ConfigureEventBus(configuration);
 
-            builder.Services.ConfigureStorage(configuration);
+            builder.Services.ConfigureImageStorage(configuration);
 
             builder.Services.ConfigureExceptionHandlers();
 

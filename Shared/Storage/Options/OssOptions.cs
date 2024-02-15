@@ -7,6 +7,5 @@
         public string AccessKeyId { get; init; }
         public string AccessKeySecret { get; init; }
         public string ImageBucketName { get; init; }
-        public string ThumbnailBucketName { get; init; }
     }
 }

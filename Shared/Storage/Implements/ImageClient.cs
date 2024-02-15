@@ -39,7 +39,7 @@ namespace Shared.Storage.Implements
                 Encoding.UTF8.GetBytes(Path.ChangeExtension(originalFileName, ".webp"))
             );
             var targetBucketName = Convert.ToBase64String(
-                Encoding.UTF8.GetBytes(_options.ThumbnailBucketName)
+                Encoding.UTF8.GetBytes(_options.ImageBucketName)
             );
 
             ProcessObjectRequest request =
