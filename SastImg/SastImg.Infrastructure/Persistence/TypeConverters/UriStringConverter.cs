@@ -1,18 +1,21 @@
-﻿using System.Data;
-using Dapper;
+﻿using Dapper;
+using System.Data;
 
 namespace SastImg.Infrastructure.Persistence.TypeConverters
 {
-    internal class UriStringConverter : SqlMapper.TypeHandler<Uri>
+    internal class UriStringConverter : SqlMapper.TypeHandler<Uri?>
     {
         public override void SetValue(IDbDataParameter parameter, Uri? value)
         {
             parameter.Value = value?.ToString();
         }
 
-        public override Uri Parse(object value)
+        public override Uri? Parse(object value)
         {
-            return new Uri((string)value);
+            if (string.IsNullOrWhiteSpace(value as string))
+                return null;
+            else
+                return new Uri((string)value);
         }
     }
 }
