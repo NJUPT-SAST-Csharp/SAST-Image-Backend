@@ -11,23 +11,20 @@ namespace Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount
     public sealed class CreateAccountEndpointHandler(
         IAuthCodeCache cache,
         IUserCommandRepository repository,
-        IMessagePublisher messenger
+        IMessagePublisher messenger,
+        IJwtProvider provider
     ) : IEndpointHandler<CreateAccountRequest>
     {
         private readonly IAuthCodeCache _cache = cache;
         private readonly IUserCommandRepository _repository = repository;
         private readonly IMessagePublisher _messenger = messenger;
+        private readonly IJwtProvider _provider = provider;
 
         public async Task<IResult> Handle(CreateAccountRequest request)
         {
             User newAccount = new(request.Username, request.Password, request.Email);
 
-            var result = await _repository.CreateUserAsync(newAccount);
-
-            if (result == false)
-            {
-                return Responses.BadRequest("Something went wrong.");
-            }
+            await _repository.CreateUserAsync(newAccount);
 
             await _cache.DeleteCodeAsync(CodeCacheKey.Registration, request.Email);
 
@@ -36,7 +33,13 @@ namespace Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount
                 new UserCreatedMessage(newAccount.Id)
             );
 
-            return Responses.NoContent;
+            var jwt = _provider.GetLoginJwt(
+                newAccount.Id.ToString(),
+                newAccount.Username,
+                newAccount.Roles.Select(r => r.Name).ToArray()
+            );
+
+            return Responses.Data<CreateAccountDto>(new(jwt));
         }
     }
 }

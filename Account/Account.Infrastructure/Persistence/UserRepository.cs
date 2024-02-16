@@ -1,17 +1,15 @@
 ﻿using Account.Entity.UserEntity;
 using Account.Entity.UserEntity.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Account.Infrastructure.Persistence
 {
-    public sealed class UserRepository(AccountDbContext dbContext, ILogger<UserRepository> logger)
+    public sealed class UserRepository(AccountDbContext dbContext)
         : IUserQueryRepository,
             IUserCheckRepository,
             IUserCommandRepository
     {
         private readonly AccountDbContext _dbContext = dbContext;
-        private readonly ILogger<UserRepository> _logger = logger;
 
         public Task<bool> CheckEmailExistenceAsync(
             string email,
@@ -33,25 +31,13 @@ namespace Account.Infrastructure.Persistence
                 .AnyAsync(name => name == username.ToUpperInvariant(), cancellationToken);
         }
 
-        public async Task<bool> CreateUserAsync(
-            User user,
-            CancellationToken cancellationToken = default
-        )
+        public async Task CreateUserAsync(User user, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                user.AddRole(
-                    await _dbContext.Roles.SingleAsync(r => r.Name == "User", cancellationToken)
-                );
-                await _dbContext.Users.AddAsync(user, cancellationToken);
-                var result = await _dbContext.SaveChangesAsync(cancellationToken);
-                return result > 0;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Add user failed for {exception}", ex.InnerException);
-                return false;
-            }
+            user.AddRole(
+                await _dbContext.Roles.SingleAsync(r => r.Name == "User", cancellationToken)
+            );
+            await _dbContext.Users.AddAsync(user, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
         public Task<User?> GetUserByEmailAsync(

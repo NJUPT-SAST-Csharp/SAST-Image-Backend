@@ -82,7 +82,7 @@ namespace Account.WebAPI.Endpoints
 
             registration
                 .AddPost<CreateAccountRequest>("/createAccount")
-                .WithNoContentResponse()
+                .WithDataResponse<CreateAccountDto>()
                 .WithSummary("Register and Create Account")
                 .WithDescription("Verify registration code and create account with info.");
         }
