@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using SNS.Domain.UserEntity;
 
-namespace SNS.Application.UserServices.UpdateAvatar
+namespace SNS.Application.UserServices.UpdateHeader
 {
-    public interface IAvatarStorageClient
+    public interface IHeaderStorageClient
     {
-        public Task<Uri> UploadAvatarAsync(
+        public Task<Uri> UploadHeaderAsync(
             UserId userId,
             IFormFile file,
             CancellationToken cancellationToken = default

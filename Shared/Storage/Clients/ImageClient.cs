@@ -35,15 +35,12 @@ namespace Storage.Clients
                 await Task.Factory.FromAsync(start, end, null);
             }
 
-            await CompressImageAsync(key, cancellationToken);
+            await CompressImageAsync(key);
 
             return new Uri(GetImageUrl(key));
         }
 
-        private async Task CompressImageAsync(
-            string originalFileName,
-            CancellationToken cancellationToken = default
-        )
+        private async Task CompressImageAsync(string originalFileName)
         {
             var targetFileName = Convert.ToBase64String(
                 Encoding.UTF8.GetBytes(

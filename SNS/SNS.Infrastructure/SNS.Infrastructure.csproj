@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Exceptions\Exceptions.csproj" />
+    <ProjectReference Include="..\..\Shared\Storage\Storage.csproj" />
     <ProjectReference Include="..\SNS.Application\SNS.Application.csproj" />
     <ProjectReference Include="..\SNS.Domain\SNS.Domain.csproj" />
   </ItemGroup>

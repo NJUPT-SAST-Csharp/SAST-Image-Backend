@@ -5,6 +5,7 @@ using SastImg.Application.ImageServices.AddImage;
 using Shared.Storage.Implements;
 using Shared.Storage.Options;
 using SNS.Application.UserServices.UpdateAvatar;
+using SNS.Application.UserServices.UpdateHeader;
 using Storage.Clients;
 using Storage.Options;
 
@@ -30,6 +31,11 @@ namespace Shared.Storage.Configurations
             IConfiguration configuration
         )
         {
+            services.TryAddSingleton<IOssClientFactory, OssClientFactory>();
+            services.AddScoped<IHeaderStorageClient, HeaderClient>();
+            services.Configure<HeaderOssOptions>(
+                configuration.GetRequiredSection(HeaderOssOptions.Position)
+            );
             return services;
         }
 

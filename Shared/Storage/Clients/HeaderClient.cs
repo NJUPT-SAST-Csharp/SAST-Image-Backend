@@ -2,27 +2,27 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Shared.Storage.Implements;
-using SNS.Application.UserServices.UpdateAvatar;
+using SNS.Application.UserServices.UpdateHeader;
 using SNS.Domain.UserEntity;
 using Storage.Options;
 
 namespace Storage.Clients
 {
-    internal sealed class AvatarClient(
+    internal sealed class HeaderClient(
         IOssClientFactory factory,
-        IOptions<AvatarOssOptions> options
-    ) : IAvatarStorageClient
+        IOptions<HeaderOssOptions> options
+    ) : IHeaderStorageClient
     {
         private readonly OssClient _client = factory.GetOssClient();
-        private readonly AvatarOssOptions _options = options.Value;
+        private readonly HeaderOssOptions _options = options.Value;
 
-        public async Task<Uri> UploadAvatarAsync(
+        public async Task<Uri> UploadHeaderAsync(
             UserId userId,
             IFormFile file,
             CancellationToken cancellationToken = default
         )
         {
-            string key = "avatars/" + userId.Value.ToString() + Path.GetExtension(file.FileName);
+            string key = "headers/" + userId.Value.ToString() + Path.GetExtension(file.FileName);
 
             using (Stream stream = file.OpenReadStream())
             {

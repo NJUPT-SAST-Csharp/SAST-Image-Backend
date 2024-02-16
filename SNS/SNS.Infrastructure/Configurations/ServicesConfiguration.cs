@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -7,12 +6,14 @@ using Primitives;
 using Primitives.Command;
 using Primitives.DomainEvent;
 using Primitives.Query;
+using Shared.Storage.Configurations;
 using SNS.Domain.AlbumEntity;
 using SNS.Domain.ImageAggregate;
 using SNS.Domain.UserEntity;
 using SNS.Infrastructure.DomainRepositories;
 using SNS.Infrastructure.EventBus;
 using SNS.Infrastructure.Persistence;
+using System.Reflection;
 
 namespace SNS.Infrastructure.Configurations
 {
@@ -71,6 +72,16 @@ namespace SNS.Infrastructure.Configurations
                 });
             });
 
+            return services;
+        }
+
+        public static IServiceCollection ConfigureStorages(
+            this IServiceCollection services,
+            IConfiguration configuration
+        )
+        {
+            services.ConfigureAvatarStorage(configuration);
+            services.ConfigureHeaderStorage(configuration);
             return services;
         }
 
