@@ -2,7 +2,7 @@
 using SNS.Domain.AlbumEntity;
 using SNS.Domain.ImageAggregate.ImageEntity;
 using SNS.Domain.UserEntity;
-using SNS.Infrastructure.EntityTypeConfigurations;
+using SNS.Infrastructure.Persistence.EntityTypeConfigurations;
 
 namespace SNS.Infrastructure.Persistence
 {

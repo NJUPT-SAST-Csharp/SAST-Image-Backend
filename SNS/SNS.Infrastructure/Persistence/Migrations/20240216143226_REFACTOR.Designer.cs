@@ -12,15 +12,15 @@ using SNS.Infrastructure.Persistence;
 namespace SNS.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SNSDbContext))]
-    [Migration("20240202141627_Fix1")]
-    partial class Fix1
+    [Migration("20240216143226_REFACTOR")]
+    partial class REFACTOR
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.1")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -132,16 +132,6 @@ namespace SNS.Infrastructure.Persistence.Migrations
                     b.Property<long>("Id")
                         .HasColumnType("bigint")
                         .HasColumnName("id");
-
-                    b.Property<string>("_biography")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("biography");
-
-                    b.Property<string>("_nickname")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("nickname");
 
                     b.HasKey("Id")
                         .HasName("pk_users");

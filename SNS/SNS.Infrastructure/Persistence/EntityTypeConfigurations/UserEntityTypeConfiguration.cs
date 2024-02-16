@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SNS.Domain.UserEntity;
 
-namespace SNS.Infrastructure.EntityTypeConfigurations
+namespace SNS.Infrastructure.Persistence.EntityTypeConfigurations
 {
     internal sealed class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
     {
@@ -17,11 +17,6 @@ namespace SNS.Infrastructure.EntityTypeConfigurations
                 .Property(x => x.Id)
                 .HasColumnName("id")
                 .HasConversion(x => x.Value, x => new(x));
-
-            builder.Property<string>("_nickname").HasColumnName("nickname");
-            builder.Property<string>("_biography").HasColumnName("biography");
-            builder.Property<Uri?>("_header").HasColumnName("header");
-            builder.Property<Uri?>("_avatar").HasColumnName("avatar");
 
             builder
                 .HasMany<User>()

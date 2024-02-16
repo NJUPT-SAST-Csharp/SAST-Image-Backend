@@ -13,7 +13,6 @@ using Primitives.Command;
 using Primitives.DomainEvent;
 using Primitives.Query;
 using Shared.Storage.Configurations;
-using SNS.Application.UserServices.GetUser;
 using SNS.Domain.AlbumEntity;
 using SNS.Domain.ImageAggregate;
 using SNS.Domain.UserEntity;
@@ -22,7 +21,6 @@ using SNS.Infrastructure.EventBus;
 using SNS.Infrastructure.Persistence;
 using SNS.Infrastructure.Persistence.QueryDatabase;
 using SNS.Infrastructure.Persistence.TypeConverters;
-using SNS.Infrastructure.QueryRepositories;
 
 namespace SNS.Infrastructure.Configurations
 {
@@ -54,7 +52,6 @@ namespace SNS.Infrastructure.Configurations
             services.AddScoped<IAlbumRepository, AlbumRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            services.AddScoped<IUserQueryRepository, UserQueryRepository>();
             return services;
         }
 

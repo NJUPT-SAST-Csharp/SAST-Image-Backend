@@ -4,8 +4,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using SastImg.Application.ImageServices.AddImage;
 using Shared.Storage.Implements;
 using Shared.Storage.Options;
-using SNS.Application.UserServices.UpdateAvatar;
-using SNS.Application.UserServices.UpdateHeader;
 using Storage.Clients;
 using Storage.Options;
 
@@ -32,7 +30,7 @@ namespace Shared.Storage.Configurations
         )
         {
             services.TryAddSingleton<IOssClientFactory, OssClientFactory>();
-            services.AddScoped<IHeaderStorageClient, HeaderClient>();
+            //services.AddScoped<IHeaderStorageClient, HeaderClient>();
             services.Configure<HeaderOssOptions>(
                 configuration.GetRequiredSection(HeaderOssOptions.Position)
             );
@@ -45,7 +43,7 @@ namespace Shared.Storage.Configurations
         )
         {
             services.TryAddSingleton<IOssClientFactory, OssClientFactory>();
-            services.AddScoped<IAvatarStorageClient, AvatarClient>();
+            //services.AddScoped<IAvatarStorageClient, AvatarClient>();
             services.Configure<AvatarOssOptions>(
                 configuration.GetRequiredSection(AvatarOssOptions.Position)
             );

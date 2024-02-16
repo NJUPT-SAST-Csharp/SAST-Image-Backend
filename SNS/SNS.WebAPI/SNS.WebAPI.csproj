@@ -22,4 +22,8 @@
     <ProjectReference Include="..\SNS.Infrastructure\SNS.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Requests\" />
+  </ItemGroup>
+
 </Project>

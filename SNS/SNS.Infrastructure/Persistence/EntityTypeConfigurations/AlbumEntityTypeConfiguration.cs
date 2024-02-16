@@ -4,7 +4,7 @@ using SNS.Domain.AlbumEntity;
 using SNS.Domain.ImageAggregate.ImageEntity;
 using SNS.Domain.UserEntity;
 
-namespace SNS.Infrastructure.EntityTypeConfigurations
+namespace SNS.Infrastructure.Persistence.EntityTypeConfigurations
 {
     internal class AlbumEntityTypeConfiguration : IEntityTypeConfiguration<Album>
     {

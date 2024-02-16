@@ -130,24 +130,6 @@ namespace SNS.Infrastructure.Persistence.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    b.Property<string>("_avatar")
-                        .HasColumnType("text")
-                        .HasColumnName("avatar");
-
-                    b.Property<string>("_biography")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("biography");
-
-                    b.Property<string>("_header")
-                        .HasColumnType("text")
-                        .HasColumnName("header");
-
-                    b.Property<string>("_nickname")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("nickname");
-
                     b.HasKey("Id")
                         .HasName("pk_users");
 

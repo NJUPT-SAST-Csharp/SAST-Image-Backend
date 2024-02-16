@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Shared.Storage.Implements;
-using SNS.Application.UserServices.UpdateAvatar;
 using SNS.Domain.UserEntity;
 using Storage.Options;
 
@@ -11,7 +10,7 @@ namespace Storage.Clients
     internal sealed class AvatarClient(
         IOssClientFactory factory,
         IOptions<AvatarOssOptions> options
-    ) : IAvatarStorageClient
+    )
     {
         private readonly OssClient _client = factory.GetOssClient();
         private readonly AvatarOssOptions _options = options.Value;
