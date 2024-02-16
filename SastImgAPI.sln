@@ -66,6 +66,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Exceptions", "Shared\Except
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Storage", "Shared\Storage\Storage.csproj", "{2B49443B-C943-4283-885B-CED3D1DE233D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Account.Domain", "Account\Account.Domain\Account.Domain.csproj", "{03D72F56-CA95-4421-9308-731C9A3AA610}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -168,6 +170,10 @@ Global
 		{2B49443B-C943-4283-885B-CED3D1DE233D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B49443B-C943-4283-885B-CED3D1DE233D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B49443B-C943-4283-885B-CED3D1DE233D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03D72F56-CA95-4421-9308-731C9A3AA610}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03D72F56-CA95-4421-9308-731C9A3AA610}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03D72F56-CA95-4421-9308-731C9A3AA610}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03D72F56-CA95-4421-9308-731C9A3AA610}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -197,6 +203,7 @@ Global
 		{C8EB102B-9CA0-4503-A577-9BD354D14EE7} = {62F54EB9-A9EE-4956-8FA2-534C755263C9}
 		{7609CBDA-DB77-4A40-AE3F-9919AA09EEFC} = {62F54EB9-A9EE-4956-8FA2-534C755263C9}
 		{2B49443B-C943-4283-885B-CED3D1DE233D} = {62F54EB9-A9EE-4956-8FA2-534C755263C9}
+		{03D72F56-CA95-4421-9308-731C9A3AA610} = {658F10E6-D599-46B3-9922-44C1B0D5D4F3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DEF9C9F4-A717-4AEF-BE30-DF9F13D3C94E}
