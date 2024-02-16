@@ -1,4 +1,8 @@
-﻿using Dapper;
+﻿using System.Data.Common;
+using System.Reflection;
+using Auth.Authentication.Extensions;
+using Auth.Authorization.Extensions;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,8 +23,6 @@ using SNS.Infrastructure.Persistence;
 using SNS.Infrastructure.Persistence.QueryDatabase;
 using SNS.Infrastructure.Persistence.TypeConverters;
 using SNS.Infrastructure.QueryRepositories;
-using System.Data.Common;
-using System.Reflection;
 
 namespace SNS.Infrastructure.Configurations
 {
@@ -126,6 +128,20 @@ namespace SNS.Infrastructure.Configurations
                 var xmlFilename = $"{Assembly.GetEntryAssembly()!.GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
+            return services;
+        }
+
+        public static IServiceCollection ConfigureAuth(
+            this IServiceCollection services,
+            IConfiguration configuration
+        )
+        {
+            services.ConfigureJwtAuthentication(options =>
+            {
+                options.SecKey = configuration["Authentication:SecKey"]!;
+                options.Algorithms = [configuration["Authentication:Algorithm"]!];
+            });
+            services.AddAuthorizationBuilder().AddBasicPolicies();
             return services;
         }
     }
