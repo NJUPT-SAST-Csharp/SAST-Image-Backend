@@ -191,7 +191,7 @@ namespace SastImg.WebAPI.Controllers
             CancellationToken cancellationToken = default
         )
         {
-            using var command = new AddImageCommand(
+            var command = new AddImageCommand(
                 request.Title,
                 request.Description,
                 request.Tags,
