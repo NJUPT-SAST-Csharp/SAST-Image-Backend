@@ -51,6 +51,7 @@ namespace SNS.WebAPI.Controllers
         /// </summary>
         /// <remarks>
         /// Update user's nickname and biography.
+        /// <para>Authorization is required</para>
         /// </remarks>
         /// <param name="request">The new user profile info.</param>
         /// <param name="cancellationToken">Cancellation token</param>
@@ -75,6 +76,7 @@ namespace SNS.WebAPI.Controllers
         /// </summary>
         /// <remarks>
         /// Update user's avatar image.
+        /// <para>Authorization is required</para>
         /// </remarks>
         /// <param name="file">The new avatar image file.</param>
         /// <param name="cancellationToken">Cancellation token</param>
