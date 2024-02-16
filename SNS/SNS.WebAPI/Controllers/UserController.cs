@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Primitives.Command;
+using Primitives.Query;
 using Shared.Response.Builders;
 using SNS.Application.UserServices.AddUser;
+using SNS.Application.UserServices.GetUser;
 using SNS.Application.UserServices.UpdateAvatar;
 using SNS.Application.UserServices.UpdateHeader;
 using SNS.Application.UserServices.UpdateProfile;
@@ -19,12 +21,17 @@ namespace SNS.WebAPI.Controllers
     /// </summary>
     [Route("api/sns")]
     [ApiController]
-    public class UserController(ICommandRequestSender commandSender) : ControllerBase
+    [Produces("application/json")]
+    public class UserController(
+        ICommandRequestSender commandSender,
+        IQueryRequestSender querySender
+    ) : ControllerBase
     {
         private readonly ICommandRequestSender _commandSender = commandSender;
+        private readonly IQueryRequestSender _querySender = querySender;
 
         /// <summary>
-        /// The method to handle the user created event.
+        /// The method handles the user created event.
         /// </summary>
         [NonAction]
         [SubscribeMessage("account.user.created")]
@@ -74,6 +81,7 @@ namespace SNS.WebAPI.Controllers
         /// <response code="204">Update header successfully</response>
         [Authorize]
         [HttpPut("user/avatar")]
+        [Produces("application/json", "multipart/form-data")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<NoContent> UpdateAvatar(
             [FromForm][FileValidator(10)] IFormFile file,
@@ -99,6 +107,7 @@ namespace SNS.WebAPI.Controllers
         /// <response code="204">Update header successfully</response>
         [Authorize]
         [HttpPut("user/header")]
+        [Produces("application/json", "multipart/form-data")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<NoContent> UpdateHeader(
             [FromForm][FileValidator(30)] IFormFile file,
@@ -110,6 +119,30 @@ namespace SNS.WebAPI.Controllers
             await _commandSender.CommandAsync(command, cancellationToken);
 
             return Responses.NoContent;
+        }
+
+        /// <summary>
+        /// Get User Info
+        /// </summary>
+        /// <remarks>
+        /// Get user's profile info,
+        /// including nickname, biography, avatar and header image.
+        /// </remarks>
+        /// <param name="userId">The user's id</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <response code="200">The user's profile info</response>
+        /// <response code="404">The user is not found</response>
+        [HttpGet("user/{userId}")]
+        [ProducesResponseType<UserDto>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<Results<Ok<UserDto>, NotFound>> GetUser(
+            [FromRoute] long userId,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var user = await _querySender.QueryAsync(new GetUserQuery(userId), cancellationToken);
+
+            return Responses.DataOrNotFound(user);
         }
     }
 }

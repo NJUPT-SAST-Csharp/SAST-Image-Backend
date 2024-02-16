@@ -1,25 +1,32 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using Npgsql;
 using Primitives;
 using Primitives.Command;
 using Primitives.DomainEvent;
 using Primitives.Query;
 using Shared.Storage.Configurations;
+using SNS.Application.UserServices.GetUser;
 using SNS.Domain.AlbumEntity;
 using SNS.Domain.ImageAggregate;
 using SNS.Domain.UserEntity;
 using SNS.Infrastructure.DomainRepositories;
 using SNS.Infrastructure.EventBus;
 using SNS.Infrastructure.Persistence;
+using SNS.Infrastructure.Persistence.QueryDatabase;
+using SNS.Infrastructure.Persistence.TypeConverters;
+using SNS.Infrastructure.QueryRepositories;
+using System.Data.Common;
 using System.Reflection;
 
 namespace SNS.Infrastructure.Configurations
 {
     public static class ServicesConfiguration
     {
-        public static IServiceCollection ConfigureDbContext(
+        public static IServiceCollection ConfigureDatabase(
             this IServiceCollection services,
             string connectionString
         )
@@ -27,6 +34,14 @@ namespace SNS.Infrastructure.Configurations
             services.AddDbContext<SNSDbContext>(
                 options => options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention()
             );
+
+            services.AddSingleton<DbDataSource>(
+                _ => new NpgsqlDataSourceBuilder(connectionString).Build()
+            );
+            services.AddScoped<IDbConnectionFactory, DbConnectionFactory>(
+                _ => new DbConnectionFactory(connectionString)
+            );
+            SqlMapper.AddTypeHandler(new UriStringConverter());
             return services;
         }
 
@@ -37,6 +52,7 @@ namespace SNS.Infrastructure.Configurations
             services.AddScoped<IAlbumRepository, AlbumRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+            services.AddScoped<IUserQueryRepository, UserQueryRepository>();
             return services;
         }
 

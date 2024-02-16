@@ -12,8 +12,8 @@ namespace SNS.Domain.UserEntity
 
         private string _nickname = "SASTer";
         private string _biography = string.Empty;
-        private Uri _header;
-        private Uri _avatar;
+        private Uri? _header;
+        private Uri? _avatar;
 
         private readonly IList<User> _following = [];
 

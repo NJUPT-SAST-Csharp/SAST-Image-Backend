@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SNS.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using SNS.Infrastructure.Persistence;
 namespace SNS.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SNSDbContext))]
-    partial class SNSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240216081555_Fix2")]
+    partial class Fix2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -131,6 +134,7 @@ namespace SNS.Infrastructure.Persistence.Migrations
                         .HasColumnName("id");
 
                     b.Property<string>("_avatar")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("avatar");
 
@@ -140,6 +144,7 @@ namespace SNS.Infrastructure.Persistence.Migrations
                         .HasColumnName("biography");
 
                     b.Property<string>("_header")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("header");
 

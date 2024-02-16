@@ -20,6 +20,8 @@ namespace SNS.Infrastructure.EntityTypeConfigurations
 
             builder.Property<string>("_nickname").HasColumnName("nickname");
             builder.Property<string>("_biography").HasColumnName("biography");
+            builder.Property<Uri?>("_header").HasColumnName("header");
+            builder.Property<Uri?>("_avatar").HasColumnName("avatar");
 
             builder
                 .HasMany<User>()
