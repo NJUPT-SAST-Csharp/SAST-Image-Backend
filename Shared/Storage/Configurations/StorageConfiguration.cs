@@ -1,9 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using SastImg.Application.ImageServices.AddImage;
 using Shared.Storage.Implements;
 using Shared.Storage.Options;
+using SNS.Application.UserServices.UpdateAvatar;
 using Storage.Clients;
+using Storage.Options;
 
 namespace Shared.Storage.Configurations
 {
@@ -14,7 +17,7 @@ namespace Shared.Storage.Configurations
             IConfiguration configuration
         )
         {
-            services.AddSingleton<IOssClientFactory, OssClientFactory>();
+            services.TryAddSingleton<IOssClientFactory, OssClientFactory>();
             services.AddScoped<IImageStorageClient, ImageClient>();
             services.Configure<ImageOssOptions>(
                 configuration.GetRequiredSection(ImageOssOptions.Position)
@@ -22,13 +25,24 @@ namespace Shared.Storage.Configurations
             return services;
         }
 
-        public static IServiceCollection ConfigureHeaderStorage(this IServiceCollection services)
+        public static IServiceCollection ConfigureHeaderStorage(
+            this IServiceCollection services,
+            IConfiguration configuration
+        )
         {
             return services;
         }
 
-        public static IServiceCollection ConfigureAvatarStorage(this IServiceCollection services)
+        public static IServiceCollection ConfigureAvatarStorage(
+            this IServiceCollection services,
+            IConfiguration configuration
+        )
         {
+            services.TryAddSingleton<IOssClientFactory, OssClientFactory>();
+            services.AddScoped<IAvatarStorageClient, AvatarClient>();
+            services.Configure<AvatarOssOptions>(
+                configuration.GetRequiredSection(AvatarOssOptions.Position)
+            );
             return services;
         }
     }
