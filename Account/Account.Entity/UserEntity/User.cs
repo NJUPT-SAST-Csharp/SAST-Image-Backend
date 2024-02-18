@@ -1,5 +1,4 @@
 ﻿using Account.Entity.RoleEntity;
-using Shared.Utilities;
 using Utilities;
 
 namespace Account.Entity.UserEntity

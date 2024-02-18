@@ -257,7 +257,7 @@ namespace SastImg.WebAPI.Controllers
         /// Get the removed albums of the specific user.
         /// <para>Authorization is required.</para>
         /// </remarks>
-        /// <param name="userId">User that removed albums authored by</param>
+        /// <param name="userId">USER that removed albums authored by</param>
         /// <param name="page">24 removed albums per page.</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <response code="200">The removed albums</response>

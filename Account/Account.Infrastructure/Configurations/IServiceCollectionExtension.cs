@@ -1,30 +1,26 @@
 ﻿using System.Reflection;
-using Account.Application.Endpoints.AccountEndpoints.Authorize;
-using Account.Application.Endpoints.AccountEndpoints.ChangePassword;
-using Account.Application.Endpoints.AccountEndpoints.ForgetAccount.ResetPassword;
-using Account.Application.Endpoints.AccountEndpoints.ForgetAccount.SendForgetCode;
-using Account.Application.Endpoints.AccountEndpoints.ForgetAccount.VerifyForgetCode;
-using Account.Application.Endpoints.AccountEndpoints.Login;
-using Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount;
-using Account.Application.Endpoints.AccountEndpoints.Register.SendRegistrationCode;
-using Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistrationCode;
-using Account.Application.Endpoints.UserEndpoints.Query;
-using Account.Application.SeedWorks;
+using Account.Application;
 using Account.Application.Services;
-using Account.Entity.RoleEntity.Repositories;
-using Account.Entity.UserEntity.Repositories;
+using Account.Domain.RoleEntity.Services;
+using Account.Domain.UserEntity.Services;
+using Account.Infrastructure.ApplicationServices;
+using Account.Infrastructure.DomainServices;
+using Account.Infrastructure.DomainServices.Repositories;
 using Account.Infrastructure.EventBus;
 using Account.Infrastructure.Persistence;
-using Account.Infrastructure.Services;
+using Account.Infrastructure.Persistence.QueryDatabase;
 using Auth.Authentication.Extensions;
 using Auth.Authorization.Extensions;
-using FluentValidation;
 using Messenger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Primitives;
+using Primitives.Command;
+using Primitives.DomainEvent;
+using Primitives.Query;
 using Serilog;
 using StackExchange.Redis;
 
@@ -39,22 +35,16 @@ namespace Account.Infrastructure.Configurations
         {
             services
                 .ConfigureAuth(configuration)
-                .ConfigureEndpoints()
-                .AddPersistence(
-                    configuration.GetConnectionString("AccountDb")
-                        ?? throw new NullReferenceException(
-                            "Couldn't find the database connection string."
-                        )
-                )
-                .AddDistributedCache(
-                    configuration.GetConnectionString("DistributedCache")
-                        ?? throw new NullReferenceException(
-                            "Couldn't find the cache connection string."
-                        )
-                )
+                .AddPersistence(configuration.GetConnectionString("AccountDb")!)
+                .AddDistributedCache(configuration.GetConnectionString("DistributedCache")!)
                 .AddEventBus(configuration);
 
-            services.AddScoped<ITokenSender, EmailTokenSender>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRoleRespository, RoleRepository>();
+
+            services.AddScoped<IUserUniquenessChecker, UserUniquenessChecker>();
+
+            services.AddScoped<IAuthCodeSender, EmailCodeSender>();
             services.AddScoped<IJwtProvider, JwtProvider>();
 
             return services;
@@ -83,68 +73,12 @@ namespace Account.Infrastructure.Configurations
             return services;
         }
 
-        public static IServiceCollection ConfigureEndpoints(this IServiceCollection services)
-        {
-            services
-                .RegisterEndpointResolver<
-                    LoginRequest,
-                    LoginEndpointHandler,
-                    LoginRequestValidator
-                >()
-                .RegisterEndpointResolver<
-                    SendRegistrationCodeRequest,
-                    SendRegistrationCodeEndpointHandler,
-                    SendRegistrationCodeRequestValidator
-                >()
-                .RegisterEndpointResolver<
-                    VerifyRegistrationCodeRequest,
-                    VerifyRegistrationCodeEndpointHandler,
-                    VerifyRegistrationCodeRequestValidator
-                >()
-                .RegisterEndpointResolver<
-                    CreateAccountRequest,
-                    CreateAccountEndpointHandler,
-                    CreateAccountValidator
-                >()
-                .RegisterEndpointResolver<
-                    SendForgetCodeRequest,
-                    SendForgetCodeEndpointHandler,
-                    SendForgetCodeRequestValidator
-                >()
-                .RegisterEndpointResolver<
-                    VerifyForgetCodeRequest,
-                    VerifyForgetCodeEndpointHandler,
-                    VerifyForgetCodeRequestValidator
-                >()
-                .RegisterEndpointResolver<
-                    ResetPasswordRequest,
-                    ResetPasswordEndpointHandler,
-                    ResetPasswordValidator
-                >()
-                .RegisterAuthEndpointResolver<
-                    AuthorizeRequest,
-                    AuthorizeEndpointHandler,
-                    AuthorizeRequestValidator
-                >()
-                .RegisterAuthEndpointResolver<
-                    ChangePasswordRequest,
-                    ChangePasswordEndpointHandler,
-                    ChangePasswordRequestValidator
-                >()
-                .RegisterAuthEndpointResolver<
-                    QueryUserRequest,
-                    QueryUserEndpointHandler,
-                    QueryUserRequestValidator
-                >();
-            return services;
-        }
-
         public static IServiceCollection ConfigureAuth(
             this IServiceCollection services,
             IConfiguration configuration
         )
         {
-            services.AddAuthorizationBuilder().AddBasicPolicies().AddRegistrantPolicy();
+            services.AddAuthorizationBuilder().AddBasicPolicies();
             services.ConfigureJwtAuthentication(options =>
             {
                 options.SecKey =
@@ -179,10 +113,10 @@ namespace Account.Infrastructure.Configurations
                 options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
             });
 
-            services.AddScoped<IUserQueryRepository, UserRepository>();
-            services.AddScoped<IUserCommandRepository, UserRepository>();
-            services.AddScoped<IUserCheckRepository, UserRepository>();
-            services.AddScoped<IRoleRespository, RoleRepository>();
+            services.AddSingleton<IDbConnectionFactory>(
+                _ => new DbConnectionFactory(connectionString)
+            );
+
             return services;
         }
 
@@ -218,32 +152,13 @@ namespace Account.Infrastructure.Configurations
             });
 
             services.AddScoped<IMessagePublisher, ExternalEventBus>();
-            return services;
-        }
+            services.AddMediatR(
+                mediat => mediat.RegisterServicesFromAssembly(ApplicationAssemblyReference.Assembly)
+            );
+            services.AddScoped<IDomainEventPublisher, InternalEventBus>();
+            services.AddScoped<IQueryRequestSender, InternalEventBus>();
+            services.AddScoped<ICommandRequestSender, InternalEventBus>();
 
-        private static IServiceCollection RegisterEndpointResolver<TRequest, THandler, TValidator>(
-            this IServiceCollection services
-        )
-            where TRequest : IRequest
-            where THandler : class, IEndpointHandler<TRequest>
-            where TValidator : class, IValidator<TRequest>
-        {
-            services.AddScoped<IEndpointHandler<TRequest>, THandler>();
-            services.AddScoped<IValidator<TRequest>, TValidator>();
-            return services;
-        }
-
-        private static IServiceCollection RegisterAuthEndpointResolver<
-            TRequest,
-            THandler,
-            TValidator
-        >(this IServiceCollection services)
-            where TRequest : IRequest
-            where THandler : class, IAuthEndpointHandler<TRequest>
-            where TValidator : class, IValidator<TRequest>
-        {
-            services.AddScoped<IAuthEndpointHandler<TRequest>, THandler>();
-            services.AddScoped<IValidator<TRequest>, TValidator>();
             return services;
         }
     }

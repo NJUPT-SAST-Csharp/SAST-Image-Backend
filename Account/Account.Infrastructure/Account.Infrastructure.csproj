@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.28" />
     <PackageReference Include="DotNetCore.CAP" Version="8.0.1" />
     <PackageReference Include="DotNetCore.CAP.PostgreSql" Version="8.0.1" />
     <PackageReference Include="DotNetCore.CAP.RabbitMQ" Version="8.0.1" />
@@ -32,7 +33,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Auth\Auth.csproj" />
     <ProjectReference Include="..\Account.Application\Account.Application.csproj" />
-    <ProjectReference Include="..\Account.Entity\Account.Entity.csproj" />
   </ItemGroup>
 
   <ItemGroup>

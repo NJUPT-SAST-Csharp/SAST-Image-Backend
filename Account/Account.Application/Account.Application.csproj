@@ -16,14 +16,19 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Auth\Auth.csproj" />
+    <ProjectReference Include="..\..\Shared\Exceptions\Exceptions.csproj" />
     <ProjectReference Include="..\..\Shared\Messenger\Messenger.csproj" />
     <ProjectReference Include="..\..\Shared\Response\Response.csproj" />
     <ProjectReference Include="..\..\Shared\Utilities\Utilities.csproj" />
-    <ProjectReference Include="..\Account.Entity\Account.Entity.csproj" />
+    <ProjectReference Include="..\Account.Domain\Account.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="UserServices\" />
   </ItemGroup>
 
 </Project>

@@ -1,17 +1,7 @@
-﻿using System.Security.Claims;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Account.Application.Endpoints.AccountEndpoints.Authorize;
-using Account.Application.Endpoints.AccountEndpoints.ChangePassword;
-using Account.Application.Endpoints.AccountEndpoints.ForgetAccount.ResetPassword;
-using Account.Application.Endpoints.AccountEndpoints.ForgetAccount.SendForgetCode;
-using Account.Application.Endpoints.AccountEndpoints.ForgetAccount.VerifyForgetCode;
-using Account.Application.Endpoints.AccountEndpoints.Login;
-using Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount;
-using Account.Application.Endpoints.AccountEndpoints.Register.SendRegistrationCode;
-using Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistrationCode;
-using Account.Application.Endpoints.UserEndpoints.Query;
-using Response.ReponseObjects;
+using Account.WebAPI.Requests;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Account.WebAPI.Configurations
 {
@@ -39,25 +29,7 @@ namespace Account.WebAPI.Configurations
         }
     }
 
-    /// <summary>
-    /// TODO: complete
-    /// </summary>
-    [JsonSerializable(typeof(ClaimsPrincipal))]
-    [JsonSerializable(typeof(BadRequestResponse))]
-    [JsonSerializable(typeof(LoginRequest))]
     [JsonSerializable(typeof(AuthorizeRequest))]
-    [JsonSerializable(typeof(VerifyRegistrationCodeRequest))]
-    [JsonSerializable(typeof(ResetPasswordRequest))]
-    [JsonSerializable(typeof(VerifyForgetCodeRequest))]
-    [JsonSerializable(typeof(SendForgetCodeRequest))]
-    [JsonSerializable(typeof(SendRegistrationCodeRequest))]
-    [JsonSerializable(typeof(CreateAccountRequest))]
-    [JsonSerializable(typeof(ChangePasswordRequest))]
-    [JsonSerializable(typeof(LoginDto))]
-    [JsonSerializable(typeof(VerifyForgetCodeDto))]
-    [JsonSerializable(typeof(VerifyRegistrationCodeDto))]
-    [JsonSerializable(typeof(QueryUserRequest))]
-    [JsonSerializable(typeof(QueryUserDto))]
-    [JsonSerializable(typeof(CreateAccountDto))]
+    [JsonSerializable(typeof(NoContent))]
     public partial class AppJsonSerializerContext : JsonSerializerContext { }
 }

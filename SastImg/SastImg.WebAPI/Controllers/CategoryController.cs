@@ -30,12 +30,12 @@ namespace SastImg.WebAPI.Controllers
         /// </summary>
         /// <remarks>
         /// Create a new category
-        /// <para>Admin authorization is required</para>
+        /// <para>ADMIN authorization is required</para>
         /// </remarks>
         /// <param name="request">The new category info</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <response code="204">The category is created</response>
-        [Authorize(nameof(AuthorizationRole.Admin))]
+        [Authorize(nameof(AuthorizationRole.ADMIN))]
         [HttpPost("category")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<NoContent> CreateCategory(

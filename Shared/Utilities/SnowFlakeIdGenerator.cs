@@ -1,7 +1,7 @@
 ﻿using IdGen;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace Shared.Utilities
+namespace Utilities
 {
     public static class SnowFlakeIdGenerator
     {

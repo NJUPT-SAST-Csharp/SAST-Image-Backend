@@ -5,7 +5,7 @@ using SastImg.Domain.AlbumAggregate.ImageEntity;
 using SastImg.Domain.CategoryEntity;
 using SastImg.Domain.TagEntity;
 using Shared.Primitives;
-using Shared.Utilities;
+using Utilities;
 
 namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 {

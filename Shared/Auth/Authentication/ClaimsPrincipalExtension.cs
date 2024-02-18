@@ -64,7 +64,14 @@ namespace Auth.Authentication
         {
             foreach (var r in user.FindAll("Roles"))
             {
-                if (r is { } roleClaim && roleClaim.Value == role.ToString())
+                if (
+                    r is { } roleClaim
+                    && string.Equals(
+                        roleClaim.Value,
+                        role.ToString(),
+                        StringComparison.InvariantCultureIgnoreCase
+                    )
+                )
                     return true;
             }
             return false;

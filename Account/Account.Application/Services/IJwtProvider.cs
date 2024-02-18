@@ -1,9 +1,10 @@
-﻿namespace Account.Application.Services
+﻿using Account.Domain.RoleEntity;
+using Account.Domain.UserEntity;
+
+namespace Account.Application.Services
 {
     public interface IJwtProvider
     {
-        public string GetRegistrantJwt(string email);
-
-        public string GetLoginJwt(string userId, string username, IEnumerable<string> roles);
+        public string GetLoginJwt(UserId userId, string username, IEnumerable<Role> roles);
     }
 }

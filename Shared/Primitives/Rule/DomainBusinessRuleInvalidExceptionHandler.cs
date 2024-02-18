@@ -28,7 +28,7 @@ namespace SastImg.WebAPI.Configurations
                         Status = StatusCodes.Status400BadRequest,
                         Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1",
                         Title = "Bad Request",
-                        Detail = ruleInvalidException.Details
+                        Detail = ruleInvalidException.Message
                     },
                     cancellationToken
                 );

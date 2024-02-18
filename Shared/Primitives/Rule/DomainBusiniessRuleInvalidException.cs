@@ -1,15 +1,24 @@
 ﻿namespace Primitives.Rule
 {
-    public sealed class DomainBusinessRuleInvalidException(IDomainBusinessRule brokenRule)
-        : Exception(brokenRule.Message)
+    public sealed class DomainBusinessRuleInvalidException : Exception
     {
-        public IDomainBusinessRule BrokenRule { get; } = brokenRule;
+        public DomainBusinessRuleInvalidException(in IDomainBusinessRule rule, string field)
+            : base(rule.Message)
+        {
+            FieldName = field;
+        }
 
-        public string Details { get; } = brokenRule.Message;
+        public DomainBusinessRuleInvalidException(in IAsyncDomainBusinessRule rule, string field)
+            : base(rule.Message)
+        {
+            FieldName = field;
+        }
+
+        public string FieldName { get; }
 
         public override string ToString()
         {
-            return $"{BrokenRule.GetType().FullName}: {BrokenRule.Message}";
+            return $"{FieldName}: {Message}";
         }
     }
 }

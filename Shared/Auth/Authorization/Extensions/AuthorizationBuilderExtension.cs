@@ -5,24 +5,24 @@ namespace Auth.Authorization.Extensions
     public static class AuthorizationBuilderExtension
     {
         /// <summary>
-        /// Add <b>User</b> and <b>Admin</b> policies.
+        /// Add <b>USER</b> and <b>ADMIN</b> policies.
         /// </summary>
         /// <remarks>
-        ///   <br><b>User</b></br>
+        ///   <br><b>USER</b></br>
         ///   <br>Include required claim <b>Id</b></br>
         ///   <br>Include required claim <b>Username</b></br>
-        ///   <br>Include required claim <b>Roles</b> -> <b>User</b></br>
+        ///   <br>Include required claim <b>Roles</b> -> <b>USER</b></br>
         ///   <para/>
-        ///   <br><b>Admin</b></br>
+        ///   <br><b>ADMIN</b></br>
         ///   <br>Include required claim <b>Id</b></br>
         ///   <br>Include required claim <b>Username</b></br>
-        ///   <br>Include required claim <b>Roles</b> -> <b>Admin</b></br>
+        ///   <br>Include required claim <b>Roles</b> -> <b>ADMIN</b></br>
         /// </remarks>
         public static AuthorizationBuilder AddBasicPolicies(this AuthorizationBuilder builder)
         {
             builder
                 .AddDefaultPolicy(
-                    AuthorizationRole.Auth.ToString(),
+                    AuthorizationRole.AUTH.ToString(),
                     policy =>
                         policy
                             .RequireAuthenticatedUser()
@@ -31,43 +31,23 @@ namespace Auth.Authorization.Extensions
                             .RequireClaim("Id")
                 )
                 .AddPolicy(
-                    AuthorizationRole.User.ToString(),
+                    AuthorizationRole.USER.ToString(),
                     policy =>
                         policy
                             .RequireAuthenticatedUser()
                             .RequireClaim("Username")
-                            .RequireClaim("Roles", AuthorizationRole.User.ToString())
+                            .RequireClaim("Roles", AuthorizationRole.USER.ToString())
                             .RequireClaim("Id")
                 )
                 .AddPolicy(
-                    AuthorizationRole.Admin.ToString(),
+                    AuthorizationRole.ADMIN.ToString(),
                     policy =>
                         policy
                             .RequireAuthenticatedUser()
                             .RequireClaim("Username")
-                            .RequireClaim("Roles", AuthorizationRole.Admin.ToString())
+                            .RequireClaim("Roles", AuthorizationRole.ADMIN.ToString())
                             .RequireClaim("Id")
                 );
-            return builder;
-        }
-
-        /// <summary>
-        ///  Add <b>Registrant</b> policy
-        /// </summary>
-        /// <remarks>
-        ///  <br>Include required claim <b>Email</b></br>
-        ///  <br>Include required claim <b>Roles</b> -> <b>Registrant</b></br>
-        /// </remarks>
-        public static AuthorizationBuilder AddRegistrantPolicy(this AuthorizationBuilder builder)
-        {
-            builder.AddPolicy(
-                AuthorizationRole.Registrant.ToString(),
-                policy =>
-                    policy
-                        .RequireAuthenticatedUser()
-                        .RequireClaim("Email")
-                        .RequireClaim("Roles", AuthorizationRole.Registrant.ToString())
-            );
             return builder;
         }
     }

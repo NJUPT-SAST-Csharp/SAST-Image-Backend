@@ -13,7 +13,7 @@ namespace SastImg.Application.SeedWorks
             Id = new(id);
             if (IsAuthenticated)
             {
-                IsAdmin = user.HasRole(AuthorizationRole.Admin);
+                IsAdmin = user.HasRole(AuthorizationRole.ADMIN);
             }
         }
 

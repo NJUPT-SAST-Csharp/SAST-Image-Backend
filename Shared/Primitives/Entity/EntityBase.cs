@@ -43,7 +43,15 @@ public abstract class EntityBase<T> : IEquatable<EntityBase<T>>, IDomainEventCon
     {
         if (rule.IsBroken)
         {
-            throw new DomainBusinessRuleInvalidException(rule);
+            throw new DomainBusinessRuleInvalidException(rule, rule.GetType().Name);
+        }
+    }
+
+    protected static async Task CheckRuleAsync(IAsyncDomainBusinessRule rule)
+    {
+        if (await rule.IsBrokenAsync())
+        {
+            throw new DomainBusinessRuleInvalidException(rule, rule.GetType().Name);
         }
     }
 

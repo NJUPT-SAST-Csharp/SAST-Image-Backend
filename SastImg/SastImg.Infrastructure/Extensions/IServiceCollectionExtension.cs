@@ -1,8 +1,8 @@
 ﻿using System.Data.Common;
 using System.Reflection;
 using Dapper;
+using Exceptions.Configurations;
 using Exceptions.ExceptionHandlers;
-using Exceptions.Extensions;
 using Messenger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

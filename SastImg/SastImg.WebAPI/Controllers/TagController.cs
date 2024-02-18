@@ -32,11 +32,11 @@ namespace SastImg.WebAPI.Controllers
         /// </summary>
         /// <remarks>
         /// Get all tags
-        /// <para>Admin authorization is required</para>
+        /// <para>ADMIN authorization is required</para>
         /// </remarks>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <response code="200">The tags</response>
-        [Authorize(nameof(AuthorizationRole.Admin))]
+        [Authorize(nameof(AuthorizationRole.ADMIN))]
         [HttpGet("tags/all")]
         [ProducesResponseType<IEnumerable<TagDto>>(StatusCodes.Status200OK)]
         public async Task<Ok<IEnumerable<TagDto>>> GetAllTags(CancellationToken cancellationToken)

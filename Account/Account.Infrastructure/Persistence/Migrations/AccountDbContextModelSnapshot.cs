@@ -17,130 +17,153 @@ namespace Account.Infrastructure.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.1")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Account.Entity.RoleEntity.Role", b =>
+            modelBuilder.Entity("Account.Domain.RoleEntity.Role", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
+                    b.Property<string>("_name")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("name");
 
-                    b.Property<string>("NormalizedName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("normalized_name");
-
                     b.HasKey("Id")
                         .HasName("pk_roles");
-
-                    b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("ix_roles_name");
 
                     b.ToTable("roles", (string)null);
                 });
 
-            modelBuilder.Entity("Account.Entity.UserEntity.User", b =>
+            modelBuilder.Entity("Account.Domain.UserEntity.User", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Email")
+                    b.Property<string>("_email")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("email");
 
-                    b.Property<DateTime>("LoginAt")
+                    b.Property<DateTime>("_loginAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("login_at");
 
-                    b.Property<byte[]>("PasswordHash")
+                    b.Property<byte[]>("_passwordHash")
                         .IsRequired()
                         .HasColumnType("bytea")
                         .HasColumnName("password_hash");
 
-                    b.Property<byte[]>("PasswordSalt")
+                    b.Property<byte[]>("_passwordSalt")
                         .IsRequired()
                         .HasColumnType("bytea")
                         .HasColumnName("password_salt");
 
-                    b.Property<DateTime>("RegisteredAt")
+                    b.Property<DateTime>("_registerAt")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("registered_at");
+                        .HasColumnName("register_at");
 
-                    b.Property<string>("Username")
+                    b.Property<string>("_username")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("username");
 
-                    b.Property<string>("UsernameNormalized")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("username_normalized");
-
                     b.HasKey("Id")
                         .HasName("pk_users");
 
-                    b.HasIndex("Email")
+                    b.HasIndex("_email")
                         .IsUnique()
                         .HasDatabaseName("ix_users_email");
 
-                    b.HasIndex("UsernameNormalized")
+                    b.HasIndex("_username")
                         .IsUnique()
-                        .HasDatabaseName("ix_users_username_normalized");
+                        .HasDatabaseName("ix_users_username");
 
                     b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("RoleUser", b =>
                 {
-                    b.Property<int>("RolesId")
+                    b.Property<int>("role_id")
                         .HasColumnType("integer")
-                        .HasColumnName("roles_id");
+                        .HasColumnName("role_id");
 
-                    b.Property<long>("UsersId")
+                    b.Property<long>("user_id")
                         .HasColumnType("bigint")
-                        .HasColumnName("users_id");
+                        .HasColumnName("user_id");
 
-                    b.HasKey("RolesId", "UsersId")
-                        .HasName("pk_role_user");
+                    b.HasKey("role_id", "user_id")
+                        .HasName("pk_user_role");
 
-                    b.HasIndex("UsersId")
-                        .HasDatabaseName("ix_role_user_users_id");
+                    b.HasIndex("user_id")
+                        .HasDatabaseName("ix_user_role_user_id");
 
-                    b.ToTable("role_user", (string)null);
+                    b.ToTable("user_role", (string)null);
+                });
+
+            modelBuilder.Entity("Account.Domain.UserEntity.User", b =>
+                {
+                    b.OwnsOne("Account.Domain.UserEntity.Profile", "_profile", b1 =>
+                        {
+                            b1.Property<long>("id")
+                                .HasColumnType("bigint")
+                                .HasColumnName("id");
+
+                            b1.Property<string>("_avatar")
+                                .HasColumnType("text")
+                                .HasColumnName("avatar");
+
+                            b1.Property<string>("_biography")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("biography");
+
+                            b1.Property<string>("_header")
+                                .HasColumnType("text")
+                                .HasColumnName("header");
+
+                            b1.Property<string>("_nickname")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("nickname");
+
+                            b1.Property<string>("_website")
+                                .HasColumnType("text")
+                                .HasColumnName("website");
+
+                            b1.HasKey("id")
+                                .HasName("pk_profiles");
+
+                            b1.ToTable("profiles", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("id")
+                                .HasConstraintName("fk_profiles_users_id");
+                        });
+
+                    b.Navigation("_profile");
                 });
 
             modelBuilder.Entity("RoleUser", b =>
                 {
-                    b.HasOne("Account.Entity.RoleEntity.Role", null)
+                    b.HasOne("Account.Domain.RoleEntity.Role", null)
                         .WithMany()
-                        .HasForeignKey("RolesId")
+                        .HasForeignKey("role_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_role_user_roles_roles_id");
+                        .HasConstraintName("fk_user_role_roles_role_id");
 
-                    b.HasOne("Account.Entity.UserEntity.User", null)
+                    b.HasOne("Account.Domain.UserEntity.User", null)
                         .WithMany()
-                        .HasForeignKey("UsersId")
+                        .HasForeignKey("user_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_role_user_users_users_id");
+                        .HasConstraintName("fk_user_role_users_user_id");
                 });
 #pragma warning restore 612, 618
         }

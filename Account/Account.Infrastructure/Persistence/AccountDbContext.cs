@@ -1,5 +1,6 @@
-﻿using Account.Entity.RoleEntity;
-using Account.Entity.UserEntity;
+﻿using Account.Domain.RoleEntity;
+using Account.Domain.UserEntity;
+using Account.Infrastructure.Persistence.EntityTypeConfigurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Account.Infrastructure.Persistence
@@ -13,13 +14,9 @@ namespace Account.Infrastructure.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new RoleEntityTypeConfiguration());
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<User>().HasIndex(u => u.UsernameNormalized).IsUnique();
-            modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
-            modelBuilder.Entity<User>().HasMany(u => u.Roles).WithMany(r => r.Users);
-
-            modelBuilder.Entity<Role>().HasIndex(r => r.Name).IsUnique();
         }
     }
 }

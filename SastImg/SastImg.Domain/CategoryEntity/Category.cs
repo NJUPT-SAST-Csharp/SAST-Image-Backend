@@ -1,5 +1,5 @@
 ﻿using Primitives.Entity;
-using Shared.Utilities;
+using Utilities;
 
 namespace SastImg.Domain.CategoryEntity
 {
