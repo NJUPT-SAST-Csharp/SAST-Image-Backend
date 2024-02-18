@@ -1,14 +1,15 @@
-﻿using Account.Application.Services;
+﻿using Account.Application.AccountServices.Register.VerifyRegistrationCode;
+using Account.Application.Services;
 using Primitives.Command;
 
 namespace Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistrationCode
 {
     public sealed class VerifyRegistrationCodeCommandHandler(IAuthCodeCache cache)
-        : ICommandRequestHandler<VerifyRegistrationCodeCommand, bool>
+        : ICommandRequestHandler<VerifyRegistrationCodeCommand, VerifyRegistrationCodeDto>
     {
         private readonly IAuthCodeCache _cache = cache;
 
-        public async Task<bool> Handle(
+        public async Task<VerifyRegistrationCodeDto> Handle(
             VerifyRegistrationCodeCommand request,
             CancellationToken cancellationToken
         )
@@ -20,7 +21,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistra
                 cancellationToken
             );
 
-            return result;
+            return new(result);
         }
     }
 }

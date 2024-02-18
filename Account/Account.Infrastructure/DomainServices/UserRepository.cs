@@ -4,7 +4,7 @@ using Account.Infrastructure.Persistence;
 using Exceptions.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
-namespace Account.Infrastructure.DomainServices.Repositories
+namespace Account.Infrastructure.DomainServices
 {
     public sealed class UserRepository(AccountDbContext context) : IUserRepository
     {
@@ -25,6 +25,7 @@ namespace Account.Infrastructure.DomainServices.Repositories
         )
         {
             email = email.ToUpperInvariant();
+
             var user = await _context
                 .Users.Include("_roles")
                 .FirstOrDefaultAsync(
@@ -62,12 +63,10 @@ namespace Account.Infrastructure.DomainServices.Repositories
             CancellationToken cancellationToken = default
         )
         {
-            username = username.ToUpperInvariant();
-
             var user = await _context
                 .Users.Include("_roles")
                 .FirstOrDefaultAsync(
-                    u => EF.Property<string>(u, "_normalizedUsername") == username,
+                    u => EF.Functions.ILike(EF.Property<string>(u, "_username"), username),
                     cancellationToken
                 );
 

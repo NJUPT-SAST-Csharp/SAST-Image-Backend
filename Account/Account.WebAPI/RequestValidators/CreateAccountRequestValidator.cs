@@ -1,13 +1,13 @@
 ﻿using Account.Application.Services;
 using Account.Domain.UserEntity.Services;
+using Account.WebAPI.Requests;
 using FluentValidation;
-using Microsoft.AspNetCore.Http;
 
-namespace Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount
+namespace Account.WebAPI.RequestValidators
 {
-    public sealed class CreateAccountCommandValidator : AbstractValidator<CreateAccountCommand>
+    public sealed class CreateAccountRequestValidator : AbstractValidator<CreateAccountRequest>
     {
-        public CreateAccountCommandValidator(IAuthCodeCache cache, IUserUniquenessChecker checker)
+        public CreateAccountRequestValidator(IAuthCodeCache cache, IUserUniquenessChecker checker)
         {
             ClassLevelCascadeMode = CascadeMode.Stop;
 

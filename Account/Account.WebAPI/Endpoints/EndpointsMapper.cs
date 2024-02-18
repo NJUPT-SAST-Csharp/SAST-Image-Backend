@@ -1,7 +1,13 @@
-﻿using Account.Application.Endpoints.AccountEndpoints.Authorize;
+﻿using Account.Application.AccountServices.Register.VerifyRegistrationCode;
+using Account.Application.Endpoints.AccountEndpoints.Authorize;
+using Account.Application.Endpoints.AccountEndpoints.ChangePassword;
+using Account.Application.Endpoints.AccountEndpoints.Login;
+using Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount;
+using Account.Application.Endpoints.AccountEndpoints.Register.SendRegistrationCode;
+using Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistrationCode;
 using Account.WebAPI.Configurations;
 using Account.WebAPI.Requests;
-using Response.Extensions;
+using Auth.Authorization;
 
 namespace Account.WebAPI.Endpoints
 {
@@ -32,37 +38,34 @@ namespace Account.WebAPI.Endpoints
         {
             var account = builder;
 
-            account.MapPost("/authorize", () => { });
-
             account
                 .AddPost<AuthorizeRequest, AuthorizeCommand>(
                     "/authorize",
-                    (request, _) => new AuthorizeCommand(request.UserId, request.RoleId)
+                    (request, _) => new(request.UserId, request.Roles)
                 )
-                .WithNoContentResponse()
-                .WithUnauthorizedResponse()
-                .WithSummary("Authorize user")
-                .WithDescription("Authorize specific user with specific role.");
+                .AddValidator<AuthorizeRequest>()
+                .AddAuthorization(AuthorizationRole.ADMIN)
+                .WithSummary("Authorize")
+                .WithDescription("Authorize specific user with specific roles.");
 
-            //account
-            //    .AddPost<AuthorizeCommand>("/authorize", AuthorizationRole.ADMIN)
-            //    .WithNoContentResponse()
-            //    .WithUnauthorizedResponse()
-            //    .WithSummary("Authorize user")
-            //    .WithDescription("Authorize specific user with specific role.");
+            account
+                .AddPost<LoginRequest, LoginCommand, LoginDto>(
+                    "/login",
+                    (request, _) => new(request.Username, request.Password)
+                )
+                .AddValidator<LoginRequest>()
+                .WithSummary("Login")
+                .WithDescription("Login with username and password.");
 
-            //account
-            //    .AddPost<LoginCommand>("/login")
-            //    .WithDataResponse<LoginDto>()
-            //    .WithSummary("LoginAsync")
-            //    .WithDescription("LoginAsync with username and password.");
-
-            //account
-            //    .AddPut<ChangePasswordCommand>("/changePassword", AuthorizationRole.USER)
-            //    .WithNoContentResponse()
-            //    .WithUnauthorizedResponse()
-            //    .WithSummary("Change Password.")
-            //    .WithDescription("Authorized user changes password.");
+            account
+                .AddPut<ChangePasswordRequest, ChangePasswordCommand>(
+                    "/changePassword",
+                    (request, user) => new(request.NewPassword, user)
+                )
+                .AddValidator<ChangePasswordRequest>()
+                .AddAuthorization(AuthorizationRole.AUTH)
+                .WithSummary("Change Password.")
+                .WithDescription("Authorized user changes password.");
 
             MapRegistration(account);
             MapForget(account);
@@ -72,23 +75,34 @@ namespace Account.WebAPI.Endpoints
         {
             var registration = builder.MapGroup("/registration");
 
-            //registration
-            //    .AddPost<SendRegistrationCodeCommand>("/sendCode")
-            //    .WithNoContentResponse()
-            //    .WithSummary("Send Registration Code")
-            //    .WithDescription("Send verify code to registrant's email.");
+            registration
+                .AddPost<SendRegistrationCodeRequest, SendRegistrationCodeCommand>(
+                    "/sendCode",
+                    (request, _) => new(request.Email)
+                )
+                .AddValidator<SendRegistrationCodeRequest>()
+                .WithSummary("Send Registration Code")
+                .WithDescription("Send verify code to registrant's email.");
 
-            //registration
-            //    .AddPost<VerifyRegistrationCodeCommand>("/verify")
-            //    .WithNoContentResponse()
-            //    .WithSummary("Verify Registration Code")
-            //    .WithDescription("Verify registration code");
+            registration
+                .AddPost<
+                    VerifyRegistrationCodeRequest,
+                    VerifyRegistrationCodeCommand,
+                    VerifyRegistrationCodeDto
+                >("/verify", (request, _) => new(request.Email, request.Code))
+                .AddValidator<VerifyRegistrationCodeRequest>()
+                .WithSummary("Verify Registration Code")
+                .WithDescription("Verify registration code, only for a snapshot of validation.");
 
-            //registration
-            //    .AddPost<CreateAccountCommand>("/createAccount")
-            //    .WithDataResponse<CreateAccountDto>()
-            //    .WithSummary("Register and Create Account")
-            //    .WithDescription("Verify registration code and create account with info.");
+            registration
+                .AddPost<CreateAccountRequest, CreateAccountCommand, CreateAccountDto>(
+                    "/createAccount",
+                    (request, _) =>
+                        new(request.Username, request.Password, request.Email, request.Code)
+                )
+                .AddValidator<CreateAccountRequest>()
+                .WithSummary("Register and Create Account")
+                .WithDescription("Verify registration code and create account with info.");
         }
 
         private static void MapForget(RouteGroupBuilder builder)

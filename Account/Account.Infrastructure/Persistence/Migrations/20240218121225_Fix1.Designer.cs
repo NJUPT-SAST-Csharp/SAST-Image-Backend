@@ -3,6 +3,7 @@ using System;
 using Account.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Account.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AccountDbContext))]
-    partial class AccountDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240218121225_Fix1")]
+    partial class Fix1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,18 +31,10 @@ namespace Account.Infrastructure.Persistence.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    b.Property<string>("_avatar")
-                        .HasColumnType("text")
-                        .HasColumnName("avatar");
-
                     b.Property<string>("_email")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("email");
-
-                    b.Property<string>("_header")
-                        .HasColumnType("text")
-                        .HasColumnName("header");
 
                     b.Property<DateTime>("_loginAt")
                         .HasColumnType("timestamp with time zone")
@@ -75,7 +70,7 @@ namespace Account.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Account.Domain.UserEntity.User", b =>
                 {
-                    b.OwnsOne("Account.Domain.UserEntity.ValueObjects.Password", "_password", b1 =>
+                    b.OwnsOne("Account.Domain.UserEntity.Password", "_password", b1 =>
                         {
                             b1.Property<long>("UserId")
                                 .HasColumnType("bigint")
@@ -100,37 +95,42 @@ namespace Account.Infrastructure.Persistence.Migrations
                                 .HasConstraintName("fk_users_users_id");
                         });
 
-                    b.OwnsOne("Account.Domain.UserEntity.ValueObjects.Profile", "_profile", b1 =>
+                    b.OwnsOne("Account.Domain.UserEntity.Profile", "_profile", b1 =>
                         {
-                            b1.Property<long>("UserId")
+                            b1.Property<long>("id")
                                 .HasColumnType("bigint")
                                 .HasColumnName("id");
 
-                            b1.Property<string>("Biography")
+                            b1.Property<string>("_avatar")
+                                .HasColumnType("text")
+                                .HasColumnName("avatar");
+
+                            b1.Property<string>("_biography")
                                 .IsRequired()
                                 .HasColumnType("text")
                                 .HasColumnName("biography");
 
-                            b1.Property<DateOnly?>("Birthday")
-                                .HasColumnType("date")
-                                .HasColumnName("birthday");
+                            b1.Property<string>("_header")
+                                .HasColumnType("text")
+                                .HasColumnName("header");
 
-                            b1.Property<string>("Nickname")
+                            b1.Property<string>("_nickname")
                                 .IsRequired()
                                 .HasColumnType("text")
                                 .HasColumnName("nickname");
 
-                            b1.Property<string>("Website")
+                            b1.Property<string>("_website")
                                 .HasColumnType("text")
                                 .HasColumnName("website");
 
-                            b1.HasKey("UserId");
+                            b1.HasKey("id")
+                                .HasName("pk_profiles");
 
-                            b1.ToTable("users");
+                            b1.ToTable("profiles", (string)null);
 
                             b1.WithOwner()
-                                .HasForeignKey("UserId")
-                                .HasConstraintName("fk_users_users_id");
+                                .HasForeignKey("id")
+                                .HasConstraintName("fk_profiles_users_id");
                         });
 
                     b.Navigation("_password");

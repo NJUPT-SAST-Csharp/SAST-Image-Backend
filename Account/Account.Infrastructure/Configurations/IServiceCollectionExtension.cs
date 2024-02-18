@@ -1,16 +1,16 @@
 ﻿using System.Reflection;
 using Account.Application;
 using Account.Application.Services;
-using Account.Domain.RoleEntity.Services;
 using Account.Domain.UserEntity.Services;
 using Account.Infrastructure.ApplicationServices;
 using Account.Infrastructure.DomainServices;
-using Account.Infrastructure.DomainServices.Repositories;
 using Account.Infrastructure.EventBus;
 using Account.Infrastructure.Persistence;
 using Account.Infrastructure.Persistence.QueryDatabase;
 using Auth.Authentication.Extensions;
 using Auth.Authorization.Extensions;
+using Exceptions.Configurations;
+using Exceptions.ExceptionHandlers;
 using Messenger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +21,7 @@ using Primitives;
 using Primitives.Command;
 using Primitives.DomainEvent;
 using Primitives.Query;
+using SastImg.WebAPI.Configurations;
 using Serilog;
 using StackExchange.Redis;
 
@@ -37,10 +38,10 @@ namespace Account.Infrastructure.Configurations
                 .ConfigureAuth(configuration)
                 .AddPersistence(configuration.GetConnectionString("AccountDb")!)
                 .AddDistributedCache(configuration.GetConnectionString("DistributedCache")!)
-                .AddEventBus(configuration);
+                .AddEventBus(configuration)
+                .AddExceptionHandlers();
 
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IRoleRespository, RoleRepository>();
 
             services.AddScoped<IUserUniquenessChecker, UserUniquenessChecker>();
 
@@ -159,6 +160,14 @@ namespace Account.Infrastructure.Configurations
             services.AddScoped<IQueryRequestSender, InternalEventBus>();
             services.AddScoped<ICommandRequestSender, InternalEventBus>();
 
+            return services;
+        }
+
+        private static IServiceCollection AddExceptionHandlers(this IServiceCollection services)
+        {
+            services.AddExceptionHandler<DbNotFoundExceptionHandler>();
+            services.AddExceptionHandler<DomainBusinessRuleInvalidExceptionHandler>();
+            services.AddDefaultExceptionHandler();
             return services;
         }
     }

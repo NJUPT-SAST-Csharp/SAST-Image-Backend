@@ -1,6 +1,6 @@
-﻿using Account.Domain.RoleEntity;
-using Account.Domain.UserEntity.Events;
+﻿using Account.Domain.UserEntity.Events;
 using Account.Domain.UserEntity.Rules;
+using Account.Domain.UserEntity.ValueObjects;
 using Primitives.Entity;
 using Shared.Primitives;
 using Utilities;
@@ -17,13 +17,18 @@ namespace Account.Domain.UserEntity
         {
             _username = username;
             _email = email.ToUpperInvariant();
-            _passwordSalt = Argon2Hasher.RandomSalt;
-            _passwordHash = Argon2Hasher.Hash(password, _passwordSalt);
+            _password = Password.NewPassword(password);
             _registerAt = DateTime.UtcNow;
+            _loginAt = DateTime.UtcNow;
+            _roles = [Role.USER];
         }
 
         public static User CreateNewUser(string username, string password, string email)
         {
+            CheckRule(new UsernameValidRule(username));
+            CheckRule(new PasswordValidRule(password));
+            CheckRule(new EmailValidRule(email));
+
             var user = new User(username, password, email);
             user.AddDomainEvent(new UserCreatedEvent(user));
             return user;
@@ -31,17 +36,17 @@ namespace Account.Domain.UserEntity
 
         #region Fields
 
-        private readonly List<Role> _roles = [];
-
         private readonly string _username;
         private readonly string _email;
-        private byte[] _passwordHash;
-        private byte[] _passwordSalt;
-
+        private Uri? _avatar = null;
+        private Uri? _header = null;
         private readonly DateTime _registerAt;
         private DateTime _loginAt;
 
         private Profile _profile;
+        private Password _password;
+
+        private Role[] _roles;
 
         #endregion
 
@@ -55,28 +60,47 @@ namespace Account.Domain.UserEntity
 
         #region Methods
 
-        public void AddRole(Role role) => _roles.Add(role);
-
-        public async Task ResetPasswordAsync(string newPassword)
+        public void UpdateAuthorizations(params Role[] roles)
         {
-            Argon2Hasher.RegenerateSalt(_passwordSalt);
-            _passwordHash = await Argon2Hasher.HashAsync(newPassword, _passwordSalt);
+            _roles = roles;
         }
 
-        public async Task LoginAsync(string password)
+        public void ResetPassword(string newPassword)
         {
-            await CheckRuleAsync(new LoginRule(password, _passwordHash, _passwordSalt));
+            CheckRule(new PasswordValidRule(newPassword));
+
+            _password = Password.NewPassword(newPassword);
+        }
+
+        public async Task<bool> LoginAsync(string password)
+        {
+            CheckRule(new PasswordValidRule(password));
+
+            if (await _password.ValidateAsync(password) is false)
+            {
+                return false;
+            }
+
             _loginAt = DateTime.UtcNow;
+            return true;
         }
 
-        public void UpdateProfile(string nickname, string biography, Uri? website)
+        public void UpdateProfile(
+            string nickname,
+            string biography,
+            DateOnly birthday,
+            Uri? website
+        )
         {
-            _profile.UpdateProfile(nickname, biography, website);
+            CheckRule(new NicknameLengthRule(nickname));
+            CheckRule(new BiographyValidRule(biography));
+
+            _profile = new(nickname, biography, birthday, website);
         }
 
-        public void UpdateAvatar(Uri? avatar) => _profile.UpdateAvatar(avatar);
+        public void UpdateAvatar(Uri? avatar) => _avatar = avatar;
 
-        public void UpdateHeader(Uri? header) => _profile.UpdateHeader(header);
+        public void UpdateHeader(Uri? header) => _header = header;
 
         #endregion
     }

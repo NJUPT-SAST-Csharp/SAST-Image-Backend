@@ -14,7 +14,6 @@ namespace Response.Extensions
         }
 
         public static RouteHandlerBuilder WithDataResponse<T>(this RouteHandlerBuilder builder)
-            where T : notnull
         {
             builder.Produces<T>(StatusCodes.Status200OK);
             return builder;

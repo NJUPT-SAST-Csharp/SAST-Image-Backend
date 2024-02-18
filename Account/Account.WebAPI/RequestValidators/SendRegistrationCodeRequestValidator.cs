@@ -1,11 +1,11 @@
 ﻿using Account.Domain.UserEntity.Services;
+using Account.WebAPI.Requests;
 using FluentValidation;
-using Microsoft.AspNetCore.Http;
 
-namespace Account.Application.Endpoints.AccountEndpoints.Register.SendRegistrationCode
+namespace Account.WebAPI.RequestValidators
 {
     public class SendRegistrationCodeRequestValidator
-        : AbstractValidator<SendRegistrationCodeCommand>
+        : AbstractValidator<SendRegistrationCodeRequest>
     {
         public SendRegistrationCodeRequestValidator(IUserUniquenessChecker checker)
         {

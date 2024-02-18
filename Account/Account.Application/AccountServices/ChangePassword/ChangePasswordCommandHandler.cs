@@ -14,7 +14,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.ChangePassword
         {
             var user = await _repository.GetUserByIdAsync(request.Requester.Id, cancellationToken);
 
-            await user.ResetPasswordAsync(request.NewPassword).WaitAsync(cancellationToken);
+            user.ResetPassword(request.NewPassword);
 
             await _unit.CommitChangesAsync(cancellationToken);
         }

@@ -1,11 +1,12 @@
 ﻿using Account.Application.Services;
 using Account.Domain.UserEntity.Services;
+using Account.WebAPI.Requests;
 using FluentValidation;
 
-namespace Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistrationCode
+namespace Account.WebAPI.RequestValidators
 {
     public sealed class VerifyRegistrationCodeRequestValidator
-        : AbstractValidator<VerifyRegistrationCodeCommand>
+        : AbstractValidator<VerifyRegistrationCodeRequest>
     {
         public VerifyRegistrationCodeRequestValidator(
             IAuthCodeCache cache,

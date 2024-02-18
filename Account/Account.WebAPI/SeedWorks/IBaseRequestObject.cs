@@ -5,9 +5,12 @@ namespace Account.WebAPI.SeedWorks
 {
     internal interface IBaseRequestObject { }
 
-    internal interface IRequestObject<TProcessRequest> : IBaseRequestObject
+    internal interface ICommandRequestObject<TProcessRequest> : IBaseRequestObject
         where TProcessRequest : ICommandRequest { }
 
-    internal interface IRequestObject<TProcessRequest, TResponse> : IBaseRequestObject
+    internal interface ICommandRequestObject<TProcessRequest, TResponse> : IBaseRequestObject
+        where TProcessRequest : ICommandRequest<TResponse> { }
+
+    internal interface IQueryRequestObject<TProcessRequest, TResponse> : IBaseRequestObject
         where TProcessRequest : IQueryRequest<TResponse> { }
 }

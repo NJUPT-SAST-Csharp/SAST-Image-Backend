@@ -4,6 +4,7 @@ using Auth.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Primitives.Command;
 using Primitives.Query;
+using Response.Extensions;
 using Shared.Primitives.Query;
 using Shared.Response.Builders;
 
@@ -17,6 +18,9 @@ namespace Account.WebAPI.Configurations
         )
         {
             builder.RequireAuthorization(Array.ConvertAll(roles, r => r.ToString()));
+
+            builder.WithUnauthorizedResponse();
+
             return builder;
         }
 
@@ -32,7 +36,7 @@ namespace Account.WebAPI.Configurations
             string route,
             Func<TRequest, ClaimsPrincipal, TProcessRequest> mapper
         )
-            where TRequest : struct, IRequestObject<TProcessRequest>
+            where TRequest : struct, ICommandRequestObject<TProcessRequest>
             where TProcessRequest : ICommandRequest
         {
             var handler = builder.MapPost(
@@ -49,6 +53,65 @@ namespace Account.WebAPI.Configurations
                 }
             );
 
+            handler.WithNoContentResponse();
+
+            return handler;
+        }
+
+        public static RouteHandlerBuilder AddPost<TRequest, TProcessRequest, TResponse>(
+            this RouteGroupBuilder builder,
+            string route,
+            Func<TRequest, ClaimsPrincipal, TProcessRequest> mapper
+        )
+            where TRequest : struct, ICommandRequestObject<TProcessRequest, TResponse>
+            where TProcessRequest : ICommandRequest<TResponse>
+        {
+            var handler = builder.MapPost(
+                route,
+                async (
+                    [AsParameters] TRequest request,
+                    [FromServices] ICommandRequestSender sender,
+                    ClaimsPrincipal user,
+                    CancellationToken cancellationToken
+                ) =>
+                {
+                    var result = await sender.CommandAsync(
+                        mapper(request, user),
+                        cancellationToken
+                    );
+                    return Responses.DataOrNotFound(result);
+                }
+            );
+
+            handler.WithDataResponse<TResponse>();
+
+            return handler;
+        }
+
+        public static RouteHandlerBuilder AddPut<TRequest, TProcessRequest>(
+            this RouteGroupBuilder builder,
+            string route,
+            Func<TRequest, ClaimsPrincipal, TProcessRequest> mapper
+        )
+            where TRequest : struct, ICommandRequestObject<TProcessRequest>
+            where TProcessRequest : ICommandRequest
+        {
+            var handler = builder.MapPut(
+                route,
+                async (
+                    [AsParameters] TRequest request,
+                    [FromServices] ICommandRequestSender sender,
+                    ClaimsPrincipal user,
+                    CancellationToken cancellationToken
+                ) =>
+                {
+                    await sender.CommandAsync(mapper(request, user), cancellationToken);
+                    return Responses.NoContent;
+                }
+            );
+
+            handler.WithNoContentResponse();
+
             return handler;
         }
 
@@ -57,7 +120,7 @@ namespace Account.WebAPI.Configurations
             string route,
             Func<TRequest, ClaimsPrincipal, TProcessRequest> mapper
         )
-            where TRequest : struct, IRequestObject<TProcessRequest, TResponse>
+            where TRequest : struct, IQueryRequestObject<TProcessRequest, TResponse>
             where TProcessRequest : IQueryRequest<TResponse>
         {
             var handler = builder.MapGet(
@@ -73,6 +136,8 @@ namespace Account.WebAPI.Configurations
                     Responses.DataOrNotFound(result);
                 }
             );
+
+            handler.WithDataResponse<TResponse>();
 
             return handler;
         }

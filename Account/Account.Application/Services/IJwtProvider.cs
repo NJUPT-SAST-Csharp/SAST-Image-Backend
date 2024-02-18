@@ -1,5 +1,4 @@
-﻿using Account.Domain.RoleEntity;
-using Account.Domain.UserEntity;
+﻿using Account.Domain.UserEntity;
 
 namespace Account.Application.Services
 {
