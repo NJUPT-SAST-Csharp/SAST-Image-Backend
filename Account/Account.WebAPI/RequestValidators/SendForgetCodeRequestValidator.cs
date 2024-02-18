@@ -1,11 +1,12 @@
 ﻿using Account.Domain.UserEntity.Rules;
+using Account.WebAPI.Requests;
 using FluentValidation;
 
 namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.SendForgetCode
 {
-    public sealed class SendForgetCodeCommandValidator : AbstractValidator<SendForgetCodeCommand>
+    public sealed class SendForgetCodeRequestValidator : AbstractValidator<SendForgetCodeRequest>
     {
-        public SendForgetCodeCommandValidator()
+        public SendForgetCodeRequestValidator()
         {
             RuleFor(r => r.Email)
                 .Cascade(CascadeMode.Stop)

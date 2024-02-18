@@ -1,6 +1,8 @@
 ﻿using Account.Application.AccountServices.Register.VerifyRegistrationCode;
 using Account.Application.Endpoints.AccountEndpoints.Authorize;
 using Account.Application.Endpoints.AccountEndpoints.ChangePassword;
+using Account.Application.Endpoints.AccountEndpoints.ForgetAccount.SendForgetCode;
+using Account.Application.Endpoints.AccountEndpoints.ForgetAccount.VerifyForgetCode;
 using Account.Application.Endpoints.AccountEndpoints.Login;
 using Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount;
 using Account.Application.Endpoints.AccountEndpoints.Register.SendRegistrationCode;
@@ -123,23 +125,23 @@ namespace Account.WebAPI.Endpoints
         {
             var forget = builder.MapGroup("/forget");
 
-            //forget
-            //    .AddPost<SendForgetCodeCommand>("/sendCode")
-            //    .WithNoContentResponse()
-            //    .WithSummary("Send ForgetAccount Code")
-            //    .WithDescription("Send code to forgetter's email.");
+            forget
+                .AddPost<SendForgetCodeRequest, SendForgetCodeCommand>(
+                    "/sendCode",
+                    (request, _) => new(request.Email)
+                )
+                .AddValidator<SendForgetCodeRequest>()
+                .WithSummary("Send ForgetAccount Code")
+                .WithDescription("Send code to forgetter's email.");
 
-            //forget
-            //    .AddPost<VerifyForgetCodeCommand>("/verify")
-            //    .WithDataResponse<VerifyForgetCodeDto>()
-            //    .WithSummary("Verify ForgetAccount Code")
-            //    .WithDescription("Verify code and return username & ResetCode for account reset.");
-
-            //forget
-            //    .AddPost<ResetPasswordRequest>("/reset")
-            //    .WithNoContentResponse()
-            //    .WithSummary("Reset Account for Forgetter")
-            //    .WithDescription("Verify ResetCode and reset account with info.");
+            forget
+                .AddPost<VerifyForgetCodeRequest, VerifyForgetCodeCommand, VerifyForgetCodeDto>(
+                    "/verify",
+                    (request, _) => new(request.Code, request.Email)
+                )
+                .AddValidator<VerifyForgetCodeRequest>()
+                .WithSummary("Verify ForgetAccount Code")
+                .WithDescription("Verify code and return username & ResetCode for account reset.");
         }
     }
 }
