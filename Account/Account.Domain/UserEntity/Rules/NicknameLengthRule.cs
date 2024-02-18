@@ -2,7 +2,7 @@
 
 namespace Account.Domain.UserEntity.Rules
 {
-    internal readonly struct NicknameLengthRule(string nickname) : IDomainBusinessRule
+    public readonly struct NicknameLengthRule(string nickname) : IDomainBusinessRule
     {
         public const int MinLength = 1;
         public const int MaxLength = 12;

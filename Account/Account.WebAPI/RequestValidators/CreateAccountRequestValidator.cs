@@ -1,4 +1,5 @@
 ﻿using Account.Application.Services;
+using Account.Domain.UserEntity.Rules;
 using Account.Domain.UserEntity.Services;
 using Account.WebAPI.Requests;
 using FluentValidation;
@@ -14,11 +15,13 @@ namespace Account.WebAPI.RequestValidators
             RuleFor(r => r.Email)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()
-                .MaximumLength(50)
+                .MaximumLength(EmailValidRule.MaxLength)
                 .EmailAddress()
                 .WithMessage("Invalid email");
 
-            RuleFor(a => a.Password).NotEmpty().Length(6, 30);
+            RuleFor(a => a.Password)
+                .NotEmpty()
+                .Length(PasswordValidRule.MinLength, PasswordValidRule.MaxLength);
 
             RuleFor(a => a.Username)
                 .Cascade(CascadeMode.Stop)

@@ -1,4 +1,5 @@
-﻿using Account.WebAPI.Requests;
+﻿using Account.Domain.UserEntity.Rules;
+using Account.WebAPI.Requests;
 using FluentValidation;
 
 namespace Account.WebAPI.RequestValidators
@@ -7,8 +8,12 @@ namespace Account.WebAPI.RequestValidators
     {
         public LoginRequestValidator()
         {
-            RuleFor(x => x.Username).NotEmpty().Length(2, 12);
-            RuleFor(x => x.Password).NotEmpty().Length(6, 20);
+            RuleFor(x => x.Username)
+                .NotEmpty()
+                .Length(UsernameValidRule.MinLength, UsernameValidRule.MaxLength);
+            RuleFor(x => x.Password)
+                .NotEmpty()
+                .Length(PasswordValidRule.MinLength, PasswordValidRule.MaxLength);
         }
     }
 }

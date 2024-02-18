@@ -2,7 +2,7 @@
 
 namespace Account.Domain.UserEntity.Rules
 {
-    internal readonly struct UsernameValidRule : IDomainBusinessRule
+    public readonly struct UsernameValidRule : IDomainBusinessRule
     {
         public UsernameValidRule(string username)
         {

@@ -1,4 +1,5 @@
 ﻿using Account.Application.Services;
+using Account.Domain.UserEntity.Rules;
 using FluentValidation;
 
 namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.VerifyForgetCode
@@ -12,7 +13,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.VerifyFor
 
             RuleFor(r => r.Email)
                 .NotEmpty()
-                .MaximumLength(50)
+                .MaximumLength(EmailValidRule.MaxLength)
                 .EmailAddress()
                 .WithMessage("Invalid email");
 

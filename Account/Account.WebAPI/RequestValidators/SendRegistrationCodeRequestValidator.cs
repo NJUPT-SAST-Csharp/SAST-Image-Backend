@@ -1,4 +1,5 @@
-﻿using Account.Domain.UserEntity.Services;
+﻿using Account.Domain.UserEntity.Rules;
+using Account.Domain.UserEntity.Services;
 using Account.WebAPI.Requests;
 using FluentValidation;
 
@@ -14,7 +15,7 @@ namespace Account.WebAPI.RequestValidators
             RuleFor(r => r.Email)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()
-                .MaximumLength(50)
+                .MaximumLength(EmailValidRule.MaxLength)
                 .EmailAddress()
                 .WithMessage("Invalid email.");
 

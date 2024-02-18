@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Account.Domain.UserEntity.Rules;
+using FluentValidation;
 
 namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.SendForgetCode
 {
@@ -9,7 +10,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.SendForge
             RuleFor(r => r.Email)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()
-                .MaximumLength(50)
+                .MaximumLength(EmailValidRule.MaxLength)
                 .EmailAddress()
                 .WithMessage("Invalid email");
         }

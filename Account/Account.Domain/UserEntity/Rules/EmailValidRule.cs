@@ -3,7 +3,7 @@ using Primitives.Rule;
 
 namespace Account.Domain.UserEntity.Rules
 {
-    internal readonly struct EmailValidRule(string email) : IDomainBusinessRule
+    public readonly struct EmailValidRule(string email) : IDomainBusinessRule
     {
         public const int MaxLength = 50;
 

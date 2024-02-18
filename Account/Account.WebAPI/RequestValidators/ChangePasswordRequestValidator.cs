@@ -1,4 +1,5 @@
-﻿using Account.WebAPI.Requests;
+﻿using Account.Domain.UserEntity.Rules;
+using Account.WebAPI.Requests;
 using FluentValidation;
 
 namespace Account.WebAPI.RequestValidators
@@ -7,7 +8,9 @@ namespace Account.WebAPI.RequestValidators
     {
         public ChangePasswordRequestValidator()
         {
-            RuleFor(r => r.NewPassword).NotEmpty().Length(6, 20);
+            RuleFor(r => r.NewPassword)
+                .NotEmpty()
+                .Length(PasswordValidRule.MinLength, PasswordValidRule.MaxLength);
         }
     }
 }
