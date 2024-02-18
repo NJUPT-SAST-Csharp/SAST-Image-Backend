@@ -49,6 +49,7 @@ namespace Account.Infrastructure.Persistence.EntityTypeConfigurations
 
             builder.HasIndex("_username").IsUnique();
             builder.HasIndex("_email").IsUnique();
+
             builder
                 .PrimitiveCollection<Role[]>("_roles")
                 .HasColumnName("roles")

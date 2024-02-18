@@ -21,6 +21,7 @@ namespace Account.Domain.UserEntity
             _registerAt = DateTime.UtcNow;
             _loginAt = DateTime.UtcNow;
             _roles = [Role.USER];
+            _profile = Profile.Default;
         }
 
         public static User CreateNewUser(string username, string password, string email)
@@ -88,7 +89,7 @@ namespace Account.Domain.UserEntity
         public void UpdateProfile(
             string nickname,
             string biography,
-            DateOnly birthday,
+            DateOnly? birthday,
             Uri? website
         )
         {

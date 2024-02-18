@@ -5,6 +5,7 @@ using Account.Application.Endpoints.AccountEndpoints.Login;
 using Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount;
 using Account.Application.Endpoints.AccountEndpoints.Register.SendRegistrationCode;
 using Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistrationCode;
+using Account.Application.UserServices.UpdateProfile;
 using Account.WebAPI.Configurations;
 using Account.WebAPI.Requests;
 using Auth.Authorization;
@@ -15,7 +16,12 @@ namespace Account.WebAPI.Endpoints
     {
         internal static WebApplication MapEndpoints(this WebApplication app)
         {
-            var api = app.MapGroup("/api/account").WithOpenApi();
+            var api = app.MapGroup("/api/account");
+
+            if (app.Environment.IsDevelopment())
+            {
+                api.WithOpenApi();
+            }
 
             MapAccount(api);
             MapUser(api);
@@ -26,6 +32,14 @@ namespace Account.WebAPI.Endpoints
         private static void MapUser(RouteGroupBuilder builder)
         {
             var user = builder.MapGroup("/user");
+
+            user.AddPut<UpdateProfileRequest, UpdateProfileCommand>(
+                    "/profile",
+                    (request, user) => request.ToCommand(user)
+                )
+                .AddAuthorization(AuthorizationRole.AUTH)
+                .WithSummary("Update Profile")
+                .WithDescription("Update user profile.");
 
             //user.AddGet<QueryUserRequest>("/", AuthorizationRole.USER)
             //    .WithDataResponse<IEnumerable<QueryUserDto>>()

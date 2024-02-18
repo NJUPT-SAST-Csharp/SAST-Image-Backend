@@ -7,7 +7,7 @@ namespace Account.WebAPI.RequestValidators
     {
         public LoginRequestValidator()
         {
-            RuleFor(x => x.Username).NotEmpty().Length(0, 20);
+            RuleFor(x => x.Username).NotEmpty().Length(2, 12);
             RuleFor(x => x.Password).NotEmpty().Length(6, 20);
         }
     }

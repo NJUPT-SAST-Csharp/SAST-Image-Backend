@@ -26,12 +26,10 @@ namespace Account.Infrastructure.DomainServices
         {
             email = email.ToUpperInvariant();
 
-            var user = await _context
-                .Users.Include("_roles")
-                .FirstOrDefaultAsync(
-                    u => EF.Property<string>(u, "_email") == email,
-                    cancellationToken
-                );
+            var user = await _context.Users.FirstOrDefaultAsync(
+                u => EF.Property<string>(u, "_email") == email,
+                cancellationToken
+            );
 
             if (user is null)
             {
@@ -46,9 +44,7 @@ namespace Account.Infrastructure.DomainServices
             CancellationToken cancellationToken = default
         )
         {
-            var user = await _context
-                .Users.Include("_roles")
-                .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
             if (user is null)
             {
@@ -63,12 +59,10 @@ namespace Account.Infrastructure.DomainServices
             CancellationToken cancellationToken = default
         )
         {
-            var user = await _context
-                .Users.Include("_roles")
-                .FirstOrDefaultAsync(
-                    u => EF.Functions.ILike(EF.Property<string>(u, "_username"), username),
-                    cancellationToken
-                );
+            var user = await _context.Users.FirstOrDefaultAsync(
+                u => EF.Functions.ILike(EF.Property<string>(u, "_username"), username),
+                cancellationToken
+            );
 
             if (user is null)
             {

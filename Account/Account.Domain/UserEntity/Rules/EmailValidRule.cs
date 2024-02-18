@@ -5,7 +5,7 @@ namespace Account.Domain.UserEntity.Rules
 {
     internal readonly struct EmailValidRule(string email) : IDomainBusinessRule
     {
-        private const int MaxLength = 50;
+        public const int MaxLength = 50;
 
         public bool IsBroken { get; } = IsValidEmail(email) == false;
 

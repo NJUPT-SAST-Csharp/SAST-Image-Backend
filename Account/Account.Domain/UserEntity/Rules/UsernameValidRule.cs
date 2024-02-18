@@ -21,8 +21,8 @@ namespace Account.Domain.UserEntity.Rules
             IsBroken = false;
         }
 
-        private const int MinLength = 2;
-        private const int MaxLength = 12;
+        public const int MinLength = 2;
+        public const int MaxLength = 12;
 
         public readonly bool IsBroken { get; }
 

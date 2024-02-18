@@ -5,5 +5,8 @@
         string Biography,
         DateOnly? Birthday,
         Uri? Website
-    ) { }
+    )
+    {
+        internal static Profile Default => new("SASTer", "", null, null);
+    }
 }

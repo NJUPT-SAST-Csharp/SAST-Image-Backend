@@ -4,8 +4,8 @@ namespace Account.Domain.UserEntity.Rules
 {
     internal readonly struct NicknameLengthRule(string nickname) : IDomainBusinessRule
     {
-        private const int MinLength = 1;
-        private const int MaxLength = 12;
+        public const int MinLength = 1;
+        public const int MaxLength = 12;
 
         public bool IsBroken { get; } = nickname.Length < MinLength || nickname.Length > MaxLength;
 
