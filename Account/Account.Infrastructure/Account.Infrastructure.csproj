@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Auth\Auth.csproj" />
+    <ProjectReference Include="..\..\Shared\Storage\Storage.csproj" />
     <ProjectReference Include="..\Account.Application\Account.Application.csproj" />
   </ItemGroup>
 

@@ -25,6 +25,7 @@ using Primitives.DomainEvent;
 using Primitives.Query;
 using SastImg.WebAPI.Configurations;
 using Serilog;
+using Shared.Storage.Configurations;
 using StackExchange.Redis;
 
 namespace Account.Infrastructure.Configurations
@@ -42,7 +43,8 @@ namespace Account.Infrastructure.Configurations
                 .AddRepositories()
                 .AddDistributedCache(configuration.GetConnectionString("DistributedCache")!)
                 .AddEventBus(configuration)
-                .AddExceptionHandlers();
+                .AddExceptionHandlers()
+                .AddStorages(configuration);
 
             services.AddScoped<IUserUniquenessChecker, UserUniquenessChecker>();
             services.AddScoped<IAuthCodeSender, EmailCodeSender>();
@@ -170,6 +172,15 @@ namespace Account.Infrastructure.Configurations
             services.AddScoped<IQueryRequestSender, InternalEventBus>();
             services.AddScoped<ICommandRequestSender, InternalEventBus>();
 
+            return services;
+        }
+
+        private static IServiceCollection AddStorages(
+            this IServiceCollection services,
+            IConfiguration configuration
+        )
+        {
+            services.ConfigureImageStorage(configuration);
             return services;
         }
 
