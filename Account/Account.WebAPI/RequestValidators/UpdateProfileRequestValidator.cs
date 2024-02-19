@@ -13,6 +13,11 @@ namespace Account.WebAPI.RequestValidators
                 .Length(NicknameLengthRule.MinLength, NicknameLengthRule.MaxLength);
 
             RuleFor(x => x.Biography).MaximumLength(BiographyValidRule.MaxLength);
+
+            RuleFor(x => x.Website)
+                .Must(x => Uri.IsWellFormedUriString(x?.ToString(), UriKind.Absolute))
+                .WithMessage("Invalid website format.")
+                .When(x => x.Website is not null);
         }
     }
 }

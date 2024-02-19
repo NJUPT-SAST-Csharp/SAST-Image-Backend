@@ -6,7 +6,7 @@ namespace Account.Domain.UserEntity.Rules
     {
         public const int MaxLength = 100;
 
-        public bool IsBroken { get; } = biography.Length < MaxLength;
+        public bool IsBroken { get; } = biography.Length > MaxLength;
 
         public string Message { get; } = $"Biography length should not be more than {MaxLength}";
     }
