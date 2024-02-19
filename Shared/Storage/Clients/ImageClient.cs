@@ -1,17 +1,15 @@
-﻿using Aliyun.OSS;
+﻿using System.Text;
+using Aliyun.OSS;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using SastImg.Application.ImageServices.AddImage;
-using Shared.Storage.Implements;
 using Shared.Storage.Options;
-using System.Text;
 
 namespace Storage.Clients
 {
-    internal sealed class ImageClient(IOssClientFactory factory, IOptions<ImageOssOptions> options)
-        : IImageStorageClient
+    public sealed class ImageClient(IOptions<ImageOssOptions> options)
     {
-        private readonly OssClient _client = factory.GetOssClient();
+        private readonly OssClient _client =
+            new(options.Value.Endpoint, options.Value.AccessKeyId, options.Value.AccessKeySecret);
         private readonly ImageOssOptions _options = options.Value;
 
         public async Task<Uri> UploadImageAsync(

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
 
-namespace SastImg.Infrastructure.Extensions
+namespace SastImg.Infrastructure.Configurations
 {
     public static class WebApplicationExtension
     {

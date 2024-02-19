@@ -1,6 +1,6 @@
 ﻿namespace Storage.Options
 {
-    internal sealed class HeaderOssOptions
+    public sealed class HeaderOssOptions
     {
         public const string Position = "Storage";
         public string Endpoint { get; init; }

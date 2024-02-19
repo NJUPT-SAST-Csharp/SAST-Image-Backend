@@ -10,7 +10,6 @@ builder.Services.ConfigureMediator();
 builder.Services.ConfigureEventBus(builder.Configuration);
 builder.Services.ConfigureDatabase(builder.Configuration.GetConnectionString("SNSDb")!);
 builder.Services.ConfigureRepositories();
-builder.Services.ConfigureStorages(builder.Configuration);
 builder.Services.ConfigureAuth(builder.Configuration);
 
 if (builder.Environment.IsDevelopment())

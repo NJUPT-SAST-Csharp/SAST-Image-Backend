@@ -7,12 +7,12 @@ namespace SastImg.Application.ImageServices.AddImage
 {
     internal sealed class AddImageCommandHandler(
         IAlbumRepository repository,
-        IImageStorageClient client,
+        IImageStorageRepository client,
         IUnitOfWork unitOfWork
     ) : ICommandRequestHandler<AddImageCommand, ImageInfoDto>
     {
         private readonly IAlbumRepository _repository = repository;
-        private readonly IImageStorageClient _client = client;
+        private readonly IImageStorageRepository _client = client;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         public async Task<ImageInfoDto> Handle(

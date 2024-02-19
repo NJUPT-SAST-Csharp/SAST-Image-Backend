@@ -1,4 +1,4 @@
-using SastImg.Infrastructure.Extensions;
+using SastImg.Infrastructure.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 

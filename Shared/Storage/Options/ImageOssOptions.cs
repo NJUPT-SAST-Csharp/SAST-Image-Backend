@@ -1,6 +1,6 @@
 ﻿namespace Shared.Storage.Options
 {
-    internal sealed class ImageOssOptions
+    public sealed class ImageOssOptions
     {
         public const string Position = "Storage";
         public string Endpoint { get; init; }

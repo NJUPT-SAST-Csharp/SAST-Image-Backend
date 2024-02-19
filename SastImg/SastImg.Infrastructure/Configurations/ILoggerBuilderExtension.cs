@@ -2,7 +2,7 @@
 using Serilog;
 using Serilog.Formatting.Compact;
 
-namespace SastImg.Infrastructure.Extensions
+namespace SastImg.Infrastructure.Configurations
 {
     public static class ILoggerBuilderExtension
     {
@@ -10,12 +10,9 @@ namespace SastImg.Infrastructure.Extensions
         {
             loggerBuilder.ClearProviders();
             var logger = new LoggerConfiguration()
-                .Enrich
-                .FromLogContext()
-                .WriteTo
-                .Console()
-                .WriteTo
-                .File(new CompactJsonFormatter(), "logs/logs")
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .WriteTo.File(new CompactJsonFormatter(), "logs/logs")
                 .CreateLogger();
             loggerBuilder.AddSerilog(logger);
         }

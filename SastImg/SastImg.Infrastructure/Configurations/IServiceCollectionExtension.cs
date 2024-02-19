@@ -7,6 +7,7 @@ using Messenger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi.Models;
 using Npgsql;
 using Primitives;
@@ -19,6 +20,7 @@ using SastImg.Application.AlbumServices.GetRemovedAlbums;
 using SastImg.Application.AlbumServices.SearchAlbums;
 using SastImg.Application.CategoryServices;
 using SastImg.Application.CategoryServices.GetAllCategory;
+using SastImg.Application.ImageServices.AddImage;
 using SastImg.Application.ImageServices.GetImage;
 using SastImg.Application.ImageServices.GetImages;
 using SastImg.Application.ImageServices.GetRemovedImages;
@@ -37,9 +39,10 @@ using SastImg.Infrastructure.Persistence.QueryDatabase;
 using SastImg.Infrastructure.Persistence.TypeConverters;
 using SastImg.Infrastructure.QueryRepositories;
 using SastImg.WebAPI.Configurations;
+using Shared.Storage.Configurations;
 using StackExchange.Redis;
 
-namespace SastImg.Infrastructure.Extensions
+namespace SastImg.Infrastructure.Configurations
 {
     public static class IServiceCollectionExtension
     {
@@ -139,6 +142,17 @@ namespace SastImg.Infrastructure.Extensions
             });
 
             services.AddScoped<IMessagePublisher, ExternalEventBus>();
+
+            return services;
+        }
+
+        public static IServiceCollection ConfigureStorage(
+            this IServiceCollection services,
+            IConfiguration configuration
+        )
+        {
+            services.ConfigureImageStorage(configuration);
+            services.TryAddScoped<IImageStorageRepository, ImageStorageRepository>();
 
             return services;
         }

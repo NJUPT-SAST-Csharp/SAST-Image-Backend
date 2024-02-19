@@ -1,27 +1,19 @@
 ﻿using Aliyun.OSS;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Shared.Storage.Implements;
-using SNS.Domain.UserEntity;
 using Storage.Options;
 
 namespace Storage.Clients
 {
-    internal sealed class AvatarClient(
-        IOssClientFactory factory,
-        IOptions<AvatarOssOptions> options
-    )
+    public sealed class AvatarClient(IOptions<AvatarOssOptions> options)
     {
-        private readonly OssClient _client = factory.GetOssClient();
+        private readonly OssClient _client =
+            new(options.Value.Endpoint, options.Value.AccessKeyId, options.Value.AccessKeySecret);
         private readonly AvatarOssOptions _options = options.Value;
 
-        public async Task<Uri> UploadAvatarAsync(
-            UserId userId,
-            IFormFile file,
-            CancellationToken cancellationToken = default
-        )
+        public async Task<Uri> UploadAvatarAsync(long userId, IFormFile file)
         {
-            string key = "avatars/" + userId.Value.ToString() + Path.GetExtension(file.FileName);
+            string key = "avatars/" + userId.ToString() + Path.GetExtension(file.FileName);
 
             using (Stream stream = file.OpenReadStream())
             {

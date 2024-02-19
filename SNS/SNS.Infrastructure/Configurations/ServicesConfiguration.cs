@@ -12,7 +12,6 @@ using Primitives;
 using Primitives.Command;
 using Primitives.DomainEvent;
 using Primitives.Query;
-using Shared.Storage.Configurations;
 using SNS.Domain.AlbumEntity;
 using SNS.Domain.ImageAggregate;
 using SNS.Domain.UserEntity;
@@ -87,16 +86,6 @@ namespace SNS.Infrastructure.Configurations
                 });
             });
 
-            return services;
-        }
-
-        public static IServiceCollection ConfigureStorages(
-            this IServiceCollection services,
-            IConfiguration configuration
-        )
-        {
-            services.ConfigureAvatarStorage(configuration);
-            services.ConfigureHeaderStorage(configuration);
             return services;
         }
 

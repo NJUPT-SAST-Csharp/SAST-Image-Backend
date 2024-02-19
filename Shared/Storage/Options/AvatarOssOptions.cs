@@ -1,6 +1,6 @@
 ﻿namespace Storage.Options
 {
-    internal sealed class AvatarOssOptions
+    public sealed class AvatarOssOptions
     {
         public const string Position = "Storage";
         public string Endpoint { get; init; }

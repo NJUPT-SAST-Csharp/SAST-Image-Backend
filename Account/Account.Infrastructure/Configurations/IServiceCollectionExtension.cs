@@ -120,7 +120,10 @@ namespace Account.Infrastructure.Configurations
                 );
                 options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
             });
+
             SqlMapper.AddTypeHandler(new UriStringConverter());
+            SqlMapper.AddTypeHandler(new DateOnlyConverter());
+
             services.AddSingleton<IDbConnectionFactory>(
                 _ => new DbConnectionFactory(connectionString)
             );

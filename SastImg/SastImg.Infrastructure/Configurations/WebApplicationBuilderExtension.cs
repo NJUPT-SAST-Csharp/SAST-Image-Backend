@@ -3,11 +3,9 @@ using Auth.Authorization.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Shared.Storage.Configurations;
 
-namespace SastImg.Infrastructure.Extensions
+namespace SastImg.Infrastructure.Configurations
 {
     public static class WebApplicationBuilderExtension
     {
@@ -19,8 +17,6 @@ namespace SastImg.Infrastructure.Extensions
             {
                 builder.Services.ConfigureSwagger();
             }
-
-            builder.Services.TryAddSingleton(configuration);
 
             builder.Services.ConfigureOptions(configuration);
 
@@ -34,7 +30,7 @@ namespace SastImg.Infrastructure.Extensions
 
             builder.Services.ConfigureEventBus(configuration);
 
-            builder.Services.ConfigureImageStorage(configuration);
+            builder.Services.ConfigureStorage(configuration);
 
             builder.Services.ConfigureExceptionHandlers();
 
