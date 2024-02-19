@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Response.ReponseObjects;
 using Response.ResponseObjects;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Shared.Response.Builders
 {
@@ -16,8 +15,7 @@ namespace Shared.Response.Builders
                 return TypedResults.NotFound();
         }
 
-        public static Ok<T> Data<T>([DisallowNull] T obj)
-            where T : notnull => TypedResults.Ok(obj);
+        public static Ok<T> Data<T>(T obj) => TypedResults.Ok(obj);
 
         public static NoContent NoContent => TypedResults.NoContent();
 

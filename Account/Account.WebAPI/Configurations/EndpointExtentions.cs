@@ -79,7 +79,7 @@ namespace Account.WebAPI.Configurations
                         mapper(request, user),
                         cancellationToken
                     );
-                    return Responses.DataOrNotFound(result);
+                    return Responses.Data(result);
                 }
             );
 
@@ -133,7 +133,7 @@ namespace Account.WebAPI.Configurations
                 ) =>
                 {
                     var result = await sender.QueryAsync(mapper(request, user), cancellationToken);
-                    Responses.DataOrNotFound(result);
+                    return Responses.DataOrNotFound(result);
                 }
             );
 

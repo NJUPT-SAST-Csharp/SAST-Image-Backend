@@ -1,5 +1,5 @@
 ﻿using Account.Domain.UserEntity.Services;
-using Account.Infrastructure.Persistence.QueryDatabase;
+using Account.Infrastructure.Persistence;
 using Dapper;
 
 namespace Account.Infrastructure.DomainServices

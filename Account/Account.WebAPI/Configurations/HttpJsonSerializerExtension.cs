@@ -3,6 +3,8 @@ using System.Text.Json.Serialization;
 using Account.Application.AccountServices.Register.VerifyRegistrationCode;
 using Account.Application.Endpoints.AccountEndpoints.Login;
 using Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount;
+using Account.Application.UserServices.GetUserBriefInfo;
+using Account.Application.UserServices.GetUserDetailedInfo;
 using Account.WebAPI.Requests;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -33,11 +35,14 @@ namespace Account.WebAPI.Configurations
     [JsonSerializable(typeof(UpdateProfileRequest))]
     [JsonSerializable(typeof(SendForgetCodeRequest))]
     [JsonSerializable(typeof(VerifyForgetCodeRequest))]
+    [JsonSerializable(typeof(GetUserBriefInfoRequest))]
     [JsonSerializable(typeof(NoContent))]
     [JsonSerializable(typeof(BadRequestResponse))]
     [JsonSerializable(typeof(ProblemDetails))]
     [JsonSerializable(typeof(LoginDto))]
     [JsonSerializable(typeof(VerifyRegistrationCodeDto))]
     [JsonSerializable(typeof(CreateAccountDto))]
+    [JsonSerializable(typeof(UserBriefInfoDto))]
+    [JsonSerializable(typeof(UserDetailedInfoDto))]
     public partial class AppJsonSerializerContext : JsonSerializerContext { }
 }

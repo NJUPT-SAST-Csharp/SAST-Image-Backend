@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Npgsql;
 
-namespace Account.Infrastructure.Persistence.QueryDatabase
+namespace Account.Infrastructure.Persistence
 {
     internal sealed class DbConnectionFactory(string connectionString) : IDbConnectionFactory
     {

@@ -1,14 +1,16 @@
 ﻿using System.Reflection;
 using Account.Application;
 using Account.Application.Services;
+using Account.Application.UserServices;
 using Account.Domain.UserEntity.Services;
 using Account.Infrastructure.ApplicationServices;
 using Account.Infrastructure.DomainServices;
 using Account.Infrastructure.EventBus;
 using Account.Infrastructure.Persistence;
-using Account.Infrastructure.Persistence.QueryDatabase;
+using Account.Infrastructure.Persistence.TypeConverters;
 using Auth.Authentication.Extensions;
 using Auth.Authorization.Extensions;
+using Dapper;
 using Exceptions.Configurations;
 using Exceptions.ExceptionHandlers;
 using Messenger;
@@ -37,17 +39,22 @@ namespace Account.Infrastructure.Configurations
             services
                 .ConfigureAuth(configuration)
                 .AddPersistence(configuration.GetConnectionString("AccountDb")!)
+                .AddRepositories()
                 .AddDistributedCache(configuration.GetConnectionString("DistributedCache")!)
                 .AddEventBus(configuration)
                 .AddExceptionHandlers();
 
-            services.AddScoped<IUserRepository, UserRepository>();
-
             services.AddScoped<IUserUniquenessChecker, UserUniquenessChecker>();
-
             services.AddScoped<IAuthCodeSender, EmailCodeSender>();
             services.AddScoped<IJwtProvider, JwtProvider>();
 
+            return services;
+        }
+
+        public static IServiceCollection AddRepositories(this IServiceCollection services)
+        {
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserQueryRepository, UserQueryRepository>();
             return services;
         }
 
@@ -113,7 +120,7 @@ namespace Account.Infrastructure.Configurations
                 );
                 options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
             });
-
+            SqlMapper.AddTypeHandler(new UriStringConverter());
             services.AddSingleton<IDbConnectionFactory>(
                 _ => new DbConnectionFactory(connectionString)
             );

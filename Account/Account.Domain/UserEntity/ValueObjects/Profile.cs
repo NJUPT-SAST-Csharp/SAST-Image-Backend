@@ -7,6 +7,6 @@
         Uri? Website
     )
     {
-        internal static Profile Default => new("SASTer", "", null, null);
+        internal static Profile Default => new("SASTer", string.Empty, null, null);
     }
 }

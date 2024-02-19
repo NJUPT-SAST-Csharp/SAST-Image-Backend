@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace Account.Infrastructure.Persistence.QueryDatabase
+namespace Account.Infrastructure.Persistence
 {
     internal interface IDbConnectionFactory : IDisposable
     {

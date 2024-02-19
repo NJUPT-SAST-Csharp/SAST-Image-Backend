@@ -7,6 +7,8 @@ using Account.Application.Endpoints.AccountEndpoints.Login;
 using Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount;
 using Account.Application.Endpoints.AccountEndpoints.Register.SendRegistrationCode;
 using Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistrationCode;
+using Account.Application.UserServices.GetUserBriefInfo;
+using Account.Application.UserServices.GetUserDetailedInfo;
 using Account.Application.UserServices.UpdateProfile;
 using Account.WebAPI.Configurations;
 using Account.WebAPI.Requests;
@@ -39,15 +41,29 @@ namespace Account.WebAPI.Endpoints
                     "/profile",
                     (request, user) => request.ToCommand(user)
                 )
+                .AddValidator<UpdateProfileRequest>()
                 .AddAuthorization(AuthorizationRole.AUTH)
                 .WithSummary("Update Profile")
                 .WithDescription("Update user profile.");
 
-            //user.AddGet<QueryUserRequest>("/", AuthorizationRole.USER)
-            //    .WithDataResponse<IEnumerable<QueryUserDto>>()
-            //    .WithUnauthorizedResponse()
-            //    .WithSummary("Query Users")
-            //    .WithDescription("Query specific users by username or ID.");
+            user.AddGet<GetUserBriefInfoRequest, GetUserBriefInfoQuery, UserBriefInfoDto>(
+                    "/{username}",
+                    (request, _) => new(request.Username)
+                )
+                .AddValidator<GetUserBriefInfoRequest>()
+                .WithSummary("Query User Brief Info")
+                .WithDescription(
+                    "Query user brief info, only containing username, nickname, avatar."
+                );
+
+            user.AddGet<GetUserDetailedInfoRequest, GetUserDetailedInfoQuery, UserDetailedInfoDto>(
+                    "/{username}/detailed",
+                    (request, _) => new(request.Username)
+                )
+                .AddAuthorization(AuthorizationRole.AUTH)
+                .AddValidator<GetUserDetailedInfoRequest>()
+                .WithSummary("Query User Detailed Info")
+                .WithDescription("Query user detailed info, containing all public user info.");
         }
 
         private static void MapAccount(RouteGroupBuilder builder)

@@ -1,9 +1,9 @@
-﻿using Dapper;
-using System.Data;
+﻿using System.Data;
+using Dapper;
 
-namespace SNS.Infrastructure.Persistence.TypeConverters
+namespace Account.Infrastructure.Persistence.TypeConverters
 {
-    internal class UriStringConverter : SqlMapper.TypeHandler<Uri?>
+    internal sealed class UriStringConverter : SqlMapper.TypeHandler<Uri?>
     {
         public override void SetValue(IDbDataParameter parameter, Uri? value)
         {
