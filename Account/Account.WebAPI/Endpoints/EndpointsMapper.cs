@@ -63,7 +63,12 @@ namespace Account.WebAPI.Endpoints
                 .AddAuthorization(AuthorizationRole.AUTH)
                 .AddValidator<GetUserDetailedInfoRequest>()
                 .WithSummary("Query User Detailed Info")
-                .WithDescription("Query user detailed info, containing all public user info.");
+                .WithDescription(
+                    """
+                    Query user detailed info, 
+                    containing username, nickname, avatar, header, bio, birthday, website
+                    """
+                );
         }
 
         private static void MapAccount(RouteGroupBuilder builder)
