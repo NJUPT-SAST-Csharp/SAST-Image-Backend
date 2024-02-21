@@ -33,6 +33,8 @@ namespace Account.WebAPI.Configurations
     [JsonSerializable(typeof(ChangePasswordRequest))]
     [JsonSerializable(typeof(AuthorizeRequest))]
     [JsonSerializable(typeof(UpdateProfileRequest))]
+    [JsonSerializable(typeof(UpdateAvatarRequest))]
+    [JsonSerializable(typeof(UpdateHeaderRequest))]
     [JsonSerializable(typeof(SendForgetCodeRequest))]
     [JsonSerializable(typeof(VerifyForgetCodeRequest))]
     [JsonSerializable(typeof(GetUserBriefInfoRequest))]

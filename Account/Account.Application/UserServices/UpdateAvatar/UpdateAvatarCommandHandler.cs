@@ -18,11 +18,18 @@ namespace Account.Application.UserServices.UpdateAvatar
         {
             var user = await _repository.GetUserByIdAsync(request.Requester.Id, cancellationToken);
 
-            var url = await _storage
-                .UploadAvatarAsync(user.Id, request.Avatar)
-                .WaitAsync(cancellationToken);
+            if (request.Avatar is not null)
+            {
+                var url = await _storage
+                    .UploadAvatarAsync(user.Id, request.Avatar)
+                    .WaitAsync(cancellationToken);
 
-            user.UpdateAvatar(url);
+                user.UpdateAvatar(url);
+            }
+            else
+            {
+                user.UpdateAvatar(null);
+            }
 
             await _unit.CommitChangesAsync(cancellationToken);
         }

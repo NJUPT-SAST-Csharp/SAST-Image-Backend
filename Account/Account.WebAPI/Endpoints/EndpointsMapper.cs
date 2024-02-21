@@ -9,6 +9,8 @@ using Account.Application.Endpoints.AccountEndpoints.Register.SendRegistrationCo
 using Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistrationCode;
 using Account.Application.UserServices.GetUserBriefInfo;
 using Account.Application.UserServices.GetUserDetailedInfo;
+using Account.Application.UserServices.UpdateAvatar;
+using Account.Application.UserServices.UpdateHeader;
 using Account.Application.UserServices.UpdateProfile;
 using Account.WebAPI.Configurations;
 using Account.WebAPI.Requests;
@@ -45,6 +47,24 @@ namespace Account.WebAPI.Endpoints
                 .AddAuthorization(AuthorizationRole.AUTH)
                 .WithSummary("Update Profile")
                 .WithDescription("Update user profile.");
+
+            user.AddFormPut<UpdateHeaderRequest, UpdateHeaderCommand>(
+                    "/header",
+                    (request, user) => new(request.HeaderFile, user)
+                )
+                .AddValidator<UpdateHeaderRequest>()
+                .AddAuthorization(AuthorizationRole.AUTH)
+                .WithSummary("Update Header")
+                .WithDescription("Update user main page's header image.");
+
+            user.AddFormPut<UpdateAvatarRequest, UpdateAvatarCommand>(
+                    "/avatar",
+                    (request, user) => new(request.AvatarFile, user)
+                )
+                .AddValidator<UpdateAvatarRequest>()
+                .AddAuthorization(AuthorizationRole.AUTH)
+                .WithSummary("Update Avatar")
+                .WithDescription("Updatet user's avatar image.");
 
             user.AddGet<GetUserBriefInfoRequest, GetUserBriefInfoQuery, UserBriefInfoDto>(
                     "/{username}",

@@ -2,6 +2,8 @@
 using Account.Application;
 using Account.Application.Services;
 using Account.Application.UserServices;
+using Account.Application.UserServices.UpdateAvatar;
+using Account.Application.UserServices.UpdateHeader;
 using Account.Domain.UserEntity.Services;
 using Account.Infrastructure.ApplicationServices;
 using Account.Infrastructure.DomainServices;
@@ -180,7 +182,11 @@ namespace Account.Infrastructure.Configurations
             IConfiguration configuration
         )
         {
-            services.ConfigureImageStorage(configuration);
+            services.AddScoped<IHeaderStorageRepository, HeaderStorageRepository>();
+            services.AddScoped<IAvatarStorageRepository, AvatarStorageRepository>();
+
+            services.ConfigureHeaderStorage(configuration);
+            services.ConfigureAvatarStorage(configuration);
             return services;
         }
 

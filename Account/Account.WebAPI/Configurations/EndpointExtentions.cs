@@ -42,7 +42,7 @@ namespace Account.WebAPI.Configurations
             var handler = builder.MapPost(
                 route,
                 async (
-                    [AsParameters] TRequest request,
+                    [FromBody] TRequest request,
                     [FromServices] ICommandRequestSender sender,
                     ClaimsPrincipal user,
                     CancellationToken cancellationToken
@@ -69,7 +69,7 @@ namespace Account.WebAPI.Configurations
             var handler = builder.MapPost(
                 route,
                 async (
-                    [AsParameters] TRequest request,
+                    [FromBody] TRequest request,
                     [FromServices] ICommandRequestSender sender,
                     ClaimsPrincipal user,
                     CancellationToken cancellationToken
@@ -88,6 +88,33 @@ namespace Account.WebAPI.Configurations
             return handler;
         }
 
+        public static RouteHandlerBuilder AddFormPost<TRequest, TProcessRequest>(
+            this RouteGroupBuilder builder,
+            string route,
+            Func<TRequest, ClaimsPrincipal, TProcessRequest> mapper
+        )
+            where TRequest : struct, ICommandRequestObject<TProcessRequest>
+            where TProcessRequest : ICommandRequest
+        {
+            var handler = builder.MapPost(
+                route,
+                async (
+                    [FromForm] TRequest request,
+                    [FromServices] ICommandRequestSender sender,
+                    ClaimsPrincipal user,
+                    CancellationToken cancellationToken
+                ) =>
+                {
+                    await sender.CommandAsync(mapper(request, user), cancellationToken);
+                    return Responses.NoContent;
+                }
+            );
+
+            handler.WithNoContentResponse().DisableAntiforgery();
+
+            return handler;
+        }
+
         public static RouteHandlerBuilder AddPut<TRequest, TProcessRequest>(
             this RouteGroupBuilder builder,
             string route,
@@ -99,7 +126,7 @@ namespace Account.WebAPI.Configurations
             var handler = builder.MapPut(
                 route,
                 async (
-                    [AsParameters] TRequest request,
+                    [FromBody] TRequest request,
                     [FromServices] ICommandRequestSender sender,
                     ClaimsPrincipal user,
                     CancellationToken cancellationToken
@@ -111,6 +138,33 @@ namespace Account.WebAPI.Configurations
             );
 
             handler.WithNoContentResponse();
+
+            return handler;
+        }
+
+        public static RouteHandlerBuilder AddFormPut<TRequest, TProcessRequest>(
+            this RouteGroupBuilder builder,
+            string route,
+            Func<TRequest, ClaimsPrincipal, TProcessRequest> mapper
+        )
+            where TRequest : struct, ICommandRequestObject<TProcessRequest>
+            where TProcessRequest : ICommandRequest
+        {
+            var handler = builder.MapPut(
+                route,
+                async (
+                    [FromForm] TRequest request,
+                    [FromServices] ICommandRequestSender sender,
+                    ClaimsPrincipal user,
+                    CancellationToken cancellationToken
+                ) =>
+                {
+                    await sender.CommandAsync(mapper(request, user), cancellationToken);
+                    return Responses.NoContent;
+                }
+            );
+
+            handler.WithNoContentResponse().DisableAntiforgery();
 
             return handler;
         }
