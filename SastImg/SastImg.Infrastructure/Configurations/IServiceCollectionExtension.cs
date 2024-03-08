@@ -14,9 +14,10 @@ using Primitives;
 using Primitives.Command;
 using Primitives.DomainEvent;
 using Primitives.Query;
-using SastImg.Application.AlbumServices.GetAlbum;
 using SastImg.Application.AlbumServices.GetAlbums;
+using SastImg.Application.AlbumServices.GetDetailedAlbum;
 using SastImg.Application.AlbumServices.GetRemovedAlbums;
+using SastImg.Application.AlbumServices.GetUserAlbums;
 using SastImg.Application.AlbumServices.SearchAlbums;
 using SastImg.Application.CategoryServices;
 using SastImg.Application.CategoryServices.GetAllCategory;
@@ -76,7 +77,8 @@ namespace SastImg.Infrastructure.Configurations
 
             services.AddScoped<IAlbumRepository, AlbumRepository>();
             services.AddScoped<IGetUserAlbumsRepository, AlbumQueryRepository>();
-            services.AddScoped<IGetAlbumRepository, AlbumQueryRepository>();
+            services.AddScoped<IGetDetailedAlbumRepository, AlbumQueryRepository>();
+            services.AddScoped<IGetAlbumsRepository, AlbumQueryRepository>();
             services.AddScoped<ISearchAlbumsRepository, AlbumQueryRepository>();
             services.AddScoped<IGetRemovedAlbumsRepository, AlbumQueryRepository>();
 

@@ -5,9 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Primitives.Command;
 using Primitives.Query;
 using SastImg.Application.AlbumServices.CreateAlbum;
-using SastImg.Application.AlbumServices.GetAlbum;
 using SastImg.Application.AlbumServices.GetAlbums;
+using SastImg.Application.AlbumServices.GetDetailedAlbum;
 using SastImg.Application.AlbumServices.GetRemovedAlbums;
+using SastImg.Application.AlbumServices.GetUserAlbums;
 using SastImg.Application.AlbumServices.RemoveAlbum;
 using SastImg.Application.AlbumServices.RestoreAlbum;
 using SastImg.Application.AlbumServices.SearchAlbums;
@@ -33,6 +34,31 @@ namespace SastImg.WebAPI.Controllers
         private readonly ICommandRequestSender _commandSender = commandSender;
 
         /// <summary>
+        /// Get Albums
+        /// </summary>
+        /// <remarks>
+        /// Get albums by category.
+        /// </remarks>
+        /// <param name="categoryId">The category id. When id=0, get all available albums.</param>
+        /// <param name="page">The page id.</param>
+        /// <param name="cancellationToken">Cancellatin token</param>
+        /// <response code="200">The albums</response>
+        [HttpGet("albums")]
+        [ProducesResponseType<IEnumerable<AlbumDto>>(StatusCodes.Status200OK)]
+        public async Task<Ok<IEnumerable<AlbumDto>>> GetAlbums(
+            [Range(0, long.MaxValue)] long categoryId = 0,
+            [Range(0, 1000)] int page = 0,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var albums = await _querySender.QueryAsync(
+                new GetAlbumsQuery(categoryId, page, User),
+                cancellationToken
+            );
+            return Responses.Data(albums);
+        }
+
+        /// <summary>
         /// Get Detailed Album
         /// </summary>
         /// <remarks>
@@ -44,13 +70,13 @@ namespace SastImg.WebAPI.Controllers
         /// <response code="404">No album is found</response>
         [HttpGet("album/{albumId}")]
         [ProducesResponseType<DetailedAlbumDto>(StatusCodes.Status200OK)]
-        public async Task<Results<Ok<DetailedAlbumDto>, NotFound>> GetAlbum(
+        public async Task<Results<Ok<DetailedAlbumDto>, NotFound>> GetDetailedAlbum(
             [Range(0, long.MaxValue)] long albumId,
             CancellationToken cancellationToken = default
         )
         {
             var album = await _querySender.QueryAsync(
-                new GetAlbumQuery(albumId, User),
+                new GetDetailedAlbumQuery(albumId, User),
                 cancellationToken
             );
             return Responses.DataOrNotFound(album);

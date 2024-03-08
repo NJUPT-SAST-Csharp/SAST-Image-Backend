@@ -1,6 +1,6 @@
 ﻿using SastImg.Domain;
 
-namespace SastImg.Application.AlbumServices.GetAlbums
+namespace SastImg.Application.AlbumServices.GetUserAlbums
 {
     public interface IGetUserAlbumsRepository
     {

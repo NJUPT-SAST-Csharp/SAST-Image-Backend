@@ -1,6 +1,6 @@
 ﻿using Shared.Primitives.Query;
 
-namespace SastImg.Application.AlbumServices.GetAlbums
+namespace SastImg.Application.AlbumServices.GetUserAlbums
 {
     internal sealed class GetUserAlbumsQueryHandler(IGetUserAlbumsRepository database)
         : IQueryRequestHandler<GetUserAlbumsQuery, IEnumerable<UserAlbumDto>>

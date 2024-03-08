@@ -3,7 +3,7 @@ using SastImg.Application.SeedWorks;
 using SastImg.Domain;
 using Shared.Primitives.Query;
 
-namespace SastImg.Application.AlbumServices.GetAlbums
+namespace SastImg.Application.AlbumServices.GetUserAlbums
 {
     public sealed class GetUserAlbumsQuery(long authorId, ClaimsPrincipal user)
         : IQueryRequest<IEnumerable<UserAlbumDto>>

@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
 
-namespace SastImg.Application.AlbumServices.GetAlbum
+namespace SastImg.Application.AlbumServices.GetDetailedAlbum
 {
     public sealed class DetailedAlbumDto
     {

@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using SastImg.Application.AlbumServices.GetAlbum;
+using SastImg.Application.AlbumServices.GetDetailedAlbum;
 using SastImg.Application.SeedWorks;
 using StackExchange.Redis;
 
@@ -7,11 +7,11 @@ namespace SastImg.Infrastructure.Caching
 {
     internal sealed class GetAlbumCache(
         IConnectionMultiplexer connection,
-        IGetAlbumRepository repository
+        IGetDetailedAlbumRepository repository
     ) : ICache<DetailedAlbumDto>
     {
         private readonly IDatabase _database = connection.GetDatabase();
-        private readonly IGetAlbumRepository _repository = repository;
+        private readonly IGetDetailedAlbumRepository _repository = repository;
 
         public Task DeleteCachingAsync(string key, CancellationToken cancellationToken = default)
         {
@@ -27,7 +27,7 @@ namespace SastImg.Infrastructure.Caching
 
             if (value.IsNullOrEmpty)
             {
-                var album = await _repository.GetAlbumByAnonymousAsync(
+                var album = await _repository.GetDetailedAlbumByAnonymousAsync(
                     new(long.Parse(key)),
                     cancellationToken
                 );
