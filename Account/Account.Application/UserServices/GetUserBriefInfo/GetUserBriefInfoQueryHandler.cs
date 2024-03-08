@@ -1,20 +1,22 @@
-﻿using Shared.Primitives.Query;
+﻿using Microsoft.AspNetCore.Http;
+using Shared.Primitives.Query;
+using Shared.Response.Builders;
 
 namespace Account.Application.UserServices.GetUserBriefInfo
 {
     internal class GetUserBriefInfoQueryHandler(IUserQueryRepository repository)
-        : IQueryRequestHandler<GetUserBriefInfoQuery, UserBriefInfoDto>
+        : IQueryRequestHandler<GetUserBriefInfoQuery, IResult>
     {
         private readonly IUserQueryRepository _repository = repository;
 
-        public async Task<UserBriefInfoDto> Handle(
+        public async Task<IResult> Handle(
             GetUserBriefInfoQuery request,
             CancellationToken cancellationToken
         )
         {
             var dto = await _repository.GetUserBriefInfoAsync(request.Username, cancellationToken);
 
-            return dto;
+            return Responses.DataOrNotFound(dto);
         }
     }
 }

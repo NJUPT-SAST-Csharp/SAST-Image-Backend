@@ -1,15 +1,17 @@
 ﻿using Account.Application.AccountServices.Register.VerifyRegistrationCode;
 using Account.Application.Services;
+using Microsoft.AspNetCore.Http;
 using Primitives.Command;
+using Shared.Response.Builders;
 
 namespace Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistrationCode
 {
     public sealed class VerifyRegistrationCodeCommandHandler(IAuthCodeCache cache)
-        : ICommandRequestHandler<VerifyRegistrationCodeCommand, VerifyRegistrationCodeDto>
+        : ICommandRequestHandler<VerifyRegistrationCodeCommand, IResult>
     {
         private readonly IAuthCodeCache _cache = cache;
 
-        public async Task<VerifyRegistrationCodeDto> Handle(
+        public async Task<IResult> Handle(
             VerifyRegistrationCodeCommand request,
             CancellationToken cancellationToken
         )
@@ -21,7 +23,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistra
                 cancellationToken
             );
 
-            return new(result);
+            return Responses.Data(new VerifyRegistrationCodeDto(result));
         }
     }
 }

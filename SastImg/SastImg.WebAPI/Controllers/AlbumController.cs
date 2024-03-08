@@ -39,13 +39,13 @@ namespace SastImg.WebAPI.Controllers
         /// Get albums that authored by the specific user.
         /// </remarks>
         /// <param name="page">24 albums per page</param>
-        /// <param name="userId">The user id.</param>
+        /// <param name="userId">The user id. When id=0, get all available albums.</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <response code="200">The albums</response>
         [HttpGet("user/{userId}/albums")]
         [ProducesResponseType<IEnumerable<AlbumDto>>(StatusCodes.Status200OK)]
         public async Task<Ok<IEnumerable<AlbumDto>>> GetAlbums(
-            [Range(0, long.MaxValue)] long userId,
+            [Range(0, long.MaxValue)] long userId = 0,
             [Range(0, 1000)] int page = 0,
             CancellationToken cancellationToken = default
         )

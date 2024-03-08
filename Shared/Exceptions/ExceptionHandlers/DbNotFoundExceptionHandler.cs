@@ -13,14 +13,14 @@ namespace Exceptions.ExceptionHandlers
             CancellationToken cancellationToken
         )
         {
-            if (exception is DbNotFoundException)
+            if (exception is DbNotFoundException ex)
             {
                 httpContext.Response.StatusCode = StatusCodes.Status404NotFound;
                 httpContext.Response.WriteAsJsonAsync(
                     new ProblemDetails()
                     {
                         Status = StatusCodes.Status404NotFound,
-                        Detail = exception.Message,
+                        Detail = ex.Message,
                         Title = "Not Found",
                     },
                     cancellationToken

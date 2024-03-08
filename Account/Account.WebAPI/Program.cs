@@ -1,7 +1,6 @@
 using System.Reflection;
 using Account.Infrastructure.Configurations;
 using Account.WebAPI.Configurations;
-using Account.WebAPI.Endpoints;
 using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,8 +13,9 @@ builder
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json");
 
 builder.Services.ConfigureJsonSerializer();
-builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 builder.Services.ConfigureServices(builder.Configuration);
+builder.Services.AddValidatorsFromAssembly(Assembly.GetCallingAssembly());
+builder.Services.RegisterEndpointMappersFromAssembly(Assembly.GetCallingAssembly());
 
 if (builder.Environment.IsDevelopment())
 {

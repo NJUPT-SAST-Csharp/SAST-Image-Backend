@@ -1,10 +1,8 @@
-﻿using Account.Application.UserServices.UpdateAvatar;
-using Account.WebAPI.SeedWorks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Account.WebAPI.Requests
 {
-    public readonly struct UpdateAvatarRequest : ICommandRequestObject<UpdateAvatarCommand>
+    public readonly struct UpdateAvatarRequest
     {
         [FromForm]
         public readonly IFormFile AvatarFile { get; init; }

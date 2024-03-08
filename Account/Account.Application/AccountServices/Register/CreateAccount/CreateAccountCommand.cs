@@ -1,4 +1,5 @@
-﻿using Primitives.Command;
+﻿using Microsoft.AspNetCore.Http;
+using Primitives.Command;
 
 namespace Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount
 {
@@ -7,7 +8,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount
         string password,
         string email,
         int code
-    ) : ICommandRequest<CreateAccountDto>
+    ) : ICommandRequest<IResult>
     {
         public string Username { get; init; } = username;
         public string Password { get; init; } = password;

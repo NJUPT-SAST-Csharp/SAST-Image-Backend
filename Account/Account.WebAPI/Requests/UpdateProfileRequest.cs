@@ -1,10 +1,9 @@
 ﻿using System.Security.Claims;
 using Account.Application.UserServices.UpdateProfile;
-using Account.WebAPI.SeedWorks;
 
 namespace Account.WebAPI.Requests
 {
-    public readonly struct UpdateProfileRequest : ICommandRequestObject<UpdateProfileCommand>
+    public readonly struct UpdateProfileRequest
     {
         public readonly string Nickname { get; init; }
         public readonly string Biography { get; init; }

@@ -5,7 +5,6 @@ namespace Account.WebAPI.SeedWorks
 {
     internal sealed class ValidationFilter<TRequest>(IValidator<TRequest> validator)
         : IEndpointFilter
-        where TRequest : IBaseRequestObject
     {
         private readonly IValidator<TRequest> _validator = validator;
 

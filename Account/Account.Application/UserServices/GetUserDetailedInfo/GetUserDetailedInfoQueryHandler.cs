@@ -1,13 +1,15 @@
-﻿using Shared.Primitives.Query;
+﻿using Microsoft.AspNetCore.Http;
+using Shared.Primitives.Query;
+using Shared.Response.Builders;
 
 namespace Account.Application.UserServices.GetUserDetailedInfo
 {
     internal class GetUserDetailedInfoQueryHandler(IUserQueryRepository repository)
-        : IQueryRequestHandler<GetUserDetailedInfoQuery, UserDetailedInfoDto>
+        : IQueryRequestHandler<GetUserDetailedInfoQuery, IResult>
     {
         private readonly IUserQueryRepository _repository = repository;
 
-        public async Task<UserDetailedInfoDto> Handle(
+        public async Task<IResult> Handle(
             GetUserDetailedInfoQuery request,
             CancellationToken cancellationToken
         )
@@ -17,7 +19,7 @@ namespace Account.Application.UserServices.GetUserDetailedInfo
                 cancellationToken
             );
 
-            return dto;
+            return Responses.DataOrNotFound(dto);
         }
     }
 }

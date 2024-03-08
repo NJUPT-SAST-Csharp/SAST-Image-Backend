@@ -22,6 +22,7 @@ public sealed class AlbumDomainUnitTest
             description,
             accessibility
         );
+
         Assert.AreEqual(expected, album.DomainEvents.Count);
     }
 }

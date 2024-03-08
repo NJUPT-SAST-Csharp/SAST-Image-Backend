@@ -1,9 +1,6 @@
-﻿using Account.Application.Endpoints.AccountEndpoints.ChangePassword;
-using Account.WebAPI.SeedWorks;
-
-namespace Account.WebAPI.Requests
+﻿namespace Account.WebAPI.Requests
 {
-    public readonly struct ChangePasswordRequest : ICommandRequestObject<ChangePasswordCommand>
+    public readonly struct ChangePasswordRequest
     {
         public readonly string NewPassword { get; init; }
     }

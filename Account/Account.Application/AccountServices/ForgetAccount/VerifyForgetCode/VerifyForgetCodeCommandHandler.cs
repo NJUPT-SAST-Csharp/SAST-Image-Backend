@@ -1,18 +1,20 @@
 ﻿using Account.Application.Services;
 using Account.Domain.UserEntity.Services;
+using Microsoft.AspNetCore.Http;
 using Primitives.Command;
+using Shared.Response.Builders;
 
 namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.VerifyForgetCode
 {
     public sealed class VerifyForgetCodeCommandHandler(
         IJwtProvider provider,
         IUserRepository repository
-    ) : ICommandRequestHandler<VerifyForgetCodeCommand, VerifyForgetCodeDto>
+    ) : ICommandRequestHandler<VerifyForgetCodeCommand, IResult>
     {
         private readonly IJwtProvider _provider = provider;
         private readonly IUserRepository _repository = repository;
 
-        public async Task<VerifyForgetCodeDto> Handle(
+        public async Task<IResult> Handle(
             VerifyForgetCodeCommand request,
             CancellationToken cancellationToken
         )
@@ -21,7 +23,7 @@ namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.VerifyFor
 
             var jwt = _provider.GetLoginJwt(user.Id, user.Username, user.Roles);
 
-            return new(jwt);
+            return Responses.Data(new VerifyForgetCodeDto(jwt));
         }
     }
 }
