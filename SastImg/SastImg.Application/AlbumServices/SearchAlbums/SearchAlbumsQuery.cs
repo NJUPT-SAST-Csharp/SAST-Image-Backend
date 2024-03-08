@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using SastImg.Application.AlbumServices.GetAlbums;
 using SastImg.Application.SeedWorks;
 using SastImg.Domain.CategoryEntity;
 using Shared.Primitives.Query;
@@ -11,7 +10,7 @@ namespace SastImg.Application.AlbumServices.SearchAlbums
         string title,
         int page,
         ClaimsPrincipal user
-    ) : IQueryRequest<IEnumerable<AlbumDto>>
+    ) : IQueryRequest<IEnumerable<SearchAlbumDto>>
     {
         public int Page { get; } = page;
         public string Title { get; } = title;

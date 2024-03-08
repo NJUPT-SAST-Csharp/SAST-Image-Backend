@@ -33,31 +33,6 @@ namespace SastImg.WebAPI.Controllers
         private readonly ICommandRequestSender _commandSender = commandSender;
 
         /// <summary>
-        /// Get Albums by UserId
-        /// </summary>
-        /// <remarks>
-        /// Get albums that authored by the specific user.
-        /// </remarks>
-        /// <param name="page">24 albums per page</param>
-        /// <param name="userId">The user id. When id=0, get all available albums.</param>
-        /// <param name="cancellationToken">Cancellation token</param>
-        /// <response code="200">The albums</response>
-        [HttpGet("user/{userId}/albums")]
-        [ProducesResponseType<IEnumerable<AlbumDto>>(StatusCodes.Status200OK)]
-        public async Task<Ok<IEnumerable<AlbumDto>>> GetAlbums(
-            [Range(0, long.MaxValue)] long userId = 0,
-            [Range(0, 1000)] int page = 0,
-            CancellationToken cancellationToken = default
-        )
-        {
-            var albums = await _querySender.QueryAsync(
-                new GetAlbumsQuery(page, userId, User),
-                cancellationToken
-            );
-            return Responses.Data(albums);
-        }
-
-        /// <summary>
         /// Get Detailed Album
         /// </summary>
         /// <remarks>
@@ -82,6 +57,30 @@ namespace SastImg.WebAPI.Controllers
         }
 
         /// <summary>
+        /// Get Albums By UserId
+        /// </summary>
+        /// <remarks>
+        /// Get albums that authored by the specific user.
+        /// </remarks>
+        /// <param name="userId">The user id.</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <response code="200">The albums</response>
+        [Authorize]
+        [HttpGet("user/{userId}/albums")]
+        [ProducesResponseType<IEnumerable<UserAlbumDto>>(StatusCodes.Status200OK)]
+        public async Task<Ok<IEnumerable<UserAlbumDto>>> GetUserAlbums(
+            [Range(0, long.MaxValue)] long userId,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var albums = await _querySender.QueryAsync(
+                new GetUserAlbumsQuery(userId, User),
+                cancellationToken
+            );
+            return Responses.Data(albums);
+        }
+
+        /// <summary>
         /// Search Albums
         /// </summary>
         /// <remarks>
@@ -95,8 +94,8 @@ namespace SastImg.WebAPI.Controllers
         /// <response code="200">The albums(order by update time descending)</response>
         [Authorize]
         [HttpGet("albums/search")]
-        [ProducesResponseType<IEnumerable<AlbumDto>>(StatusCodes.Status200OK)]
-        public async Task<Ok<IEnumerable<AlbumDto>>> SearchAlbums(
+        [ProducesResponseType<IEnumerable<SearchAlbumDto>>(StatusCodes.Status200OK)]
+        public async Task<Ok<IEnumerable<SearchAlbumDto>>> SearchAlbums(
             [Range(0, long.MaxValue)] long categoryId,
             [MaxLength(12)] string title,
             [Range(0, 1000)] int page = 0,
@@ -105,6 +104,31 @@ namespace SastImg.WebAPI.Controllers
         {
             var albums = await _querySender.QueryAsync(
                 new SearchAlbumsQuery(categoryId, title, page, User),
+                cancellationToken
+            );
+            return Responses.Data(albums);
+        }
+
+        /// <summary>
+        /// Get Removed Albums
+        /// </summary>
+        /// <remarks>
+        /// Get the removed albums of the specific user.
+        /// <para>Authorization is required.</para>
+        /// </remarks>
+        /// <param name="userId">USER that removed albums authored by</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <response code="200">The removed albums</response>
+        [Authorize]
+        [HttpGet("user/{userId}/albums/removed")]
+        [ProducesResponseType<IEnumerable<RemovedAlbumDto>>(StatusCodes.Status200OK)]
+        public async Task<Ok<IEnumerable<RemovedAlbumDto>>> GetRemovedAlbums(
+            [Range(0, long.MaxValue)] long userId,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var albums = await _querySender.QueryAsync(
+                new GetRemovedAlbumsQuery(userId, User),
                 cancellationToken
             );
             return Responses.Data(albums);
@@ -248,33 +272,6 @@ namespace SastImg.WebAPI.Controllers
                 cancellationToken
             );
             return Responses.NoContent;
-        }
-
-        /// <summary>
-        /// Get Removed Albums
-        /// </summary>
-        /// <remarks>
-        /// Get the removed albums of the specific user.
-        /// <para>Authorization is required.</para>
-        /// </remarks>
-        /// <param name="userId">USER that removed albums authored by</param>
-        /// <param name="page">24 removed albums per page.</param>
-        /// <param name="cancellationToken">Cancellation token</param>
-        /// <response code="200">The removed albums</response>
-        [Authorize]
-        [HttpGet("user/{userId}/albums/removed")]
-        [ProducesResponseType<IEnumerable<AlbumDto>>(StatusCodes.Status200OK)]
-        public async Task<Ok<IEnumerable<AlbumDto>>> GetRemovedAlbums(
-            [Range(0, long.MaxValue)] long userId,
-            [Range(0, 1000)] int page = 0,
-            CancellationToken cancellationToken = default
-        )
-        {
-            var albums = await _querySender.QueryAsync(
-                new GetRemovedAlbumsQuery(userId, User),
-                cancellationToken
-            );
-            return Responses.Data(albums);
         }
     }
 }

@@ -12,7 +12,7 @@ using SastImg.Infrastructure.Persistence.QueryDatabase;
 namespace SastImg.Infrastructure.QueryRepositories
 {
     internal sealed class AlbumQueryRepository(IDbConnectionFactory factory)
-        : IGetAlbumsRepository,
+        : IGetUserAlbumsRepository,
             IGetAlbumRepository,
             ISearchAlbumsRepository,
             IGetRemovedAlbumsRepository
@@ -20,32 +20,9 @@ namespace SastImg.Infrastructure.QueryRepositories
         private readonly IDbConnection _connection = factory.GetConnection();
         private const int numPerPage = 20;
 
-        #region GetAlbums
+        #region GetUserAlbums
 
-        public Task<IEnumerable<AlbumDto>> GetAlbumsAnonymousAsync(
-            CancellationToken cancellationToken = default
-        )
-        {
-            const string sql =
-                "SELECT "
-                + "id as AlbumId, "
-                + "title as Title, "
-                + "cover_url as CoverUri, "
-                + "author_id as AuthorId "
-                + "FROM albums "
-                + "WHERE accessibility = @PUBLIC "
-                + "AND NOT is_removed "
-                + "ORDER BY updated_at DESC "
-                + "LIMIT @take;";
-
-            return _connection.QueryAsync<AlbumDto>(
-                sql,
-                new { take = numPerPage, PUBLIC = Accessibility.Public }
-            );
-        }
-
-        public Task<IEnumerable<AlbumDto>> GetAlbumsByAdminAsync(
-            int page,
+        public Task<IEnumerable<UserAlbumDto>> GetUserAlbumsByAdminAsync(
             UserId authorId,
             CancellationToken cancellationToken = default
         )
@@ -54,28 +31,17 @@ namespace SastImg.Infrastructure.QueryRepositories
                 "SELECT "
                 + "id as AlbumId, "
                 + "title as Title, "
-                + "cover_url as CoverUri, "
-                + "author_id as AuthorId "
+                + "cover_url as CoverUrl, "
+                + "category_id as CategoryId "
                 + "FROM albums "
                 + "WHERE ( NOT is_removed ) "
                 + "AND ( @authorId = 0 OR author_id = @authorId ) "
-                + "ORDER BY updated_at DESC "
-                + "LIMIT @take "
-                + "OFFSET @skip";
+                + "ORDER BY updated_at DESC ";
 
-            return _connection.QueryAsync<AlbumDto>(
-                sql,
-                new
-                {
-                    take = numPerPage,
-                    skip = page * numPerPage,
-                    authorId = authorId.Value,
-                }
-            );
+            return _connection.QueryAsync<UserAlbumDto>(sql, new { authorId = authorId.Value, });
         }
 
-        public Task<IEnumerable<AlbumDto>> GetAlbumsByUserAsync(
-            int page,
+        public Task<IEnumerable<UserAlbumDto>> GetUserAlbumsByUserAsync(
             UserId authorId,
             UserId requesterId,
             CancellationToken cancellationToken = default
@@ -85,22 +51,18 @@ namespace SastImg.Infrastructure.QueryRepositories
                 "SELECT "
                 + "id as AlbumId, "
                 + "title as Title, "
-                + "cover_url as CoverUri, "
-                + "author_id as AuthorId "
+                + "cover_url as CoverUrl, "
+                + "category_id as CategoryId "
                 + "FROM albums "
                 + "WHERE ( NOT is_removed ) "
                 + "AND ( @authorId = 0 OR author_id = @authorId ) "
                 + "AND ( accessibility <> @PRIVATE OR author_id = @requesterId OR @requesterId = ANY( collaborators ) ) "
-                + "ORDER BY updated_at DESC "
-                + "LIMIT @take "
-                + "OFFSET @skip";
+                + "ORDER BY updated_at DESC ";
 
-            return _connection.QueryAsync<AlbumDto>(
+            return _connection.QueryAsync<UserAlbumDto>(
                 sql,
                 new
                 {
-                    take = numPerPage,
-                    skip = page * numPerPage,
                     authorId = authorId.Value,
                     requesterId = requesterId.Value,
                     PRIVATE = Accessibility.Private
@@ -123,7 +85,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "id as AlbumId, "
                 + "title as Title, "
                 + "description as Description, "
-                + "cover_url as CoverUri, "
+                + "cover_url as CoverUrl, "
                 + "accessibility as Accessibility, "
                 + "updated_at as UpdatedAt, "
                 + "author_id as AuthorId, "
@@ -160,7 +122,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "id as AlbumId, "
                 + "title as Title, "
                 + "description as Description, "
-                + "cover_url as CoverUri, "
+                + "cover_url as CoverUrl, "
                 + "accessibility as Accessibility, "
                 + "updated_at as UpdatedAt, "
                 + "author_id as AuthorId, "
@@ -186,7 +148,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "id as AlbumId, "
                 + "title as Title, "
                 + "description as Description, "
-                + "cover_url as CoverUri, "
+                + "cover_url as CoverUrl, "
                 + "accessibility as Accessibility, "
                 + "updated_at as UpdatedAt, "
                 + "author_id as AuthorId, "
@@ -208,7 +170,7 @@ namespace SastImg.Infrastructure.QueryRepositories
 
         #region SearchAlbums
 
-        public Task<IEnumerable<AlbumDto>> SearchAlbumsByAdminAsync(
+        public Task<IEnumerable<SearchAlbumDto>> SearchAlbumsByAdminAsync(
             CategoryId categoryId,
             string title,
             int page,
@@ -219,7 +181,8 @@ namespace SastImg.Infrastructure.QueryRepositories
                 "SELECT "
                 + "id as AlbumId, "
                 + "title as Title, "
-                + "cover_url as CoverUri, "
+                + "cover_url as CoverUrl, "
+                + "category_id as CategoryId, "
                 + "author_id as AuthorId "
                 + "FROM albums "
                 + "WHERE NOT is_removed "
@@ -228,7 +191,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "ORDER BY updated_at DESC "
                 + "LIMIT @take "
                 + "OFFSET @skip";
-            return _connection.QueryAsync<AlbumDto>(
+            return _connection.QueryAsync<SearchAlbumDto>(
                 sql,
                 new
                 {
@@ -240,7 +203,7 @@ namespace SastImg.Infrastructure.QueryRepositories
             );
         }
 
-        public Task<IEnumerable<AlbumDto>> SearchAlbumsByUserAsync(
+        public Task<IEnumerable<SearchAlbumDto>> SearchAlbumsByUserAsync(
             CategoryId categoryId,
             string title,
             int page,
@@ -252,7 +215,8 @@ namespace SastImg.Infrastructure.QueryRepositories
                 "SELECT "
                 + "id as AlbumId, "
                 + "title as Title, "
-                + "cover_url as CoverUri, "
+                + "cover_url as CoverUrl, "
+                + "category_id as CategoryId, "
                 + "author_id as AuthorId "
                 + "FROM albums "
                 + "WHERE ( NOT is_removed ) "
@@ -263,7 +227,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "LIMIT @take "
                 + "OFFSET @skip";
 
-            return _connection.QueryAsync<AlbumDto>(
+            return _connection.QueryAsync<SearchAlbumDto>(
                 sql,
                 new
                 {
@@ -281,7 +245,7 @@ namespace SastImg.Infrastructure.QueryRepositories
 
         #region GetRemovedAlbums
 
-        public Task<IEnumerable<AlbumDto>> GetAlbumsByAdminAsync(
+        public Task<IEnumerable<RemovedAlbumDto>> GetRemovedAlbumsByAdminAsync(
             UserId authorId,
             CancellationToken cancellationToken = default
         )
@@ -290,17 +254,16 @@ namespace SastImg.Infrastructure.QueryRepositories
                 "SELECT "
                 + "id as AlbumId, "
                 + "title as Title, "
-                + "cover_url as CoverUri, "
-                + "author_id as AuthorId "
+                + "cover_url as CoverUrl "
                 + "FROM albums "
                 + "WHERE is_removed "
                 + "AND author_id = @authorId "
                 + "ORDER BY updated_at DESC";
 
-            return _connection.QueryAsync<AlbumDto>(sql, new { authorId = authorId.Value });
+            return _connection.QueryAsync<RemovedAlbumDto>(sql, new { authorId = authorId.Value });
         }
 
-        public Task<IEnumerable<AlbumDto>> GetAlbumsByUserAsync(
+        public Task<IEnumerable<RemovedAlbumDto>> GetRemovedAlbumsByUserAsync(
             UserId requesterId,
             CancellationToken cancellationToken = default
         )
@@ -309,14 +272,16 @@ namespace SastImg.Infrastructure.QueryRepositories
                 "SELECT "
                 + "id as AlbumId, "
                 + "title as Title, "
-                + "cover_url as CoverUri, "
-                + "author_id as AuthorId "
+                + "cover_url as CoverUrl "
                 + "FROM albums "
                 + "WHERE is_removed "
                 + "AND author_id = @authorId "
                 + "ORDER BY updated_at DESC";
 
-            return _connection.QueryAsync<AlbumDto>(sql, new { authorId = requesterId.Value });
+            return _connection.QueryAsync<RemovedAlbumDto>(
+                sql,
+                new { authorId = requesterId.Value }
+            );
         }
 
         #endregion

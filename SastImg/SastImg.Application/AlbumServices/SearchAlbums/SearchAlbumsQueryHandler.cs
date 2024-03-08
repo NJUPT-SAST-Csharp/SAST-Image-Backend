@@ -1,14 +1,13 @@
-﻿using SastImg.Application.AlbumServices.GetAlbums;
-using Shared.Primitives.Query;
+﻿using Shared.Primitives.Query;
 
 namespace SastImg.Application.AlbumServices.SearchAlbums
 {
     internal sealed class SearchAlbumsQueryHandler(ISearchAlbumsRepository repository)
-        : IQueryRequestHandler<SearchAlbumsQuery, IEnumerable<AlbumDto>>
+        : IQueryRequestHandler<SearchAlbumsQuery, IEnumerable<SearchAlbumDto>>
     {
         private readonly ISearchAlbumsRepository _repository = repository;
 
-        public Task<IEnumerable<AlbumDto>> Handle(
+        public Task<IEnumerable<SearchAlbumDto>> Handle(
             SearchAlbumsQuery request,
             CancellationToken cancellationToken
         )
@@ -18,7 +17,8 @@ namespace SastImg.Application.AlbumServices.SearchAlbums
                 return _repository.SearchAlbumsByAdminAsync(
                     request.CategoryId,
                     request.Title,
-                    request.Page
+                    request.Page,
+                    cancellationToken
                 );
             }
             else
@@ -27,7 +27,8 @@ namespace SastImg.Application.AlbumServices.SearchAlbums
                     request.CategoryId,
                     request.Title,
                     request.Page,
-                    request.Requester.Id
+                    request.Requester.Id,
+                    cancellationToken
                 );
             }
         }

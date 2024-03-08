@@ -2,14 +2,14 @@
 
 namespace SastImg.Application.AlbumServices.GetAlbums
 {
-    public sealed class AlbumDto
+    public sealed class UserAlbumDto
     {
         [JsonConstructor]
-        private AlbumDto() { }
+        private UserAlbumDto() { }
 
         public long AlbumId { get; init; }
         public long CategoryId { get; init; }
         public string Title { get; init; }
-        public Uri CoverUri { get; init; }
+        public Uri CoverUrl { get; init; }
     };
 }

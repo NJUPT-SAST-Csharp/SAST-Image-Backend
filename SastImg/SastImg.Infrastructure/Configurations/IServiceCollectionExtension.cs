@@ -75,7 +75,7 @@ namespace SastImg.Infrastructure.Configurations
             );
 
             services.AddScoped<IAlbumRepository, AlbumRepository>();
-            services.AddScoped<IGetAlbumsRepository, AlbumQueryRepository>();
+            services.AddScoped<IGetUserAlbumsRepository, AlbumQueryRepository>();
             services.AddScoped<IGetAlbumRepository, AlbumQueryRepository>();
             services.AddScoped<ISearchAlbumsRepository, AlbumQueryRepository>();
             services.AddScoped<IGetRemovedAlbumsRepository, AlbumQueryRepository>();
@@ -103,7 +103,6 @@ namespace SastImg.Infrastructure.Configurations
             services.AddSingleton<IConnectionMultiplexer>(
                 ConnectionMultiplexer.Connect(connectionString)
             );
-            services.AddScoped<ICache<IEnumerable<AlbumDto>>, GetAlbumsCache>();
             services.AddScoped<ICache<DetailedAlbumDto>, GetAlbumCache>();
             services.AddScoped<ICache<IEnumerable<AlbumImageDto>>, GetImagesCache>();
             services.AddScoped<ICache<DetailedImageDto>, DetailedImageDtoCache>();

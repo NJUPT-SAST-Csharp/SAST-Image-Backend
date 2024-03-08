@@ -1,16 +1,15 @@
-﻿using SastImg.Application.AlbumServices.GetAlbums;
-using SastImg.Domain;
+﻿using SastImg.Domain;
 
 namespace SastImg.Application.AlbumServices.GetRemovedAlbums
 {
     public interface IGetRemovedAlbumsRepository
     {
-        public Task<IEnumerable<AlbumDto>> GetAlbumsByAdminAsync(
+        public Task<IEnumerable<RemovedAlbumDto>> GetRemovedAlbumsByAdminAsync(
             UserId authorId,
             CancellationToken cancellationToken = default
         );
 
-        public Task<IEnumerable<AlbumDto>> GetAlbumsByUserAsync(
+        public Task<IEnumerable<RemovedAlbumDto>> GetRemovedAlbumsByUserAsync(
             UserId requesterId,
             CancellationToken cancellationToken = default
         );

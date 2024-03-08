@@ -1,15 +1,14 @@
-﻿using SastImg.Application.AlbumServices.GetAlbums;
-using SastImg.Domain;
+﻿using SastImg.Domain;
 using Shared.Primitives.Query;
 
 namespace SastImg.Application.AlbumServices.GetRemovedAlbums
 {
     public sealed class GetRemovedAlbumsQueryHandler(IGetRemovedAlbumsRepository repository)
-        : IQueryRequestHandler<GetRemovedAlbumsQuery, IEnumerable<AlbumDto>>
+        : IQueryRequestHandler<GetRemovedAlbumsQuery, IEnumerable<RemovedAlbumDto>>
     {
         private readonly IGetRemovedAlbumsRepository _repository = repository;
 
-        public Task<IEnumerable<AlbumDto>> Handle(
+        public Task<IEnumerable<RemovedAlbumDto>> Handle(
             GetRemovedAlbumsQuery request,
             CancellationToken cancellationToken
         )
@@ -17,11 +16,14 @@ namespace SastImg.Application.AlbumServices.GetRemovedAlbums
             if (request.Requester.IsAdmin)
             {
                 UserId id = request.AuthorId.Value == 0 ? request.Requester.Id : request.AuthorId;
-                return _repository.GetAlbumsByAdminAsync(id, cancellationToken);
+                return _repository.GetRemovedAlbumsByAdminAsync(id, cancellationToken);
             }
             else
             {
-                return _repository.GetAlbumsByUserAsync(request.Requester.Id, cancellationToken);
+                return _repository.GetRemovedAlbumsByUserAsync(
+                    request.Requester.Id,
+                    cancellationToken
+                );
             }
         }
     }
