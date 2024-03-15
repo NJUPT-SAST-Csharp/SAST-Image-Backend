@@ -40,7 +40,7 @@ namespace Account.Infrastructure.ApplicationServices
 
             const string sql =
                 "SELECT "
-                + "username, nickname, biography, avatar, header, birthday, website "
+                + "username, nickname, biography, avatar, header, birthday, website, id "
                 + "FROM users "
                 + "WHERE username = @username";
 

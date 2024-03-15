@@ -114,7 +114,7 @@ namespace SastImg.WebAPI.Controllers
         )
         {
             var image = await _querySender.QueryAsync(
-                new GetImageQuery(imageId, User),
+                new GetImageQuery(albumId, imageId, User),
                 cancellationToken
             );
             return Responses.DataOrNotFound(image);

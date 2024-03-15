@@ -20,11 +20,16 @@ namespace SastImg.Application.ImageServices.GetImage
             {
                 if (request.Requester.IsAdmin)
                 {
-                    return _repository.GetImageByAdminAsync(request.ImageId, cancellationToken);
+                    return _repository.GetImageByAdminAsync(
+                        request.AlbumId,
+                        request.ImageId,
+                        cancellationToken
+                    );
                 }
                 else
                 {
                     return _repository.GetImageByUserAsync(
+                        request.AlbumId,
                         request.ImageId,
                         request.Requester.Id,
                         cancellationToken
