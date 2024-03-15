@@ -5,12 +5,12 @@ namespace Account.Application.UserServices
 {
     public interface IUserQueryRepository
     {
-        public Task<UserBriefInfoDto> GetUserBriefInfoAsync(
+        public Task<UserBriefInfoDto?> GetUserBriefInfoAsync(
             string username,
             CancellationToken cancellationToken = default
         );
 
-        public Task<UserDetailedInfoDto> GetUserDetailedInfoAsync(
+        public Task<UserDetailedInfoDto?> GetUserDetailedInfoAsync(
             string username,
             CancellationToken cancellationToken = default
         );

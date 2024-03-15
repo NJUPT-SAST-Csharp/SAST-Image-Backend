@@ -10,7 +10,7 @@ namespace Account.Infrastructure.ApplicationServices
     {
         private readonly IDbConnectionFactory _factory = factory;
 
-        public async Task<UserBriefInfoDto> GetUserBriefInfoAsync(
+        public async Task<UserBriefInfoDto?> GetUserBriefInfoAsync(
             string username,
             CancellationToken cancellationToken = default
         )
@@ -31,7 +31,7 @@ namespace Account.Infrastructure.ApplicationServices
             return result;
         }
 
-        public async Task<UserDetailedInfoDto> GetUserDetailedInfoAsync(
+        public async Task<UserDetailedInfoDto?> GetUserDetailedInfoAsync(
             string username,
             CancellationToken cancellationToken = default
         )

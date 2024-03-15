@@ -20,18 +20,16 @@ using SastImg.Application.AlbumServices.GetRemovedAlbums;
 using SastImg.Application.AlbumServices.GetUserAlbums;
 using SastImg.Application.AlbumServices.SearchAlbums;
 using SastImg.Application.CategoryServices;
-using SastImg.Application.CategoryServices.GetAllCategory;
 using SastImg.Application.ImageServices.AddImage;
 using SastImg.Application.ImageServices.GetImage;
 using SastImg.Application.ImageServices.GetImages;
 using SastImg.Application.ImageServices.GetRemovedImages;
+using SastImg.Application.ImageServices.GetUserImages;
 using SastImg.Application.ImageServices.SearchImages;
-using SastImg.Application.SeedWorks;
 using SastImg.Application.TagServices;
 using SastImg.Domain.AlbumAggregate;
 using SastImg.Domain.Categories;
 using SastImg.Domain.TagEntity;
-using SastImg.Infrastructure.Caching;
 using SastImg.Infrastructure.DomainRepositories;
 using SastImg.Infrastructure.Event;
 using SastImg.Infrastructure.EventBus;
@@ -82,6 +80,7 @@ namespace SastImg.Infrastructure.Configurations
             services.AddScoped<ISearchAlbumsRepository, AlbumQueryRepository>();
             services.AddScoped<IGetRemovedAlbumsRepository, AlbumQueryRepository>();
 
+            services.AddScoped<IGetUserImagesRepository, ImageQueryRepository>();
             services.AddScoped<IGetImagesRepository, ImageQueryRepository>();
             services.AddScoped<IGetImageRepository, ImageQueryRepository>();
             services.AddScoped<ISearchImagesRepository, ImageQueryRepository>();
@@ -105,10 +104,7 @@ namespace SastImg.Infrastructure.Configurations
             services.AddSingleton<IConnectionMultiplexer>(
                 ConnectionMultiplexer.Connect(connectionString)
             );
-            services.AddScoped<ICache<DetailedAlbumDto>, GetAlbumCache>();
-            services.AddScoped<ICache<IEnumerable<AlbumImageDto>>, GetImagesCache>();
-            services.AddScoped<ICache<DetailedImageDto>, DetailedImageDtoCache>();
-            services.AddScoped<ICache<IEnumerable<CategoryDto>>, GetAllCategoriesCache>();
+
             return services;
         }
 

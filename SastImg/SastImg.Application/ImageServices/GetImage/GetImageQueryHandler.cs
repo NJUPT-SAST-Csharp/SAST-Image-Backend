@@ -1,15 +1,11 @@
-﻿using SastImg.Application.SeedWorks;
-using Shared.Primitives.Query;
+﻿using Shared.Primitives.Query;
 
 namespace SastImg.Application.ImageServices.GetImage
 {
-    internal sealed class GetImageQueryHandler(
-        IGetImageRepository repository,
-        ICache<DetailedImageDto> cache
-    ) : IQueryRequestHandler<GetImageQuery, DetailedImageDto?>
+    internal sealed class GetImageQueryHandler(IGetImageRepository repository)
+        : IQueryRequestHandler<GetImageQuery, DetailedImageDto?>
     {
         private readonly IGetImageRepository _repository = repository;
-        private readonly ICache<DetailedImageDto> _cache = cache;
 
         public Task<DetailedImageDto?> Handle(
             GetImageQuery request,
@@ -38,7 +34,11 @@ namespace SastImg.Application.ImageServices.GetImage
             }
             else
             {
-                return _cache.GetCachingAsync(request.ImageId.ToString(), cancellationToken);
+                return _repository.GetImageByAnonymousAsync(
+                    request.AlbumId,
+                    request.ImageId,
+                    cancellationToken
+                );
             }
         }
     }

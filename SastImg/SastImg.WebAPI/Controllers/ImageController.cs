@@ -8,6 +8,7 @@ using SastImg.Application.ImageServices.AddImage;
 using SastImg.Application.ImageServices.GetImage;
 using SastImg.Application.ImageServices.GetImages;
 using SastImg.Application.ImageServices.GetRemovedImages;
+using SastImg.Application.ImageServices.GetUserImages;
 using SastImg.Application.ImageServices.RemoveImage;
 using SastImg.Application.ImageServices.SearchImages;
 using SastImg.WebAPI.Requests.ImageRequest;
@@ -35,7 +36,7 @@ namespace SastImg.WebAPI.Controllers
         /// <remarks>
         /// Get images by album id
         /// </remarks>
-        /// <param name="albumId">Album that images belong to</param>
+        /// <param name="albumId">Id of album that images belong to</param>
         /// <param name="page">24 images per page</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <response code="200">The images</response>
@@ -52,6 +53,31 @@ namespace SastImg.WebAPI.Controllers
                 cancellationToken
             );
 
+            return Responses.Data(images);
+        }
+
+        /// <summary>
+        /// Get User Images
+        /// </summary>
+        /// <remarks>
+        /// Get images of a specific user directly.
+        /// </remarks>
+        /// <param name="userId">The user id</param>
+        /// <param name="page">24 images per page</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns></returns>
+        [HttpGet("user/{userId}/images")]
+        [ProducesResponseType<IEnumerable<UserImageDto>>(StatusCodes.Status200OK)]
+        public async Task<Ok<IEnumerable<UserImageDto>>> GetUserImages(
+            [Range(0, long.MaxValue)] long userId,
+            [Range(0, 1000)] int page,
+            CancellationToken cancellationToken
+        )
+        {
+            var images = await _querySender.QueryAsync(
+                new GetUserImagesQuery(userId, page, User),
+                cancellationToken
+            );
             return Responses.Data(images);
         }
 
