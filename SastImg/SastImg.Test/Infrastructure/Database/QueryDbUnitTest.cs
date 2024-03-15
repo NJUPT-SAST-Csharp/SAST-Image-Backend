@@ -25,7 +25,6 @@ namespace SastImg.Test.Infrastructure.Database
             DbConnectionFactory factory = new(ConnectionString);
 
             var connection = factory.GetConnection();
-
             factory.Dispose();
 
             Assert.AreEqual(ConnectionState.Closed, connection.State);

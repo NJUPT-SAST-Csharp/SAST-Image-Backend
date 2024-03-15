@@ -75,7 +75,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
         public bool IsOwnedBy(UserId userId) => _authorId == userId;
 
         public bool IsManagedBy(UserId userId) =>
-            _authorId == userId || _collaborators.Contains(userId);
+            _authorId == userId || Array.Exists(_collaborators, id => id == userId);
 
         #endregion
 
@@ -166,6 +166,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
         public void RestoreImage(ImageId imageId)
         {
             CheckRule(new RestoreImageOnlyWhenAlbumNotRemovedRule(_isRemoved));
+
             var image = _images.FirstOrDefault(image => image.Id == imageId);
             if (image is not null)
             {
@@ -189,7 +190,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
         public void UpdateCollaborators(UserId[] collaborators)
         {
-            _collaborators = collaborators;
+            _collaborators = collaborators.Distinct().Where(c => c != _authorId).ToArray();
             //TODO: Raise domain event
         }
 
