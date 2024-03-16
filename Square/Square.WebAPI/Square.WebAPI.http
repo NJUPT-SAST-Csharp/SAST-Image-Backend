@@ -1,0 +1,6 @@
+@Square.WebAPI_HostAddress = http://localhost:5173
+
+GET {{Square.WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
