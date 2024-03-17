@@ -24,21 +24,24 @@ namespace Square.Domain.TopicAggregate.ColumnEntity
 
         private readonly string _text = string.Empty;
 
-        private readonly List<TopicImage> _images = [];
+        private readonly IReadOnlyCollection<TopicImage> _images = [];
 
         private readonly List<UserId> _likedBy = [];
 
         private readonly DateTime _uploadAt = DateTime.UtcNow;
 
-        private bool _isRemoved = false;
-
         #endregion
 
         #region Methods
 
-        internal void RemoveColumn()
+        public void Liked(UserId userId)
         {
-            _isRemoved = true;
+            _likedBy.Add(userId);
+        }
+
+        public void Unliked(UserId userId)
+        {
+            _likedBy.Remove(userId);
         }
 
         #endregion

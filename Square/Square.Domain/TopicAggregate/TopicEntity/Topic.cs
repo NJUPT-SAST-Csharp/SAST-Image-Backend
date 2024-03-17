@@ -1,5 +1,6 @@
 ﻿using Primitives.Entity;
 using Shared.Primitives;
+using Square.Domain.TopicAggregate.ColumnEntity;
 
 namespace Square.Domain.TopicAggregate.TopicEntity;
 
@@ -12,7 +13,7 @@ public sealed class Topic : EntityBase<TopicId>, IAggregateRoot<Topic>
 
     private readonly string _title = string.Empty;
 
-    private readonly List<TopicImage> _images = [];
+    private readonly Column _topicColumn;
 
     private readonly List<UserId> _subscribers = [];
 

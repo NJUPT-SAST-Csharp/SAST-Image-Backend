@@ -56,6 +56,8 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
         private bool _isRemoved = false;
 
+        private bool _isArchived = false;
+
         private Cover _cover = new(null, true);
 
         private DateTime _createdAt = DateTime.UtcNow;
@@ -106,8 +108,19 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             // TODO: Raise domain event.
         }
 
+        public void Archive()
+        {
+            if (_isArchived)
+                return;
+            _isArchived = true;
+
+            _collaborators = [];
+        }
+
         public void SetCoverAsLatestImage()
         {
+            CheckRule(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
+
             var image = _images
                 .Where(image => image.IsRemoved == false)
                 .OrderByDescending(i => i.UploadedTime)
@@ -119,6 +132,8 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
         public void SetCoverAsContainedImage(ImageId imageId)
         {
+            CheckRule(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
+
             var image = _images.FirstOrDefault(image => image.Id == imageId);
             _cover = new(image?.ImageUrl, false);
             // TODO: Raise domain event
@@ -131,14 +146,23 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             Accessibility accessibility
         )
         {
+            CheckRule(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
+
             _title = title;
             _description = description;
             _categoryId = categoryId;
             _accessibility = accessibility;
+
+            if (_accessibility == Accessibility.Private)
+            {
+                _collaborators = [];
+            }
         }
 
         public ImageId AddImage(string title, Uri uri, string description, TagId[] tags)
         {
+            CheckRule(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
+
             var image = Image.CreateNewImage(title, uri, description, tags);
 
             _updatedAt = DateTime.UtcNow;
@@ -152,6 +176,8 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
         public void RemoveImage(ImageId imageId)
         {
+            CheckRule(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
+
             var image = _images.FirstOrDefault(image => image.Id == imageId);
             if (image is not null)
             {
@@ -165,6 +191,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
         public void RestoreImage(ImageId imageId)
         {
+            CheckRule(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
             CheckRule(new RestoreImageOnlyWhenAlbumNotRemovedRule(_isRemoved));
 
             var image = _images.FirstOrDefault(image => image.Id == imageId);
@@ -180,6 +207,8 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
         public void UpdateCollaborators(UserId[] collaborators)
         {
+            CheckRule(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
+
             _collaborators = collaborators.Distinct().Where(c => c != _authorId).ToArray();
             //TODO: Raise domain event
         }
