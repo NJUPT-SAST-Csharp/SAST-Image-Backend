@@ -39,19 +39,21 @@ public abstract class EntityBase<T> : IEquatable<EntityBase<T>>, IDomainEventCon
         return Equals(obj as EntityBase<T>);
     }
 
-    protected static void CheckRule(in IDomainBusinessRule rule)
+    protected static void CheckRule<TRule>(in TRule rule)
+        where TRule : IDomainBusinessRule
     {
         if (rule.IsBroken)
         {
-            throw new DomainBusinessRuleInvalidException(rule, rule.GetType().Name);
+            throw new DomainBusinessRuleInvalidException(rule, typeof(TRule).Name);
         }
     }
 
-    protected static async Task CheckRuleAsync(IAsyncDomainBusinessRule rule)
+    protected static async Task CheckRuleAsync<TAsyncRule>(TAsyncRule rule)
+        where TAsyncRule : IAsyncDomainBusinessRule
     {
         if (await rule.IsBrokenAsync())
         {
-            throw new DomainBusinessRuleInvalidException(rule, rule.GetType().Name);
+            throw new DomainBusinessRuleInvalidException(rule, typeof(TAsyncRule).Name);
         }
     }
 
