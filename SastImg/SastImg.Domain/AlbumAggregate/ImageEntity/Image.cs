@@ -28,17 +28,17 @@ public sealed class Image : EntityBase<ImageId>
 
     #region Fields
 
-    private string _title = string.Empty;
+    private readonly string _title = string.Empty;
 
-    private string _description = string.Empty;
+    private readonly string _description = string.Empty;
 
     private readonly Uri _url;
 
     private readonly DateTime _uploadedAt = DateTime.UtcNow;
 
-    private bool _isRemoved = false;
+    private readonly TagId[] _tags = [];
 
-    private TagId[] _tags = [];
+    private bool _isRemoved = false;
 
     #endregion
 
@@ -54,13 +54,6 @@ public sealed class Image : EntityBase<ImageId>
     #region Methods
 
 
-    internal void UpdateImageInfo(string title, string description, TagId[] tags)
-    {
-        CheckRule(new ImageOwnNotMoreThan5TagsRule(tags));
-        _title = title;
-        _description = description;
-        _tags = tags;
-    }
 
     internal void Remove()
     {

@@ -178,16 +178,6 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             }
         }
 
-        public void UpdateImageInfo(ImageId imageId, string title, string description, TagId[] tags)
-        {
-            var image = _images.FirstOrDefault(image => image.Id == imageId);
-            if (image is not null)
-            {
-                image.UpdateImageInfo(title, description, tags);
-                // TODO: Raise domain event
-            }
-        }
-
         public void UpdateCollaborators(UserId[] collaborators)
         {
             _collaborators = collaborators.Distinct().Where(c => c != _authorId).ToArray();
