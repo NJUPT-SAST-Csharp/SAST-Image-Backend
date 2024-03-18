@@ -11,17 +11,19 @@ public sealed class Topic : EntityBase<TopicId>, IAggregateRoot<Topic>
 
     #region Fields
 
-    private readonly DateTime _publishedAt = DateTime.UtcNow;
-
     private readonly string _title = string.Empty;
 
-    private readonly Column _mainColumn;
+    private readonly string _description = string.Empty;
+
+    private readonly UserId _authorId;
+
+    private readonly DateTime _publishedAt;
 
     private readonly List<Column> _columns;
 
-    private readonly List<UserId> _subscribers = [];
+    private readonly List<Subscribe> _subscribers = [];
 
-    private readonly List<UserId> _likedBy = [];
+    private DateTime _updatedAt;
 
     #endregion
 

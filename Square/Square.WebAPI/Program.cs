@@ -1,11 +1,19 @@
+using Square.Infrastructure.Configurations;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+}
+
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.ConfigureServices();
 
 var app = builder.Build();
 
