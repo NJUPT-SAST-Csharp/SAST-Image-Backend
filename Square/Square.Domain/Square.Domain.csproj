@@ -11,4 +11,8 @@
     <ProjectReference Include="..\..\Shared\Utilities\Utilities.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TopicAggregate\TopicEntity\Rules\" />
+  </ItemGroup>
+
 </Project>

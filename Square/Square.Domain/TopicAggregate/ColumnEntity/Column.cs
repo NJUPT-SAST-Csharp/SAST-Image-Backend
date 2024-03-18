@@ -8,27 +8,31 @@ namespace Square.Domain.TopicAggregate.ColumnEntity
         private Column()
             : base(default) { }
 
-        private Column(string text)
+        internal Column(UserId authorId, string text, IEnumerable<TopicImage> images)
             : base(new(SnowFlakeIdGenerator.NewId))
         {
+            _authorId = authorId;
             _text = text;
-        }
-
-        internal static Column CreateNewColumn(string text)
-        {
-            Column column = new(text);
-            return column;
+            _images = images;
         }
 
         #region Fields
 
+        private readonly UserId _authorId;
+
         private readonly string _text = string.Empty;
 
-        private readonly IReadOnlyCollection<TopicImage> _images = [];
+        private readonly IEnumerable<TopicImage> _images = [];
 
         private readonly List<UserId> _likedBy = [];
 
         private readonly DateTime _uploadAt = DateTime.UtcNow;
+
+        #endregion
+
+        #region Properties
+
+        public IEnumerable<TopicImage> Images => _images;
 
         #endregion
 
