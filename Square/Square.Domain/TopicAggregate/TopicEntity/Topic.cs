@@ -19,11 +19,11 @@ public sealed class Topic : EntityBase<TopicId>, IAggregateRoot<Topic>
 
     private readonly DateTime _publishedAt;
 
-    private readonly List<Column> _columns;
+    private readonly List<Column> _columns = [];
 
     private readonly List<Subscribe> _subscribers = [];
 
-    private DateTime _updatedAt;
+    private DateTime _updatedAt = DateTime.UtcNow;
 
     #endregion
 

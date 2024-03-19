@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SNS.Domain.AlbumEntity;
-using SNS.Domain.ImageAggregate.CommentEntity;
 using SNS.Domain.ImageAggregate.ImageEntity;
 using SNS.Domain.UserEntity;
 
@@ -28,74 +27,71 @@ namespace SNS.Infrastructure.Persistence.EntityTypeConfigurations
                 .HasColumnName("album_id")
                 .HasConversion(x => x.Value, x => new AlbumId(x));
 
-            builder
-                .HasMany<User>()
-                .WithMany()
-                .UsingEntity<Like>(
-                    left => left.HasOne<User>().WithMany().HasForeignKey(x => x.UserId),
-                    right =>
-                        right.HasOne<Image>().WithMany("_likedBy").HasForeignKey(x => x.ImageId),
-                    like =>
-                    {
-                        like.ToTable("likes");
+            builder.OwnsMany<Like>(
+                "_likes",
+                like =>
+                {
+                    like.ToTable("likes");
+                    like.HasKey(l => new { l.ImageId, l.UserId });
 
-                        like.Property(x => x.UserId)
-                            .HasColumnName("liker_id")
-                            .HasConversion(x => x.Value, x => new UserId(x));
-                        like.Property(x => x.ImageId)
-                            .HasColumnName("image_id")
-                            .HasConversion(id => id.Value, id => new ImageId(id));
-                    }
-                );
-            builder
-                .HasMany<User>()
-                .WithMany()
-                .UsingEntity<Favourite>(
-                    left => left.HasOne<User>().WithMany().HasForeignKey(x => x.UserId),
-                    right =>
-                        right
-                            .HasOne<Image>()
-                            .WithMany("_favouritedBy")
-                            .HasForeignKey(x => x.ImageId),
-                    fav =>
-                    {
-                        fav.ToTable("favourites");
+                    like.WithOwner().HasForeignKey(x => x.ImageId);
 
-                        fav.Property(x => x.UserId)
-                            .HasColumnName("favouriter_id")
-                            .HasConversion(x => x.Value, x => new UserId(x));
-                        fav.Property(x => x.ImageId)
-                            .HasColumnName("image_id")
-                            .HasConversion(x => x.Value, x => new ImageId(x));
-                    }
-                );
+                    like.Property(l => l.ImageId)
+                        .HasColumnName("image_id")
+                        .HasConversion(x => x.Value, x => new(x));
 
-            builder.HasOne<User>().WithMany().HasForeignKey("_authorId");
-            builder.HasOne<Album>().WithMany().HasForeignKey("_albumId");
+                    like.Property(l => l.UserId)
+                        .HasColumnName("liker_id")
+                        .HasConversion(id => id.Value, id => new(id));
+
+                    like.Property(l => l.LikeAt).HasColumnName("like_at");
+                }
+            );
+
+            builder.OwnsMany<Favourite>(
+                "_favourites",
+                favourite =>
+                {
+                    favourite.ToTable("favourites");
+                    favourite.HasKey(f => new { f.ImageId, f.UserId });
+
+                    favourite.WithOwner().HasForeignKey(x => x.ImageId);
+
+                    favourite
+                        .Property(f => f.ImageId)
+                        .HasColumnName("image_id")
+                        .HasConversion(x => x.Value, x => new(x));
+
+                    favourite
+                        .Property(f => f.UserId)
+                        .HasColumnName("favouriter_id")
+                        .HasConversion(id => id.Value, id => new(id));
+
+                    favourite.Property(f => f.FavouriteAt).HasColumnName("favourite_at");
+                }
+            );
 
             builder.OwnsMany<Comment>(
                 "_comments",
                 comment =>
                 {
                     comment.ToTable("comments");
-                    comment.HasKey(c => c.Id);
+                    comment.HasKey(c => new { c.ImageId, c.CommenterId });
 
-                    comment.Ignore(c => c.DomainEvents);
-                    comment.WithOwner().HasForeignKey("image_id");
+                    comment.WithOwner().HasForeignKey(x => x.ImageId);
 
                     comment
-                        .Property(c => c.Id)
-                        .HasColumnName("id")
+                        .Property(c => c.ImageId)
+                        .HasColumnName("image_id")
                         .HasConversion(x => x.Value, x => new(x));
+
                     comment
-                        .Property<UserId>("_commenter")
-                        .HasColumnName("commenter")
+                        .Property(c => c.CommenterId)
+                        .HasColumnName("commenter_id")
                         .HasConversion(id => id.Value, id => new(id));
 
-                    comment.Property<string>("content").HasColumnName("content");
-                    comment.Property<DateTime>("_commentAt").HasColumnName("comment_at");
-
-                    comment.HasOne<User>().WithMany().HasForeignKey("_authorId");
+                    comment.Property(c => c.Content).HasColumnName("content");
+                    comment.Property(c => c.CommentAt).HasColumnName("comment_at");
                 }
             );
         }

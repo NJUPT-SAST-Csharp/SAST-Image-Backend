@@ -13,7 +13,7 @@ using Primitives.Command;
 using Primitives.DomainEvent;
 using Primitives.Query;
 using SNS.Domain.AlbumEntity;
-using SNS.Domain.ImageAggregate;
+using SNS.Domain.ImageAggregate.ImageEntity;
 using SNS.Domain.UserEntity;
 using SNS.Infrastructure.DomainRepositories;
 using SNS.Infrastructure.EventBus;

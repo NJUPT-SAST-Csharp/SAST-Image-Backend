@@ -24,27 +24,30 @@ namespace SNS.Infrastructure.Persistence.EntityTypeConfigurations
                 .HasColumnName("author_id")
                 .HasConversion(x => x.Value, x => new UserId(x));
 
-            builder
-                .HasMany<User>()
-                .WithMany()
-                .UsingEntity<Subscriber>(
-                    l => l.HasOne<User>().WithMany().HasForeignKey(o => o.SubscriberId),
-                    r => r.HasOne<Album>().WithMany("_subscribers").HasForeignKey(o => o.AlbumId),
-                    sub =>
-                    {
-                        sub.ToTable("subscribers");
+            builder.OwnsMany<Subscriber>(
+                "_subscribers",
+                subscriber =>
+                {
+                    subscriber.ToTable("subscribers");
+                    subscriber.HasKey(s => new { s.AlbumId, s.SubscriberId });
 
-                        sub.Property(s => s.SubscriberId)
-                            .HasColumnName("subscriber_id")
-                            .HasConversion(id => id.Value, id => new UserId(id));
-                        sub.Property(s => s.AlbumId)
-                            .HasColumnName("album_id")
-                            .HasConversion(id => id.Value, id => new AlbumId(id));
-                    }
-                );
+                    subscriber.WithOwner().HasForeignKey(s => s.AlbumId);
+
+                    subscriber
+                        .Property(s => s.AlbumId)
+                        .HasColumnName("album_id")
+                        .HasConversion(x => x.Value, x => new AlbumId(x));
+
+                    subscriber
+                        .Property(s => s.SubscriberId)
+                        .HasColumnName("subscriber_id")
+                        .HasConversion(x => x.Value, x => new UserId(x));
+
+                    subscriber.Property(s => s.SubscribeAt).HasColumnName("subscribe_at");
+                }
+            );
 
             builder.HasMany<Image>().WithOne().HasForeignKey("_albumId");
-            builder.HasOne<User>().WithMany().HasForeignKey("_authorId");
         }
     }
 }

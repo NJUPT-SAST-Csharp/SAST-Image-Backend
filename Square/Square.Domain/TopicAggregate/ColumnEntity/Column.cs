@@ -14,7 +14,6 @@ namespace Square.Domain.TopicAggregate.ColumnEntity
             _authorId = authorId;
             _text = text;
             _images = images;
-            _uploadedAt = DateTime.UtcNow;
         }
 
         #region Fields
@@ -27,7 +26,7 @@ namespace Square.Domain.TopicAggregate.ColumnEntity
 
         private readonly List<Like> _likedBy = [];
 
-        private readonly DateTime _uploadedAt;
+        private readonly DateTime _uploadedAt = DateTime.UtcNow;
 
         #endregion
 

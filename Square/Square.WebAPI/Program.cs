@@ -4,6 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Logging.ConfigureLogger();
 
 if (builder.Environment.IsDevelopment())
 {

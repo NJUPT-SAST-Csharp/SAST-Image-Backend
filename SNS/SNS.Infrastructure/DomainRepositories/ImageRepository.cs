@@ -1,5 +1,4 @@
-﻿using SNS.Domain.ImageAggregate;
-using SNS.Domain.ImageAggregate.ImageEntity;
+﻿using SNS.Domain.ImageAggregate.ImageEntity;
 using SNS.Infrastructure.Persistence;
 
 namespace SNS.Infrastructure.DomainRepositories

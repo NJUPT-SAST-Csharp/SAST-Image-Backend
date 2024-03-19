@@ -1,6 +1,4 @@
-﻿using SNS.Domain.ImageAggregate.ImageEntity;
-
-namespace SNS.Domain.ImageAggregate
+﻿namespace SNS.Domain.ImageAggregate.ImageEntity
 {
     public interface IImageRepository
     {

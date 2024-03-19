@@ -23,7 +23,7 @@ namespace Square.Infrastructure.Configurations
             services.AddDbContext<SquareDbContext>(
                 options =>
                     options
-                        .UseNpgsql(configuration.GetConnectionString(nameof(SquareDbContext)))
+                        .UseNpgsql(configuration.GetConnectionString("SquareDb"))
                         .UseSnakeCaseNamingConvention()
             );
 

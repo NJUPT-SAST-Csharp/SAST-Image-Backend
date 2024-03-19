@@ -10,22 +10,25 @@ namespace SNS.Domain.UserEntity
         private User(UserId userId)
             : base(userId) { }
 
-        private readonly IList<User> _following = [];
-
         public static User CreateNewUser(UserId userId)
         {
             var user = new User(userId);
             return user;
         }
 
-        public void Follow(User user)
-        {
-            _following.Add(user);
-        }
+        private readonly List<User> _following = [];
 
-        public void Unfollow(User user)
-        {
-            _following.Remove(user);
-        }
+        //public void Follow(UserId FollowingId)
+        //{
+        //    _following.Add(new(Id, FollowingId));
+        //}
+
+        //public void Unfollow(UserId followingId)
+        //{
+        //    var following = _following.FirstOrDefault(f => f.FollowingId == followingId);
+        //    if (following is null)
+        //        return;
+        //    _following.Remove(following);
+        //}
     }
 }

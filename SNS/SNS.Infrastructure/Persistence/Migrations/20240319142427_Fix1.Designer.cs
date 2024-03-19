@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SNS.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using SNS.Infrastructure.Persistence;
 namespace SNS.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SNSDbContext))]
-    partial class SNSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240319142427_Fix1")]
+    partial class Fix1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

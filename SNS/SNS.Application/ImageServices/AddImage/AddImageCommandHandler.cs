@@ -1,6 +1,5 @@
 ﻿using Primitives;
 using Primitives.Command;
-using SNS.Domain.ImageAggregate;
 using SNS.Domain.ImageAggregate.ImageEntity;
 
 namespace SNS.Application.ImageServices.AddImage
