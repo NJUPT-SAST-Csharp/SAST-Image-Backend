@@ -2,8 +2,9 @@ using SNS.Infrastructure.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Logging.ConfigureLogger();
 
+// Add services to the container.
 builder.Services.AddControllers();
 
 builder.Services.ConfigureMediator();
