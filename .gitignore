@@ -499,3 +499,5 @@ SastImgAPI/appsettings.Development.json
 /Account/Account.Infrastructure/Persistence/Migrations/20231208080113_Init.cs
 /Account/Account.Infrastructure/Persistence/Migrations/20231208080113_Init.Designer.cs
 /.editorconfig
+/Square/Square.WebAPI/appsettings.json
+/Square/Square.WebAPI/appsettings.Development.json
