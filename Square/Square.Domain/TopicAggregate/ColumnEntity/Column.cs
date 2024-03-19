@@ -40,6 +40,9 @@ namespace Square.Domain.TopicAggregate.ColumnEntity
 
         public void Liked(UserId userId)
         {
+            if (_likedBy.Any(like => like.UserId == userId))
+                return;
+
             _likedBy.Add(new(userId, Id, DateTime.UtcNow));
         }
 

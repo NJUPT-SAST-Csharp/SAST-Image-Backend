@@ -37,13 +37,24 @@ namespace SNS.Domain.ImageAggregate.ImageEntity
 
         public void Comment(UserId commenter, string content)
         {
-            var comment = new Comment(Id, commenter, content);
+            var comment = _comments.FirstOrDefault(c => c.CommenterId == commenter);
+
+            if (comment is not null)
+            {
+                _comments.Remove(comment);
+            }
+
+            comment = new Comment(Id, commenter, content);
             _comments.Add(comment);
         }
 
         public void DeleteComment(UserId commenterId)
         {
-            var comment = _comments.First(comment => comment.CommenterId == commenterId);
+            var comment = _comments.FirstOrDefault(c => c.CommenterId == commenterId);
+
+            if (comment is null)
+                return;
+
             _comments.Remove(comment);
         }
 

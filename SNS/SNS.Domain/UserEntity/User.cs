@@ -20,6 +20,9 @@ namespace SNS.Domain.UserEntity
 
         public void Follow(UserId followingId)
         {
+            if (_following.Any(f => f.Id == followingId))
+                return;
+
             _following.Add(new(followingId));
         }
 

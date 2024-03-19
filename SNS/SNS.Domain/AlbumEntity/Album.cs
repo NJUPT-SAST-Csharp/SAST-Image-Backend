@@ -22,14 +22,22 @@ namespace SNS.Domain.AlbumEntity
             return new Album(albumId, authorId);
         }
 
-        public void AddSubscriber(UserId subscriberId)
+        public void Subscribe(UserId subscriberId)
         {
+            if (_subscribers.Any(s => s.SubscriberId == subscriberId))
+                return;
+
             _subscribers.Add(new(Id, subscriberId));
         }
 
-        public void RemoveSubscriber(UserId subscriberId)
+        public void Unsubscribe(UserId subscriberId)
         {
-            _subscribers.Remove(_subscribers.SingleOrDefault(s => s.SubscriberId == subscriberId)!);
+            var subscriber = _subscribers.FirstOrDefault(s => s.SubscriberId == subscriberId);
+
+            if (subscriber is null)
+                return;
+
+            _subscribers.Remove(subscriber);
         }
     }
 }

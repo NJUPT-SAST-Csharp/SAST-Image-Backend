@@ -67,6 +67,8 @@ public sealed class Topic : EntityBase<TopicId>, IAggregateRoot<Topic>
 
         _columns.Add(column);
 
+        _updatedAt = DateTime.UtcNow;
+
         // TODO: Raise domain event
     }
 
@@ -82,7 +84,20 @@ public sealed class Topic : EntityBase<TopicId>, IAggregateRoot<Topic>
 
     public void Subscribe(UserId userId)
     {
+        if (_subscribers.Any(subscriber => subscriber.UserId == userId))
+            return;
+
         _subscribers.Add(new(userId, Id, DateTime.UtcNow));
+    }
+
+    public void Unsubscribe(UserId userId)
+    {
+        var subscribe = _subscribers.FirstOrDefault(subscribe => subscribe.UserId == userId);
+
+        if (subscribe is null)
+            return;
+
+        _subscribers.Remove(subscribe);
     }
 
     public void ChangeToArchivedAlbum()
