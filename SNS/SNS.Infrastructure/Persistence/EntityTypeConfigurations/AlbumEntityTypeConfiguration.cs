@@ -24,7 +24,7 @@ namespace SNS.Infrastructure.Persistence.EntityTypeConfigurations
                 .HasColumnName("author_id")
                 .HasConversion(x => x.Value, x => new UserId(x));
 
-            builder.OwnsMany<Subscriber>(
+            builder.OwnsMany<Subscribe>(
                 "_subscribers",
                 subscriber =>
                 {

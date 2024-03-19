@@ -44,7 +44,7 @@ namespace SNS.Infrastructure.Persistence.Migrations
                     b.ToTable("albums", (string)null);
                 });
 
-            modelBuilder.Entity("SNS.Domain.AlbumEntity.Subscriber", b =>
+            modelBuilder.Entity("SNS.Domain.AlbumEntity.Subscribe", b =>
                 {
                     b.Property<long>("SubscriberId")
                         .HasColumnType("bigint")
@@ -168,7 +168,7 @@ namespace SNS.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_albums_users_author_id");
                 });
 
-            modelBuilder.Entity("SNS.Domain.AlbumEntity.Subscriber", b =>
+            modelBuilder.Entity("SNS.Domain.AlbumEntity.Subscribe", b =>
                 {
                     b.HasOne("SNS.Domain.AlbumEntity.Album", null)
                         .WithMany("_subscribers")

@@ -15,7 +15,7 @@ namespace SNS.Domain.AlbumEntity
         }
 
         private readonly UserId _authorId;
-        private readonly List<Subscriber> _subscribers = [];
+        private readonly List<Subscribe> _subscribers = [];
 
         public static Album CreateNewAlbum(AlbumId albumId, UserId authorId)
         {

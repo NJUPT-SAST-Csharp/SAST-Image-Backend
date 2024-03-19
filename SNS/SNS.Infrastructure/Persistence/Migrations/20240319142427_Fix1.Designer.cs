@@ -97,7 +97,7 @@ namespace SNS.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("SNS.Domain.AlbumEntity.Album", b =>
                 {
-                    b.OwnsMany("SNS.Domain.AlbumEntity.Subscriber", "_subscribers", b1 =>
+                    b.OwnsMany("SNS.Domain.AlbumEntity.Subscribe", "_subscribers", b1 =>
                         {
                             b1.Property<long>("AlbumId")
                                 .HasColumnType("bigint")

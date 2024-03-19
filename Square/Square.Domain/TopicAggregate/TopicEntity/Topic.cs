@@ -80,6 +80,11 @@ public sealed class Topic : EntityBase<TopicId>, IAggregateRoot<Topic>
         _columns.Remove(column);
     }
 
+    public void Subscribe(UserId userId)
+    {
+        _subscribers.Add(new(userId, Id, DateTime.UtcNow));
+    }
+
     public void ChangeToArchivedAlbum()
     {
         // TODO: Raise domain event
