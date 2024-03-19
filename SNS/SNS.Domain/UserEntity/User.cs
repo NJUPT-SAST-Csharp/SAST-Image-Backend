@@ -18,17 +18,17 @@ namespace SNS.Domain.UserEntity
 
         private readonly List<User> _following = [];
 
-        //public void Follow(UserId FollowingId)
-        //{
-        //    _following.Add(new(Id, FollowingId));
-        //}
+        public void Follow(UserId followingId)
+        {
+            _following.Add(new(followingId));
+        }
 
-        //public void Unfollow(UserId followingId)
-        //{
-        //    var following = _following.FirstOrDefault(f => f.FollowingId == followingId);
-        //    if (following is null)
-        //        return;
-        //    _following.Remove(following);
-        //}
+        public void Unfollow(UserId followingId)
+        {
+            var following = _following.FirstOrDefault(f => f.Id == followingId);
+            if (following is null)
+                return;
+            _following.Remove(following);
+        }
     }
 }

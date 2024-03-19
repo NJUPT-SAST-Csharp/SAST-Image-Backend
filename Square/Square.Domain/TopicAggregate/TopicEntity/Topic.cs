@@ -1,6 +1,7 @@
 ﻿using Primitives.Entity;
 using Shared.Primitives;
 using Square.Domain.TopicAggregate.ColumnEntity;
+using Utilities;
 
 namespace Square.Domain.TopicAggregate.TopicEntity;
 
@@ -8,6 +9,36 @@ public sealed class Topic : EntityBase<TopicId>, IAggregateRoot<Topic>
 {
     private Topic()
         : base(default) { }
+
+    private Topic(
+        UserId authorId,
+        string title,
+        string description,
+        string mainColumnText,
+        IEnumerable<TopicImage> images
+    )
+        : base(new(SnowFlakeIdGenerator.NewId))
+    {
+        _authorId = authorId;
+        _title = title;
+        _description = description;
+        _columns.Add(new(authorId, mainColumnText, images));
+    }
+
+    public static Topic CreateNewTopic(
+        UserId authorId,
+        string title,
+        string description,
+        string mainColumnText,
+        IEnumerable<TopicImage> images
+    )
+    {
+        //TODO: Check
+        Topic topic = new(authorId, title, description, mainColumnText, images);
+
+        //TODO: Raise domain event
+        return topic;
+    }
 
     #region Fields
 
@@ -17,7 +48,7 @@ public sealed class Topic : EntityBase<TopicId>, IAggregateRoot<Topic>
 
     private readonly UserId _authorId;
 
-    private readonly DateTime _publishedAt;
+    private readonly DateTime _publishedAt = DateTime.UtcNow;
 
     private readonly List<Column> _columns = [];
 
