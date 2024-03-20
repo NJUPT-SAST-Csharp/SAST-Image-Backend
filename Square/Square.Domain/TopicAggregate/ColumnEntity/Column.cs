@@ -24,7 +24,7 @@ namespace Square.Domain.TopicAggregate.ColumnEntity
 
         private readonly IEnumerable<TopicImage> _images = [];
 
-        private readonly List<Like> _likedBy = [];
+        private readonly List<Like> _likes = [];
 
         private readonly DateTime _uploadedAt = DateTime.UtcNow;
 
@@ -40,20 +40,20 @@ namespace Square.Domain.TopicAggregate.ColumnEntity
 
         public void Liked(UserId userId)
         {
-            if (_likedBy.Any(like => like.UserId == userId))
+            if (_likes.Any(like => like.UserId == userId))
                 return;
 
-            _likedBy.Add(new(userId, Id, DateTime.UtcNow));
+            _likes.Add(new(userId, DateTime.UtcNow));
         }
 
         public void Unliked(UserId userId)
         {
-            var like = _likedBy.FirstOrDefault(like => like.UserId == userId);
+            var like = _likes.FirstOrDefault(like => like.UserId == userId);
 
             if (like is null)
                 return;
 
-            _likedBy.Remove(like);
+            _likes.Remove(like);
         }
 
         #endregion

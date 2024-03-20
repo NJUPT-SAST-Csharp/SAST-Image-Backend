@@ -28,6 +28,27 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
             builder.Property<DateTime>("_publishedAt").HasColumnName("published_at");
             builder.Property<DateTime>("_updatedAt").HasColumnName("updated_at");
 
+            builder.OwnsMany<Like>(
+                "_likes",
+                likes =>
+                {
+                    likes.ToTable("topic_likes");
+
+                    likes
+                        .Property<TopicId>("topic_id")
+                        .HasConversion(id => id.Value, value => new TopicId(value));
+
+                    likes.HasKey("UserId", "topic_id");
+                    likes.WithOwner().HasForeignKey("topic_id");
+                    likes
+                        .Property(x => x.UserId)
+                        .HasColumnName("user_id")
+                        .HasConversion(x => x.Value, value => new UserId(value));
+
+                    likes.Property(x => x.LikedAt).HasColumnName("liked_at");
+                }
+            );
+
             builder.OwnsMany<Column>(
                 "_columns",
                 columns =>
@@ -48,20 +69,21 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
                         .HasConversion(x => x.Value, value => new UserId(value));
 
                     columns.OwnsMany<Like>(
-                        "_likedBy",
+                        "_likes",
                         likes =>
                         {
                             likes.ToTable("column_likes");
-                            likes.HasKey(x => new { x.ColumnId, x.UserId });
-                            likes.WithOwner().HasForeignKey(x => x.ColumnId);
+
+                            likes
+                                .Property<ColumnId>("column_id")
+                                .HasConversion(id => id.Value, value => new ColumnId(value));
+
+                            likes.HasKey("UserId", "column_id");
+                            likes.WithOwner().HasForeignKey("column_id");
                             likes
                                 .Property(x => x.UserId)
                                 .HasColumnName("user_id")
                                 .HasConversion(x => x.Value, value => new UserId(value));
-                            likes
-                                .Property(x => x.ColumnId)
-                                .HasColumnName("column_id")
-                                .HasConversion(x => x.Value, value => new ColumnId(value));
 
                             likes.Property(x => x.LikedAt).HasColumnName("liked_at");
                         }

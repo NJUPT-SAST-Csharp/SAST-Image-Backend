@@ -94,7 +94,7 @@ namespace SNS.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("SNS.Domain.AlbumEntity.Album", b =>
                 {
-                    b.OwnsMany("SNS.Domain.AlbumEntity.Subscribe", "_subscribers", b1 =>
+                    b.OwnsMany("SNS.Domain.AlbumEntity.Album._subscribers#SNS.Domain.AlbumEntity.Subscribe", "_subscribers", b1 =>
                         {
                             b1.Property<long>("AlbumId")
                                 .HasColumnType("bigint")
@@ -130,7 +130,7 @@ namespace SNS.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_images_albums__album_id");
 
-                    b.OwnsMany("SNS.Domain.ImageAggregate.ImageEntity.Comment", "_comments", b1 =>
+                    b.OwnsMany("SNS.Domain.ImageAggregate.ImageEntity.Image._comments#SNS.Domain.ImageAggregate.ImageEntity.Comment", "_comments", b1 =>
                         {
                             b1.Property<long>("ImageId")
                                 .HasColumnType("bigint")
@@ -159,7 +159,7 @@ namespace SNS.Infrastructure.Persistence.Migrations
                                 .HasConstraintName("fk_comments_images_image_id");
                         });
 
-                    b.OwnsMany("SNS.Domain.ImageAggregate.ImageEntity.Favourite", "_favourites", b1 =>
+                    b.OwnsMany("SNS.Domain.ImageAggregate.ImageEntity.Image._favourites#SNS.Domain.ImageAggregate.ImageEntity.Favourite", "_favourites", b1 =>
                         {
                             b1.Property<long>("ImageId")
                                 .HasColumnType("bigint")
@@ -183,7 +183,7 @@ namespace SNS.Infrastructure.Persistence.Migrations
                                 .HasConstraintName("fk_favourites_images_image_id");
                         });
 
-                    b.OwnsMany("SNS.Domain.ImageAggregate.ImageEntity.Like", "_likes", b1 =>
+                    b.OwnsMany("SNS.Domain.ImageAggregate.ImageEntity.Image._likes#SNS.Domain.ImageAggregate.ImageEntity.Like", "_likes", b1 =>
                         {
                             b1.Property<long>("ImageId")
                                 .HasColumnType("bigint")

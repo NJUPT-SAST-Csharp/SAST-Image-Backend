@@ -50,6 +50,8 @@ public sealed class Topic : EntityBase<TopicId>, IAggregateRoot<Topic>
 
     private readonly DateTime _publishedAt = DateTime.UtcNow;
 
+    private readonly List<Like> _likes = [];
+
     private readonly List<Column> _columns = [];
 
     private readonly List<Subscribe> _subscribers = [];
