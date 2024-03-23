@@ -35,6 +35,7 @@ using SastImg.Infrastructure.Event;
 using SastImg.Infrastructure.EventBus;
 using SastImg.Infrastructure.Persistence;
 using SastImg.Infrastructure.Persistence.QueryDatabase;
+using SastImg.Infrastructure.Persistence.Storages;
 using SastImg.Infrastructure.Persistence.TypeConverters;
 using SastImg.Infrastructure.QueryRepositories;
 using SastImg.WebAPI.Configurations;

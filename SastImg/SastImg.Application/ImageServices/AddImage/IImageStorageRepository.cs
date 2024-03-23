@@ -4,7 +4,7 @@ namespace SastImg.Application.ImageServices.AddImage
 {
     public interface IImageStorageRepository
     {
-        public Task<Uri> UploadImageAsync(
+        public Task<(Uri, Uri)> UploadImageAsync(
             IFormFile file,
             CancellationToken cancellationToken = default
         );
