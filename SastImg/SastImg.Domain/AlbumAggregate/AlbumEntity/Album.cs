@@ -159,16 +159,22 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             }
         }
 
-        public ImageId AddImage(string title, Uri uri, string description, TagId[] tags)
+        public ImageId AddImage(
+            string title,
+            string description,
+            Uri url,
+            Uri thumbnailUrl,
+            TagId[] tags
+        )
         {
             CheckRule(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
 
-            var image = Image.CreateNewImage(title, uri, description, tags);
+            var image = new Image(title, description, url, thumbnailUrl, tags);
 
             _updatedAt = DateTime.UtcNow;
             if (_cover.IsLatestImage)
             {
-                _cover = new(uri, true);
+                _cover = new(url, true);
             }
             image.AddDomainEvent(new ImageAddedDomainEvent(Id, _authorId, image.Id));
             return image.Id;

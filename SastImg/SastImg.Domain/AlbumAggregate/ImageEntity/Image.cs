@@ -10,20 +10,16 @@ public sealed class Image : EntityBase<ImageId>
     private Image()
         : base(default) { }
 
-    private Image(string title, Uri uri, string description, TagId[] tags)
+    internal Image(string title, string description, Uri url, Uri thumbnailUrl, TagId[] tags)
         : base(new(SnowFlakeIdGenerator.NewId))
     {
-        _title = title;
-        _url = uri;
-        _description = description;
-        _tags = tags;
-    }
-
-    internal static Image CreateNewImage(string title, Uri uri, string description, TagId[] tags)
-    {
         CheckRule(new ImageOwnNotMoreThan5TagsRule(tags));
-        Image image = new(title, uri, description, tags);
-        return image;
+
+        _title = title;
+        _description = description;
+        _url = url;
+        _thumbnailUrl = thumbnailUrl;
+        _tags = tags;
     }
 
     #region Fields
@@ -33,6 +29,8 @@ public sealed class Image : EntityBase<ImageId>
     private readonly string _description = string.Empty;
 
     private readonly Uri _url;
+
+    private readonly Uri _thumbnailUrl;
 
     private readonly DateTime _uploadedAt = DateTime.UtcNow;
 

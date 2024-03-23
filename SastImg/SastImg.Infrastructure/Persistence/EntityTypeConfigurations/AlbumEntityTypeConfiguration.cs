@@ -73,6 +73,7 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
                     image.Property<string>("_title").HasColumnName("title");
                     image.Property<string>("_description").HasColumnName("description");
                     image.Property<Uri>("_url").HasColumnName("url");
+                    image.Property<Uri>("_thumbnailUrl").HasColumnName("thumbnail_url");
                     image.Property<DateTime>("_uploadtedAt").HasColumnName("uploaded_at");
                     image.Property<bool>("_isRemoved").HasColumnName("is_removed");
 

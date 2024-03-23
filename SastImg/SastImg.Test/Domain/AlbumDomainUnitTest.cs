@@ -26,7 +26,7 @@ public sealed class AlbumDomainUnitTest
         const string uri = "https://fake.com";
         const long tag = 0;
 
-        album.AddImage(title, new(uri), description, [new(tag)]);
+        album.AddImage(title, description, new(uri), new(uri), [new(tag)]);
 
         Assert.AreEqual(expectedEventCount, album.DomainEvents.Count);
     }

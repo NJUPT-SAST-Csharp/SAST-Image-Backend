@@ -154,6 +154,7 @@ namespace SastImg.Infrastructure.Configurations
                 configuration.GetSection("Storage").Get<StorageOptions>()
                     ?? throw new NullReferenceException("Couldn't find 'Storage' configuration")
             );
+
             services.TryAddScoped<IImageStorageRepository, ImageStorageRepository>();
 
             return services;
