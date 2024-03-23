@@ -20,9 +20,11 @@ namespace Account.Application.UserServices.UpdateAvatar
 
             if (request.Avatar is not null)
             {
-                var url = await _storage
-                    .UploadAvatarAsync(user.Id, request.Avatar)
-                    .WaitAsync(cancellationToken);
+                var url = await _storage.UploadAvatarAsync(
+                    user.Id,
+                    request.Avatar,
+                    cancellationToken
+                );
 
                 user.UpdateAvatar(url);
             }

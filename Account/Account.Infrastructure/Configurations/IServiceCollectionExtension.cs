@@ -9,6 +9,7 @@ using Account.Infrastructure.ApplicationServices;
 using Account.Infrastructure.DomainServices;
 using Account.Infrastructure.EventBus;
 using Account.Infrastructure.Persistence;
+using Account.Infrastructure.Persistence.Storages;
 using Account.Infrastructure.Persistence.TypeConverters;
 using Auth.Authentication.Extensions;
 using Auth.Authorization.Extensions;
@@ -29,6 +30,7 @@ using SastImg.WebAPI.Configurations;
 using Serilog;
 using Shared.Storage.Configurations;
 using StackExchange.Redis;
+using Storage.Options;
 
 namespace Account.Infrastructure.Configurations
 {
@@ -185,8 +187,10 @@ namespace Account.Infrastructure.Configurations
             services.AddScoped<IHeaderStorageRepository, HeaderStorageRepository>();
             services.AddScoped<IAvatarStorageRepository, AvatarStorageRepository>();
 
-            services.ConfigureHeaderStorage(configuration);
-            services.ConfigureAvatarStorage(configuration);
+            services.AddStorageClient(
+                configuration.GetSection("Storage").Get<StorageOptions>()
+                    ?? throw new NullReferenceException("Couldn't find 'Storage' configuration")
+            );
             return services;
         }
 

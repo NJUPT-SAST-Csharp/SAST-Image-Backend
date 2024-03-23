@@ -5,6 +5,10 @@ namespace Account.Application.UserServices.UpdateHeader
 {
     public interface IHeaderStorageRepository
     {
-        public Task<Uri> UploadHeaderAsync(UserId id, IFormFile file);
+        public Task<Uri> UploadHeaderAsync(
+            UserId id,
+            IFormFile file,
+            CancellationToken cancellationToken = default
+        );
     }
 }

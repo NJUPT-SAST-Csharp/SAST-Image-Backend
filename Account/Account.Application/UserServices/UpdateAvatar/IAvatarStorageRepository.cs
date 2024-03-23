@@ -5,6 +5,10 @@ namespace Account.Application.UserServices.UpdateAvatar
 {
     public interface IAvatarStorageRepository
     {
-        public Task<Uri> UploadAvatarAsync(UserId id, IFormFile avatarFile);
+        public Task<Uri> UploadAvatarAsync(
+            UserId id,
+            IFormFile avatarFile,
+            CancellationToken cancellationToken = default
+        );
     }
 }

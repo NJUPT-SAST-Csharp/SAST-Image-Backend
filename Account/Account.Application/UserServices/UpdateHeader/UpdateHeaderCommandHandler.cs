@@ -20,7 +20,11 @@ namespace Account.Application.UserServices.UpdateHeader
 
             if (request.Header is not null)
             {
-                var url = await _storage.UploadHeaderAsync(user.Id, request.Header);
+                var url = await _storage.UploadHeaderAsync(
+                    user.Id,
+                    request.Header,
+                    cancellationToken
+                );
 
                 user.UpdateHeader(url);
             }
