@@ -41,6 +41,7 @@ using SastImg.Infrastructure.QueryRepositories;
 using SastImg.WebAPI.Configurations;
 using Shared.Storage.Configurations;
 using StackExchange.Redis;
+using Storage.Options;
 
 namespace SastImg.Infrastructure.Configurations
 {
@@ -149,7 +150,10 @@ namespace SastImg.Infrastructure.Configurations
             IConfiguration configuration
         )
         {
-            services.ConfigureImageStorage(configuration);
+            services.AddStorageClient(
+                configuration.GetSection("Storage").Get<StorageOptions>()
+                    ?? throw new NullReferenceException("Couldn't find 'Storage' configuration")
+            );
             services.TryAddScoped<IImageStorageRepository, ImageStorageRepository>();
 
             return services;
