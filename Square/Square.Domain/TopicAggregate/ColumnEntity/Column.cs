@@ -1,4 +1,5 @@
 ﻿using Primitives.Entity;
+using Square.Domain.TopicAggregate.TopicEntity;
 using Utilities;
 
 namespace Square.Domain.TopicAggregate.ColumnEntity
@@ -8,15 +9,27 @@ namespace Square.Domain.TopicAggregate.ColumnEntity
         private Column()
             : base(default) { }
 
-        internal Column(UserId authorId, string text, IEnumerable<TopicImage> images)
+        internal Column(
+            UserId authorId,
+            TopicId topicId,
+            string text,
+            IEnumerable<TopicImage> images
+        )
             : base(new(SnowFlakeIdGenerator.NewId))
         {
             _authorId = authorId;
+            _topicId = topicId;
             _text = text;
+
+            foreach (var image in images)
+                image.SetTopicId(topicId);
+
             _images = images;
         }
 
         #region Fields
+
+        private readonly TopicId _topicId;
 
         private readonly UserId _authorId;
 

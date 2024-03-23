@@ -21,6 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Storage\Storage.csproj" />
+    <ProjectReference Include="..\Square.Application\Square.Application.csproj" />
     <ProjectReference Include="..\Square.Domain\Square.Domain.csproj" />
   </ItemGroup>
 

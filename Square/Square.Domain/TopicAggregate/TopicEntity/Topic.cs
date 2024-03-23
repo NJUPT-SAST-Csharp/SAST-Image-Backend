@@ -10,31 +10,18 @@ public sealed class Topic : EntityBase<TopicId>, IAggregateRoot<Topic>
     private Topic()
         : base(default) { }
 
-    private Topic(
-        UserId authorId,
-        string title,
-        string description,
-        string mainColumnText,
-        IEnumerable<TopicImage> images
-    )
+    private Topic(UserId authorId, string title, string description)
         : base(new(SnowFlakeIdGenerator.NewId))
     {
         _authorId = authorId;
         _title = title;
         _description = description;
-        _columns.Add(new(authorId, mainColumnText, images));
     }
 
-    public static Topic CreateNewTopic(
-        UserId authorId,
-        string title,
-        string description,
-        string mainColumnText,
-        IEnumerable<TopicImage> images
-    )
+    public static Topic CreateNewTopic(UserId authorId, string title, string description)
     {
         //TODO: Check
-        Topic topic = new(authorId, title, description, mainColumnText, images);
+        Topic topic = new(authorId, title, description);
 
         //TODO: Raise domain event
         return topic;
@@ -62,10 +49,18 @@ public sealed class Topic : EntityBase<TopicId>, IAggregateRoot<Topic>
 
     #region Methods
 
-    public void Reply(UserId authorId, string text, IEnumerable<Uri> imageUrls)
+    public void AddColumn(UserId authorId, string text, IEnumerable<TopicImage> images)
     {
-        var images = imageUrls.Select(url => new TopicImage(url));
-        Column column = new(authorId, text, images);
+        Column column = new(authorId, Id, text, images);
+
+        _columns.Add(column);
+
+        _updatedAt = DateTime.UtcNow;
+    }
+
+    public void Reply(UserId authorId, string text, IEnumerable<TopicImage> images)
+    {
+        Column column = new(authorId, Id, text, images);
 
         _columns.Add(column);
 

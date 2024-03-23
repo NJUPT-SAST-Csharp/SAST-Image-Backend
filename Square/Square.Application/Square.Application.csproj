@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="TopicServices\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\Shared\Auth\Auth.csproj" />
     <ProjectReference Include="..\Square.Domain\Square.Domain.csproj" />
   </ItemGroup>

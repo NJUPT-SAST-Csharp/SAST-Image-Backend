@@ -55,18 +55,25 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
                 {
                     columns.Ignore(x => x.Images);
 
+                    columns.WithOwner().HasForeignKey("_topicId");
+
                     columns.ToTable("columns");
                     columns.HasKey(x => x.Id);
                     columns
                         .Property(x => x.Id)
                         .HasColumnName("column_id")
                         .HasConversion(x => x.Value, value => new ColumnId(value));
+
                     columns.Property<string>("_text").HasColumnName("text");
                     columns.Property<DateTime>("_uploadedAt").HasColumnName("uploaded_at");
                     columns
                         .Property<UserId>("_authorId")
                         .HasColumnName("author_id")
                         .HasConversion(x => x.Value, value => new UserId(value));
+                    columns
+                        .Property<TopicId>("_topicId")
+                        .HasColumnName("topic_id")
+                        .HasConversion(x => x.Value, value => new TopicId(value));
 
                     columns.OwnsMany<Like>(
                         "_likes",
@@ -91,15 +98,16 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
 
                     columns.OwnsMany<TopicImage>(
                         "_images",
-                        images =>
+                        image =>
                         {
-                            images.ToTable("column_images");
-                            images.HasKey(x => x.Id);
-                            images
+                            image.ToTable("column_images");
+                            image.HasKey(x => x.Id);
+                            image
                                 .Property(x => x.Id)
                                 .HasColumnName("id")
                                 .HasConversion(x => x.Value, value => new TopicImageId(value));
-                            images.Property(x => x.Url).HasColumnName("image_url");
+                            image.Property(x => x.Url).HasColumnName("image_url");
+                            image.Property(x => x.ThumbnailUrl).HasColumnName("thumbnail_url");
                         }
                     );
                 }

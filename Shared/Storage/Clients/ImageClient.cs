@@ -20,7 +20,7 @@ namespace Storage.Clients
             string key =
                 "images/"
                 + DateTime.UtcNow.ToString("yyyyMMdd")
-                + Path.GetRandomFileName().Replace(".", "")
+                + Path.GetRandomFileName().Replace(".", string.Empty)
                 + Path.GetExtension(file.FileName);
 
             using (Stream stream = file.OpenReadStream())
@@ -38,7 +38,7 @@ namespace Storage.Clients
             return new Uri(GetImageUrl(key));
         }
 
-        private async Task CompressImageAsync(string originalFileName)
+        private Task CompressImageAsync(string originalFileName)
         {
             var targetFileName = Convert.ToBase64String(
                 Encoding.UTF8.GetBytes(
@@ -49,13 +49,15 @@ namespace Storage.Clients
                 Encoding.UTF8.GetBytes(_options.BucketName)
             );
 
+            string style = "image/auto-orient,1/quality,q_50/format,webp";
+
             ProcessObjectRequest request =
                 new(_options.BucketName, originalFileName)
                 {
-                    Process = $"style/compress|sys/saveas,o_{targetFileName},b_{targetBucketName}"
+                    Process = $"{style}|sys/saveas,o_{targetFileName},b_{targetBucketName}"
                 };
 
-            await Task.Factory.StartNew(() => _client.ProcessObject(request));
+            return Task.Run(() => _client.ProcessObject(request));
         }
 
         private string GetImageUrl(string key)
