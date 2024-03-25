@@ -14,6 +14,7 @@
     <PackageReference Include="Serilog.Formatting.Compact" Version="2.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Exceptions\Exceptions.csproj" />
     <ProjectReference Include="..\..\Shared\Storage\Storage.csproj" />
     <ProjectReference Include="..\Square.Application\Square.Application.csproj" />
     <ProjectReference Include="..\Square.Domain\Square.Domain.csproj" />

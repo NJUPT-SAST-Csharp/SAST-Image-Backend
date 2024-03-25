@@ -11,6 +11,7 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
         public void Configure(EntityTypeBuilder<Topic> builder)
         {
             builder.Ignore(x => x.DomainEvents);
+            builder.Ignore(x => x.Columns);
 
             builder.HasKey(x => x.Id);
 

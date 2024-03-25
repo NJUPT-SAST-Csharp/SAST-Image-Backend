@@ -1,6 +1,6 @@
 ﻿namespace Square.WebAPI.Requests
 {
-    public class CreateTopicRequest
+    public sealed class CreateTopicRequest
     {
         public string Title { get; init; }
         public string Description { get; init; }

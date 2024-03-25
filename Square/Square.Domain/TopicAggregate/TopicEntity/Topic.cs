@@ -29,9 +29,9 @@ public sealed class Topic : EntityBase<TopicId>, IAggregateRoot<Topic>
 
     #region Fields
 
-    private readonly string _title = string.Empty;
+    private string _title = string.Empty;
 
-    private readonly string _description = string.Empty;
+    private string _description = string.Empty;
 
     private readonly UserId _authorId;
 
@@ -44,6 +44,14 @@ public sealed class Topic : EntityBase<TopicId>, IAggregateRoot<Topic>
     private readonly List<Subscribe> _subscribers = [];
 
     private DateTime _updatedAt = DateTime.UtcNow;
+
+    #endregion
+
+    #region Properties
+
+    public UserId AuthorId => _authorId;
+
+    public IEnumerable<Column> Columns => _columns;
 
     #endregion
 
@@ -95,6 +103,12 @@ public sealed class Topic : EntityBase<TopicId>, IAggregateRoot<Topic>
             return;
 
         _subscribers.Remove(subscribe);
+    }
+
+    public void UpdateInfo(string title, string description)
+    {
+        _title = title;
+        _description = description;
     }
 
     public void ChangeToArchivedAlbum()

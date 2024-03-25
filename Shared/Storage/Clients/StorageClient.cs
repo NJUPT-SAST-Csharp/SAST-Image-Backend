@@ -9,6 +9,16 @@ namespace Storage.Clients
             new(options.Endpoint, options.AccessKeyId, options.AccessKeySecret);
         private readonly StorageOptions _options = options;
 
+        public Task DeleteImagesAsync(
+            IEnumerable<string> keys,
+            CancellationToken cancellationToken = default
+        )
+        {
+            DeleteObjectsRequest request = new(_options.BucketName, keys.ToList(), true);
+
+            return Task.Run(() => _client.DeleteObjects(request), cancellationToken);
+        }
+
         public async Task<Uri> UploadImageAsync(
             Stream file,
             string key,

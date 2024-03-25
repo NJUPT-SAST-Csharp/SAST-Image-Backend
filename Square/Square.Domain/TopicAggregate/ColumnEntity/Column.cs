@@ -24,7 +24,7 @@ namespace Square.Domain.TopicAggregate.ColumnEntity
             foreach (var image in images)
                 image.SetTopicId(topicId);
 
-            _images = images;
+            _images = images.ToList();
         }
 
         #region Fields
@@ -35,7 +35,7 @@ namespace Square.Domain.TopicAggregate.ColumnEntity
 
         private readonly string _text = string.Empty;
 
-        private readonly IEnumerable<TopicImage> _images = [];
+        private readonly List<TopicImage> _images = [];
 
         private readonly List<Like> _likes = [];
 

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.ObjectPool;
 using Square.Application.TopicServices;
+using Square.Domain.TopicAggregate.ColumnEntity;
 using Storage.Clients;
 
 namespace Square.Infrastructure.Persistence.Storages
@@ -15,6 +16,23 @@ namespace Square.Infrastructure.Persistence.Storages
         private readonly IStorageClient _storage = storage;
         private readonly IProcessClient _processor = processor;
 
+        public Task DeleteImagesAsync(
+            IEnumerable<TopicImage> images,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var keys = images.SelectMany(
+                i =>
+                    new[]
+                    {
+                        i.Url.AbsolutePath.TrimStart('/'),
+                        i.ThumbnailUrl.AbsolutePath.TrimStart('/')
+                    }
+            );
+
+            return _storage.DeleteImagesAsync(keys, cancellationToken);
+        }
+
         public async Task<(Uri, Uri)> UploadImageAsync(
             IFormFile file,
             CancellationToken cancellationToken = default
@@ -27,7 +45,7 @@ namespace Square.Infrastructure.Persistence.Storages
             var builder = builderPool.Get();
 
             builder
-                .Append("topic-images")
+                .Append("images")
                 .Append('/')
                 .Append(DateTime.UtcNow.ToString("yyyy/MM/dd"))
                 .Append('/')

@@ -81,8 +81,6 @@ public sealed class AlbumDomainUnitTest
 
         bool result = album.IsManagedBy(user);
 
-        PrivateObject privateObject = new(album);
-
         Assert.AreEqual(expected, result);
     }
 }
