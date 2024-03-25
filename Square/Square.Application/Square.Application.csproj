@@ -12,4 +12,8 @@
     <ProjectReference Include="..\Square.Domain\Square.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ColumnServices\DeleteColumn\" />
+  </ItemGroup>
+
 </Project>

@@ -10,9 +10,9 @@ namespace Square.WebAPI.Controllers;
 
 [ApiController]
 [Route("api/square")]
-public class TopicController(ICommandRequestSender sender) : ControllerBase
+public class TopicController(ICommandRequestSender commandSender) : ControllerBase
 {
-    private readonly ICommandRequestSender _commandSender = sender;
+    private readonly ICommandRequestSender _commandSender = commandSender;
 
     [Authorize]
     [HttpPost("topic")]

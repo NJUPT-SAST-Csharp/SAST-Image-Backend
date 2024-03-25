@@ -19,22 +19,11 @@ namespace Square.Infrastructure.DomainRepositories
             return topicEntity.Entity.Id;
         }
 
-        public async Task DeleteTopicAsync(
-            TopicId topicId,
-            CancellationToken cancellationToken = default
-        )
+        public Task DeleteTopicAsync(Topic topic, CancellationToken cancellationToken = default)
         {
-            var topic = await _context.Topics.FirstOrDefaultAsync(
-                t => t.Id == topicId,
-                cancellationToken
-            );
-
-            if (topic is null)
-            {
-                throw new DbNotFoundException(nameof(Topic), topicId.ToString());
-            }
-
             _context.Topics.Remove(topic);
+
+            return Task.CompletedTask;
         }
 
         public async Task<Topic> GetTopicAsync(

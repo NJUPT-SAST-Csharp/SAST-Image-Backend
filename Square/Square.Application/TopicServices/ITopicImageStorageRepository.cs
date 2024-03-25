@@ -5,13 +5,18 @@ namespace Square.Application.TopicServices
 {
     public interface ITopicImageStorageRepository
     {
-        public Task<(Uri, Uri)> UploadImageAsync(
+        public Task<TopicImage> UploadImageAsync(
             IFormFile file,
             CancellationToken cancellationToken = default
         );
 
         public Task DeleteImagesAsync(
             IEnumerable<TopicImage> images,
+            CancellationToken cancellationToken = default
+        );
+
+        public Task<IEnumerable<TopicImage>> UploadImagesAsync(
+            IEnumerable<IFormFile> images,
             CancellationToken cancellationToken = default
         );
     }

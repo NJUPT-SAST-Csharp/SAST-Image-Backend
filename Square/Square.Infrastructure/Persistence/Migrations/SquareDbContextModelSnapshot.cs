@@ -50,9 +50,10 @@ namespace Square.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_topics");
 
-                    b.ToTable("Topics");
+                    b.ToTable("topics", (string)null);
                 });
 
             modelBuilder.Entity("Square.Domain.TopicAggregate.TopicEntity.Topic", b =>
@@ -71,14 +72,17 @@ namespace Square.Infrastructure.Persistence.Migrations
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("subscribed_at");
 
-                            b1.HasKey("UserId", "TopicId");
+                            b1.HasKey("UserId", "TopicId")
+                                .HasName("pk_subscribers");
 
-                            b1.HasIndex("TopicId");
+                            b1.HasIndex("TopicId")
+                                .HasDatabaseName("ix_subscribers_topic_id");
 
                             b1.ToTable("subscribers", (string)null);
 
                             b1.WithOwner()
-                                .HasForeignKey("TopicId");
+                                .HasForeignKey("TopicId")
+                                .HasConstraintName("fk_subscribers_topics_topic_id");
                         });
 
                     b.OwnsMany("Square.Domain.TopicAggregate.ColumnEntity.Column", "_columns", b1 =>
@@ -92,7 +96,6 @@ namespace Square.Infrastructure.Persistence.Migrations
                                 .HasColumnName("author_id");
 
                             b1.Property<string>("_text")
-                                .IsRequired()
                                 .HasColumnType("text")
                                 .HasColumnName("text");
 
@@ -104,14 +107,17 @@ namespace Square.Infrastructure.Persistence.Migrations
                                 .HasColumnType("timestamp with time zone")
                                 .HasColumnName("uploaded_at");
 
-                            b1.HasKey("Id");
+                            b1.HasKey("Id")
+                                .HasName("pk_columns");
 
-                            b1.HasIndex("_topicId");
+                            b1.HasIndex("_topicId")
+                                .HasDatabaseName("ix_columns__topic_id");
 
                             b1.ToTable("columns", (string)null);
 
                             b1.WithOwner()
-                                .HasForeignKey("_topicId");
+                                .HasForeignKey("_topicId")
+                                .HasConstraintName("fk_columns_topics__topic_id");
 
                             b1.OwnsMany("Square.Domain.TopicAggregate.ColumnEntity.TopicImage", "_images", b2 =>
                                 {
@@ -120,7 +126,8 @@ namespace Square.Infrastructure.Persistence.Migrations
                                         .HasColumnName("id");
 
                                     b2.Property<long>("ColumnId")
-                                        .HasColumnType("bigint");
+                                        .HasColumnType("bigint")
+                                        .HasColumnName("column_id");
 
                                     b2.Property<string>("ThumbnailUrl")
                                         .IsRequired()
@@ -132,14 +139,17 @@ namespace Square.Infrastructure.Persistence.Migrations
                                         .HasColumnType("text")
                                         .HasColumnName("image_url");
 
-                                    b2.HasKey("Id");
+                                    b2.HasKey("Id")
+                                        .HasName("pk_column_images");
 
-                                    b2.HasIndex("ColumnId");
+                                    b2.HasIndex("ColumnId")
+                                        .HasDatabaseName("ix_column_images_column_id");
 
                                     b2.ToTable("column_images", (string)null);
 
                                     b2.WithOwner()
-                                        .HasForeignKey("ColumnId");
+                                        .HasForeignKey("ColumnId")
+                                        .HasConstraintName("fk_column_images_columns_column_id");
                                 });
 
                             b1.OwnsMany("Square.Domain.TopicAggregate.Like", "_likes", b2 =>
@@ -149,20 +159,24 @@ namespace Square.Infrastructure.Persistence.Migrations
                                         .HasColumnName("user_id");
 
                                     b2.Property<long>("column_id")
-                                        .HasColumnType("bigint");
+                                        .HasColumnType("bigint")
+                                        .HasColumnName("column_id");
 
                                     b2.Property<DateTime>("LikedAt")
                                         .HasColumnType("timestamp with time zone")
                                         .HasColumnName("liked_at");
 
-                                    b2.HasKey("UserId", "column_id");
+                                    b2.HasKey("UserId", "column_id")
+                                        .HasName("pk_column_likes");
 
-                                    b2.HasIndex("column_id");
+                                    b2.HasIndex("column_id")
+                                        .HasDatabaseName("ix_column_likes_column_id");
 
                                     b2.ToTable("column_likes", (string)null);
 
                                     b2.WithOwner()
-                                        .HasForeignKey("column_id");
+                                        .HasForeignKey("column_id")
+                                        .HasConstraintName("fk_column_likes_columns_column_id");
                                 });
 
                             b1.Navigation("_images");
@@ -177,7 +191,8 @@ namespace Square.Infrastructure.Persistence.Migrations
                                 .HasColumnName("user_id");
 
                             b1.Property<long>("topic_id")
-                                .HasColumnType("bigint");
+                                .HasColumnType("bigint")
+                                .HasColumnName("topic_id");
 
                             b1.Property<DateTime>("LikedAt")
                                 .HasColumnType("timestamp with time zone")
@@ -185,12 +200,14 @@ namespace Square.Infrastructure.Persistence.Migrations
 
                             b1.HasKey("UserId", "topic_id");
 
-                            b1.HasIndex("topic_id");
+                            b1.HasIndex("topic_id")
+                                .HasDatabaseName("ix_topic_likes_topic_id");
 
                             b1.ToTable("topic_likes", (string)null);
 
                             b1.WithOwner()
-                                .HasForeignKey("topic_id");
+                                .HasForeignKey("topic_id")
+                                .HasConstraintName("fk_topic_likes_topics_topic_id");
                         });
 
                     b.Navigation("_columns");

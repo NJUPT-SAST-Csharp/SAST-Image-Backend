@@ -1,7 +1,6 @@
 ﻿using Primitives;
 using Primitives.Command;
 using Square.Domain.TopicAggregate;
-using Square.Domain.TopicAggregate.ColumnEntity;
 using Square.Domain.TopicAggregate.TopicEntity;
 
 namespace Square.Application.TopicServices.CreateTopic
@@ -18,16 +17,7 @@ namespace Square.Application.TopicServices.CreateTopic
 
         public async Task Handle(CreateTopicCommand request, CancellationToken cancellationToken)
         {
-            var result = request.Images.Select(
-                image => _storage.UploadImageAsync(image, cancellationToken)
-            );
-
-            var imageUrls = await Task.WhenAll(result);
-
-            var images = Array.ConvertAll(
-                imageUrls,
-                urls => new TopicImage(urls.Item1, urls.Item2)
-            );
+            var images = await _storage.UploadImagesAsync(request.Images, cancellationToken);
 
             var topic = Topic.CreateNewTopic(
                 request.Requester.Id,
@@ -37,7 +27,7 @@ namespace Square.Application.TopicServices.CreateTopic
 
             topic.AddColumn(request.Requester.Id, request.MainColumnText, images);
 
-            await _repository.AddTopicAsync(topic);
+            await _repository.AddTopicAsync(topic, cancellationToken);
 
             await _unitOfWork.CommitChangesAsync(cancellationToken);
         }

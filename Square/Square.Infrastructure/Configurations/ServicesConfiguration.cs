@@ -30,7 +30,7 @@ namespace Square.Infrastructure.Configurations
         public static IServiceCollection ConfigureServices(this WebApplicationBuilder builder)
         {
             builder
-                .Services.ConfigureSwagger()
+                .Services.ConfigureMediatR()
                 .ConfigureRepositories()
                 .ConfigurePersistence(builder.Configuration)
                 .ConfigureAuth(builder.Configuration);

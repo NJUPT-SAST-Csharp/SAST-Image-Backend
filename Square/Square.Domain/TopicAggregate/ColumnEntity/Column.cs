@@ -12,7 +12,7 @@ namespace Square.Domain.TopicAggregate.ColumnEntity
         internal Column(
             UserId authorId,
             TopicId topicId,
-            string text,
+            string? text,
             IEnumerable<TopicImage> images
         )
             : base(new(SnowFlakeIdGenerator.NewId))
@@ -33,7 +33,7 @@ namespace Square.Domain.TopicAggregate.ColumnEntity
 
         private readonly UserId _authorId;
 
-        private readonly string _text = string.Empty;
+        private readonly string? _text = string.Empty;
 
         private readonly List<TopicImage> _images = [];
 

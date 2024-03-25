@@ -57,7 +57,7 @@ public sealed class Topic : EntityBase<TopicId>, IAggregateRoot<Topic>
 
     #region Methods
 
-    public void AddColumn(UserId authorId, string text, IEnumerable<TopicImage> images)
+    public void AddColumn(UserId authorId, string? text, IEnumerable<TopicImage> images)
     {
         Column column = new(authorId, Id, text, images);
 

@@ -65,7 +65,7 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
                         .HasColumnName("column_id")
                         .HasConversion(x => x.Value, value => new ColumnId(value));
 
-                    columns.Property<string>("_text").HasColumnName("text");
+                    columns.Property<string?>("_text").HasColumnName("text");
                     columns.Property<DateTime>("_uploadedAt").HasColumnName("uploaded_at");
                     columns
                         .Property<UserId>("_authorId")

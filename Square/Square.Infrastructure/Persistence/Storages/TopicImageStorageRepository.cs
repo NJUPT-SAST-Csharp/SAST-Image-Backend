@@ -33,7 +33,7 @@ namespace Square.Infrastructure.Persistence.Storages
             return _storage.DeleteImagesAsync(keys, cancellationToken);
         }
 
-        public async Task<(Uri, Uri)> UploadImageAsync(
+        public async Task<TopicImage> UploadImageAsync(
             IFormFile file,
             CancellationToken cancellationToken = default
         )
@@ -61,7 +61,20 @@ namespace Square.Infrastructure.Persistence.Storages
 
             var compressedImageUrl = await _processor.ProcessImageAsync(mainKey, cancellationToken);
 
-            return (imageUrl, compressedImageUrl);
+            return new(imageUrl, compressedImageUrl);
+        }
+
+        public async Task<IEnumerable<TopicImage>> UploadImagesAsync(
+            IEnumerable<IFormFile> images,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var topicImages = await Task.WhenAll(
+                    images.Select(i => UploadImageAsync(i, cancellationToken))
+                )
+                .WaitAsync(cancellationToken);
+
+            return topicImages.AsEnumerable();
         }
     }
 }
