@@ -68,7 +68,7 @@ namespace Square.Infrastructure.Configurations
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ITopicRepository, TopicRepository>();
-            services.AddScoped<ITopicImageStorageRepository, TopicImageStorageRepository>();
+            services.AddScoped<ITopicImageStorage, TopicImageStorage>();
 
             return services;
         }

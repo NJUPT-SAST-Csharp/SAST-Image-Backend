@@ -66,18 +66,7 @@ public sealed class Topic : EntityBase<TopicId>, IAggregateRoot<Topic>
         _updatedAt = DateTime.UtcNow;
     }
 
-    public void Reply(UserId authorId, string text, IEnumerable<TopicImage> images)
-    {
-        Column column = new(authorId, Id, text, images);
-
-        _columns.Add(column);
-
-        _updatedAt = DateTime.UtcNow;
-
-        // TODO: Raise domain event
-    }
-
-    public void RemoveReply(ColumnId columnId)
+    public void DeleteColumn(ColumnId columnId)
     {
         var column = _columns.FirstOrDefault(column => column.Id == columnId);
 

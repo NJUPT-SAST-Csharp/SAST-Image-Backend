@@ -7,12 +7,12 @@ namespace Square.Application.TopicServices.DeleteTopic
 {
     internal class DeleteTopicCommandHandler(
         ITopicRepository repository,
-        ITopicImageStorageRepository storage,
+        ITopicImageStorage storage,
         IUnitOfWork unitOfWork
     ) : ICommandRequestHandler<DeleteTopicCommand>
     {
         private readonly ITopicRepository _repository = repository;
-        private readonly ITopicImageStorageRepository _storage = storage;
+        private readonly ITopicImageStorage _storage = storage;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         public async Task Handle(DeleteTopicCommand request, CancellationToken cancellationToken)

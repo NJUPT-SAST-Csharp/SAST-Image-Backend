@@ -8,12 +8,12 @@ namespace Square.Application.ColumnServices.AddColumn
     internal sealed class AddColumnCommandHandler(
         ITopicRepository repository,
         IUnitOfWork unitOfWork,
-        ITopicImageStorageRepository storage
+        ITopicImageStorage storage
     ) : ICommandRequestHandler<AddColumnCommand>
     {
         private readonly ITopicRepository _repository = repository;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
-        private readonly ITopicImageStorageRepository _storage = storage;
+        private readonly ITopicImageStorage _storage = storage;
 
         public async Task Handle(AddColumnCommand request, CancellationToken cancellationToken)
         {

@@ -7,11 +7,11 @@ using Storage.Clients;
 
 namespace Square.Infrastructure.Persistence.Storages
 {
-    internal class TopicImageStorageRepository(
+    internal class TopicImageStorage(
         IStorageClient storage,
         IProcessClient processor,
         ObjectPool<StringBuilder> builderPool
-    ) : ITopicImageStorageRepository
+    ) : ITopicImageStorage
     {
         private readonly IStorageClient _storage = storage;
         private readonly IProcessClient _processor = processor;

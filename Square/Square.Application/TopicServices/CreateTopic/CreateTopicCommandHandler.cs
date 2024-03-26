@@ -6,12 +6,12 @@ using Square.Domain.TopicAggregate.TopicEntity;
 namespace Square.Application.TopicServices.CreateTopic
 {
     internal sealed class CreateTopicCommandHandler(
-        ITopicImageStorageRepository storage,
+        ITopicImageStorage storage,
         ITopicRepository repository,
         IUnitOfWork unitOfWork
     ) : ICommandRequestHandler<CreateTopicCommand>
     {
-        private readonly ITopicImageStorageRepository _storage = storage;
+        private readonly ITopicImageStorage _storage = storage;
         private readonly ITopicRepository _repository = repository;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 

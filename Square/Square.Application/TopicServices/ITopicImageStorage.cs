@@ -3,7 +3,7 @@ using Square.Domain.TopicAggregate.ColumnEntity;
 
 namespace Square.Application.TopicServices
 {
-    public interface ITopicImageStorageRepository
+    public interface ITopicImageStorage
     {
         public Task<TopicImage> UploadImageAsync(
             IFormFile file,
