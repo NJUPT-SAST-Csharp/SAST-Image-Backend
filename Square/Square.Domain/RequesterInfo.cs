@@ -1,9 +1,8 @@
 ﻿using System.Security.Claims;
 using Auth.Authentication;
 using Auth.Authorization;
-using Square.Domain.TopicAggregate;
 
-namespace Square.Application.SeedWorks
+namespace Square.Domain
 {
     public readonly struct RequesterInfo
     {

@@ -1,4 +1,6 @@
-﻿namespace Primitives.Rule
+﻿using System.Runtime.CompilerServices;
+
+namespace Primitives.Rule
 {
     public sealed class DomainBusinessRuleInvalidException : Exception
     {
@@ -10,6 +12,15 @@
 
         public DomainBusinessRuleInvalidException(in IAsyncDomainBusinessRule rule, string field)
             : base(rule.Message)
+        {
+            FieldName = field;
+        }
+
+        public DomainBusinessRuleInvalidException(
+            string message,
+            [CallerMemberName] string field = null!
+        )
+            : base(message)
         {
             FieldName = field;
         }

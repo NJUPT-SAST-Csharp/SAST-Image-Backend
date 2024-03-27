@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Primitives.Command;
-using Square.Application.SeedWorks;
-using Square.Domain.TopicAggregate.ColumnEntity;
+using Square.Domain;
+using Square.Domain.ColumnAggregate.ColumnEntity;
 using Square.Domain.TopicAggregate.TopicEntity;
 
 namespace Square.Application.ColumnServices.DeleteColumn

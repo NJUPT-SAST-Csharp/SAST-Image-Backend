@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Square.Domain.TopicAggregate;
-using Square.Domain.TopicAggregate.ColumnEntity;
+using Square.Domain;
+using Square.Domain.ColumnAggregate.ColumnEntity;
 using Square.Domain.TopicAggregate.TopicEntity;
 
 namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
@@ -11,7 +11,6 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
         public void Configure(EntityTypeBuilder<Topic> builder)
         {
             builder.Ignore(x => x.DomainEvents);
-            builder.Ignore(x => x.Columns);
 
             builder.HasKey(x => x.Id);
 
@@ -20,16 +19,23 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
                 .HasColumnName("id")
                 .HasConversion(builder => builder.Value, value => new TopicId(value));
 
-            builder.Property<string>("_title").HasColumnName("title");
-            builder.Property<string>("_description").HasColumnName("description");
+            builder
+                .Property<TopicTitle>("_title")
+                .HasColumnName("title")
+                .HasConversion(t => t.Value, t => new(t));
+            builder
+                .Property<TopicDescription>("_description")
+                .HasColumnName("description")
+                .HasConversion(d => d.Value, d => new(d));
             builder
                 .Property<UserId>("_authorId")
                 .HasColumnName("author_id")
-                .HasConversion(x => x.Value, value => new UserId(value));
+                .HasConversion(x => x.Value, value => new(value));
+
             builder.Property<DateTime>("_publishedAt").HasColumnName("published_at");
             builder.Property<DateTime>("_updatedAt").HasColumnName("updated_at");
 
-            builder.OwnsMany<Like>(
+            builder.OwnsMany<TopicLike>(
                 "_likes",
                 likes =>
                 {
@@ -37,14 +43,14 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
 
                     likes
                         .Property<TopicId>("topic_id")
-                        .HasConversion(id => id.Value, value => new TopicId(value));
+                        .HasConversion(id => id.Value, value => new(value));
 
                     likes.HasKey("UserId", "topic_id");
                     likes.WithOwner().HasForeignKey("topic_id");
                     likes
                         .Property(x => x.UserId)
                         .HasColumnName("user_id")
-                        .HasConversion(x => x.Value, value => new UserId(value));
+                        .HasConversion(x => x.Value, value => new(value));
 
                     likes.Property(x => x.LikedAt).HasColumnName("liked_at");
                 }
@@ -63,20 +69,20 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
                     columns
                         .Property(x => x.Id)
                         .HasColumnName("column_id")
-                        .HasConversion(x => x.Value, value => new ColumnId(value));
+                        .HasConversion(x => x.Value, value => new(value));
 
                     columns.Property<string?>("_text").HasColumnName("text");
                     columns.Property<DateTime>("_uploadedAt").HasColumnName("uploaded_at");
                     columns
                         .Property<UserId>("_authorId")
                         .HasColumnName("author_id")
-                        .HasConversion(x => x.Value, value => new UserId(value));
+                        .HasConversion(x => x.Value, value => new(value));
                     columns
                         .Property<TopicId>("_topicId")
                         .HasColumnName("topic_id")
-                        .HasConversion(x => x.Value, value => new TopicId(value));
+                        .HasConversion(x => x.Value, value => new(value));
 
-                    columns.OwnsMany<Like>(
+                    columns.OwnsMany<TopicLike>(
                         "_likes",
                         likes =>
                         {
@@ -84,20 +90,20 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
 
                             likes
                                 .Property<ColumnId>("column_id")
-                                .HasConversion(id => id.Value, value => new ColumnId(value));
+                                .HasConversion(id => id.Value, value => new(value));
 
                             likes.HasKey("UserId", "column_id");
                             likes.WithOwner().HasForeignKey("column_id");
                             likes
                                 .Property(x => x.UserId)
                                 .HasColumnName("user_id")
-                                .HasConversion(x => x.Value, value => new UserId(value));
+                                .HasConversion(x => x.Value, value => new(value));
 
                             likes.Property(x => x.LikedAt).HasColumnName("liked_at");
                         }
                     );
 
-                    columns.OwnsMany<TopicImage>(
+                    columns.OwnsMany<ColumnImage>(
                         "_images",
                         image =>
                         {
@@ -106,7 +112,7 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
                             image
                                 .Property(x => x.Id)
                                 .HasColumnName("id")
-                                .HasConversion(x => x.Value, value => new TopicImageId(value));
+                                .HasConversion(x => x.Value, value => new(value));
                             image.Property(x => x.Url).HasColumnName("image_url");
                             image.Property(x => x.ThumbnailUrl).HasColumnName("thumbnail_url");
                         }
@@ -114,7 +120,7 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
                 }
             );
 
-            builder.OwnsMany<Subscribe>(
+            builder.OwnsMany<TopicSubscribe>(
                 "_subscribers",
                 subscribers =>
                 {
@@ -124,11 +130,11 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
                     subscribers
                         .Property(x => x.UserId)
                         .HasColumnName("user_id")
-                        .HasConversion(x => x.Value, value => new UserId(value));
+                        .HasConversion(x => x.Value, value => new(value));
                     subscribers
                         .Property(x => x.TopicId)
                         .HasColumnName("topic_id")
-                        .HasConversion(x => x.Value, value => new TopicId(value));
+                        .HasConversion(x => x.Value, value => new(value));
 
                     subscribers.Property(x => x.SubscribedAt).HasColumnName("subscribed_at");
                 }

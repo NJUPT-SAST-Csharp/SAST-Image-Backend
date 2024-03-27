@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Primitives.Command;
-using Square.Application.SeedWorks;
+using Square.Domain;
 
 namespace Square.Application.TopicServices.CreateTopic
 {

@@ -1,4 +1,4 @@
-﻿namespace Square.Domain.TopicAggregate
+﻿namespace Square.Domain
 {
     public readonly record struct UserId(long Value)
     {

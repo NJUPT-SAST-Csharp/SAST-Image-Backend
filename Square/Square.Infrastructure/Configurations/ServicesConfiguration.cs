@@ -16,6 +16,7 @@ using Serilog;
 using Shared.Storage.Configurations;
 using Square.Application.SeedWorks;
 using Square.Application.TopicServices;
+using Square.Domain;
 using Square.Domain.TopicAggregate;
 using Square.Infrastructure.DomainRepositories;
 using Square.Infrastructure.EventBus;

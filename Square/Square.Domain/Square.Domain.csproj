@@ -7,12 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Auth\Auth.csproj" />
+    <ProjectReference Include="..\..\Shared\Exceptions\Exceptions.csproj" />
+    <ProjectReference Include="..\..\Shared\FoxResult\FoxResult.csproj" />
     <ProjectReference Include="..\..\Shared\Primitives\Primitives.csproj" />
     <ProjectReference Include="..\..\Shared\Utilities\Utilities.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="TopicAggregate\TopicEntity\Rules\" />
   </ItemGroup>
 
 </Project>

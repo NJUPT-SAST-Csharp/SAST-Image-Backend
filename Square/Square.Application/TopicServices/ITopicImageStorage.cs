@@ -1,21 +1,21 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Square.Domain.TopicAggregate.ColumnEntity;
+using Square.Domain.ColumnAggregate.ColumnEntity;
 
 namespace Square.Application.TopicServices
 {
     public interface ITopicImageStorage
     {
-        public Task<TopicImage> UploadImageAsync(
+        public Task<ColumnImage> UploadImageAsync(
             IFormFile file,
             CancellationToken cancellationToken = default
         );
 
         public Task DeleteImagesAsync(
-            IEnumerable<TopicImage> images,
+            IEnumerable<ColumnImage> images,
             CancellationToken cancellationToken = default
         );
 
-        public Task<IEnumerable<TopicImage>> UploadImagesAsync(
+        public Task<IEnumerable<ColumnImage>> UploadImagesAsync(
             IEnumerable<IFormFile> images,
             CancellationToken cancellationToken = default
         );

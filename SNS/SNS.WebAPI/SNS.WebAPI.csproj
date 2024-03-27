@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Response\Response.csproj" />
     <ProjectReference Include="..\SNS.Application\SNS.Application.csproj" />
     <ProjectReference Include="..\SNS.Infrastructure\SNS.Infrastructure.csproj" />
   </ItemGroup>

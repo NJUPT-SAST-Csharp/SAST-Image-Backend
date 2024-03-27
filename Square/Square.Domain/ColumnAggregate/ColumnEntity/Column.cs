@@ -2,7 +2,7 @@
 using Square.Domain.TopicAggregate.TopicEntity;
 using Utilities;
 
-namespace Square.Domain.TopicAggregate.ColumnEntity
+namespace Square.Domain.ColumnAggregate.ColumnEntity
 {
     public sealed class Column : EntityBase<ColumnId>
     {
@@ -12,8 +12,8 @@ namespace Square.Domain.TopicAggregate.ColumnEntity
         internal Column(
             UserId authorId,
             TopicId topicId,
-            string? text,
-            IEnumerable<TopicImage> images
+            ColumnText text,
+            IEnumerable<ColumnImage> images
         )
             : base(new(SnowFlakeIdGenerator.NewId))
         {
@@ -33,19 +33,13 @@ namespace Square.Domain.TopicAggregate.ColumnEntity
 
         private readonly UserId _authorId;
 
-        private readonly string? _text = string.Empty;
+        private readonly ColumnText _text;
 
-        private readonly List<TopicImage> _images = [];
+        private readonly List<ColumnImage> _images = [];
 
-        private readonly List<Like> _likes = [];
+        private readonly List<TopicLike> _likes = [];
 
         private readonly DateTime _uploadedAt = DateTime.UtcNow;
-
-        #endregion
-
-        #region Properties
-
-        public IEnumerable<TopicImage> Images => _images;
 
         #endregion
 

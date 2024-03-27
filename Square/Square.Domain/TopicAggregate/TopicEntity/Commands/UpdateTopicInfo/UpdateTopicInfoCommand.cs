@@ -1,16 +1,15 @@
 ﻿using System.Security.Claims;
+using FoxResult;
 using Primitives.Command;
-using Square.Domain;
-using Square.Domain.TopicAggregate.TopicEntity;
 
-namespace Square.Application.TopicServices.UpdateTopicInfo
+namespace Square.Domain.TopicAggregate.TopicEntity.Commands.UpdateTopicInfo
 {
     public sealed class UpdateTopicInfoCommand(
         long topicId,
         string title,
         string description,
         ClaimsPrincipal user
-    ) : ICommandRequest
+    ) : ICommandRequest<Result>
     {
         public TopicId TopicId { get; } = new(topicId);
 

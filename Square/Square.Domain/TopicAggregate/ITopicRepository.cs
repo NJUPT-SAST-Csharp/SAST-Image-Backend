@@ -1,19 +1,13 @@
-﻿using Square.Domain.TopicAggregate.TopicEntity;
+﻿using Square.Domain.TopicAggregate.Commands;
+using Square.Domain.TopicAggregate.TopicEntity;
 
 namespace Square.Domain.TopicAggregate
 {
     public interface ITopicRepository
     {
-        public Task<TopicId> AddTopicAsync(
-            Topic topic,
-            CancellationToken cancellationToken = default
-        );
+        public Task CreateTopic(CreateTopicCommand command);
+        public Task DeleteTopic(DeleteTopicCommand command);
 
-        public Task<Topic> GetTopicAsync(
-            TopicId topicId,
-            CancellationToken cancellationToken = default
-        );
-
-        public Task DeleteTopicAsync(Topic topic, CancellationToken cancellationToken = default);
+        public Task<ITopic> GetTopicAsync(TopicId topicId);
     }
 }

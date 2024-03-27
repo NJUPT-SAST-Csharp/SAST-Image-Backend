@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.ObjectPool;
 using Square.Application.TopicServices;
-using Square.Domain.TopicAggregate.ColumnEntity;
+using Square.Domain.ColumnAggregate.ColumnEntity;
 using Storage.Clients;
 
 namespace Square.Infrastructure.Persistence.Storages
@@ -17,7 +17,7 @@ namespace Square.Infrastructure.Persistence.Storages
         private readonly IProcessClient _processor = processor;
 
         public Task DeleteImagesAsync(
-            IEnumerable<TopicImage> images,
+            IEnumerable<ColumnImage> images,
             CancellationToken cancellationToken = default
         )
         {
@@ -33,7 +33,7 @@ namespace Square.Infrastructure.Persistence.Storages
             return _storage.DeleteImagesAsync(keys, cancellationToken);
         }
 
-        public async Task<TopicImage> UploadImageAsync(
+        public async Task<ColumnImage> UploadImageAsync(
             IFormFile file,
             CancellationToken cancellationToken = default
         )
@@ -64,7 +64,7 @@ namespace Square.Infrastructure.Persistence.Storages
             return new(imageUrl, compressedImageUrl);
         }
 
-        public async Task<IEnumerable<TopicImage>> UploadImagesAsync(
+        public async Task<IEnumerable<ColumnImage>> UploadImagesAsync(
             IEnumerable<IFormFile> images,
             CancellationToken cancellationToken = default
         )

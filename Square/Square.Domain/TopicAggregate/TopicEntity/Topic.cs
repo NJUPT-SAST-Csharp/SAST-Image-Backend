@@ -1,16 +1,15 @@
 ﻿using Primitives.Entity;
-using Shared.Primitives;
-using Square.Domain.TopicAggregate.ColumnEntity;
+using Square.Domain.ColumnAggregate.ColumnEntity;
 using Utilities;
 
 namespace Square.Domain.TopicAggregate.TopicEntity;
 
-public sealed class Topic : EntityBase<TopicId>, IAggregateRoot<Topic>
+public sealed class Topic : EntityBase<TopicId>, ITopic
 {
     private Topic()
         : base(default) { }
 
-    private Topic(UserId authorId, string title, string description)
+    private Topic(UserId authorId, TopicTitle title, TopicDescription description)
         : base(new(SnowFlakeIdGenerator.NewId))
     {
         _authorId = authorId;
@@ -18,9 +17,12 @@ public sealed class Topic : EntityBase<TopicId>, IAggregateRoot<Topic>
         _description = description;
     }
 
-    public static Topic CreateNewTopic(UserId authorId, string title, string description)
+    internal static Topic CreateNewTopic(
+        UserId authorId,
+        TopicTitle title,
+        TopicDescription description
+    )
     {
-        //TODO: Check
         Topic topic = new(authorId, title, description);
 
         //TODO: Raise domain event
@@ -29,19 +31,19 @@ public sealed class Topic : EntityBase<TopicId>, IAggregateRoot<Topic>
 
     #region Fields
 
-    private string _title = string.Empty;
+    private TopicTitle _title;
 
-    private string _description = string.Empty;
+    private TopicDescription _description;
 
     private readonly UserId _authorId;
 
     private readonly DateTime _publishedAt = DateTime.UtcNow;
 
-    private readonly List<Like> _likes = [];
+    private readonly List<TopicLike> _likes = [];
 
-    private readonly List<Column> _columns = [];
+    private readonly List<TopicColumn> _columns = [];
 
-    private readonly List<Subscribe> _subscribers = [];
+    private readonly List<TopicSubscribe> _subscribers = [];
 
     private DateTime _updatedAt = DateTime.UtcNow;
 
@@ -51,13 +53,11 @@ public sealed class Topic : EntityBase<TopicId>, IAggregateRoot<Topic>
 
     public UserId AuthorId => _authorId;
 
-    public IEnumerable<Column> Columns => _columns;
-
     #endregion
 
     #region Methods
 
-    public void AddColumn(UserId authorId, string? text, IEnumerable<TopicImage> images)
+    public void AddColumn(UserId authorId, string? text, IEnumerable<ColumnImage> images)
     {
         Column column = new(authorId, Id, text, images);
 
@@ -94,7 +94,7 @@ public sealed class Topic : EntityBase<TopicId>, IAggregateRoot<Topic>
         _subscribers.Remove(subscribe);
     }
 
-    public void UpdateInfo(string title, string description)
+    public void UpdateInfo(TopicTitle title, TopicDescription description)
     {
         _title = title;
         _description = description;
