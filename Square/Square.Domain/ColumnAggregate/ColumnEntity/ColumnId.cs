@@ -2,5 +2,5 @@
 
 namespace Square.Domain.ColumnAggregate.ColumnEntity
 {
-    public readonly record struct ColumnId((TopicId, UserId) Value) { }
+    public readonly record struct ColumnId(TopicId TopicId, UserId AuthorId) { }
 }

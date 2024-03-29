@@ -1,4 +1,6 @@
-﻿namespace FoxResult
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace FoxResult
 {
     public class Result
     {
@@ -18,7 +20,10 @@
             return new() { IsSuccess = false, Error = error };
         }
 
-        public static Result<T> Fail<T>(Error error)
+        public static Result Fail(string message) =>
+            new() { IsSuccess = false, Error = new(message) };
+
+        public static Result<T> Fail<T>(Error<T> error)
         {
             if (error == Error.None)
             {
@@ -38,6 +43,23 @@
             Value = value;
         }
 
+        [MemberNotNullWhen(false, nameof(Value))]
+        public new bool IsFailure => !IsSuccess;
+
         public T? Value { get; }
+
+        public bool TryGetValue([NotNullWhen(true)] out T? value)
+        {
+            if (IsSuccess)
+            {
+                value = Value;
+                return true;
+            }
+            else
+            {
+                value = default;
+                return false;
+            }
+        }
     }
 }

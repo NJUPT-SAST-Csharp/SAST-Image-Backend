@@ -30,7 +30,7 @@ namespace Account.Application.UserServices.UpdateHeader
             }
             else
             {
-                user.UpdateAvatar(null);
+                user.UpdateHeader(null);
             }
 
             await _unit.CommitChangesAsync(cancellationToken);

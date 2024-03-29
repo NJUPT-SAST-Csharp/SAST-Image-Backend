@@ -3,10 +3,11 @@ using FoxResult;
 using Microsoft.AspNetCore.Http;
 using Primitives.Command;
 using Square.Domain.ColumnAggregate.ColumnEntity;
+using Square.Domain.TopicAggregate.TopicEntity;
 
-namespace Square.Domain.TopicAggregate.TopicEntity.Commands.AddTopicColumn
+namespace Square.Domain.DomainServices.AddColumnToTopic
 {
-    public sealed class AddTopicColumnCommand(
+    public sealed class AddColumnToTopicCommand(
         long topicId,
         string? text,
         IFormFileCollection images,
@@ -14,7 +15,7 @@ namespace Square.Domain.TopicAggregate.TopicEntity.Commands.AddTopicColumn
     ) : ICommandRequest<Result<ColumnId>>
     {
         public TopicId TopicId { get; } = new(topicId);
-        public TopicColumnText Text { get; } = new(text);
+        public ColumnText Text { get; } = new(text);
         public IFormFileCollection Images { get; } = images;
         public RequesterInfo Requester { get; } = new(user);
     }

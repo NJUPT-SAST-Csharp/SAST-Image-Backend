@@ -1,10 +1,11 @@
 ﻿using System.Security.Claims;
 using FoxResult;
 using Primitives.Command;
+using Square.Domain.TopicAggregate.TopicEntity;
 
-namespace Square.Domain.TopicAggregate.TopicEntity.Commands.DeleteTopicColumn
+namespace Square.Domain.TopicAggregate.Commands.UnsubscribeTopic
 {
-    public sealed class DeleteTopicColumnCommand(long topicId, ClaimsPrincipal user)
+    public sealed class UnsubscribeTopicCommand(long topicId, ClaimsPrincipal user)
         : ICommandRequest<Result>
     {
         public TopicId TopicId { get; } = new(topicId);

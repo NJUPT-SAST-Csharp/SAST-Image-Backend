@@ -1,5 +1,9 @@
-﻿using Primitives.Entity;
-using Square.Domain.ColumnAggregate.ColumnEntity;
+﻿using FoxResult;
+using Primitives.Entity;
+using Square.Domain.DomainServices.CreateTopic;
+using Square.Domain.TopicAggregate.Commands.SubscribeTopic;
+using Square.Domain.TopicAggregate.Commands.UnsubscribeTopic;
+using Square.Domain.TopicAggregate.Commands.UpdateTopicInfo;
 using Utilities;
 
 namespace Square.Domain.TopicAggregate.TopicEntity;
@@ -9,21 +13,15 @@ public sealed class Topic : EntityBase<TopicId>, ITopic
     private Topic()
         : base(default) { }
 
-    private Topic(UserId authorId, TopicTitle title, TopicDescription description)
+    private Topic(UserId authorId)
         : base(new(SnowFlakeIdGenerator.NewId))
     {
         _authorId = authorId;
-        _title = title;
-        _description = description;
     }
 
-    internal static Topic CreateNewTopic(
-        UserId authorId,
-        TopicTitle title,
-        TopicDescription description
-    )
+    internal static ITopic CreateNewTopic(CreateTopicCommand command)
     {
-        Topic topic = new(authorId, title, description);
+        Topic topic = new(command.Requester.Id);
 
         //TODO: Raise domain event
         return topic;
@@ -31,78 +29,37 @@ public sealed class Topic : EntityBase<TopicId>, ITopic
 
     #region Fields
 
-    private TopicTitle _title;
-
-    private TopicDescription _description;
-
     private readonly UserId _authorId;
 
-    private readonly DateTime _publishedAt = DateTime.UtcNow;
-
-    private readonly List<TopicLike> _likes = [];
-
-    private readonly List<TopicColumn> _columns = [];
-
     private readonly List<TopicSubscribe> _subscribers = [];
-
-    private DateTime _updatedAt = DateTime.UtcNow;
-
-    #endregion
-
-    #region Properties
-
-    public UserId AuthorId => _authorId;
 
     #endregion
 
     #region Methods
 
-    public void AddColumn(UserId authorId, string? text, IEnumerable<ColumnImage> images)
+    public Result UpdateTopicInfo(UpdateTopicInfoCommand command)
     {
-        Column column = new(authorId, Id, text, images);
-
-        _columns.Add(column);
-
-        _updatedAt = DateTime.UtcNow;
+        return Result.Success;
     }
 
-    public void DeleteColumn(ColumnId columnId)
+    public void Subscribe(SubscribeTopicCommand command)
     {
-        var column = _columns.FirstOrDefault(column => column.Id == columnId);
-
-        if (column is null)
+        if (_subscribers.Any(subscriber => subscriber.UserId == command.Requester.Id))
+        {
             return;
+        }
 
-        _columns.Remove(column);
+        _subscribers.Add(new(command.Requester.Id, Id));
     }
 
-    public void Subscribe(UserId userId)
+    public void Unsubscribe(UnsubscribeTopicCommand command)
     {
-        if (_subscribers.Any(subscriber => subscriber.UserId == userId))
-            return;
-
-        _subscribers.Add(new(userId, Id, DateTime.UtcNow));
+        _subscribers.RemoveAll(x => x.UserId == command.Requester.Id);
     }
 
-    public void Unsubscribe(UserId userId)
+    public bool IsManagedBy(in RequesterInfo user)
     {
-        var subscribe = _subscribers.FirstOrDefault(subscribe => subscribe.UserId == userId);
-
-        if (subscribe is null)
-            return;
-
-        _subscribers.Remove(subscribe);
-    }
-
-    public void UpdateInfo(TopicTitle title, TopicDescription description)
-    {
-        _title = title;
-        _description = description;
-    }
-
-    public void ChangeToArchivedAlbum()
-    {
-        // TODO: Raise domain event
+        return _authorId == user.Id || user.IsAdmin;
     }
 
     #endregion

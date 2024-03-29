@@ -1,13 +1,11 @@
-﻿using Square.Domain.TopicAggregate.Commands;
-using Square.Domain.TopicAggregate.TopicEntity;
+﻿using Square.Domain.TopicAggregate.TopicEntity;
 
 namespace Square.Domain.TopicAggregate
 {
     public interface ITopicRepository
     {
-        public Task CreateTopic(CreateTopicCommand command);
-        public Task DeleteTopic(DeleteTopicCommand command);
-
-        public Task<ITopic> GetTopicAsync(TopicId topicId);
+        public Task AddTopicAsync(ITopic topic);
+        public Task DeleteTopicAsync(ITopic topic);
+        public Task<ITopic?> GetTopicAsync(TopicId topicId);
     }
 }

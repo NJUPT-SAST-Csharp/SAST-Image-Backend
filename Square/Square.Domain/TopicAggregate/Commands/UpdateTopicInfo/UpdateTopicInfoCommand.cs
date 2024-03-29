@@ -1,8 +1,9 @@
 ﻿using System.Security.Claims;
 using FoxResult;
 using Primitives.Command;
+using Square.Domain.TopicAggregate.TopicEntity;
 
-namespace Square.Domain.TopicAggregate.TopicEntity.Commands.UpdateTopicInfo
+namespace Square.Domain.TopicAggregate.Commands.UpdateTopicInfo
 {
     public sealed class UpdateTopicInfoCommand(
         long topicId,

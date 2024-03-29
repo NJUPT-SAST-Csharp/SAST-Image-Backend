@@ -1,8 +1,9 @@
 ﻿using System.Security.Claims;
 using FoxResult;
 using Primitives.Command;
+using Square.Domain.TopicAggregate.TopicEntity;
 
-namespace Square.Domain.TopicAggregate.TopicEntity.Commands.SubscribeTopic
+namespace Square.Domain.TopicAggregate.Commands.SubscribeTopic
 {
     public sealed class SubscribeTopicCommand(long topicId, ClaimsPrincipal user)
         : ICommandRequest<Result>

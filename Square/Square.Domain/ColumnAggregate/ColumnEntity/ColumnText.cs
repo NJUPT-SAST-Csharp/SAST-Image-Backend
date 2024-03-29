@@ -1,14 +1,14 @@
 ﻿using Primitives.Rule;
 
-namespace Square.Domain.TopicAggregate.TopicEntity
+namespace Square.Domain.ColumnAggregate.ColumnEntity
 {
-    public readonly struct TopicColumnText
+    public readonly record struct ColumnText
     {
         public const int MaxLength = 200;
 
         public readonly string? Value { get; }
 
-        public TopicColumnText(string? value)
+        public ColumnText(string? value)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
@@ -26,11 +26,6 @@ namespace Square.Domain.TopicAggregate.TopicEntity
             }
 
             Value = value;
-        }
-
-        public override readonly string? ToString()
-        {
-            return Value;
         }
     }
 }

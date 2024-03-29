@@ -1,23 +1,18 @@
 ﻿using FoxResult;
-using Square.Domain.ColumnAggregate.ColumnEntity;
-using Square.Domain.TopicAggregate.TopicEntity.Commands.AddTopicColumn;
-using Square.Domain.TopicAggregate.TopicEntity.Commands.DeleteTopicColumn;
-using Square.Domain.TopicAggregate.TopicEntity.Commands.SubscribeTopic;
-using Square.Domain.TopicAggregate.TopicEntity.Commands.UnsubscribeTopic;
-using Square.Domain.TopicAggregate.TopicEntity.Commands.UpdateTopicInfo;
+using Shared.Primitives.DomainEvent;
+using Square.Domain.TopicAggregate.Commands.UpdateTopicInfo;
+using Square.Domain.TopicAggregate.TopicEntity;
 
 namespace Square.Domain.TopicAggregate
 {
-    public interface ITopic
+    public interface ITopic : IDomainEventContainer
     {
-        public Result<ColumnId> AddColumn(AddTopicColumnCommand command);
-
-        public Result DeleteColumn(DeleteTopicColumnCommand command);
+        public TopicId Id { get; }
 
         public Result UpdateTopicInfo(UpdateTopicInfoCommand command);
 
-        public Result Subscribe(SubscribeTopicCommand command);
+        public void Subscribe(UserId subscriberId);
 
-        public Result Unsubscribe(UnsubscribeTopicCommand command);
+        public void Unsubscribe(UserId subscriberId);
     }
 }

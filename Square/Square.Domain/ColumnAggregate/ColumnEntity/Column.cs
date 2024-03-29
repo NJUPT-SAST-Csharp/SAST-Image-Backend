@@ -1,66 +1,47 @@
 ﻿using Primitives.Entity;
 using Square.Domain.TopicAggregate.TopicEntity;
-using Utilities;
 
 namespace Square.Domain.ColumnAggregate.ColumnEntity
 {
-    public sealed class Column : EntityBase<ColumnId>
+    public sealed class Column : EntityBase<ColumnId>, IColumn
     {
         private Column()
-            : base(default) { }
+            : base(default!) { }
 
-        internal Column(
-            UserId authorId,
-            TopicId topicId,
-            ColumnText text,
-            IEnumerable<ColumnImage> images
-        )
-            : base(new(SnowFlakeIdGenerator.NewId))
+        private Column(TopicId topicId, UserId authorId)
+            : base(new(topicId, authorId)) { }
+
+        internal static IColumn CreateNewColumn(TopicId topicId, UserId authorId)
         {
-            _authorId = authorId;
-            _topicId = topicId;
-            _text = text;
-
-            foreach (var image in images)
-                image.SetTopicId(topicId);
-
-            _images = images.ToList();
+            return new Column(topicId, authorId);
         }
 
         #region Fields
 
-        private readonly TopicId _topicId;
-
-        private readonly UserId _authorId;
-
-        private readonly ColumnText _text;
-
-        private readonly List<ColumnImage> _images = [];
-
-        private readonly List<TopicLike> _likes = [];
-
-        private readonly DateTime _uploadedAt = DateTime.UtcNow;
+        private readonly List<ColumnLike> _likes = [];
 
         #endregion
 
         #region Methods
 
-        public void Liked(UserId userId)
+        public void Like(UserId userId)
         {
             if (_likes.Any(like => like.UserId == userId))
+            {
                 return;
+            }
 
-            _likes.Add(new(userId, DateTime.UtcNow));
+            _likes.Add(new(Id, userId));
         }
 
-        public void Unliked(UserId userId)
+        public void Unlike(UserId userId)
         {
-            var like = _likes.FirstOrDefault(like => like.UserId == userId);
+            _likes.RemoveAll(x => x.UserId == userId);
+        }
 
-            if (like is null)
-                return;
-
-            _likes.Remove(like);
+        public bool IsManagedBy(in RequesterInfo user)
+        {
+            return Id.AuthorId == user.Id || user.IsAdmin;
         }
 
         #endregion
