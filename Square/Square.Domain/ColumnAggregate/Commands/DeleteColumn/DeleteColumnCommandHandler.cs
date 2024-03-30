@@ -1,15 +1,11 @@
 ﻿using FoxResult;
-using Primitives;
 using Primitives.Command;
 
 namespace Square.Domain.ColumnAggregate.Commands.DeleteColumn
 {
-    internal sealed class DeleteColumnCommandHandler(
-        IUnitOfWork unitOfWork,
-        IColumnRepository repository
-    ) : ICommandRequestHandler<DeleteColumnCommand, Result>
+    internal sealed class DeleteColumnCommandHandler(IColumnRepository repository)
+        : ICommandRequestHandler<DeleteColumnCommand, Result>
     {
-        private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IColumnRepository _repository = repository;
 
         public async Task<Result> Handle(
@@ -17,15 +13,16 @@ namespace Square.Domain.ColumnAggregate.Commands.DeleteColumn
             CancellationToken cancellationToken
         )
         {
-            var column = await _repository.GetColumnAsync(request.ColumnId);
+            var column = await _repository
+                .GetColumnAsync(request.TopicId, request.Requester.Id)
+                .WaitAsync(cancellationToken);
+
             if (column is null)
             {
                 return Result.Fail(Error.NotFound(column));
             }
 
-            await _repository.DeleteColumnAsync(column).WaitAsync(cancellationToken);
-
-            await _unitOfWork.CommitChangesAsync(cancellationToken);
+            column.DeleteColumn(request, _repository);
 
             return Result.Success;
         }

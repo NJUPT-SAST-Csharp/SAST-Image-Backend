@@ -4,8 +4,8 @@ namespace Square.Domain.TopicAggregate
 {
     public interface ITopicRepository
     {
-        public Task AddTopicAsync(ITopic topic);
-        public Task DeleteTopicAsync(ITopic topic);
-        public Task<ITopic?> GetTopicAsync(TopicId topicId);
+        public void AddTopic(Topic topic);
+        public void DeleteTopic(Topic topic);
+        public Task<Topic?> GetTopicAsync(TopicId topicId);
     }
 }

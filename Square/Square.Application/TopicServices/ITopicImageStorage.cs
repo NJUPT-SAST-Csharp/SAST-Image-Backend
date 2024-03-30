@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Square.Domain.ColumnAggregate.ColumnEntity;
+using Square.Application.ColumnServices.Models;
 
 namespace Square.Application.TopicServices
 {

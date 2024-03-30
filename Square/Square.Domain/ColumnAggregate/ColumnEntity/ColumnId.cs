@@ -1,6 +1,4 @@
-﻿using Square.Domain.TopicAggregate.TopicEntity;
-
-namespace Square.Domain.ColumnAggregate.ColumnEntity
+﻿namespace Square.Domain.ColumnAggregate.ColumnEntity
 {
-    public readonly record struct ColumnId(TopicId TopicId, UserId AuthorId) { }
+    public readonly record struct ColumnId(long Value) { }
 }

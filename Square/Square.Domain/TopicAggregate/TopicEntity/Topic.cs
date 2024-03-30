@@ -1,35 +1,52 @@
 ﻿using FoxResult;
 using Primitives.Entity;
-using Square.Domain.DomainServices.CreateTopic;
+using Square.Domain.TopicAggregate.Commands.CreateTopic;
+using Square.Domain.TopicAggregate.Commands.DeleteTopic;
 using Square.Domain.TopicAggregate.Commands.SubscribeTopic;
 using Square.Domain.TopicAggregate.Commands.UnsubscribeTopic;
 using Square.Domain.TopicAggregate.Commands.UpdateTopicInfo;
+using Square.Domain.TopicAggregate.Events;
 using Utilities;
 
 namespace Square.Domain.TopicAggregate.TopicEntity;
 
-public sealed class Topic : EntityBase<TopicId>, ITopic
+public sealed class Topic : EntityBase<TopicId>
 {
     private Topic()
         : base(default) { }
 
-    private Topic(UserId authorId)
+    private Topic(UserId authorId, TopicTitle title)
         : base(new(SnowFlakeIdGenerator.NewId))
     {
         _authorId = authorId;
+        _title = title;
     }
 
-    internal static ITopic CreateNewTopic(CreateTopicCommand command)
+    internal static async Task<Result<Topic>> CreateNewTopicAsync(
+        CreateTopicCommand command,
+        ITopicUniquenessChecker checker,
+        ITopicRepository repository
+    )
     {
-        Topic topic = new(command.Requester.Id);
+        if (await checker.IsConflictAsync(command.Title))
+        {
+            return Result.Fail(Error.Conflict<Topic>());
+        }
 
-        //TODO: Raise domain event
-        return topic;
+        Topic topic = new(command.Requester.Id, command.Title);
+
+        topic.AddDomainEvent(new TopicCreatedEvent(command, topic.Id));
+
+        repository.AddTopic(topic);
+
+        return Result.Return(topic);
     }
 
     #region Fields
 
     private readonly UserId _authorId;
+
+    private readonly TopicTitle _title;
 
     private readonly List<TopicSubscribe> _subscribers = [];
 
@@ -37,12 +54,26 @@ public sealed class Topic : EntityBase<TopicId>, ITopic
 
     #region Methods
 
-    public Result UpdateTopicInfo(UpdateTopicInfoCommand command)
+    internal async Task<Result> UpdateTopicInfoAsync(
+        UpdateTopicInfoCommand command,
+        ITopicUniquenessChecker checker
+    )
     {
-        return Result.Success;
+        if (await checker.IsConflictAsync(command.Title))
+        {
+            return Result.Fail(Error.Conflict<Topic>());
+        }
+
+        if (command.Requester.Id == _authorId || command.Requester.IsAdmin)
+        {
+            AddDomainEvent(new TopicInfoUpdatedEvent(Id, command.Title, command.Description));
+            return Result.Success;
+        }
+
+        return Result.Fail(Error.Forbidden);
     }
 
-    public void Subscribe(SubscribeTopicCommand command)
+    internal void Subscribe(SubscribeTopicCommand command)
     {
         if (_subscribers.Any(subscriber => subscriber.UserId == command.Requester.Id))
         {
@@ -50,16 +81,29 @@ public sealed class Topic : EntityBase<TopicId>, ITopic
         }
 
         _subscribers.Add(new(command.Requester.Id, Id));
+
+        AddDomainEvent(new TopicSubscribedEvent(Id, command.Requester.Id));
     }
 
-    public void Unsubscribe(UnsubscribeTopicCommand command)
+    internal void Unsubscribe(UnsubscribeTopicCommand command)
     {
-        _subscribers.RemoveAll(x => x.UserId == command.Requester.Id);
+        int number = _subscribers.RemoveAll(x => x.UserId == command.Requester.Id);
+        if (number > 0)
+        {
+            AddDomainEvent(new TopicUnsubscribedEvent(Id, command.Requester.Id));
+        }
     }
 
-    public bool IsManagedBy(in RequesterInfo user)
+    internal Result DeleteTopic(DeleteTopicCommand command, ITopicRepository repository)
     {
-        return _authorId == user.Id || user.IsAdmin;
+        if (command.Requester.Id == _authorId || command.Requester.IsAdmin)
+        {
+            repository.DeleteTopic(this);
+            AddDomainEvent(new TopicDeletedEvent(Id));
+            return Result.Success;
+        }
+
+        return Result.Fail(Error.Forbidden);
     }
 
     #endregion

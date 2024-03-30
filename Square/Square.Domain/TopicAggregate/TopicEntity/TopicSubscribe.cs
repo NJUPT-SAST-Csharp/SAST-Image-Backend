@@ -5,7 +5,7 @@
         public UserId UserId { get; }
         public TopicId TopicId { get; }
 
-        internal TopicSubscribe(UserId userId, TopicId topicId)
+        public TopicSubscribe(UserId userId, TopicId topicId)
         {
             UserId = userId;
             TopicId = topicId;

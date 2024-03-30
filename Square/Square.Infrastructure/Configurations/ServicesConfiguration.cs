@@ -14,11 +14,13 @@ using Primitives.DomainEvent;
 using Primitives.Query;
 using Serilog;
 using Shared.Storage.Configurations;
-using Square.Application.SeedWorks;
+using Square.Application.Behaviors;
 using Square.Application.TopicServices;
-using Square.Domain;
+using Square.Domain.ColumnAggregate;
 using Square.Domain.TopicAggregate;
-using Square.Infrastructure.DomainRepositories;
+using Square.Domain.TopicAggregate.TopicEntity;
+using Square.Infrastructure.ApplicationServices;
+using Square.Infrastructure.DomainServices;
 using Square.Infrastructure.EventBus;
 using Square.Infrastructure.Persistence;
 using Square.Infrastructure.Persistence.Storages;
@@ -32,7 +34,8 @@ namespace Square.Infrastructure.Configurations
         {
             builder
                 .Services.ConfigureMediatR()
-                .ConfigureRepositories()
+                .ConfigureDomainServices()
+                .ConfigureApplicationServices()
                 .ConfigurePersistence(builder.Configuration)
                 .ConfigureAuth(builder.Configuration);
 
@@ -57,6 +60,14 @@ namespace Square.Infrastructure.Configurations
                         .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddSerilog()))
             );
 
+            services.AddDbContext<SquareQueryDbContext>(
+                options =>
+                    options
+                        .UseNpgsql(configuration.GetConnectionString("SquareDb"))
+                        .UseSnakeCaseNamingConvention()
+                        .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddSerilog()))
+            );
+
             services.AddStorageClient(
                 configuration.GetRequiredSection("Storage").Get<StorageOptions>()
                     ?? throw new NullReferenceException("Couldn't find 'Storage' configuration")
@@ -65,11 +76,23 @@ namespace Square.Infrastructure.Configurations
             return services;
         }
 
-        private static IServiceCollection ConfigureRepositories(this IServiceCollection services)
+        private static IServiceCollection ConfigureDomainServices(this IServiceCollection services)
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ITopicRepository, TopicRepository>();
-            services.AddScoped<ITopicImageStorage, TopicImageStorage>();
+            services.AddScoped<IColumnRepository, ColumnRepository>();
+
+            services.AddScoped<ITopicUniquenessChecker, TopicUniquenessChecker>();
+
+            return services;
+        }
+
+        private static IServiceCollection ConfigureApplicationServices(
+            this IServiceCollection services
+        )
+        {
+            services.AddSingleton<ITopicImageStorage, TopicImageStorage>();
+            services.AddScoped<ITopicQueryRepository, TopicQueryRepository>();
 
             return services;
         }
@@ -82,7 +105,11 @@ namespace Square.Infrastructure.Configurations
 
             services.AddMediatR(options =>
             {
-                options.RegisterServicesFromAssemblyContaining<RequesterInfo>();
+                options.RegisterServicesFromAssemblyContaining<Topic>();
+                options.RegisterServicesFromAssemblyContaining<TopicModel>();
+                options.AddOpenBehavior(typeof(CommandLoggingBehavior<,>));
+                options.AddOpenBehavior(typeof(QueryLoggingBehavior<,>));
+                options.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>));
             });
 
             return services;

@@ -2,7 +2,7 @@
 
 namespace Square.Domain.TopicAggregate.TopicEntity
 {
-    public readonly struct TopicTitle
+    public readonly record struct TopicTitle
     {
         public const int MinLength = 1;
         public const int MaxLength = 20;
@@ -11,11 +11,16 @@ namespace Square.Domain.TopicAggregate.TopicEntity
 
         public TopicTitle(string value)
         {
-            if (
-                string.IsNullOrWhiteSpace(value)
-                || value.Length < MinLength
-                || value.Length > MaxLength
-            )
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new DomainObjectValidationException(
+                    $"The topic title length must be between {MinLength} and {MaxLength}."
+                );
+            }
+
+            value = value.Trim();
+
+            if (value.Length < MinLength || value.Length > MaxLength)
             {
                 throw new DomainObjectValidationException(
                     $"The topic title length must be between {MinLength} and {MaxLength}."

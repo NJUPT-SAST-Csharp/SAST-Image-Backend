@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Square.Domain;
-using Square.Domain.ColumnAggregate.ColumnEntity;
 using Square.Domain.TopicAggregate.TopicEntity;
 
 namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
@@ -20,105 +19,16 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
                 .HasConversion(builder => builder.Value, value => new TopicId(value));
 
             builder
-                .Property<TopicTitle>("_title")
-                .HasColumnName("title")
-                .HasConversion(t => t.Value, t => new(t));
-            builder
-                .Property<TopicDescription>("_description")
-                .HasColumnName("description")
-                .HasConversion(d => d.Value, d => new(d));
-            builder
                 .Property<UserId>("_authorId")
                 .HasColumnName("author_id")
                 .HasConversion(x => x.Value, value => new(value));
 
-            builder.Property<DateTime>("_publishedAt").HasColumnName("published_at");
-            builder.Property<DateTime>("_updatedAt").HasColumnName("updated_at");
+            builder.HasIndex("_title").IsUnique(true);
 
-            builder.OwnsMany<TopicLike>(
-                "_likes",
-                likes =>
-                {
-                    likes.ToTable("topic_likes");
-
-                    likes
-                        .Property<TopicId>("topic_id")
-                        .HasConversion(id => id.Value, value => new(value));
-
-                    likes.HasKey("UserId", "topic_id");
-                    likes.WithOwner().HasForeignKey("topic_id");
-                    likes
-                        .Property(x => x.UserId)
-                        .HasColumnName("user_id")
-                        .HasConversion(x => x.Value, value => new(value));
-
-                    likes.Property(x => x.LikedAt).HasColumnName("liked_at");
-                }
-            );
-
-            builder.OwnsMany<Column>(
-                "_columns",
-                columns =>
-                {
-                    columns.Ignore(x => x.Images);
-
-                    columns.WithOwner().HasForeignKey("_topicId");
-
-                    columns.ToTable("columns");
-                    columns.HasKey(x => x.Id);
-                    columns
-                        .Property(x => x.Id)
-                        .HasColumnName("column_id")
-                        .HasConversion(x => x.Value, value => new(value));
-
-                    columns.Property<string?>("_text").HasColumnName("text");
-                    columns.Property<DateTime>("_uploadedAt").HasColumnName("uploaded_at");
-                    columns
-                        .Property<UserId>("_authorId")
-                        .HasColumnName("author_id")
-                        .HasConversion(x => x.Value, value => new(value));
-                    columns
-                        .Property<TopicId>("_topicId")
-                        .HasColumnName("topic_id")
-                        .HasConversion(x => x.Value, value => new(value));
-
-                    columns.OwnsMany<TopicLike>(
-                        "_likes",
-                        likes =>
-                        {
-                            likes.ToTable("column_likes");
-
-                            likes
-                                .Property<ColumnId>("column_id")
-                                .HasConversion(id => id.Value, value => new(value));
-
-                            likes.HasKey("UserId", "column_id");
-                            likes.WithOwner().HasForeignKey("column_id");
-                            likes
-                                .Property(x => x.UserId)
-                                .HasColumnName("user_id")
-                                .HasConversion(x => x.Value, value => new(value));
-
-                            likes.Property(x => x.LikedAt).HasColumnName("liked_at");
-                        }
-                    );
-
-                    columns.OwnsMany<ColumnImage>(
-                        "_images",
-                        image =>
-                        {
-                            image.ToTable("column_images");
-                            image.HasKey(x => x.Id);
-                            image
-                                .Property(x => x.Id)
-                                .HasColumnName("id")
-                                .HasConversion(x => x.Value, value => new(value));
-                            image.Property(x => x.Url).HasColumnName("image_url");
-                            image.Property(x => x.ThumbnailUrl).HasColumnName("thumbnail_url");
-                        }
-                    );
-                }
-            );
+            builder
+                .Property<TopicTitle>("_title")
+                .HasColumnName("title")
+                .HasConversion(x => x.Value, value => new(value));
 
             builder.OwnsMany<TopicSubscribe>(
                 "_subscribers",
@@ -135,8 +45,6 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
                         .Property(x => x.TopicId)
                         .HasColumnName("topic_id")
                         .HasConversion(x => x.Value, value => new(value));
-
-                    subscribers.Property(x => x.SubscribedAt).HasColumnName("subscribed_at");
                 }
             );
         }

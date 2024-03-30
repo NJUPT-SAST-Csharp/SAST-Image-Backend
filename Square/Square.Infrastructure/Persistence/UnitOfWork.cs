@@ -4,26 +4,39 @@ using Shared.Primitives.DomainEvent;
 
 namespace Square.Infrastructure.Persistence
 {
-    internal class UnitOfWork(SquareDbContext dbContext, IDomainEventPublisher eventBus)
-        : IUnitOfWork
+    internal class UnitOfWork(
+        SquareDbContext domainContext,
+        SquareQueryDbContext queryContext,
+        IDomainEventPublisher eventBus
+    ) : IUnitOfWork
     {
-        private readonly SquareDbContext _dbContext = dbContext;
+        private readonly SquareDbContext _domainContext = domainContext;
+        private readonly SquareQueryDbContext _queryContext = queryContext;
         private readonly IDomainEventPublisher _eventBus = eventBus;
+
+        private bool isTransactionActive = false;
 
         public async Task CommitChangesAsync(CancellationToken cancellationToken = default)
         {
-            await using var transaction = await _dbContext.Database.BeginTransactionAsync(
+            if (isTransactionActive)
+            {
+                return;
+            }
+
+            await using var transaction = await _domainContext.Database.BeginTransactionAsync(
                 cancellationToken
             );
 
-            var domainEntities = _dbContext
+            isTransactionActive = true;
+
+            var domainEntities = _domainContext
                 .ChangeTracker.Entries<IDomainEventContainer>()
                 .Where(x => x.Entity.DomainEvents.Count > 0)
                 .Select(x => x.Entity)
                 .ToList();
 
             // First SaveChangesAsync() call is to save the changes made by the command handlers
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _domainContext.SaveChangesAsync(cancellationToken);
 
             var domainEvents = domainEntities.SelectMany(x => x.DomainEvents);
 
@@ -35,10 +48,13 @@ namespace Square.Infrastructure.Persistence
             domainEntities.ForEach(e => e.ClearDomainEvents());
 
             // Second SaveChangesAsync() call is to save the changes made by the domain event handlers
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _domainContext.SaveChangesAsync(cancellationToken);
+            await _queryContext.SaveChangesAsync(cancellationToken);
 
             // Commit the transaction
             await transaction.CommitAsync(cancellationToken);
+
+            isTransactionActive = false;
         }
     }
 }

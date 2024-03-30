@@ -1,8 +1,8 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.ObjectPool;
+using Square.Application.ColumnServices.Models;
 using Square.Application.TopicServices;
-using Square.Domain.ColumnAggregate.ColumnEntity;
 using Storage.Clients;
 
 namespace Square.Infrastructure.Persistence.Storages

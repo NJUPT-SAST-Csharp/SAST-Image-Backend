@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Primitives.Command;
-using Square.Application.TopicServices.CreateTopic;
-using Square.Application.TopicServices.DeleteTopic;
-using Square.Application.TopicServices.UpdateTopicInfo;
+using Square.Domain.TopicAggregate.Commands.CreateTopic;
+using Square.Domain.TopicAggregate.Commands.DeleteTopic;
+using Square.Domain.TopicAggregate.Commands.UpdateTopicInfo;
 using Square.WebAPI.Requests;
 
 namespace Square.WebAPI.Controllers;
@@ -23,13 +23,7 @@ public class TopicController(ICommandRequestSender commandSender) : ControllerBa
     )
     {
         return _commandSender.CommandAsync(
-            new CreateTopicCommand(
-                request.Title,
-                request.Description,
-                request.MainColumnText,
-                request.Images,
-                User
-            ),
+            new CreateTopicCommand(request.Title, request.Description, User),
             cancellationToken
         );
     }

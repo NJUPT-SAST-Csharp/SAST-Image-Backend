@@ -1,14 +1,14 @@
 ﻿using System.Security.Claims;
 using FoxResult;
 using Primitives.Command;
-using Square.Domain.ColumnAggregate.ColumnEntity;
+using Square.Domain.TopicAggregate.TopicEntity;
 
 namespace Square.Domain.ColumnAggregate.Commands.DeleteColumn
 {
-    public sealed class DeleteColumnCommand(long topicId, long columnAuthorId, ClaimsPrincipal user)
+    public sealed class DeleteColumnCommand(long topicId, ClaimsPrincipal user)
         : ICommandRequest<Result>
     {
-        public ColumnId ColumnId { get; } = new(new(topicId), new(columnAuthorId));
+        public TopicId TopicId { get; } = new(topicId);
         public RequesterInfo Requester { get; } = new(user);
     }
 }

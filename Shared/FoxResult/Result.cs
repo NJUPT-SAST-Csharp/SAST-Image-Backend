@@ -2,11 +2,11 @@
 
 namespace FoxResult
 {
-    public class Result
+    public record class Result
     {
-        public Error Error { get; private init; } = Error.None;
+        public Error? Error { get; private init; } = Error.None;
         public bool IsSuccess { get; private init; } = true;
-        public bool IsFailure => !IsSuccess;
+        public virtual bool IsFailure => !IsSuccess;
 
         public static readonly Result Success = new();
 
@@ -34,9 +34,22 @@ namespace FoxResult
         }
 
         public static Result<T> Return<T>(T value) => new(value);
+
+        public static Result<T> From<T>(Result result)
+        {
+            if (result.IsSuccess)
+            {
+                throw new ArgumentException(
+                    "Parameter 'result' must be failure when using 'Result.From'.",
+                    nameof(result)
+                );
+            }
+
+            return new Result<T>(default) { IsSuccess = false, Error = result.Error };
+        }
     }
 
-    public sealed class Result<T> : Result
+    public sealed record class Result<T> : Result
     {
         internal Result(T? value)
         {
@@ -44,21 +57,21 @@ namespace FoxResult
         }
 
         [MemberNotNullWhen(false, nameof(Value))]
-        public new bool IsFailure => !IsSuccess;
+        public override bool IsFailure => !IsSuccess;
 
         public T? Value { get; }
 
         public bool TryGetValue([NotNullWhen(true)] out T? value)
         {
-            if (IsSuccess)
-            {
-                value = Value;
-                return true;
-            }
-            else
+            if (IsFailure)
             {
                 value = default;
                 return false;
+            }
+            else
+            {
+                value = Value;
+                return true;
             }
         }
     }

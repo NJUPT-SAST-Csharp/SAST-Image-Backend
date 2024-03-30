@@ -1,16 +1,12 @@
 ﻿using FoxResult;
-using Primitives;
 using Primitives.Command;
 using Square.Domain.TopicAggregate.TopicEntity;
 
 namespace Square.Domain.TopicAggregate.Commands.DeleteTopic
 {
-    internal sealed class DeleteTopicCommandHandler(
-        IUnitOfWork unitOfWork,
-        ITopicRepository repository
-    ) : ICommandRequestHandler<DeleteTopicCommand, Result>
+    internal sealed class DeleteTopicCommandHandler(ITopicRepository repository)
+        : ICommandRequestHandler<DeleteTopicCommand, Result>
     {
-        private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly ITopicRepository _repository = repository;
 
         public async Task<Result> Handle(
@@ -25,14 +21,12 @@ namespace Square.Domain.TopicAggregate.Commands.DeleteTopic
                 return Result.Fail(Error.NotFound<Topic>());
             }
 
-            if (topic.IsManagedBy(request.Requester) == false)
+            var result = topic.DeleteTopic(request, _repository);
+
+            if (result.IsFailure)
             {
-                return Result.Fail(Error.Forbidden);
+                return result;
             }
-
-            await _repository.DeleteTopicAsync(topic);
-
-            await _unitOfWork.CommitChangesAsync(cancellationToken);
 
             return Result.Success;
         }

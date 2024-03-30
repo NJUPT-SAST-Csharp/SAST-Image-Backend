@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Primitives.Command;
-using Square.Application.ColumnServices.AddColumn;
-using Square.Application.ColumnServices.DeleteColumn;
+using Square.Domain.ColumnAggregate.Commands.AddColumn;
+using Square.Domain.ColumnAggregate.Commands.DeleteColumn;
 using Square.WebAPI.Requests;
 
 namespace Square.WebAPI.Controllers
@@ -29,15 +29,14 @@ namespace Square.WebAPI.Controllers
         }
 
         [Authorize]
-        [HttpDelete("topic/{topicId}/column/{columnId}")]
+        [HttpDelete("topic/{topicId}/column")]
         public Task DeleteColumn(
             [FromRoute] long topicId,
-            [FromRoute] long columnId,
             CancellationToken cancellationToken = default
         )
         {
             return _commandSender.CommandAsync(
-                new DeleteColumnCommand(topicId, columnId, User),
+                new DeleteColumnCommand(topicId, User),
                 cancellationToken
             );
         }

@@ -1,15 +1,11 @@
 ﻿using FoxResult;
-using Primitives;
 using Primitives.Command;
 
 namespace Square.Domain.ColumnAggregate.Commands.LikeColumn
 {
-    internal sealed class LikeColumnCommandHandler(
-        IColumnRepository repository,
-        IUnitOfWork unitOfWork
-    ) : ICommandRequestHandler<LikeColumnCommand, Result>
+    internal sealed class LikeColumnCommandHandler(IColumnRepository repository)
+        : ICommandRequestHandler<LikeColumnCommand, Result>
     {
-        private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IColumnRepository _repository = repository;
 
         public async Task<Result> Handle(
@@ -23,8 +19,6 @@ namespace Square.Domain.ColumnAggregate.Commands.LikeColumn
             {
                 return Result.Fail(Error.NotFound());
             }
-
-            await _unitOfWork.CommitChangesAsync(cancellationToken);
 
             return Result.Success;
         }
