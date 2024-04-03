@@ -1,20 +1,22 @@
-﻿using System.Reflection;
-using Auth.Authentication.Extensions;
+﻿using Auth.Authentication.Extensions;
 using Auth.Authorization.Extensions;
+using Exceptions.Configurations;
+using Exceptions.ExceptionHandlers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
 using Primitives;
 using Primitives.Command;
 using Primitives.DomainEvent;
 using Primitives.Query;
+using Primitives.Rule;
+using SastImg.WebAPI.Configurations;
 using Serilog;
 using Shared.Storage.Configurations;
 using Square.Application.Behaviors;
+using Square.Application.ColumnServices;
 using Square.Application.TopicServices;
 using Square.Domain.ColumnAggregate;
 using Square.Domain.TopicAggregate;
@@ -36,15 +38,25 @@ namespace Square.Infrastructure.Configurations
                 .Services.ConfigureMediatR()
                 .ConfigureDomainServices()
                 .ConfigureApplicationServices()
+                .ConfigureExceptionHandlers()
                 .ConfigurePersistence(builder.Configuration)
                 .ConfigureAuth(builder.Configuration);
 
-            if (builder.Environment.IsDevelopment())
-            {
-                builder.Services.ConfigureSwagger();
-            }
-
             return builder.Services;
+        }
+
+        private static IServiceCollection ConfigureExceptionHandlers(
+            this IServiceCollection services
+        )
+        {
+            services.AddProblemDetails();
+
+            services.AddExceptionHandler<DomainBusinessRuleInvalidExceptionHandler>();
+            services.AddExceptionHandler<DbNotFoundExceptionHandler>();
+            services.AddExceptionHandler<DomainObjectValidationExceptionHandler>();
+            services.AddDefaultExceptionHandler();
+
+            return services;
         }
 
         private static IServiceCollection ConfigurePersistence(
@@ -55,6 +67,7 @@ namespace Square.Infrastructure.Configurations
             services.AddDbContext<SquareDbContext>(
                 options =>
                     options
+                        .EnableSensitiveDataLogging()
                         .UseNpgsql(configuration.GetConnectionString("SquareDb"))
                         .UseSnakeCaseNamingConvention()
                         .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddSerilog()))
@@ -63,6 +76,7 @@ namespace Square.Infrastructure.Configurations
             services.AddDbContext<SquareQueryDbContext>(
                 options =>
                     options
+                        .EnableSensitiveDataLogging()
                         .UseNpgsql(configuration.GetConnectionString("SquareDb"))
                         .UseSnakeCaseNamingConvention()
                         .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddSerilog()))
@@ -91,8 +105,9 @@ namespace Square.Infrastructure.Configurations
             this IServiceCollection services
         )
         {
-            services.AddSingleton<ITopicImageStorage, TopicImageStorage>();
+            services.AddSingleton<IColumnImageStorage, TopicImageStorage>();
             services.AddScoped<ITopicQueryRepository, TopicQueryRepository>();
+            services.AddScoped<IColumnQueryRepository, ColumnQueryRepository>();
 
             return services;
         }
@@ -127,30 +142,6 @@ namespace Square.Infrastructure.Configurations
             });
 
             services.AddAuthorizationBuilder().AddBasicPolicies();
-
-            return services;
-        }
-
-        private static IServiceCollection ConfigureSwagger(this IServiceCollection services)
-        {
-            services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen(options =>
-            {
-                var scheme = new OpenApiSecurityScheme
-                {
-                    Description = "Authorization Header \r\nExample:'Bearer 123456789'",
-                    Reference = new() { Type = ReferenceType.SecurityScheme, Id = "Authorization" },
-                    Scheme = "oauth2",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey
-                };
-                options.AddSecurityDefinition("Authorization", scheme);
-                var requirement = new OpenApiSecurityRequirement { [scheme] = new List<string>() };
-                options.AddSecurityRequirement(requirement);
-                var xmlFilename = $"{Assembly.GetEntryAssembly()!.GetName().Name}.xml";
-                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-            });
 
             return services;
         }

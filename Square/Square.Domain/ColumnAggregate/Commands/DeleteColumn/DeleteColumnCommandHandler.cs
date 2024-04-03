@@ -22,9 +22,9 @@ namespace Square.Domain.ColumnAggregate.Commands.DeleteColumn
                 return Result.Fail(Error.NotFound(column));
             }
 
-            column.DeleteColumn(request, _repository);
+            var result = column.DeleteColumn(request, _repository);
 
-            return Result.Success;
+            return result;
         }
     }
 }

@@ -31,5 +31,10 @@ namespace Square.Infrastructure.ApplicationServices
         {
             return _context.Topics.FirstOrDefaultAsync(t => t.Id == id);
         }
+
+        public async Task<IEnumerable<TopicModel>> GetTopicsAsync()
+        {
+            return await _context.Topics.ToListAsync();
+        }
     }
 }

@@ -22,6 +22,18 @@ public sealed class Topic : EntityBase<TopicId>
         _title = title;
     }
 
+    #region Fields
+
+    private readonly UserId _authorId;
+
+    private readonly TopicTitle _title;
+
+    private readonly List<TopicSubscribe> _subscribers = [];
+
+    #endregion
+
+    #region Methods
+
     internal static async Task<Result<Topic>> CreateNewTopicAsync(
         CreateTopicCommand command,
         ITopicUniquenessChecker checker,
@@ -41,18 +53,6 @@ public sealed class Topic : EntityBase<TopicId>
 
         return Result.Return(topic);
     }
-
-    #region Fields
-
-    private readonly UserId _authorId;
-
-    private readonly TopicTitle _title;
-
-    private readonly List<TopicSubscribe> _subscribers = [];
-
-    #endregion
-
-    #region Methods
 
     internal async Task<Result> UpdateTopicInfoAsync(
         UpdateTopicInfoCommand command,

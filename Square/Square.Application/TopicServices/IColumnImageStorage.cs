@@ -3,7 +3,7 @@ using Square.Application.ColumnServices.Models;
 
 namespace Square.Application.TopicServices
 {
-    public interface ITopicImageStorage
+    public interface IColumnImageStorage
     {
         public Task<ColumnImage> UploadImageAsync(
             IFormFile file,

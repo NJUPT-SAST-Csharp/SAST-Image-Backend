@@ -45,6 +45,8 @@ namespace Square.Domain.ColumnAggregate.ColumnEntity
             column = new(command.TopicId, command.Requester.Id);
             columns.AddColumn(column);
 
+            column.AddDomainEvent(new NewColumnAddedEvent(column.Id, command));
+
             return Result.Return(column.Id);
         }
 
@@ -53,7 +55,7 @@ namespace Square.Domain.ColumnAggregate.ColumnEntity
 
         private readonly UserId _authorId;
 
-        private readonly List<ColumnLike> _likes = [];
+        private readonly HashSet<ColumnLike> _likes = [];
 
         #endregion
 
@@ -67,12 +69,13 @@ namespace Square.Domain.ColumnAggregate.ColumnEntity
             }
 
             _likes.Add(new(Id, command.Requester.Id));
+
             AddDomainEvent(new ColumnLikedEvent(Id, command.Requester.Id));
         }
 
         internal void Unlike(UnlikeColumnCommand command)
         {
-            int number = _likes.RemoveAll(x => x.UserId == command.Requester.Id);
+            int number = _likes.RemoveWhere(x => x.UserId == command.Requester.Id);
 
             if (number > 0)
             {
@@ -88,6 +91,8 @@ namespace Square.Domain.ColumnAggregate.ColumnEntity
             }
 
             repository.DeleteColumn(this);
+
+            AddDomainEvent(new ColumnDeletedEvent(Id));
 
             return Result.Success;
         }

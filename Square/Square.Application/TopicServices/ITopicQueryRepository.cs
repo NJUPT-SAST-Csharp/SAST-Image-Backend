@@ -6,6 +6,8 @@ namespace Square.Application.TopicServices
     {
         public Task<TopicModel?> GetTopicAsync(TopicId id);
 
+        public Task<IEnumerable<TopicModel>> GetTopicsAsync();
+
         public Task AddTopicAsync(TopicModel topic);
 
         public Task DeleteTopicAsync(TopicId id);

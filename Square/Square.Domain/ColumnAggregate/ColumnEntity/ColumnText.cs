@@ -18,7 +18,7 @@ namespace Square.Domain.ColumnAggregate.ColumnEntity
 
             value = value.Trim();
 
-            if (value?.Length > MaxLength)
+            if (value.Length > MaxLength)
             {
                 throw new DomainObjectValidationException(
                     $"The topic column text length must be less than {MaxLength}."

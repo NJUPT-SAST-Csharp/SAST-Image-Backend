@@ -12,16 +12,6 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
         {
             builder.HasKey(x => x.Id);
 
-            //builder
-            //    .Property(x => x.Id.AuthorId)
-            //    .HasColumnName("author_id")
-            //    .HasConversion(builder => builder.Value, value => new(value));
-
-            //builder
-            //    .Property(x => x.Id.TopicId)
-            //    .HasColumnName("topic_id")
-            //    .HasConversion(builder => builder.Value, value => new(value));
-
             builder.HasOne<Topic>().WithMany().HasForeignKey("_topicId");
 
             builder

@@ -1,5 +1,5 @@
-﻿using Npgsql;
-using System.Data;
+﻿using System.Data;
+using Npgsql;
 
 namespace SNS.Infrastructure.Persistence.QueryDatabase
 {

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Primitives.Rule
 {
-    internal class DomainObjectInvalidExceptionHandler : IExceptionHandler
+    public sealed class DomainObjectValidationExceptionHandler : IExceptionHandler
     {
         public ValueTask<bool> TryHandleAsync(
             HttpContext httpContext,

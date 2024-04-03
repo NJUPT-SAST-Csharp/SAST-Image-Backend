@@ -76,7 +76,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Square.Application", "Squar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Response", "Shared\Response\Response.csproj", "{A4D09771-BFA3-48FE-A9D7-4FBFB3C249D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoxResult", "Shared\FoxResult\FoxResult.csproj", "{818CCFCE-ED87-4771-B827-925295F69DD6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxResult", "Shared\FoxResult\FoxResult.csproj", "{818CCFCE-ED87-4771-B827-925295F69DD6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoxResult.Extensions", "Shared\FoxResult.Extensions\FoxResult.Extensions.csproj", "{C304A940-BFC1-438E-B2F7-928A70DC1566}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -200,6 +202,10 @@ Global
 		{818CCFCE-ED87-4771-B827-925295F69DD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{818CCFCE-ED87-4771-B827-925295F69DD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{818CCFCE-ED87-4771-B827-925295F69DD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C304A940-BFC1-438E-B2F7-928A70DC1566}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C304A940-BFC1-438E-B2F7-928A70DC1566}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C304A940-BFC1-438E-B2F7-928A70DC1566}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C304A940-BFC1-438E-B2F7-928A70DC1566}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -234,6 +240,7 @@ Global
 		{3CF90C11-652A-458E-A850-B611A16AF291} = {677AD124-5DFC-477F-B56C-F5CDD696668E}
 		{A4D09771-BFA3-48FE-A9D7-4FBFB3C249D0} = {62F54EB9-A9EE-4956-8FA2-534C755263C9}
 		{818CCFCE-ED87-4771-B827-925295F69DD6} = {62F54EB9-A9EE-4956-8FA2-534C755263C9}
+		{C304A940-BFC1-438E-B2F7-928A70DC1566} = {62F54EB9-A9EE-4956-8FA2-534C755263C9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DEF9C9F4-A717-4AEF-BE30-DF9F13D3C94E}

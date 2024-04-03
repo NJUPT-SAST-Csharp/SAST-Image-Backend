@@ -1,6 +1,4 @@
-﻿using Account.Domain.UserEntity;
-
-namespace Account.Domain.UserEntity.Services
+﻿namespace Account.Domain.UserEntity.Services
 {
     public interface IUserRepository
     {

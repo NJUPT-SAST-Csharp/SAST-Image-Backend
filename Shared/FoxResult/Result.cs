@@ -5,7 +5,11 @@ namespace FoxResult
     public record class Result
     {
         public Error? Error { get; private init; } = Error.None;
+
+        [MemberNotNullWhen(false, nameof(Error))]
         public bool IsSuccess { get; private init; } = true;
+
+        [MemberNotNullWhen(true, nameof(Error))]
         public virtual bool IsFailure => !IsSuccess;
 
         public static readonly Result Success = new();

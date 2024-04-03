@@ -11,7 +11,7 @@ namespace Square.Infrastructure.Persistence.Storages
         IStorageClient storage,
         IProcessClient processor,
         ObjectPool<StringBuilder> builderPool
-    ) : ITopicImageStorage
+    ) : IColumnImageStorage
     {
         private readonly IStorageClient _storage = storage;
         private readonly IProcessClient _processor = processor;

@@ -19,9 +19,9 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
                 .HasConversion(id => id.Value, value => new(value));
 
             builder
-                .Property(column => column.Text)
-                .HasColumnName("text")
-                .HasConversion(text => text.Value, value => new(value));
+                .ComplexProperty(column => column.Text)
+                .Property(t => t.Value)
+                .HasColumnName("text");
 
             builder
                 .Property(column => column.AuthorId)
@@ -42,16 +42,40 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
                     images.ToTable("column_images", "query");
 
                     images
-                        .Property<ColumnId>("id")
+                        .Property<ColumnId>("column_id")
+                        .HasColumnName("column_id")
                         .HasConversion(id => id.Value, value => new(value));
+
+                    images.Property<int>("id").HasColumnName("id");
 
                     images.HasKey("id");
 
-                    images.WithOwner().HasForeignKey("id");
+                    images.WithOwner().HasForeignKey("column_id");
 
                     images.Property(image => image.Url).HasColumnName("url");
 
                     images.Property(image => image.ThumbnailUrl).HasColumnName("thumbnail_url");
+                }
+            );
+
+            builder.OwnsMany(
+                column => column.Likes,
+                likes =>
+                {
+                    likes.ToTable("column_likes", "query");
+
+                    likes
+                        .Property(like => like.ColumnId)
+                        .HasColumnName("column_id")
+                        .HasConversion(id => id.Value, value => new(value));
+
+                    likes
+                        .Property(like => like.UserId)
+                        .HasColumnName("user_id")
+                        .HasConversion(id => id.Value, value => new(value));
+
+                    likes.WithOwner().HasForeignKey(like => like.ColumnId);
+                    likes.HasKey(like => new { like.ColumnId, like.UserId });
                 }
             );
         }

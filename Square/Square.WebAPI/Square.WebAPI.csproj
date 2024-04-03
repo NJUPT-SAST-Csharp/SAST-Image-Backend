@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Shared\FoxResult.Extensions\FoxResult.Extensions.csproj" />
     <ProjectReference Include="..\Square.Infrastructure\Square.Infrastructure.csproj" />
   </ItemGroup>
 
