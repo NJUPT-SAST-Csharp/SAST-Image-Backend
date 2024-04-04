@@ -78,7 +78,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Response", "Shared\Response
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxResult", "Shared\FoxResult\FoxResult.csproj", "{818CCFCE-ED87-4771-B827-925295F69DD6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoxResult.Extensions", "Shared\FoxResult.Extensions\FoxResult.Extensions.csproj", "{C304A940-BFC1-438E-B2F7-928A70DC1566}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxResult.Extensions", "Shared\FoxResult.Extensions\FoxResult.Extensions.csproj", "{C304A940-BFC1-438E-B2F7-928A70DC1566}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proxy", "Proxy\Proxy.csproj", "{EC9E24CB-963C-4C36-8475-2DFE4388813B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -206,6 +208,10 @@ Global
 		{C304A940-BFC1-438E-B2F7-928A70DC1566}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C304A940-BFC1-438E-B2F7-928A70DC1566}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C304A940-BFC1-438E-B2F7-928A70DC1566}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC9E24CB-963C-4C36-8475-2DFE4388813B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC9E24CB-963C-4C36-8475-2DFE4388813B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC9E24CB-963C-4C36-8475-2DFE4388813B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC9E24CB-963C-4C36-8475-2DFE4388813B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
