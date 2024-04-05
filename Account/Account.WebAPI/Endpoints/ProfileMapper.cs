@@ -1,6 +1,5 @@
 ﻿using System.Security.Claims;
 using Account.Application.UserServices.GetUserBriefInfo;
-using Account.Application.UserServices.GetUserDetailedInfo;
 using Account.Application.UserServices.UpdateAvatar;
 using Account.Application.UserServices.UpdateHeader;
 using Account.WebAPI.Configurations;
@@ -87,41 +86,31 @@ namespace Account.WebAPI.Endpoints
         {
             builder
                 .MapGet(
-                    "/{username}",
-                    (
-                        [AsParameters] GetUserBriefInfoRequest request,
+                    "/",
+                    async (
+                        [AsParameters] GetUserInfoRequest request,
                         [FromServices] IQueryRequestSender querySender
                     ) =>
                     {
-                        return querySender.QueryAsync(new GetUserBriefInfoQuery(request.Username));
-                    }
-                )
-                .AddValidator<GetUserBriefInfoRequest>()
-                .WithSummary("Query User Brief Info")
-                .WithDescription(
-                    "Query user brief info, only containing username, nickname, avatar."
-                );
-
-            builder
-                .MapGet(
-                    "/{username}/detailed",
-                    (
-                        [AsParameters] GetUserDetailedInfoRequest request,
-                        [FromServices] IQueryRequestSender querySender
-                    ) =>
-                    {
-                        return querySender.QueryAsync(
-                            new GetUserDetailedInfoQuery(request.Username)
+                        return await querySender.QueryAsync(
+                            new GetUserInfoQuery(
+                                request.Username,
+                                request.UserId,
+                                request.IsDetailed
+                            )
                         );
                     }
                 )
-                .AddAuthorization(AuthorizationRole.AUTH)
-                .AddValidator<GetUserDetailedInfoRequest>()
-                .WithSummary("Query User Detailed Info")
+                .AddValidator<GetUserInfoRequest>()
+                .WithSummary("Query User Info")
                 .WithDescription(
                     """
-                    Query user detailed info, 
-                    containing username, nickname, avatar, header, bio, birthday, website
+                    Query user brief info, only containing username, nickname, avatar.
+
+                    Query user detailed info by adding query param 'detailed', 
+                    containing username, nickname, avatar, header, bio, birthday, website.
+
+                    id has a higher priority
                     """
                 );
         }

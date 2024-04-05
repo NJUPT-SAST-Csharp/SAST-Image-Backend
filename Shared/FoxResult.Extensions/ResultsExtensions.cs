@@ -52,10 +52,7 @@ namespace FoxResult.Extensions
             }
             else
             {
-                return Results.Json(
-                    new { Data = result.Value, Status = 200, },
-                    _jsonSerializerOptions
-                );
+                return Results.Json(result.Value, _jsonSerializerOptions);
             }
         }
 

@@ -13,7 +13,9 @@ namespace Square.Application.TopicServices.Queries.GetTopics
             CancellationToken cancellationToken
         )
         {
-            var models = await _repository.GetTopicsAsync().WaitAsync(cancellationToken);
+            var models = await _repository
+                .GetTopicsAsync(request.CategoryId)
+                .WaitAsync(cancellationToken);
 
             var topics = models.Select(TopicDto.MapFrom);
 

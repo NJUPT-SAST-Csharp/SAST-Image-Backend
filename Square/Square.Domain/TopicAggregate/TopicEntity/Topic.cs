@@ -1,5 +1,6 @@
 ﻿using FoxResult;
 using Primitives.Entity;
+using Square.Domain.CategoryAggregate.CategoryEntity;
 using Square.Domain.TopicAggregate.Commands.CreateTopic;
 using Square.Domain.TopicAggregate.Commands.DeleteTopic;
 using Square.Domain.TopicAggregate.Commands.SubscribeTopic;
@@ -15,14 +16,17 @@ public sealed class Topic : EntityBase<TopicId>
     private Topic()
         : base(default) { }
 
-    private Topic(UserId authorId, TopicTitle title)
+    private Topic(UserId authorId, TopicTitle title, CategoryId categoryId)
         : base(new(SnowFlakeIdGenerator.NewId))
     {
+        _categoryId = categoryId;
         _authorId = authorId;
         _title = title;
     }
 
     #region Fields
+
+    private readonly CategoryId _categoryId;
 
     private readonly UserId _authorId;
 
@@ -45,7 +49,7 @@ public sealed class Topic : EntityBase<TopicId>
             return Result.Fail(Error.Conflict<Topic>());
         }
 
-        Topic topic = new(command.Requester.Id, command.Title);
+        Topic topic = new(command.Requester.Id, command.Title, command.CategoryId);
 
         topic.AddDomainEvent(new TopicCreatedEvent(command, topic.Id));
 

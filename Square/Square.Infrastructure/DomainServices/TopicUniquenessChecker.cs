@@ -13,7 +13,8 @@ namespace Square.Infrastructure.DomainServices
         {
             return _context
                 .Topics.AsNoTracking()
-                .AnyAsync(t => EF.Property<TopicTitle>(t, "_title") == title);
+                .Select(t => new { Title = EF.Property<TopicTitle>(t, "_title") })
+                .AnyAsync(t => t.Title == title);
         }
     }
 }

@@ -17,6 +17,10 @@ namespace Square.Domain.TopicAggregate.Commands.CreateTopic
             CancellationToken cancellationToken
         )
         {
+            Console.WriteLine(request.CategoryId);
+            Console.WriteLine(request.Description);
+            Console.WriteLine(request.Title);
+
             var result = await Topic
                 .CreateNewTopicAsync(request, _checker, _topics)
                 .WaitAsync(cancellationToken);

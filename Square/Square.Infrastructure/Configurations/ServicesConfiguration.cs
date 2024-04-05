@@ -16,8 +16,10 @@ using SastImg.WebAPI.Configurations;
 using Serilog;
 using Shared.Storage.Configurations;
 using Square.Application.Behaviors;
+using Square.Application.CategoryServices;
 using Square.Application.ColumnServices;
 using Square.Application.TopicServices;
+using Square.Domain.CategoryAggregate;
 using Square.Domain.ColumnAggregate;
 using Square.Domain.TopicAggregate;
 using Square.Domain.TopicAggregate.TopicEntity;
@@ -95,8 +97,10 @@ namespace Square.Infrastructure.Configurations
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ITopicRepository, TopicRepository>();
             services.AddScoped<IColumnRepository, ColumnRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             services.AddScoped<ITopicUniquenessChecker, TopicUniquenessChecker>();
+            services.AddScoped<ICategoryUniquenessChecker, CategoryUniquenessChecker>();
 
             return services;
         }
@@ -108,6 +112,7 @@ namespace Square.Infrastructure.Configurations
             services.AddSingleton<IColumnImageStorage, TopicImageStorage>();
             services.AddScoped<ITopicQueryRepository, TopicQueryRepository>();
             services.AddScoped<IColumnQueryRepository, ColumnQueryRepository>();
+            services.AddScoped<ICategoryQueryRepository, CategoryQueryRepository>();
 
             return services;
         }

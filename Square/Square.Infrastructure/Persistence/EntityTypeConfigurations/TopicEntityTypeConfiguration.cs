@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Square.Domain;
+using Square.Domain.CategoryAggregate.CategoryEntity;
 using Square.Domain.TopicAggregate.TopicEntity;
 
 namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
@@ -47,6 +48,8 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
                         .HasConversion(x => x.Value, value => new(value));
                 }
             );
+
+            builder.HasOne<Category>().WithMany().HasForeignKey("_categoryId");
         }
     }
 }

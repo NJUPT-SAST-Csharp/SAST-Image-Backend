@@ -1,22 +1,65 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Account.Application.UserServices.GetUserDetailedInfo;
+using Microsoft.AspNetCore.Http;
 using Shared.Primitives.Query;
 using Shared.Response.Builders;
 
 namespace Account.Application.UserServices.GetUserBriefInfo
 {
     internal class GetUserBriefInfoQueryHandler(IUserQueryRepository repository)
-        : IQueryRequestHandler<GetUserBriefInfoQuery, IResult>
+        : IQueryRequestHandler<GetUserInfoQuery, IResult>
     {
         private readonly IUserQueryRepository _repository = repository;
 
         public async Task<IResult> Handle(
-            GetUserBriefInfoQuery request,
+            GetUserInfoQuery request,
             CancellationToken cancellationToken
         )
         {
-            var dto = await _repository.GetUserBriefInfoAsync(request.Username, cancellationToken);
+            if (request.Username is null && request.Id is null)
+            {
+                return Results.NotFound();
+            }
 
-            return Responses.DataOrNotFound(dto);
+            if (request.IsDetailed)
+            {
+                UserDetailedInfoDto? dto = null;
+
+                if (request.Id.HasValue)
+                {
+                    dto = await _repository.GetUserDetailedInfoAsync(
+                        request.Id.Value,
+                        cancellationToken
+                    );
+                    return Responses.DataOrNotFound(dto);
+                }
+                else
+                {
+                    dto = await _repository.GetUserDetailedInfoAsync(
+                        request.Username!,
+                        cancellationToken
+                    );
+                    return Responses.DataOrNotFound(dto);
+                }
+            }
+
+            UserBriefInfoDto? briefInfo = null;
+
+            if (request.Id.HasValue)
+            {
+                briefInfo = await _repository.GetUserBriefInfoAsync(
+                    request.Id.Value,
+                    cancellationToken
+                );
+                return Responses.DataOrNotFound(briefInfo);
+            }
+            else
+            {
+                briefInfo = await _repository.GetUserBriefInfoAsync(
+                    request.Username!,
+                    cancellationToken
+                );
+                return Responses.DataOrNotFound(briefInfo);
+            }
         }
     }
 }

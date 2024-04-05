@@ -1,5 +1,6 @@
 ﻿using Square.Application.ColumnServices.Models;
 using Square.Domain;
+using Square.Domain.CategoryAggregate.CategoryEntity;
 using Square.Domain.TopicAggregate.Events;
 using Square.Domain.TopicAggregate.TopicEntity;
 
@@ -11,6 +12,7 @@ namespace Square.Application.TopicServices
 
         public TopicId Id { get; private init; }
         public UserId AuthorId { get; private init; }
+        public CategoryId CategoryId { get; private init; }
         public TopicTitle Title { get; private set; }
         public TopicDescription Description { get; private set; }
         public DateTime PublishedAt { get; private init; } = DateTime.UtcNow;
@@ -27,7 +29,8 @@ namespace Square.Application.TopicServices
                 Id = e.Id,
                 AuthorId = e.Requester.Id,
                 Description = e.Description,
-                Title = e.Title
+                Title = e.Title,
+                CategoryId = e.CategoryId,
             };
         }
 

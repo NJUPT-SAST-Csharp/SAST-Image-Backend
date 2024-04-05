@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Square.Application.CategoryServices;
 using Square.Application.TopicServices;
 
 namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
@@ -59,6 +60,8 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
             );
 
             builder.HasMany(t => t.Columns).WithOne().HasForeignKey(c => c.TopicId);
+
+            builder.HasOne<CategoryModel>().WithMany().HasForeignKey(t => t.CategoryId);
         }
     }
 }

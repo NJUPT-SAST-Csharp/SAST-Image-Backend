@@ -24,6 +24,27 @@ namespace Square.Infrastructure.Persistence.QueryMigrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Square.Application.CategoryServices.CategoryModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_categories");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_categories_name");
+
+                    b.ToTable("categories", "query");
+                });
+
             modelBuilder.Entity("Square.Application.ColumnServices.Models.ColumnModel", b =>
                 {
                     b.Property<long>("Id")
@@ -68,6 +89,10 @@ namespace Square.Infrastructure.Persistence.QueryMigrations
                         .HasColumnType("bigint")
                         .HasColumnName("author_id");
 
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("integer")
+                        .HasColumnName("category_id");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text")
@@ -88,6 +113,9 @@ namespace Square.Infrastructure.Persistence.QueryMigrations
 
                     b.HasKey("Id")
                         .HasName("pk_topics");
+
+                    b.HasIndex("CategoryId")
+                        .HasDatabaseName("ix_topics_category_id");
 
                     b.ToTable("topics", "query");
                 });
@@ -164,6 +192,13 @@ namespace Square.Infrastructure.Persistence.QueryMigrations
 
             modelBuilder.Entity("Square.Application.TopicServices.TopicModel", b =>
                 {
+                    b.HasOne("Square.Application.CategoryServices.CategoryModel", null)
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_topics_categories_category_id");
+
                     b.OwnsMany("Square.Domain.TopicAggregate.TopicEntity.TopicSubscribe", "Subscribes", b1 =>
                         {
                             b1.Property<long>("UserId")

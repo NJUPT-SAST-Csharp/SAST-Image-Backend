@@ -1,4 +1,5 @@
-﻿using Square.Domain.TopicAggregate.TopicEntity;
+﻿using Square.Domain.CategoryAggregate.CategoryEntity;
+using Square.Domain.TopicAggregate.TopicEntity;
 
 namespace Square.Application.TopicServices
 {
@@ -6,7 +7,7 @@ namespace Square.Application.TopicServices
     {
         public Task<TopicModel?> GetTopicAsync(TopicId id);
 
-        public Task<IEnumerable<TopicModel>> GetTopicsAsync();
+        public Task<IEnumerable<TopicModel>> GetTopicsAsync(CategoryId? category = null);
 
         public Task AddTopicAsync(TopicModel topic);
 

@@ -1,6 +1,7 @@
 ﻿using Exceptions.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Square.Application.TopicServices;
+using Square.Domain.CategoryAggregate.CategoryEntity;
 using Square.Domain.TopicAggregate.TopicEntity;
 using Square.Infrastructure.Persistence;
 
@@ -29,12 +30,20 @@ namespace Square.Infrastructure.ApplicationServices
 
         public Task<TopicModel?> GetTopicAsync(TopicId id)
         {
-            return _context.Topics.FirstOrDefaultAsync(t => t.Id == id);
+            return _context.Topics.Include(t => t.Columns).FirstOrDefaultAsync(t => t.Id == id);
         }
 
-        public async Task<IEnumerable<TopicModel>> GetTopicsAsync()
+        public async Task<IEnumerable<TopicModel>> GetTopicsAsync(CategoryId? category = null)
         {
-            return await _context.Topics.ToListAsync();
+            if (category is not null)
+            {
+                return await _context
+                    .Topics.Include(t => t.Columns)
+                    .Where(t => t.CategoryId == category)
+                    .ToListAsync();
+            }
+
+            return await _context.Topics.Include(t => t.Columns).ToListAsync();
         }
     }
 }

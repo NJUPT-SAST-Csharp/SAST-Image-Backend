@@ -37,7 +37,7 @@ namespace Account.WebAPI.Configurations
     [JsonSerializable(typeof(UpdateHeaderRequest))]
     [JsonSerializable(typeof(SendForgetCodeRequest))]
     [JsonSerializable(typeof(VerifyForgetCodeRequest))]
-    [JsonSerializable(typeof(GetUserBriefInfoRequest))]
+    [JsonSerializable(typeof(GetUserInfoRequest))]
     [JsonSerializable(typeof(NoContent))]
     [JsonSerializable(typeof(BadRequestResponse))]
     [JsonSerializable(typeof(ProblemDetails))]

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Square.Domain.CategoryAggregate.CategoryEntity;
 using Square.Domain.ColumnAggregate.ColumnEntity;
 using Square.Domain.TopicAggregate.TopicEntity;
 using Square.Infrastructure.Persistence.EntityTypeConfigurations;
@@ -12,6 +13,8 @@ namespace Square.Infrastructure.Persistence
 
         public DbSet<Column> Columns { get; set; }
 
+        public DbSet<Category> Categories { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -19,6 +22,7 @@ namespace Square.Infrastructure.Persistence
             modelBuilder.HasDefaultSchema("domain");
             modelBuilder.ApplyConfiguration(new TopicEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new ColumnEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new CategoryEntityTypeConfiguration());
         }
     }
 }

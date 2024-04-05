@@ -8,12 +8,29 @@
 
         public string Title { get; private init; }
 
-        public static TopicDto MapFrom(TopicModel topic) =>
-            new()
+        public Uri[] Previews { get; private init; }
+
+        public DateTime UpdatedAt { get; private init; }
+
+        public static TopicDto MapFrom(TopicModel topic)
+        {
+            var previews = topic
+                .Columns.SelectMany(c => c.Images)
+                .Select(p => p.ThumbnailUrl)
+                .ToArray();
+
+            Random.Shared.Shuffle(previews);
+
+            previews = previews.Take(10).ToArray();
+
+            return new()
             {
                 TopicId = topic.Id.Value,
                 AuthorId = topic.AuthorId.Value,
-                Title = topic.Title.Value
+                Title = topic.Title.Value,
+                UpdatedAt = topic.UpdatedAt,
+                Previews = previews,
             };
+        }
     }
 }

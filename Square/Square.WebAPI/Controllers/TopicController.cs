@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Primitives.Command;
 using Primitives.Query;
+using Square.Application.TopicServices.Queries.GetTopic;
 using Square.Application.TopicServices.Queries.GetTopics;
 using Square.Domain.TopicAggregate.Commands.CreateTopic;
 using Square.Domain.TopicAggregate.Commands.DeleteTopic;
@@ -40,7 +41,7 @@ public class TopicController(ICommandRequestSender commandSender, IQueryRequestS
     )
     {
         var result = _commandSender.CommandAsync(
-            new CreateTopicCommand(request.Title, request.Description, User),
+            new CreateTopicCommand(request.Title, request.Description, request.CategoryId, User),
             cancellationToken
         );
 
@@ -108,13 +109,38 @@ public class TopicController(ICommandRequestSender commandSender, IQueryRequestS
     /// <remarks>
     /// Get global topics. Order by update time default.
     /// </remarks>
-    /// <param name="cancellationToken"></param>
+    /// <param name="category">Category Id, all topics if empty.</param>
+    /// <param name="cancellationToken">Cancellation token</param>
     /// <response code="200">The topics.</response>
     [HttpGet("topics")]
     [ProducesResponseType<DataResponseType<IEnumerable<TopicDto>>>(StatusCodes.Status200OK)]
-    public Task<IResult> GetTopics(CancellationToken cancellationToken = default)
+    public Task<IResult> GetTopics(
+        [FromQuery] int? category = null,
+        CancellationToken cancellationToken = default
+    )
     {
-        var result = _querySender.QueryAsync(new GetTopicsQuery(), cancellationToken);
+        var result = _querySender.QueryAsync(new GetTopicsQuery(category), cancellationToken);
+
+        return Results.Extensions.FromTask(result);
+    }
+
+    /// <summary>
+    /// Get topic.
+    /// </summary>
+    /// <remarks>
+    /// Get a topic with its detail info.
+    /// </remarks>
+    /// <param name="topicId">Id of the topic</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    [HttpGet("topic/{topicId}")]
+    [ProducesResponseType<DataResponseType<TopicDetailedDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public Task<IResult> GetTopic(
+        [FromRoute] long topicId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var result = _querySender.QueryAsync(new GetTopicQuery(topicId), cancellationToken);
 
         return Results.Extensions.FromTask(result);
     }

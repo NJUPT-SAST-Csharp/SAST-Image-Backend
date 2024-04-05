@@ -130,7 +130,7 @@ namespace Account.Infrastructure.Configurations
             SqlMapper.AddTypeHandler(new UriStringConverter());
             SqlMapper.AddTypeHandler(new DateOnlyConverter());
 
-            services.AddSingleton<IDbConnectionFactory>(
+            services.AddScoped<IDbConnectionFactory>(
                 _ => new DbConnectionFactory(connectionString)
             );
 
