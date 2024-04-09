@@ -17,6 +17,11 @@ namespace Square.Application.TopicServices.Queries.GetTopics
                 .GetTopicsAsync(request.CategoryId)
                 .WaitAsync(cancellationToken);
 
+            if (string.IsNullOrWhiteSpace(request.SearchWord) == false)
+            {
+                models = models.Where(m => m.Title.Value.Contains(request.SearchWord));
+            }
+
             var topics = models.Select(TopicDto.MapFrom);
 
             return Result.Return(topics);

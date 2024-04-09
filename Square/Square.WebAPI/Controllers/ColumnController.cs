@@ -5,7 +5,6 @@ using Primitives.Command;
 using Primitives.Query;
 using Square.Application.ColumnServices.Queries.GetColumn;
 using Square.Application.ColumnServices.Queries.GetColumns;
-using Square.Domain.ColumnAggregate.ColumnEntity;
 using Square.Domain.ColumnAggregate.Commands.AddColumn;
 using Square.Domain.ColumnAggregate.Commands.DeleteColumn;
 using Square.WebAPI.Requests;
@@ -31,12 +30,12 @@ namespace Square.WebAPI.Controllers
         /// <param name="topicId">Id of the target topic</param>
         /// <param name="request">The new column info</param>
         /// <param name="cancellationToken">Cancellation token</param>
-        /// <response code="200">Column added successfully</response>
+        /// <response code="200">Column added successfully, return the column id.</response>
         /// <response code="404">Topic not found</response>
         [Authorize]
-        [HttpPost("topic/{topicId}/column")]
+        [HttpPost("topic/{topicId}")]
         [DisableRequestSizeLimit]
-        [ProducesResponseType<DataResponseType<ColumnId>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<long>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IResult> AddColumn(
             [FromRoute] long topicId,
@@ -49,9 +48,7 @@ namespace Square.WebAPI.Controllers
                 cancellationToken
             );
 
-            var iresult = Results.Extensions.From(result);
-
-            return iresult;
+            return Results.Extensions.Custom(result.Value.Value, 200);
         }
 
         /// <summary>
@@ -89,7 +86,7 @@ namespace Square.WebAPI.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <response code="200">Column info with its containing images.</response>
         [HttpGet("column/{columnId}")]
-        [ProducesResponseType<DataResponseType<ColumnDetailedDto>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<ColumnDetailedDto>(StatusCodes.Status200OK)]
         public Task<IResult> GetColumn(
             [FromRoute] long columnId,
             CancellationToken cancellationToken
@@ -110,7 +107,7 @@ namespace Square.WebAPI.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <response code="200">Columns of the topic.</response>
         [HttpGet("topic/{topicId}/columns")]
-        [ProducesResponseType<DataResponseType<IEnumerable<ColumnDto>>>(StatusCodes.Status200OK)]
+        [ProducesResponseType<IEnumerable<ColumnDto>>(StatusCodes.Status200OK)]
         public Task<IResult> GetColumns(
             [FromRoute] long topicId,
             CancellationToken cancellationToken

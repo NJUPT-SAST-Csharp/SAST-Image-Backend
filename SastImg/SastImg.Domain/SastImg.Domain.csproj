@@ -7,8 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="AlbumAggregate\ImageEntity\Events\" />
-    <Folder Include="CategoryEntity\Events\" />
+    <Compile Remove="AlbumAggregate\ImageEntity\Events\**" />
+    <Compile Remove="CategoryEntity\Events\**" />
+    <EmbeddedResource Remove="AlbumAggregate\ImageEntity\Events\**" />
+    <EmbeddedResource Remove="CategoryEntity\Events\**" />
+    <None Remove="AlbumAggregate\ImageEntity\Events\**" />
+    <None Remove="CategoryEntity\Events\**" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,8 +4,8 @@ namespace Square.Domain.TopicAggregate.TopicEntity
 {
     public readonly struct TopicDescription
     {
-        public const int MinLength = 10;
-        public const int MaxLength = 200;
+        public const int MinLength = 2;
+        public const int MaxLength = 100;
 
         public readonly string Value { get; }
 

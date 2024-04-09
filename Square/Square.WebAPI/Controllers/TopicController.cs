@@ -8,7 +8,6 @@ using Square.Application.TopicServices.Queries.GetTopics;
 using Square.Domain.TopicAggregate.Commands.CreateTopic;
 using Square.Domain.TopicAggregate.Commands.DeleteTopic;
 using Square.Domain.TopicAggregate.Commands.UpdateTopicInfo;
-using Square.Domain.TopicAggregate.TopicEntity;
 using Square.WebAPI.Requests;
 
 namespace Square.WebAPI.Controllers;
@@ -29,23 +28,23 @@ public class TopicController(ICommandRequestSender commandSender, IQueryRequestS
     /// </remarks>
     /// <param name="request">New topic info</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <response code="200">Topic created successfully</response>
+    /// <response code="200">Topic created successfully, return the topic id.</response>
     /// <response code="409">Topic title already exists</response>
     [Authorize]
     [HttpPost("topic")]
-    [ProducesResponseType<DataResponseType<TopicId>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<long>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public Task<IResult> CreateTopic(
+    public async Task<IResult> CreateTopic(
         [FromBody] CreateTopicRequest request,
         CancellationToken cancellationToken = default
     )
     {
-        var result = _commandSender.CommandAsync(
+        var result = await _commandSender.CommandAsync(
             new CreateTopicCommand(request.Title, request.Description, request.CategoryId, User),
             cancellationToken
         );
 
-        return Results.Extensions.FromTask(result);
+        return Results.Extensions.Custom(result.Value.Value, 200);
     }
 
     /// <summary>
@@ -110,16 +109,21 @@ public class TopicController(ICommandRequestSender commandSender, IQueryRequestS
     /// Get global topics. Order by update time default.
     /// </remarks>
     /// <param name="category">Category Id, all topics if empty.</param>
+    /// <param name="search">Search keyword.</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <response code="200">The topics.</response>
     [HttpGet("topics")]
-    [ProducesResponseType<DataResponseType<IEnumerable<TopicDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<IEnumerable<TopicDto>>(StatusCodes.Status200OK)]
     public Task<IResult> GetTopics(
         [FromQuery] int? category = null,
+        [FromQuery] string? search = null,
         CancellationToken cancellationToken = default
     )
     {
-        var result = _querySender.QueryAsync(new GetTopicsQuery(category), cancellationToken);
+        var result = _querySender.QueryAsync(
+            new GetTopicsQuery(category, search),
+            cancellationToken
+        );
 
         return Results.Extensions.FromTask(result);
     }
@@ -133,7 +137,7 @@ public class TopicController(ICommandRequestSender commandSender, IQueryRequestS
     /// <param name="topicId">Id of the topic</param>
     /// <param name="cancellationToken">Cancellation token</param>
     [HttpGet("topic/{topicId}")]
-    [ProducesResponseType<DataResponseType<TopicDetailedDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<TopicDetailedDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public Task<IResult> GetTopic(
         [FromRoute] long topicId,
