@@ -19,12 +19,19 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
 
             builder.Ignore(album => album.DomainEvents);
 
-            builder.Property<string>("_title").HasColumnName("title");
-            builder.Property<string>("_description").HasColumnName("description");
+            builder
+                .Property<AlbumTitle>("_title")
+                .HasColumnName("title")
+                .HasConversion(t => t.Value, v => new(v));
+            builder
+                .Property<AlbumDescription>("_description")
+                .HasColumnName("description")
+                .HasConversion(t => t.Value, v => new(v));
             builder.Property<Accessibility>("_accessibility").HasColumnName("accessibility");
             builder.Property<bool>("_isRemoved").HasColumnName("is_removed");
             builder.Property<DateTime>("_createdAt").HasColumnName("created_at");
             builder.Property<DateTime>("_updatedAt").HasColumnName("updated_at");
+
             builder
                 .Property<CategoryId>("_categoryId")
                 .HasColumnName("category_id")
@@ -70,10 +77,15 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
                     image.Ignore("UploadtedTime");
                     image.Ignore("ImageUrl");
 
-                    image.Property<string>("_title").HasColumnName("title");
-                    image.Property<string>("_description").HasColumnName("description");
-                    image.Property<Uri>("_url").HasColumnName("url");
-                    image.Property<Uri>("_thumbnailUrl").HasColumnName("thumbnail_url");
+                    image
+                        .Property<ImageTitle>("_title")
+                        .HasColumnName("title")
+                        .HasConversion(t => t.Value, s => new(s));
+                    image
+                        .Property<ImageDescription>("_description")
+                        .HasColumnName("description")
+                        .HasConversion(t => t.Value, s => new(s));
+
                     image.Property<DateTime>("_uploadtedAt").HasColumnName("uploaded_at");
                     image.Property<bool>("_isRemoved").HasColumnName("is_removed");
 
@@ -89,6 +101,15 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
                                     )
                                 )
                         );
+
+                    image.OwnsOne<ImageUrl>(
+                        "_url",
+                        url =>
+                        {
+                            url.Property(u => u.Original).HasColumnName("url");
+                            url.Property(u => u.Thumbnail).HasColumnName("thumbnail");
+                        }
+                    );
                 }
             );
         }

@@ -16,8 +16,8 @@ namespace SastImg.Application.AlbumServices.UpdateAlbumInfo
     ) : ICommandRequest
     {
         public AlbumId AlbumId { get; } = new(albumId);
-        public string Title { get; } = title;
-        public string Description { get; } = description;
+        public AlbumTitle Title { get; } = new(title);
+        public AlbumDescription Description { get; } = new(description);
         public CategoryId CategoryId { get; } = new(categoryId);
         public Accessibility Accessibility { get; } = accessibility;
         public RequesterInfo Requester { get; } = new(user);

@@ -10,7 +10,7 @@ public sealed class Image : EntityBase<ImageId>
     private Image()
         : base(default) { }
 
-    internal Image(string title, string description, Uri url, Uri thumbnailUrl, TagId[] tags)
+    internal Image(ImageTitle title, ImageDescription description, ImageUrl url, TagId[] tags)
         : base(new(SnowFlakeIdGenerator.NewId))
     {
         CheckRule(new ImageOwnNotMoreThan5TagsRule(tags));
@@ -18,19 +18,16 @@ public sealed class Image : EntityBase<ImageId>
         _title = title;
         _description = description;
         _url = url;
-        _thumbnailUrl = thumbnailUrl;
         _tags = tags;
     }
 
     #region Fields
 
-    private readonly string _title = string.Empty;
+    private readonly ImageTitle _title;
 
-    private readonly string _description = string.Empty;
+    private readonly ImageDescription _description;
 
-    private readonly Uri _url;
-
-    private readonly Uri _thumbnailUrl;
+    private readonly ImageUrl _url;
 
     private readonly DateTime _uploadedAt = DateTime.UtcNow;
 
@@ -43,15 +40,13 @@ public sealed class Image : EntityBase<ImageId>
     #region Properties
     internal DateTime UploadedTime => _uploadedAt;
 
-    internal Uri ImageUrl => _url;
+    internal ImageUrl Url => _url;
 
     internal bool IsRemoved => _isRemoved;
 
     #endregion
 
     #region Methods
-
-
 
     internal void Remove()
     {

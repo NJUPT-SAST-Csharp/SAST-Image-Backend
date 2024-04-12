@@ -35,7 +35,12 @@ namespace SastImg.Application.ImageServices.AddImage
                 cancellationToken
             );
 
-            album.AddImage(request.Title, request.Description, url, thumbnailUrl, request.Tags);
+            album.AddImage(
+                request.Title,
+                request.Description,
+                new(url, thumbnailUrl),
+                request.Tags
+            );
 
             await _unitOfWork.CommitChangesAsync(cancellationToken);
 

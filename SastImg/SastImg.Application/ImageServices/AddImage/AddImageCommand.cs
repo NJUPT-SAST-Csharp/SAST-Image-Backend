@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Primitives.Command;
 using SastImg.Application.SeedWorks;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
+using SastImg.Domain.AlbumAggregate.ImageEntity;
 using SastImg.Domain.TagEntity;
 
 namespace SastImg.Application.ImageServices.AddImage
@@ -20,9 +21,9 @@ namespace SastImg.Application.ImageServices.AddImage
 
         public AlbumId AlbumId { get; } = new(albumId);
 
-        public string Title { get; } = title;
+        public ImageTitle Title { get; } = new(title);
 
-        public string Description { get; } = description;
+        public ImageDescription Description { get; } = new(description);
 
         public TagId[] Tags { get; } = Array.ConvertAll(tags, tag => new TagId(tag));
 

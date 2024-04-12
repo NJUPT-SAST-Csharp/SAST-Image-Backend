@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SastImg.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using SastImg.Infrastructure.Persistence;
 namespace SastImg.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SastImgDbContext))]
-    partial class SastImgDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240412170350_Fix6")]
+    partial class Fix6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -155,6 +158,29 @@ namespace SastImg.Infrastructure.Persistence.Migrations
                                 .HasConstraintName("fk_albums_albums_id");
                         });
 
+                    b.OwnsMany("SastImg.Domain.AlbumAggregate.AlbumEntity.Subscriber", "_subscribers", b1 =>
+                        {
+                            b1.Property<long>("UserId")
+                                .HasColumnType("bigint")
+                                .HasColumnName("user");
+
+                            b1.Property<long>("AlbumId")
+                                .HasColumnType("bigint")
+                                .HasColumnName("album");
+
+                            b1.HasKey("UserId", "AlbumId")
+                                .HasName("pk_subscribers");
+
+                            b1.HasIndex("AlbumId")
+                                .HasDatabaseName("ix_subscribers_album");
+
+                            b1.ToTable("subscribers", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("AlbumId")
+                                .HasConstraintName("fk_subscribers_albums_album_id");
+                        });
+
                     b.OwnsMany("SastImg.Domain.AlbumAggregate.ImageEntity.Image", "_images", b1 =>
                         {
                             b1.Property<long>("Id")
@@ -200,6 +226,26 @@ namespace SastImg.Infrastructure.Persistence.Migrations
                                 .HasForeignKey("album_id")
                                 .HasConstraintName("fk_images_albums_album_id");
 
+                            b1.OwnsMany("SastImg.Domain.AlbumAggregate.ImageEntity.Bookmark", "_bookmarks", b2 =>
+                                {
+                                    b2.Property<long>("ImageId")
+                                        .HasColumnType("bigint")
+                                        .HasColumnName("image");
+
+                                    b2.Property<long>("UserId")
+                                        .HasColumnType("bigint")
+                                        .HasColumnName("user");
+
+                                    b2.HasKey("ImageId", "UserId")
+                                        .HasName("pk_bookmarks");
+
+                                    b2.ToTable("bookmarks", (string)null);
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("ImageId")
+                                        .HasConstraintName("fk_bookmarks_images_image");
+                                });
+
                             b1.OwnsOne("SastImg.Domain.AlbumAggregate.ImageEntity.ImageUrl", "_url", b2 =>
                                 {
                                     b2.Property<long>("ImageId")
@@ -225,12 +271,38 @@ namespace SastImg.Infrastructure.Persistence.Migrations
                                         .HasConstraintName("fk_images_images_id");
                                 });
 
+                            b1.OwnsMany("SastImg.Domain.AlbumAggregate.ImageEntity.Like", "_likes", b2 =>
+                                {
+                                    b2.Property<long>("ImageId")
+                                        .HasColumnType("bigint")
+                                        .HasColumnName("image");
+
+                                    b2.Property<long>("UserId")
+                                        .HasColumnType("bigint")
+                                        .HasColumnName("user");
+
+                                    b2.HasKey("ImageId", "UserId")
+                                        .HasName("pk_likes");
+
+                                    b2.ToTable("likes", (string)null);
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("ImageId")
+                                        .HasConstraintName("fk_likes_images_image");
+                                });
+
+                            b1.Navigation("_bookmarks");
+
+                            b1.Navigation("_likes");
+
                             b1.Navigation("_url");
                         });
 
                     b.Navigation("_cover");
 
                     b.Navigation("_images");
+
+                    b.Navigation("_subscribers");
                 });
 #pragma warning restore 612, 618
         }

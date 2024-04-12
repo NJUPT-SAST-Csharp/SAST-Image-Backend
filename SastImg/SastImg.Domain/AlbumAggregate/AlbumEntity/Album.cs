@@ -18,8 +18,8 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
         private Album(
             UserId authorId,
             CategoryId categoryId,
-            string title,
-            string description,
+            AlbumTitle title,
+            AlbumDescription description,
             Accessibility accessibility
         )
             : base(new(SnowFlakeIdGenerator.NewId))
@@ -34,8 +34,8 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
         public static Album CreateNewAlbum(
             UserId authorId,
             CategoryId categoryId,
-            string title,
-            string description,
+            AlbumTitle title,
+            AlbumDescription description,
             Accessibility accessibility
         )
         {
@@ -46,9 +46,9 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
         #region Fields
 
-        private string _title = string.Empty;
+        private AlbumTitle _title;
 
-        private string _description = string.Empty;
+        private AlbumDescription _description;
 
         private CategoryId _categoryId;
 
@@ -58,7 +58,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
         private bool _isArchived = false;
 
-        private Cover _cover = new(null, true);
+        private Cover _cover = new((Uri?)null, true);
 
         private DateTime _createdAt = DateTime.UtcNow;
 
@@ -68,7 +68,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
         private UserId[] _collaborators = [];
 
-        private readonly IList<Image> _images = [];
+        private readonly List<Image> _images = [];
 
         #endregion
 
@@ -126,7 +126,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
                 .OrderByDescending(i => i.UploadedTime)
                 .FirstOrDefault();
 
-            _cover = new(image?.ImageUrl, true);
+            _cover = new(image?.Url, true);
             // TODO: Raise domain event
         }
 
@@ -135,13 +135,13 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             CheckRule(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
 
             var image = _images.FirstOrDefault(image => image.Id == imageId);
-            _cover = new(image?.ImageUrl, false);
+            _cover = new(image?.Url, false);
             // TODO: Raise domain event
         }
 
         public void UpdateAlbumInfo(
-            string title,
-            string description,
+            AlbumTitle title,
+            AlbumDescription description,
             CategoryId categoryId,
             Accessibility accessibility
         )
@@ -160,16 +160,15 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
         }
 
         public ImageId AddImage(
-            string title,
-            string description,
-            Uri url,
-            Uri thumbnailUrl,
+            ImageTitle title,
+            ImageDescription description,
+            ImageUrl url,
             TagId[] tags
         )
         {
             CheckRule(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
 
-            var image = new Image(title, description, url, thumbnailUrl, tags);
+            var image = new Image(title, description, url, tags);
 
             _updatedAt = DateTime.UtcNow;
             if (_cover.IsLatestImage)
@@ -188,7 +187,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             if (image is not null)
             {
                 image.Remove();
-                if (image.ImageUrl.Equals(_cover.Url))
+                if (image.Url.Thumbnail.Equals(_cover.Url))
                 {
                     _cover = _cover with { Url = null };
                 }
