@@ -6,10 +6,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Primitives\Primitives.csproj" />
-    <ProjectReference Include="..\SNS.Domain.Core\SNS.Domain.Core.csproj" />
-  </ItemGroup>
+   
+ <ItemGroup>
+	    <ProjectReference Include="..\..\Shared\Primitives\Primitives.csproj" />
+	    <ProjectReference Include="..\..\Shared\Utilities\Utilities.csproj" />
+    </ItemGroup>
 
 
 </Project>

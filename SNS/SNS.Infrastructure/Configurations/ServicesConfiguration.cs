@@ -12,10 +12,7 @@ using Primitives;
 using Primitives.Command;
 using Primitives.DomainEvent;
 using Primitives.Query;
-using SNS.Domain.AlbumEntity;
-using SNS.Domain.ImageAggregate.ImageEntity;
-using SNS.Domain.UserEntity;
-using SNS.Infrastructure.DomainRepositories;
+using Shared.Primitives.DomainEvent;
 using SNS.Infrastructure.EventBus;
 using SNS.Infrastructure.Persistence;
 using SNS.Infrastructure.Persistence.QueryDatabase;
@@ -46,10 +43,8 @@ namespace SNS.Infrastructure.Configurations
 
         public static IServiceCollection ConfigureRepositories(this IServiceCollection services)
         {
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IImageRepository, ImageRepository>();
-            services.AddScoped<IAlbumRepository, AlbumRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddSingleton<IDomainEventContainer, DomainEventContainer>();
 
             return services;
         }
