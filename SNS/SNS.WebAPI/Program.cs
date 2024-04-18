@@ -9,8 +9,7 @@ builder.Services.AddControllers();
 
 builder.Services.ConfigureMediator();
 builder.Services.ConfigureEventBus(builder.Configuration);
-builder.Services.ConfigureDatabase(builder.Configuration.GetConnectionString("SNSDb")!);
-builder.Services.ConfigureRepositories();
+builder.Services.ConfigurePersistence(builder.Configuration.GetConnectionString("SNSDb")!);
 builder.Services.ConfigureAuth(builder.Configuration);
 
 if (builder.Environment.IsDevelopment())

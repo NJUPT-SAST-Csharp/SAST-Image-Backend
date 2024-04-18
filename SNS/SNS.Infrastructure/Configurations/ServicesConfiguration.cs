@@ -13,16 +13,31 @@ using Primitives.Command;
 using Primitives.DomainEvent;
 using Primitives.Query;
 using Shared.Primitives.DomainEvent;
+using SNS.Application.GetFollowCount;
+using SNS.Application.GetFollowers;
+using SNS.Application.GetFollowing;
+using SNS.Domain.Bookmarks;
+using SNS.Domain.Follows;
 using SNS.Infrastructure.EventBus;
+using SNS.Infrastructure.Managers;
 using SNS.Infrastructure.Persistence;
-using SNS.Infrastructure.Persistence.QueryDatabase;
 using SNS.Infrastructure.Persistence.TypeConverters;
+using SNS.Infrastructure.Query;
+using Square.Application.Behaviors;
 
 namespace SNS.Infrastructure.Configurations
 {
     public static class ServicesConfiguration
     {
         public static IServiceCollection ConfigureDatabase(
+            this IServiceCollection services,
+            string connectionString
+        )
+        {
+            return services;
+        }
+
+        public static IServiceCollection ConfigurePersistence(
             this IServiceCollection services,
             string connectionString
         )
@@ -38,12 +53,15 @@ namespace SNS.Infrastructure.Configurations
                 _ => new DbConnectionFactory(connectionString)
             );
             SqlMapper.AddTypeHandler(new UriStringConverter());
-            return services;
-        }
 
-        public static IServiceCollection ConfigureRepositories(this IServiceCollection services)
-        {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IFollowerRepository, FollowRepository>();
+            services.AddScoped<IFollowingRepository, FollowRepository>();
+            services.AddScoped<IFollowCountRepository, FollowRepository>();
+
+            services.AddScoped<IBookmarkManager, BookmarkManager>();
+            services.AddScoped<IFollowManager, FollowManager>();
+
             services.AddSingleton<IDomainEventContainer, DomainEventContainer>();
 
             return services;
@@ -57,7 +75,10 @@ namespace SNS.Infrastructure.Configurations
 
             services.AddMediatR(config =>
             {
+                config.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>), ServiceLifetime.Scoped);
+
                 config.RegisterServicesFromAssembly(Application.AssemblyReference.Assembly);
+                config.RegisterServicesFromAssembly(Domain.AssemblyReference.Assembly);
             });
             return services;
         }

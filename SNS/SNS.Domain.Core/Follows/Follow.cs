@@ -2,7 +2,7 @@
 
 internal sealed record class Follow
 {
-    public UserId Follower { get; }
+    public UserId Follower { get; init; }
 
-    public UserId Following { get; }
+    public UserId Following { get; init; }
 }

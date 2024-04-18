@@ -20,6 +20,11 @@ namespace SNS.Domain.Follows
                 cancellationToken
             );
 
+            if (follow is null)
+            {
+                return;
+            }
+
             await _manager.UnfollowAsync(follow, cancellationToken);
 
             _container.AddDomainEvent(

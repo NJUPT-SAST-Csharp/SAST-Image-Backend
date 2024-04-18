@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Npgsql;
 
-namespace SNS.Infrastructure.Persistence.QueryDatabase
+namespace SNS.Infrastructure.Query
 {
     internal sealed class DbConnectionFactory(string connectionString) : IDbConnectionFactory
     {

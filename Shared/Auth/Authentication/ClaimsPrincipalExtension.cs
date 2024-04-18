@@ -60,6 +60,12 @@ namespace Auth.Authentication
             return user.TryFetchClaim("Email", out email);
         }
 
+        public static long FetchId(this ClaimsPrincipal user)
+        {
+            user.TryFetchId(out long id);
+            return id;
+        }
+
         public static bool HasRole(this ClaimsPrincipal user, AuthorizationRole role)
         {
             foreach (var r in user.FindAll("Roles"))

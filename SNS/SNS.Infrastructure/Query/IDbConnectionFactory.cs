@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace SNS.Infrastructure.Persistence.QueryDatabase
+namespace SNS.Infrastructure.Query
 {
     internal interface IDbConnectionFactory : IDisposable
     {

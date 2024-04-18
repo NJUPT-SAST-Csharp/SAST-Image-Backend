@@ -2,6 +2,6 @@
 
 internal sealed record class Bookmark
 {
-    public UserId UserId { get; }
-    public ImageId ImageId { get; }
+    public required UserId UserId { get; init; }
+    public required ImageId ImageId { get; init; }
 }

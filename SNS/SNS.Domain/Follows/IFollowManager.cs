@@ -2,7 +2,7 @@
 {
     internal interface IFollowManager
     {
-        Task<Follow> GetFollowAsync(
+        Task<Follow?> GetFollowAsync(
             UserId follower,
             UserId target,
             CancellationToken cancellationToken = default
