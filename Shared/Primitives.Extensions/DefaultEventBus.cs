@@ -23,15 +23,13 @@ namespace Primitives
             CancellationToken cancellationToken = default
         )
         {
-            CommandLogger.LogEnterInfo(_commandLogger, command.GetType().Name);
+            string commandName = command.GetType().Name;
+
+            CommandLogger.LogEnterInfo(_commandLogger, commandName);
 
             var result = await _mediator.Send(command, cancellationToken);
 
-            CommandLogger.LogExitInfo(
-                _commandLogger,
-                command.GetType().Name,
-                typeof(TResponse).Name
-            );
+            CommandLogger.LogExitInfo(_commandLogger, commandName, typeof(TResponse).Name);
 
             return result;
         }
@@ -41,11 +39,13 @@ namespace Primitives
             CancellationToken cancellationToken = default
         )
         {
-            CommandLogger.LogEnterInfo(_commandLogger, command.GetType().Name);
+            string commandName = command.GetType().Name;
+
+            CommandLogger.LogEnterInfo(_commandLogger, commandName);
 
             await _mediator.Send(command, cancellationToken);
 
-            CommandLogger.LogExitInfo(_commandLogger, command.GetType().Name);
+            CommandLogger.LogExitInfo(_commandLogger, commandName);
         }
 
         public Task PublishAsync<TEvent>(
@@ -62,11 +62,14 @@ namespace Primitives
             CancellationToken cancellationToken = default
         )
         {
-            QueryLogger.LogEnterInfo(_queryLogger, request.GetType().Name);
+            string requestName = request.GetType().Name;
+
+            QueryLogger.LogEnterInfo(_queryLogger, requestName);
 
             var result = await _mediator.Send(request, cancellationToken);
 
-            QueryLogger.LogExitInfo(_queryLogger, request.GetType().Name, typeof(TResponse).Name);
+            string resultName = result?.GetType().Name ?? "Null";
+            QueryLogger.LogExitInfo(_queryLogger, requestName, resultName);
 
             return result;
         }
