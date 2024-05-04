@@ -21,19 +21,19 @@ namespace Primitives.Configuration
                 return this;
             }
 
-            Services.Add(ServiceDescriptor.Singleton<ICommandRequestSender, TSender>());
+            Services.Add(ServiceDescriptor.Scoped<ICommandRequestSender, TSender>());
             return this;
         }
 
         public EventBusOptions AddQuerySender<TSender>()
             where TSender : class, IQueryRequestSender
         {
-            if (Services.Any(s => s.ServiceType == typeof(ICommandRequestSender)))
+            if (Services.Any(s => s.ServiceType == typeof(IQueryRequestSender)))
             {
                 return this;
             }
 
-            Services.Add(ServiceDescriptor.Singleton<IQueryRequestSender, TSender>());
+            Services.Add(ServiceDescriptor.Scoped<IQueryRequestSender, TSender>());
             return this;
         }
 
@@ -45,7 +45,7 @@ namespace Primitives.Configuration
                 return this;
             }
 
-            Services.Add(ServiceDescriptor.Singleton<IDomainEventPublisher, TPublisher>());
+            Services.Add(ServiceDescriptor.Scoped<IDomainEventPublisher, TPublisher>());
             return this;
         }
 

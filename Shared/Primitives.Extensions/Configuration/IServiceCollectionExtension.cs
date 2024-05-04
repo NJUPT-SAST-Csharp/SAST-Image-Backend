@@ -24,6 +24,11 @@ namespace Primitives
                 throw new InvalidOperationException("At least one assembly must be provided.");
             }
 
+            if (options.Services.Count == 0)
+            {
+                options.AddDefaultBuses();
+            }
+
             services.AddMediatR(option =>
             {
                 option.AutoRegisterRequestProcessors = true;

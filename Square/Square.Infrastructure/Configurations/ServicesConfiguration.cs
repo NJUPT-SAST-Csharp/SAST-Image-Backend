@@ -36,7 +36,13 @@ namespace Square.Infrastructure.Configurations
         public static IServiceCollection ConfigureServices(this WebApplicationBuilder builder)
         {
             builder
-                .Services.ConfigureMediatR()
+                .Services.AddInternalEventBus(options =>
+                {
+                    options.AddResolverFromAssemblyContaining<Topic>();
+                    options.AddResolverFromAssemblyContaining<TopicModel>();
+                })
+                .AddInternalUnitOfWork<SquareDbContext, SquareQueryDbContext>()
+                //.ConfigureMediatR()
                 .ConfigureDomainServices()
                 .ConfigureApplicationServices()
                 .ConfigureExceptionHandlers()
@@ -93,7 +99,7 @@ namespace Square.Infrastructure.Configurations
 
         private static IServiceCollection ConfigureDomainServices(this IServiceCollection services)
         {
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            //services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ITopicRepository, TopicRepository>();
             services.AddScoped<IColumnRepository, ColumnRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
