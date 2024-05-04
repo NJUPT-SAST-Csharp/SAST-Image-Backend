@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Primitives.Rule;
 
-namespace SastImg.WebAPI.Configurations
+namespace Primitives.Rule
 {
     /// <summary>
     /// TODO: complete
     /// </summary>
-    public class DomainBusinessRuleInvalidExceptionHandler : IExceptionHandler
+    public sealed class DomainBusinessRuleInvalidExceptionHandler : IExceptionHandler
     {
         /// <summary>
         /// TODO: complete

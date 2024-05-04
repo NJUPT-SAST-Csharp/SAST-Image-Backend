@@ -82,7 +82,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxResult.Extensions", "Sha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proxy", "Proxy\Proxy.csproj", "{EC9E24CB-963C-4C36-8475-2DFE4388813B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SNS.Domain.Core", "SNS\SNS.Domain.Core\SNS.Domain.Core.csproj", "{009BD4EA-1043-490F-8951-852BB7398135}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SNS.Domain.Core", "SNS\SNS.Domain.Core\SNS.Domain.Core.csproj", "{009BD4EA-1043-490F-8951-852BB7398135}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Primitives.Extensions", "Shared\Primitives.Extensions\Primitives.Extensions.csproj", "{9DFEF95D-284C-4BE3-A5FE-4D22ED410F18}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -218,6 +220,10 @@ Global
 		{009BD4EA-1043-490F-8951-852BB7398135}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{009BD4EA-1043-490F-8951-852BB7398135}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{009BD4EA-1043-490F-8951-852BB7398135}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DFEF95D-284C-4BE3-A5FE-4D22ED410F18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DFEF95D-284C-4BE3-A5FE-4D22ED410F18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DFEF95D-284C-4BE3-A5FE-4D22ED410F18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DFEF95D-284C-4BE3-A5FE-4D22ED410F18}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -254,6 +260,7 @@ Global
 		{818CCFCE-ED87-4771-B827-925295F69DD6} = {62F54EB9-A9EE-4956-8FA2-534C755263C9}
 		{C304A940-BFC1-438E-B2F7-928A70DC1566} = {62F54EB9-A9EE-4956-8FA2-534C755263C9}
 		{009BD4EA-1043-490F-8951-852BB7398135} = {91D622E4-6572-43F5-A8AC-0AD759CACEC0}
+		{9DFEF95D-284C-4BE3-A5FE-4D22ED410F18} = {62F54EB9-A9EE-4956-8FA2-534C755263C9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DEF9C9F4-A717-4AEF-BE30-DF9F13D3C94E}

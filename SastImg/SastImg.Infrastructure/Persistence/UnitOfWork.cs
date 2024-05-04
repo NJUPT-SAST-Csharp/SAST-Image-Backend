@@ -11,11 +11,20 @@ namespace SastImg.Infrastructure.Persistence
         private readonly SastImgDbContext _dbContext = dbContext;
         private readonly IDomainEventPublisher _eventBus = eventBus;
 
+        private bool isTransactionBegin = false;
+
         public async Task CommitChangesAsync(CancellationToken cancellationToken = default)
         {
+            if (isTransactionBegin)
+            {
+                return;
+            }
+
             await using var transaction = await _dbContext.Database.BeginTransactionAsync(
                 cancellationToken
             );
+
+            isTransactionBegin = true;
 
             var domainEntities = _dbContext
                 .ChangeTracker.Entries<IDomainEventContainer>()
@@ -40,6 +49,8 @@ namespace SastImg.Infrastructure.Persistence
 
             // Commit the transaction
             await transaction.CommitAsync(cancellationToken);
+
+            isTransactionBegin = false;
         }
     }
 }

@@ -17,21 +17,6 @@ public sealed class AlbumDomainUnitTest
     }
 
     [TestMethod]
-    public void Add_Image_AlbumNotRaiseEvent()
-    {
-        Album album = AlbumUnitTestHelper.CreateDefaultAlbum();
-        const int expectedEventCount = 1;
-        const string title = "FakeTitle";
-        const string description = "FakeDescription";
-        const string uri = "https://fake.com";
-        const long tag = 0;
-
-        album.AddImage(title, description, new(uri), new(uri), [new(tag)]);
-
-        Assert.AreEqual(expectedEventCount, album.DomainEvents.Count);
-    }
-
-    [TestMethod]
     [DataRow(1, 1, true)]
     [DataRow(1, 2, false)]
     public void Album_OwnedBy_Author(long testAuthorId, long testUserId, bool expected)

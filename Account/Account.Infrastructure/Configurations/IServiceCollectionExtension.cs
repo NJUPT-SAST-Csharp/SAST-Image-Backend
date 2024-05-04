@@ -26,7 +26,7 @@ using Primitives;
 using Primitives.Command;
 using Primitives.DomainEvent;
 using Primitives.Query;
-using SastImg.WebAPI.Configurations;
+using Primitives.Rule;
 using Serilog;
 using Shared.Storage.Configurations;
 using StackExchange.Redis;

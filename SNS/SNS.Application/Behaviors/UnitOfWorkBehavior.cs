@@ -8,6 +8,7 @@ public sealed class UnitOfWorkBehavior<TCommand, TResponse>(
     IUnitOfWork unitOfWork,
     ILogger<UnitOfWorkBehavior<TCommand, TResponse>> logger
 ) : IPipelineBehavior<TCommand, TResponse>
+    where TCommand : notnull
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly ILogger<UnitOfWorkBehavior<TCommand, TResponse>> _logger = logger;

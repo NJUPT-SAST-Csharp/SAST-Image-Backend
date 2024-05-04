@@ -12,7 +12,6 @@ using Primitives.Command;
 using Primitives.DomainEvent;
 using Primitives.Query;
 using Primitives.Rule;
-using SastImg.WebAPI.Configurations;
 using Serilog;
 using Shared.Storage.Configurations;
 using Square.Application.Behaviors;
@@ -54,8 +53,8 @@ namespace Square.Infrastructure.Configurations
             services.AddProblemDetails();
 
             services.AddExceptionHandler<DomainBusinessRuleInvalidExceptionHandler>();
-            services.AddExceptionHandler<DbNotFoundExceptionHandler>();
             services.AddExceptionHandler<DomainObjectValidationExceptionHandler>();
+            services.AddExceptionHandler<DbNotFoundExceptionHandler>();
             services.AddDefaultExceptionHandler();
 
             return services;
