@@ -31,6 +31,7 @@ namespace Primitives.Extensions
 
             isTransactionStarted = true;
             int transactionId = Random.Shared.Next();
+            int count = 0;
 
             UnitOfWorkLogger.LogBeginTransaction(_logger, transactionId);
 
@@ -41,7 +42,7 @@ namespace Primitives.Extensions
                 .ToList();
 
             // First SaveChangesAsync() call is to save the changes made by the command handlers
-            await _context.SaveChangesAsync(cancellationToken);
+            count += await _context.SaveChangesAsync(cancellationToken);
 
             var domainEvents = domainEntities.SelectMany(x => x.DomainEvents);
 
@@ -53,12 +54,12 @@ namespace Primitives.Extensions
             domainEntities.ForEach(e => e.ClearDomainEvents());
 
             // Second SaveChangesAsync() call is to save the changes made by the domain event handlers
-            await _context.SaveChangesAsync(cancellationToken);
+            count += await _context.SaveChangesAsync(cancellationToken);
 
             // Commit the transaction
             await transaction.CommitAsync(cancellationToken);
 
-            UnitOfWorkLogger.LogEndTransaction(_logger, transactionId);
+            UnitOfWorkLogger.LogEndTransaction(_logger, transactionId, count);
 
             isTransactionStarted = false;
         }
@@ -93,6 +94,7 @@ namespace Primitives.Extensions
 
             isTransactionStarted = true;
             int transactionId = Random.Shared.Next();
+            int count = 0;
 
             UnitOfWorkLogger.LogBeginTransaction(_logger, transactionId);
 
@@ -103,7 +105,7 @@ namespace Primitives.Extensions
                 .ToList();
 
             // First SaveChangesAsync() call is to save the changes made by the command handlers
-            await _writeContext.SaveChangesAsync(cancellationToken);
+            count += await _writeContext.SaveChangesAsync(cancellationToken);
 
             var domainEvents = domainEntities.SelectMany(x => x.DomainEvents);
 
@@ -115,13 +117,13 @@ namespace Primitives.Extensions
             domainEntities.ForEach(e => e.ClearDomainEvents());
 
             // Second SaveChangesAsync() call is to save the changes made by the domain event handlers
-            await _writeContext.SaveChangesAsync(cancellationToken);
-            await _queryContext.SaveChangesAsync(cancellationToken);
+            count += await _writeContext.SaveChangesAsync(cancellationToken);
+            count += await _queryContext.SaveChangesAsync(cancellationToken);
 
             // Commit the transaction
             await transaction.CommitAsync(cancellationToken);
 
-            UnitOfWorkLogger.LogEndTransaction(_logger, transactionId);
+            UnitOfWorkLogger.LogEndTransaction(_logger, transactionId, count);
 
             isTransactionStarted = false;
         }
@@ -138,9 +140,9 @@ namespace Primitives.Extensions
 
         [LoggerMessage(
             LogLevel.Information,
-            "[{Id}] End transaction.",
+            "[{Id}] End transaction. {ChangeCount} records have been changed.",
             EventName = "TransactionEnded"
         )]
-        public static partial void LogEndTransaction(ILogger logger, int id);
+        public static partial void LogEndTransaction(ILogger logger, int id, int changeCount);
     }
 }

@@ -8,13 +8,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Primitives;
-using Primitives.Command;
-using Primitives.DomainEvent;
-using Primitives.Query;
 using Primitives.Rule;
 using Serilog;
 using Shared.Storage.Configurations;
-using Square.Application.Behaviors;
 using Square.Application.CategoryServices;
 using Square.Application.ColumnServices;
 using Square.Application.TopicServices;
@@ -24,7 +20,6 @@ using Square.Domain.TopicAggregate;
 using Square.Domain.TopicAggregate.TopicEntity;
 using Square.Infrastructure.ApplicationServices;
 using Square.Infrastructure.DomainServices;
-using Square.Infrastructure.EventBus;
 using Square.Infrastructure.Persistence;
 using Square.Infrastructure.Persistence.Storages;
 using Storage.Options;
@@ -36,13 +31,14 @@ namespace Square.Infrastructure.Configurations
         public static IServiceCollection ConfigureServices(this WebApplicationBuilder builder)
         {
             builder
-                .Services.AddInternalEventBus(options =>
+                .Services.AddPrimitives(options =>
                 {
-                    options.AddResolverFromAssemblyContaining<Topic>();
-                    options.AddResolverFromAssemblyContaining<TopicModel>();
+                    options
+                        .AddResolversFromAssemblyContaining<Topic>()
+                        .AddResolversFromAssemblyContaining<TopicModel>()
+                        .AddUnitOfWorkWithDbContext<SquareDbContext, SquareQueryDbContext>();
+                    options.AutoCommitAfterCommandHandled = true;
                 })
-                .AddInternalUnitOfWork<SquareDbContext, SquareQueryDbContext>()
-                //.ConfigureMediatR()
                 .ConfigureDomainServices()
                 .ConfigureApplicationServices()
                 .ConfigureExceptionHandlers()
@@ -99,7 +95,6 @@ namespace Square.Infrastructure.Configurations
 
         private static IServiceCollection ConfigureDomainServices(this IServiceCollection services)
         {
-            //services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ITopicRepository, TopicRepository>();
             services.AddScoped<IColumnRepository, ColumnRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -118,24 +113,6 @@ namespace Square.Infrastructure.Configurations
             services.AddScoped<ITopicQueryRepository, TopicQueryRepository>();
             services.AddScoped<IColumnQueryRepository, ColumnQueryRepository>();
             services.AddScoped<ICategoryQueryRepository, CategoryQueryRepository>();
-
-            return services;
-        }
-
-        private static IServiceCollection ConfigureMediatR(this IServiceCollection services)
-        {
-            services.AddScoped<IQueryRequestSender, InternalEventBus>();
-            services.AddScoped<ICommandRequestSender, InternalEventBus>();
-            services.AddScoped<IDomainEventPublisher, InternalEventBus>();
-
-            services.AddMediatR(options =>
-            {
-                options.RegisterServicesFromAssemblyContaining<Topic>();
-                options.RegisterServicesFromAssemblyContaining<TopicModel>();
-                options.AddOpenBehavior(typeof(CommandLoggingBehavior<,>));
-                options.AddOpenBehavior(typeof(QueryLoggingBehavior<,>));
-                options.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>));
-            });
 
             return services;
         }

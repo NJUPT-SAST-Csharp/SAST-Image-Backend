@@ -2,7 +2,9 @@
 
 namespace Primitives.Command
 {
-    public interface ICommandRequest : IRequest { }
+    public interface IBaseCommand { }
 
-    public interface ICommandRequest<TResponse> : IRequest<TResponse> { }
+    public interface ICommandRequest : IRequest, IBaseCommand { }
+
+    public interface ICommandRequest<TResponse> : IRequest<TResponse>, IBaseCommand { }
 }

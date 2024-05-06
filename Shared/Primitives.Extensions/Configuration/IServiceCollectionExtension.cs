@@ -1,64 +1,30 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Primitives.Configuration;
-using Primitives.Extensions;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Primitives.Extensions.Behaviors;
+using Primitives.Extensions.Configuration;
 
 namespace Primitives
 {
     public static class IServiceCollectionExtension
     {
-        public static IServiceCollection AddInternalEventBus(
+        public static IServiceCollection AddPrimitives(
             this IServiceCollection services,
-            Action<EventBusOptions>? optionsBuilder = null
+            Action<PrimitivesOptions>? optionsBuilder = null
         )
         {
-            EventBusOptions options = new();
+            PrimitivesOptions options = new(services);
 
-            optionsBuilder ??= options => options.AddDefaultBuses();
-
-            optionsBuilder(options);
-
-            if (options.Assemblies.Length == 0)
-            {
-                throw new InvalidOperationException("At least one assembly must be provided.");
-            }
-
-            if (options.Services.Count == 0)
-            {
-                options.AddDefaultBuses();
-            }
+            optionsBuilder?.Invoke(options);
+            options.AddDefaultBuses();
 
             services.AddMediatR(option =>
             {
                 option.AutoRegisterRequestProcessors = true;
                 option.RegisterServicesFromAssemblies(options.Assemblies);
+                if (options.AutoCommitAfterCommandHandled)
+                {
+                    option.AddOpenRequestPostProcessor(typeof(UnitOfWorkPostProcessor<,>));
+                }
             });
-            services.TryAddEnumerable(options.Services);
-
-            return services;
-        }
-
-        public static IServiceCollection AddInternalUnitOfWork<TDbContext>(
-            this IServiceCollection services
-        )
-            where TDbContext : DbContext
-        {
-            services.TryAddScoped<IUnitOfWork, DefaultUnitOfWork<TDbContext>>();
-
-            return services;
-        }
-
-        public static IServiceCollection AddInternalUnitOfWork<TWriteDbContext, TQueryDbContext>(
-            this IServiceCollection services
-        )
-            where TWriteDbContext : DbContext
-            where TQueryDbContext : DbContext
-        {
-            services.TryAddScoped<
-                IUnitOfWork,
-                DefaultUnitOfWork<TWriteDbContext, TQueryDbContext>
-            >();
 
             return services;
         }

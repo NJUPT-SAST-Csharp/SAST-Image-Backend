@@ -61,12 +61,9 @@ namespace FoxResult.Extensions
             return task.ContinueWith(t => From(_, t.Result));
         }
 
-        public static async Task<IResult> FromTask<T>(
-            this IResultExtensions _,
-            Task<Result<T>> task
-        )
+        public static Task<IResult> FromTask<T>(this IResultExtensions _, Task<Result<T>> task)
         {
-            return await task.ContinueWith(t => From(_, t.Result));
+            return task.ContinueWith(t => From(_, t.Result));
         }
 
         public static IResult Custom<T>(this IResultExtensions _, T value, int code)

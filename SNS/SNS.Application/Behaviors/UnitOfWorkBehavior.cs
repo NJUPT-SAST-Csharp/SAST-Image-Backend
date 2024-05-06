@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Primitives;
 
-namespace Square.Application.Behaviors;
+namespace SNS.Application.Behaviors;
 
 public sealed class UnitOfWorkBehavior<TCommand, TResponse>(
     IUnitOfWork unitOfWork,
