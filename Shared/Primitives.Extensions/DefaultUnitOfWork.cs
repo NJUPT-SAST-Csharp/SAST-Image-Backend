@@ -30,8 +30,9 @@ namespace Primitives.Extensions
             );
 
             isTransactionStarted = true;
+            int transactionId = Random.Shared.Next();
 
-            UnitOfWorkLogger.LogBeginTransaction(_logger);
+            UnitOfWorkLogger.LogBeginTransaction(_logger, transactionId);
 
             var domainEntities = _context
                 .ChangeTracker.Entries<IDomainEventContainer>()
@@ -57,7 +58,7 @@ namespace Primitives.Extensions
             // Commit the transaction
             await transaction.CommitAsync(cancellationToken);
 
-            UnitOfWorkLogger.LogEndTransaction(_logger);
+            UnitOfWorkLogger.LogEndTransaction(_logger, transactionId);
 
             isTransactionStarted = false;
         }
@@ -91,8 +92,9 @@ namespace Primitives.Extensions
             );
 
             isTransactionStarted = true;
+            int transactionId = Random.Shared.Next();
 
-            UnitOfWorkLogger.LogBeginTransaction(_logger);
+            UnitOfWorkLogger.LogBeginTransaction(_logger, transactionId);
 
             var domainEntities = _writeContext
                 .ChangeTracker.Entries<IDomainEventContainer>()
@@ -119,7 +121,7 @@ namespace Primitives.Extensions
             // Commit the transaction
             await transaction.CommitAsync(cancellationToken);
 
-            UnitOfWorkLogger.LogEndTransaction(_logger);
+            UnitOfWorkLogger.LogEndTransaction(_logger, transactionId);
 
             isTransactionStarted = false;
         }
@@ -127,10 +129,18 @@ namespace Primitives.Extensions
 
     internal static partial class UnitOfWorkLogger
     {
-        [LoggerMessage(LogLevel.Information, "Begin transaction.")]
-        public static partial void LogBeginTransaction(ILogger logger);
+        [LoggerMessage(
+            LogLevel.Information,
+            "[{Id}] Begin transaction.",
+            EventName = "TransactionBegun"
+        )]
+        public static partial void LogBeginTransaction(ILogger logger, int id);
 
-        [LoggerMessage(LogLevel.Information, "End transaction.")]
-        public static partial void LogEndTransaction(ILogger logger);
+        [LoggerMessage(
+            LogLevel.Information,
+            "[{Id}] End transaction.",
+            EventName = "TransactionEnded"
+        )]
+        public static partial void LogEndTransaction(ILogger logger, int id);
     }
 }
