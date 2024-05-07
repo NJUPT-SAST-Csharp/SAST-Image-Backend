@@ -22,19 +22,18 @@ namespace Storage.Clients
 
         public Task<Uri> CompressImageAsync(
             string key,
+            bool overwrite = false,
             CancellationToken cancellationToken = default
         )
         {
-            var builder = new StringBuilder(128);
-
-            var index = key.LastIndexOf('.');
-
-            var newKey = builder
-                .Append(key)
-                .Remove(index, builder.Length - index)
-                .Append("_thumbnail")
-                .Append(".webp")
-                .ToString();
+            string newKey;
+            if (overwrite)
+                newKey = Path.ChangeExtension(key, ".webp");
+            else
+                newKey = Path.Combine(
+                    Path.GetDirectoryName(key)!,
+                    Path.GetFileNameWithoutExtension(key) + "_compressed.webp"
+                );
 
             var targetFileName = Convert.ToBase64String(Encoding.UTF8.GetBytes(newKey));
             var targetBucketName = Convert.ToBase64String(
@@ -49,7 +48,15 @@ namespace Storage.Clients
                     Process = $"{style}|sys/saveas,o_{targetFileName},b_{targetBucketName}"
                 };
 
-            _ = Task.Run(() => _client.ProcessObject(request), cancellationToken);
+            _ = Task.Run(
+                () =>
+                {
+                    _client.ProcessObject(request);
+                    if (overwrite)
+                        _client.DeleteObject(_options.BucketName, key);
+                },
+                cancellationToken
+            );
 
             var url = _options.GetUrl(newKey);
 

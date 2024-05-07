@@ -52,6 +52,7 @@ namespace Square.Infrastructure.Persistence.Storages
 
             var compressedImageUrl = await _processor.CompressImageAsync(
                 mainKey,
+                false,
                 cancellationToken
             );
 

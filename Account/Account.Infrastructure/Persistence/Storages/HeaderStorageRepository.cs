@@ -23,7 +23,9 @@ namespace Account.Infrastructure.Persistence.Storages
 
             var key = $"headers/{id}.{extension}";
 
-            var url = await _client.UploadImageAsync(image, key, cancellationToken);
+            await _client.UploadImageAsync(image, key, cancellationToken);
+
+            Uri url = await _processor.CompressImageAsync(key, true, cancellationToken);
 
             return url;
         }

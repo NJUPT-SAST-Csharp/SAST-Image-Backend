@@ -1,4 +1,6 @@
+using Primitives;
 using SNS.Infrastructure.Configurations;
+using SNS.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,9 +9,17 @@ builder.Logging.ConfigureLogger();
 // Add services to the container.
 builder.Services.AddControllers();
 
-builder.Services.ConfigureMediator();
+builder.Services.AddPrimitives(options =>
+{
+    options.AddUnitOfWorkWithDbContext<SNSDbContext>();
+    options.AddResolversFromAssemblies(
+        SNS.Application.AssemblyReference.Assembly,
+        SNS.Domain.AssemblyReference.Assembly
+    );
+    options.AutoCommitAfterCommandHandled = true;
+});
 builder.Services.ConfigureEventBus(builder.Configuration);
-builder.Services.ConfigurePersistence(builder.Configuration.GetConnectionString("SNSDb")!);
+builder.Services.ConfigurePersistence(builder.Configuration);
 builder.Services.ConfigureAuth(builder.Configuration);
 
 if (builder.Environment.IsDevelopment())

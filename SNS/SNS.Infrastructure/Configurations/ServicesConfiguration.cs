@@ -9,16 +9,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Npgsql;
 using Primitives;
-using Primitives.Command;
-using Primitives.DomainEvent;
-using Primitives.Query;
 using Shared.Primitives.DomainEvent;
 using SNS.Application.GetFollowCount;
 using SNS.Application.GetFollowers;
 using SNS.Application.GetFollowing;
 using SNS.Domain.Bookmarks;
 using SNS.Domain.Follows;
-using SNS.Infrastructure.EventBus;
 using SNS.Infrastructure.Managers;
 using SNS.Infrastructure.Persistence;
 using SNS.Infrastructure.Persistence.TypeConverters;
@@ -38,9 +34,11 @@ namespace SNS.Infrastructure.Configurations
 
         public static IServiceCollection ConfigurePersistence(
             this IServiceCollection services,
-            string connectionString
+            IConfiguration configuration
         )
         {
+            string connectionString = configuration.GetConnectionString("SNSDb")!;
+
             services.AddDbContext<SNSDbContext>(
                 options => options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention()
             );
@@ -63,22 +61,6 @@ namespace SNS.Infrastructure.Configurations
 
             services.AddSingleton<IDomainEventContainer, DomainEventContainer>();
 
-            return services;
-        }
-
-        public static IServiceCollection ConfigureMediator(this IServiceCollection services)
-        {
-            services.AddScoped<IQueryRequestSender, InternalEventBus>();
-            services.AddScoped<ICommandRequestSender, InternalEventBus>();
-            services.AddScoped<IDomainEventPublisher, InternalEventBus>();
-
-            services.AddMediatR(config =>
-            {
-                config.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>), ServiceLifetime.Scoped);
-
-                config.RegisterServicesFromAssembly(Application.AssemblyReference.Assembly);
-                config.RegisterServicesFromAssembly(Domain.AssemblyReference.Assembly);
-            });
             return services;
         }
 

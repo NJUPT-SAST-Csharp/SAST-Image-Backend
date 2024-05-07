@@ -4,6 +4,7 @@
     {
         public Task<Uri> CompressImageAsync(
             string key,
+            bool overwrite = false,
             CancellationToken cancellationToken = default
         );
 
