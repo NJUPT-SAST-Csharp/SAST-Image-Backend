@@ -2,12 +2,12 @@
 {
     public interface IProcessClient
     {
-        public Task<Uri> ProcessImageAsync(
+        public Task<Uri> CompressImageAsync(
             string key,
             CancellationToken cancellationToken = default
         );
 
-        public Task<string> GetExtensionNameAsync(
+        public ValueTask<string> GetExtensionNameAsync(
             Stream file,
             CancellationToken cancellationToken = default
         );

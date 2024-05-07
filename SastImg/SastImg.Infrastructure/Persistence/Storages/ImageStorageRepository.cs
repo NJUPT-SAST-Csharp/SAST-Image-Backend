@@ -41,7 +41,7 @@ namespace SastImg.Infrastructure.Persistence.Storages
 
             var url = await _client.UploadImageAsync(image, key, cancellationToken);
 
-            var compressedUrl = await _processor.ProcessImageAsync(key, cancellationToken);
+            var compressedUrl = await _processor.CompressImageAsync(key, cancellationToken);
 
             return (url, compressedUrl);
         }

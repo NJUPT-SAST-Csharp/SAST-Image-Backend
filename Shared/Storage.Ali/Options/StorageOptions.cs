@@ -6,8 +6,6 @@ namespace Storage.Options
     {
         public const string Position = "Storage";
 
-        private readonly StringBuilder _builder = new(128);
-
         public string Endpoint { get; set; }
         public string AccessKeyId { get; set; }
         public string AccessKeySecret { get; set; }
@@ -15,11 +13,9 @@ namespace Storage.Options
 
         public string GetUrl(string key)
         {
-            _builder.Clear();
-
             int headerIndex = Endpoint.IndexOf('/') + 2;
 
-            return _builder
+            return new StringBuilder(128)
                 .Append(Endpoint, 0, headerIndex)
                 .Append(BucketName)
                 .Append('.')

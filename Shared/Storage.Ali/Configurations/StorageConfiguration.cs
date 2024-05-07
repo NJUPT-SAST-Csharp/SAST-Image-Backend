@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.ObjectPool;
 using Storage.Clients;
 using Storage.Options;
 
@@ -13,10 +12,6 @@ namespace Shared.Storage.Configurations
             StorageOptions options
         )
         {
-            services.TryAddSingleton(
-                new DefaultObjectPoolProvider().CreateStringBuilderPool(128, 512)
-            );
-
             services.TryAddSingleton(options);
             services.TryAddSingleton<IProcessClient, ProcessClient>();
             services.TryAddSingleton<IStorageClient, StorageClient>();
@@ -30,10 +25,6 @@ namespace Shared.Storage.Configurations
         {
             StorageOptions options = new();
             storageOptionsBuilder(options);
-
-            services.TryAddSingleton(
-                new DefaultObjectPoolProvider().CreateStringBuilderPool(128, 512)
-            );
 
             services.TryAddSingleton(options);
             services.TryAddSingleton<IProcessClient, ProcessClient>();

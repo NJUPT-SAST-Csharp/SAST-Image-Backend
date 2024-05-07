@@ -1,17 +1,13 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.ObjectPool;
 using Square.Application.ColumnServices.Models;
 using Square.Application.TopicServices;
 using Storage.Clients;
 
 namespace Square.Infrastructure.Persistence.Storages
 {
-    internal class TopicImageStorage(
-        IStorageClient storage,
-        IProcessClient processor,
-        ObjectPool<StringBuilder> builderPool
-    ) : IColumnImageStorage
+    internal class TopicImageStorage(IStorageClient storage, IProcessClient processor)
+        : IColumnImageStorage
     {
         private readonly IStorageClient _storage = storage;
         private readonly IProcessClient _processor = processor;
@@ -42,7 +38,7 @@ namespace Square.Infrastructure.Persistence.Storages
 
             var extension = await _processor.GetExtensionNameAsync(image, cancellationToken);
 
-            var builder = builderPool.Get();
+            var builder = new StringBuilder(128);
 
             builder
                 .Append("images")
@@ -55,11 +51,12 @@ namespace Square.Infrastructure.Persistence.Storages
 
             string mainKey = builder.ToString();
 
-            builderPool.Return(builder);
-
             var imageUrl = await _storage.UploadImageAsync(image, mainKey, cancellationToken);
 
-            var compressedImageUrl = await _processor.ProcessImageAsync(mainKey, cancellationToken);
+            var compressedImageUrl = await _processor.CompressImageAsync(
+                mainKey,
+                cancellationToken
+            );
 
             return new(imageUrl, compressedImageUrl);
         }
