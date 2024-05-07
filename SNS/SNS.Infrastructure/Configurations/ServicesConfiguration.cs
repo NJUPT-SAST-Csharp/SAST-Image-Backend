@@ -23,7 +23,6 @@ using SNS.Infrastructure.Managers;
 using SNS.Infrastructure.Persistence;
 using SNS.Infrastructure.Persistence.TypeConverters;
 using SNS.Infrastructure.Query;
-using Square.Application.Behaviors;
 
 namespace SNS.Infrastructure.Configurations
 {

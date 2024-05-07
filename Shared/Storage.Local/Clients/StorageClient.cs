@@ -1,7 +1,6 @@
-﻿using Storage.Clients;
-using Storage.Options;
+﻿using Storage.Options;
 
-namespace Storage.Local.Clients
+namespace Storage.Clients
 {
     internal sealed class StorageClient(StorageOptions options) : IStorageClient
     {

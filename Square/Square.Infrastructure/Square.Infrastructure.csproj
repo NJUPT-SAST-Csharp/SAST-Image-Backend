@@ -25,6 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Exceptions\Exceptions.csproj" />
     <ProjectReference Include="..\..\Shared\Primitives.Extensions\Primitives.Extensions.csproj" />
+    <ProjectReference Include="..\..\Shared\Storage.Local\Storage.Local.csproj" />
     <ProjectReference Include="..\..\Shared\Storage\Storage.csproj" />
     <ProjectReference Include="..\Square.Application\Square.Application.csproj" />
     <ProjectReference Include="..\Square.Domain\Square.Domain.csproj" />

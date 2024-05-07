@@ -38,18 +38,15 @@ namespace Square.Infrastructure.Persistence.Storages
 
             var extension = await _processor.GetExtensionNameAsync(image, cancellationToken);
 
-            var builder = new StringBuilder(128);
-
-            builder
+            string mainKey = new StringBuilder(64)
                 .Append("images")
                 .Append('/')
                 .Append(DateTime.UtcNow.ToString("yyyy/MM/dd"))
                 .Append('/')
                 .Append(Guid.NewGuid().ToString("N"))
                 .Append('.')
-                .Append(extension);
-
-            string mainKey = builder.ToString();
+                .Append(extension)
+                .ToString();
 
             var imageUrl = await _storage.UploadImageAsync(image, mainKey, cancellationToken);
 

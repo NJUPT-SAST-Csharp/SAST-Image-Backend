@@ -38,6 +38,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Exceptions\Exceptions.csproj" />
     <ProjectReference Include="..\..\Shared\Primitives.Extensions\Primitives.Extensions.csproj" />
+    <ProjectReference Include="..\..\Shared\Storage.Local\Storage.Local.csproj" />
     <ProjectReference Include="..\..\Shared\Storage\Storage.csproj" />
     <ProjectReference Include="..\SastImg.Application\SastImg.Application.csproj" />
 	<ProjectReference Include="..\SastImg.Domain\SastImg.Domain.csproj" />
