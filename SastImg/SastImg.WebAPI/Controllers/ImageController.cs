@@ -6,6 +6,7 @@ using Primitives.Command;
 using Primitives.Query;
 using SastImg.Application.ImageServices.AddImage;
 using SastImg.Application.ImageServices.GetImage;
+using SastImg.Application.ImageServices.GetImageFile;
 using SastImg.Application.ImageServices.GetImages;
 using SastImg.Application.ImageServices.GetRemovedImages;
 using SastImg.Application.ImageServices.GetUserImages;
@@ -209,7 +210,6 @@ namespace SastImg.WebAPI.Controllers
         /// <response code="201">The image is added successfully</response>
         [Authorize]
         [HttpPost("album/{albumId}/add")]
-        [Produces("application/json", "multipart/form-data")]
         [ProducesResponseType<ImageInfoDto>(StatusCodes.Status201Created)]
         public async Task<Created<ImageInfoDto>> AddImage(
             [FromForm] AddImageRequest request,
@@ -227,6 +227,37 @@ namespace SastImg.WebAPI.Controllers
             );
             var response = await _commandSender.CommandAsync(command, cancellationToken);
             return Responses.Created(response);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="imageId"></param>
+        /// <param name="cancellationToken"></param>
+        /// <param name="thumbnail"></param>
+        /// <returns></returns>
+        [HttpGet("image/{imageId}")]
+        [Produces("image/png", "image/jpeg", "image/gif", "image/webp", "image/svg+xml")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IResult> GetImageFile(
+            [FromRoute] long imageId,
+            [FromQuery] bool thumbnail = false,
+            CancellationToken cancellationToken = default
+        )
+        {
+            // file will be disposes automatically after return;
+            var file = await _querySender.QueryAsync(
+                new GetImageFileQuery(imageId, thumbnail, User),
+                cancellationToken
+            );
+
+            if (file is null)
+            {
+                return Results.NotFound();
+            }
+
+            return Results.File(file, "image/*");
         }
     }
 }

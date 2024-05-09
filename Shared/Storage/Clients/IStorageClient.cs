@@ -1,16 +1,20 @@
-﻿namespace Storage.Clients
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Storage.Clients
 {
     public interface IStorageClient
     {
         public Task<Uri> UploadImageAsync(
-            Stream file,
+            IFormFile file,
             string key,
             CancellationToken cancellationToken = default
         );
 
         public Task DeleteImagesAsync(
-            IEnumerable<string> keys,
+            IEnumerable<Uri> paths,
             CancellationToken cancellationToken = default
         );
+
+        public Task<Stream?> GetImageAsync(Uri url, CancellationToken cancellationToken = default);
     }
 }

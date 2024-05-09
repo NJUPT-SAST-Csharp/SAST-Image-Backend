@@ -17,14 +17,7 @@ namespace Square.Infrastructure.Persistence.Storages
             CancellationToken cancellationToken = default
         )
         {
-            var keys = images.SelectMany(
-                i =>
-                    new[]
-                    {
-                        i.Url.AbsolutePath.TrimStart('/'),
-                        i.ThumbnailUrl.AbsolutePath.TrimStart('/')
-                    }
-            );
+            var keys = images.SelectMany(i => new[] { i.Url, i.ThumbnailUrl });
 
             return _storage.DeleteImagesAsync(keys, cancellationToken);
         }
@@ -34,9 +27,7 @@ namespace Square.Infrastructure.Persistence.Storages
             CancellationToken cancellationToken = default
         )
         {
-            await using var image = file.OpenReadStream();
-
-            var extension = await _processor.GetExtensionNameAsync(image, cancellationToken);
+            var extension = await _processor.GetExtensionNameAsync(file, cancellationToken);
 
             string mainKey = new StringBuilder(64)
                 .Append("images")
@@ -48,7 +39,7 @@ namespace Square.Infrastructure.Persistence.Storages
                 .Append(extension)
                 .ToString();
 
-            var imageUrl = await _storage.UploadImageAsync(image, mainKey, cancellationToken);
+            var imageUrl = await _storage.UploadImageAsync(file, mainKey, cancellationToken);
 
             var compressedImageUrl = await _processor.CompressImageAsync(
                 mainKey,

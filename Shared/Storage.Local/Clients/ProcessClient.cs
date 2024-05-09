@@ -1,16 +1,21 @@
-﻿using SkiaSharp;
+﻿using Microsoft.AspNetCore.Http;
+using SkiaSharp;
+using Storage.Options;
 
 namespace Storage.Clients
 {
-    internal sealed class ProcessClient : IProcessClient
+    internal sealed class ProcessClient(StorageOptions options) : IProcessClient
     {
+        private readonly StorageOptions _options = options;
+
         public ValueTask<string> GetExtensionNameAsync(
-            Stream file,
+            IFormFile file,
             CancellationToken cancellationToken = default
         )
         {
-            using SKCodec code = SKCodec.Create(file);
-            return ValueTask.FromResult(code.EncodedFormat.ToString());
+            using var stream = file.OpenReadStream();
+            using SKCodec code = SKCodec.Create(stream);
+            return ValueTask.FromResult(code.EncodedFormat.ToString().ToLowerInvariant());
         }
 
         public async Task<Uri> CompressImageAsync(
@@ -19,27 +24,29 @@ namespace Storage.Clients
             CancellationToken cancellationToken = default
         )
         {
-            if (File.Exists(key) == false)
-                throw new FileNotFoundException(null, key);
+            string filename = _options.GetPath(key);
+
+            if (File.Exists(filename) == false)
+                throw new FileNotFoundException(null, filename);
 
             string target;
 
             if (overwrite)
-                target = Path.ChangeExtension(key, ".webp");
+                target = Path.ChangeExtension(filename, ".webp");
             else
                 target = Path.Combine(
-                    Path.GetDirectoryName(key)!,
-                    Path.GetFileNameWithoutExtension(key) + "_compressed.webp"
+                    Path.GetDirectoryName(filename)!,
+                    Path.GetFileNameWithoutExtension(filename) + "_compressed.webp"
                 );
 
-            using var image = SKBitmap.Decode(key);
+            using var image = SKBitmap.Decode(filename);
             using var data = image.PeekPixels();
             using var encoded = data.Encode(SKEncodedImageFormat.Webp, 50);
             await using var targetFile = File.OpenWrite(target);
             encoded.SaveTo(targetFile);
 
             if (overwrite)
-                File.Delete(key);
+                File.Delete(filename);
 
             return new Uri(target);
         }

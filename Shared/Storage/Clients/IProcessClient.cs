@@ -1,4 +1,6 @@
-﻿namespace Storage.Clients
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Storage.Clients
 {
     public interface IProcessClient
     {
@@ -9,7 +11,7 @@
         );
 
         public ValueTask<string> GetExtensionNameAsync(
-            Stream file,
+            IFormFile file,
             CancellationToken cancellationToken = default
         );
     }

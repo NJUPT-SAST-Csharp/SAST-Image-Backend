@@ -30,21 +30,13 @@ namespace SastImg.Application.ImageServices.AddImage
                 throw new NoPermissionException();
             }
 
-            var (url, thumbnailUrl) = await _client.UploadImageAsync(
-                request.ImageFile,
-                cancellationToken
-            );
+            var url = await _client.UploadImageAsync(request.ImageFile, cancellationToken);
 
-            album.AddImage(
-                request.Title,
-                request.Description,
-                new(url, thumbnailUrl),
-                request.Tags
-            );
+            var imageId = album.AddImage(request.Title, request.Description, url, request.Tags);
 
             await _unitOfWork.CommitChangesAsync(cancellationToken);
 
-            return new ImageInfoDto(url);
+            return new ImageInfoDto(imageId);
         }
     }
 }

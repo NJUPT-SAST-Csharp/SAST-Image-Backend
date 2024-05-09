@@ -170,11 +170,14 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
             var image = new Image(title, description, url, tags);
 
+            _images.Add(image);
+
             _updatedAt = DateTime.UtcNow;
             if (_cover.IsLatestImage)
             {
                 _cover = new(url, true);
             }
+
             image.AddDomainEvent(new ImageAddedDomainEvent(Id, _authorId, image.Id));
             return image.Id;
         }

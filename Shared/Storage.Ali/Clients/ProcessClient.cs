@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Aliyun.OSS;
+using Microsoft.AspNetCore.Http;
 using SixLabors.ImageSharp;
 using Storage.Options;
 
@@ -12,11 +13,12 @@ namespace Storage.Clients
         private readonly StorageOptions _options = options;
 
         public async ValueTask<string> GetExtensionNameAsync(
-            Stream file,
+            IFormFile file,
             CancellationToken cancellationToken = default
         )
         {
-            var format = await Image.DetectFormatAsync(file, cancellationToken);
+            await using var stream = file.OpenReadStream();
+            var format = await Image.DetectFormatAsync(stream, cancellationToken);
             return format.FileExtensions.First();
         }
 

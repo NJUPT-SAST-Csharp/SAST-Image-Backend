@@ -17,13 +17,11 @@ namespace Account.Infrastructure.Persistence.Storages
             CancellationToken cancellationToken = default
         )
         {
-            await using var image = file.OpenReadStream();
-
-            string extension = await _processor.GetExtensionNameAsync(image, cancellationToken);
+            string extension = await _processor.GetExtensionNameAsync(file, cancellationToken);
 
             var key = $"headers/{id}.{extension}";
 
-            await _client.UploadImageAsync(image, key, cancellationToken);
+            await _client.UploadImageAsync(file, key, cancellationToken);
 
             Uri url = await _processor.CompressImageAsync(key, true, cancellationToken);
 

@@ -17,6 +17,6 @@
             }
         }
 
-        public string GetUrl(string key) => Path.Combine(_folderPath, key);
+        public string GetPath(string key) => Path.Combine(_folderPath, key);
     }
 }

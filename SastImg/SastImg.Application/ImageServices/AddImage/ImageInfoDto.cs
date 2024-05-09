@@ -1,7 +1,9 @@
-﻿namespace SastImg.Application.ImageServices.AddImage
+﻿using SastImg.Domain.AlbumAggregate.ImageEntity;
+
+namespace SastImg.Application.ImageServices.AddImage
 {
-    public sealed class ImageInfoDto(Uri url)
+    public sealed class ImageInfoDto(ImageId id)
     {
-        public Uri Url { get; init; } = url;
+        public long Id { get; } = id.Value;
     }
 }

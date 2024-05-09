@@ -1,11 +1,18 @@
 ﻿using Microsoft.AspNetCore.Http;
+using SastImg.Domain.AlbumAggregate.ImageEntity;
 
 namespace SastImg.Application.ImageServices.AddImage
 {
     public interface IImageStorageRepository
     {
-        public Task<(Uri, Uri)> UploadImageAsync(
+        public Task<ImageUrl> UploadImageAsync(
             IFormFile file,
+            CancellationToken cancellationToken = default
+        );
+
+        public Task<Stream?> GetImageAsync(
+            ImageId imageId,
+            bool isThumbnail = false,
             CancellationToken cancellationToken = default
         );
     }

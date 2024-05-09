@@ -6,29 +6,29 @@ namespace SastImg.WebAPI.Requests.ImageRequest
     /// <summary>
     /// TODO: complete
     /// </summary>
-    public readonly struct AddImageRequest
+    public sealed class AddImageRequest
     {
         /// <summary>
-        /// TODO: complete
+        /// Image file.
         /// </summary>
         [FileValidator(50)]
-        public readonly IFormFile Image { get; init; }
+        public IFormFile Image { get; init; }
 
         /// <summary>
-        /// TODO: complete
+        /// Title of the image.
         /// </summary>
         [MaxLength(30)]
-        public readonly string Title { get; init; }
+        public string Title { get; init; }
 
         /// <summary>
-        /// TODO: complete
+        /// Description of the image.
         /// </summary>
         [MaxLength(100)]
-        public readonly string Description { get; init; }
+        public string Description { get; init; }
 
         /// <summary>
-        /// TODO: complete
+        /// Tags used to categorize the image.
         /// </summary>
-        public readonly long[] Tags { get; init; }
+        public long[] Tags { get; init; }
     }
 }
