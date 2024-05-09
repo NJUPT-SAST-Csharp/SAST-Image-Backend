@@ -10,5 +10,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
         public static bool operator ==(Cover cover, ImageUrl image) => image.Thumbnail == cover.Url;
 
         public static bool operator !=(Cover cover, ImageUrl image) => !(cover == image);
+
+        public static readonly Cover Empty = new((Uri?)null, true);
     };
 }

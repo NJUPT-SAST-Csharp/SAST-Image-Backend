@@ -1,4 +1,5 @@
-﻿using Auth.Authentication.Extensions;
+﻿using System.Text.Json.Serialization;
+using Auth.Authentication.Extensions;
 using Auth.Authorization.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -34,7 +35,12 @@ namespace SastImg.Infrastructure.Configurations
 
             builder.Services.ConfigureExceptionHandlers();
 
-            builder.Services.AddControllers();
+            builder
+                .Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.WriteAsString;
+                });
 
             builder.Services.ConfigureJwtAuthentication(options =>
             {

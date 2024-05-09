@@ -58,7 +58,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 
         private bool _isArchived = false;
 
-        private Cover _cover = new((Uri?)null, true);
+        private Cover _cover = Cover.Empty;
 
         private DateTime _createdAt = DateTime.UtcNow;
 

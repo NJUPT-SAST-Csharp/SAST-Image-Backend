@@ -11,7 +11,7 @@ namespace SastImg.Infrastructure.Configurations
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(options => options.EnablePersistAuthorization());
             }
 
             app.UseExceptionHandler(op => { });
