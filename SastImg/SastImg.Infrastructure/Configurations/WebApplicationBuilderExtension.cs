@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Primitives;
+using SastImg.Infrastructure.Persistence;
 
 namespace SastImg.Infrastructure.Configurations
 {
@@ -27,9 +29,7 @@ namespace SastImg.Infrastructure.Configurations
 
             builder.Services.ConfigureCache(configuration.GetConnectionString("DistributedCache")!);
 
-            builder.Services.ConfigureMediator();
-
-            builder.Services.ConfigureEventBus(configuration);
+            builder.Services.ConfigureMessageQueue(configuration);
 
             builder.Services.ConfigureStorage(configuration);
 
@@ -41,6 +41,13 @@ namespace SastImg.Infrastructure.Configurations
                 {
                     options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.WriteAsString;
                 });
+
+            builder.Services.AddPrimitives(
+                options =>
+                    options
+                        .AddUnitOfWorkWithDbContext<SastImgDbContext>()
+                        .AddResolverFromAssembly(Application.AssemblyReference.Assembly)
+            );
 
             builder.Services.ConfigureJwtAuthentication(options =>
             {

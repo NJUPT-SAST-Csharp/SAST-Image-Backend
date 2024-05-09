@@ -30,7 +30,7 @@ namespace SastImg.Infrastructure.Persistence.Storages
             const string sql =
                 @"
                 SELECT i.url AS Original,
-                i.thumbnail AS Thumbnail
+                i.thumbnail_url AS Thumbnail
                 FROM images AS i
                 WHERE id = @Id";
 

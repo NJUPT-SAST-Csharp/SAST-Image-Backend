@@ -107,7 +107,7 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
                         url =>
                         {
                             url.Property(u => u.Original).HasColumnName("url");
-                            url.Property(u => u.Thumbnail).HasColumnName("thumbnail");
+                            url.Property(u => u.Thumbnail).HasColumnName("thumbnail_url");
                         }
                     );
                 }

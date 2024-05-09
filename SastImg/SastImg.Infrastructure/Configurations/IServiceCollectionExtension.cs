@@ -11,9 +11,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi.Models;
 using Npgsql;
 using Primitives;
-using Primitives.Command;
-using Primitives.DomainEvent;
-using Primitives.Query;
 using Primitives.Rule;
 using SastImg.Application.AlbumServices.GetAlbums;
 using SastImg.Application.AlbumServices.GetDetailedAlbum;
@@ -32,7 +29,6 @@ using SastImg.Domain.AlbumAggregate;
 using SastImg.Domain.Categories;
 using SastImg.Domain.TagEntity;
 using SastImg.Infrastructure.DomainRepositories;
-using SastImg.Infrastructure.Event;
 using SastImg.Infrastructure.EventBus;
 using SastImg.Infrastructure.Persistence;
 using SastImg.Infrastructure.Persistence.QueryDatabase;
@@ -121,7 +117,7 @@ namespace SastImg.Infrastructure.Configurations
             return services;
         }
 
-        public static IServiceCollection ConfigureEventBus(
+        public static IServiceCollection ConfigureMessageQueue(
             this IServiceCollection services,
             IConfiguration configuration
         )
@@ -160,19 +156,17 @@ namespace SastImg.Infrastructure.Configurations
             return services;
         }
 
-        public static IServiceCollection ConfigureMediator(this IServiceCollection services)
-        {
-            services.AddScoped<IQueryRequestSender, InternalEventBus>();
-            services.AddScoped<ICommandRequestSender, InternalEventBus>();
-            services.AddScoped<IDomainEventPublisher, InternalEventBus>();
+        //public static IServiceCollection ConfigureMediator(this IServiceCollection services)
+        //{
+        //    services.AddPrimitives(
+        //        options =>
+        //            options
+        //                .AddUnitOfWorkWithDbContext<SastImgDbContext>()
+        //                .AddResolverFromAssembly(Application.AssemblyReference.Assembly)
+        //    );
 
-            services.AddMediatR(config =>
-            {
-                config.RegisterServicesFromAssembly(Application.AssemblyReference.Assembly);
-            });
-
-            return services;
-        }
+        //    return services;
+        //}
 
         public static IServiceCollection ConfigureSwagger(this IServiceCollection services)
         {
