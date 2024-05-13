@@ -9,6 +9,6 @@ namespace SastImg.Application.AlbumServices.GetRemovedAlbums
 
         public long AlbumId { get; init; }
         public string Title { get; init; }
-        public Uri CoverUri { get; init; }
+        public long? CoverId { get; init; }
     }
 }

@@ -11,6 +11,6 @@ namespace SastImg.Application.AlbumServices.GetAlbums
         public long AuthorId { get; init; }
         public long CategoryId { get; init; }
         public string Title { get; init; }
-        public Uri CoverUrl { get; init; }
+        public long? CoverId { get; init; }
     }
 }

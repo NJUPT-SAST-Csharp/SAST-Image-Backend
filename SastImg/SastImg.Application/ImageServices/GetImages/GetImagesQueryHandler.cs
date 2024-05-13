@@ -26,6 +26,7 @@ namespace SastImg.Application.ImageServices.GetImages
                 {
                     return _repository.GetImagesByUserAsync(
                         request.AlbumId,
+                        request.Requester.Id,
                         request.Page,
                         cancellationToken
                     );

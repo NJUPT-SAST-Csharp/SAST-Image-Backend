@@ -56,7 +56,13 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
                 "_cover",
                 cover =>
                 {
-                    cover.Property(c => c.Url).HasColumnName("cover_url");
+                    cover
+                        .Property(c => c.ImageId)
+                        .HasColumnName("cover_id")
+                        .HasConversion<long?>(
+                            id => id.HasValue ? id.Value.Value : null,
+                            id => id.HasValue ? new(id.Value) : null
+                        );
                     cover.Property(c => c.IsLatestImage).HasColumnName("cover_is_latest_image");
                 }
             );
@@ -74,8 +80,8 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
                     image.ToTable("images");
                     image.WithOwner().HasForeignKey("album_id");
 
-                    image.Ignore("UploadtedTime");
-                    image.Ignore("ImageUrl");
+                    image.Ignore("UploadedTime");
+                    image.Ignore("Url");
 
                     image
                         .Property<ImageTitle>("_title")

@@ -2,15 +2,16 @@
 
 namespace SastImg.Domain.AlbumAggregate.AlbumEntity
 {
-    public sealed record class Cover(Uri? Url, bool IsLatestImage)
+    public sealed record class Cover(ImageId? ImageId, bool IsLatestImage)
     {
-        public Cover(ImageUrl? url, bool isLatestImage)
-            : this(url?.Thumbnail, isLatestImage) { }
+        public static bool operator ==(Cover cover, Image image) => image.Id == cover.ImageId;
 
-        public static bool operator ==(Cover cover, ImageUrl image) => image.Thumbnail == cover.Url;
+        public static bool operator ==(Image image, Cover cover) => image.Id == cover.ImageId;
 
-        public static bool operator !=(Cover cover, ImageUrl image) => !(cover == image);
+        public static bool operator !=(Cover cover, Image image) => !(cover == image);
 
-        public static readonly Cover Empty = new((Uri?)null, true);
-    };
+        public static bool operator !=(Image image, Cover cover) => !(image == cover);
+
+        public static readonly Cover Empty = new(null, true);
+    }
 }

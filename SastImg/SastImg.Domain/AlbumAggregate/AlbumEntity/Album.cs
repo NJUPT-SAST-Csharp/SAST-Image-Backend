@@ -126,8 +126,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
                 .OrderByDescending(i => i.UploadedTime)
                 .FirstOrDefault();
 
-            _cover = new(image?.Url, true);
-            // TODO: Raise domain event
+            _cover = new(image?.Id, true);
         }
 
         public void SetCoverAsContainedImage(ImageId imageId)
@@ -135,8 +134,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             CheckRule(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
 
             var image = _images.FirstOrDefault(image => image.Id == imageId);
-            _cover = new(image?.Url, false);
-            // TODO: Raise domain event
+            _cover = new(image?.Id, false);
         }
 
         public void UpdateAlbumInfo(
@@ -175,7 +173,7 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             _updatedAt = DateTime.UtcNow;
             if (_cover.IsLatestImage)
             {
-                _cover = new(url, true);
+                _cover = _cover with { ImageId = image.Id };
             }
 
             image.AddDomainEvent(new ImageAddedDomainEvent(Id, _authorId, image.Id));
@@ -190,9 +188,9 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
             if (image is not null)
             {
                 image.Remove();
-                if (image.Url.Thumbnail.Equals(_cover.Url))
+                if (_cover == image)
                 {
-                    _cover = _cover with { Url = null };
+                    _cover = _cover with { ImageId = null };
                 }
             }
         }

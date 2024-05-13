@@ -12,6 +12,5 @@ namespace SastImg.Application.ImageServices.GetImage
         public DateTime UploadedAt { get; init; }
         public bool IsRemoved { get; init; }
         public long[] Tags { get; init; }
-        public Uri Url { get; init; }
     }
 }

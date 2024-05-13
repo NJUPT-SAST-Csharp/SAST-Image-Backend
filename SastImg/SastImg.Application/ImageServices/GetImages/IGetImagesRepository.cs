@@ -1,4 +1,5 @@
-﻿using SastImg.Domain.AlbumAggregate.AlbumEntity;
+﻿using SastImg.Domain;
+using SastImg.Domain.AlbumAggregate.AlbumEntity;
 
 namespace SastImg.Application.ImageServices.GetImages
 {
@@ -6,6 +7,7 @@ namespace SastImg.Application.ImageServices.GetImages
     {
         public Task<IEnumerable<AlbumImageDto>> GetImagesByUserAsync(
             AlbumId albumId,
+            UserId requesterId,
             int page,
             CancellationToken cancellationToken = default
         );

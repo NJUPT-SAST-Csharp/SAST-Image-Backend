@@ -16,7 +16,7 @@ namespace SastImg.Application.AlbumServices.GetDetailedAlbum
         public Accessibility Accessibility { get; init; }
         public DateTime UpdatedAt { get; init; }
         public bool IsRemoved { get; init; }
-        public Uri CoverUri { get; init; }
+        public long? CoverId { get; init; }
         public long[] Collaborators { get; init; }
     }
 }

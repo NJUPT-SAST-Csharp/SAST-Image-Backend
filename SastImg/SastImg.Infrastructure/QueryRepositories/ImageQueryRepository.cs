@@ -39,8 +39,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "i.title AS Title, "
                 + "i.uploaded_at AS UploadedAt, "
                 + "i.is_removed as IsRemoved, "
-                + "i.tags as Tags, "
-                + "i.url as Url "
+                + "i.tags as Tags "
                 + "FROM images AS i "
                 + "INNER JOIN albums AS a "
                 + "ON i.album_id = a.id "
@@ -67,8 +66,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "i.title AS Title, "
                 + "i.uploaded_at AS UploadedAt, "
                 + "i.is_removed as IsRemoved, "
-                + "i.tags as Tags, "
-                + "i.url as Url "
+                + "i.tags as Tags "
                 + "FROM images AS i "
                 + "INNER JOIN albums AS a "
                 + "ON i.album_id = a.id "
@@ -102,8 +100,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "i.title AS Title, "
                 + "i.uploaded_at AS UploadedAt, "
                 + "i.is_removed as IsRemoved, "
-                + "i.tags as Tags, "
-                + "i.url as Url "
+                + "i.tags as Tags "
                 + "FROM images AS i "
                 + "INNER JOIN albums AS a "
                 + "ON i.album_id = a.id "
@@ -139,8 +136,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 "SELECT "
                 + "i.id AS ImageId, "
                 + "i.title AS Title, "
-                + "i.album_id AS AlbumId, "
-                + "i.thumbnail_url as Url "
+                + "i.album_id AS AlbumId "
                 + "FROM images AS i "
                 + "INNER JOIN albums AS a "
                 + "ON a.id = i.album_id "
@@ -170,8 +166,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 "SELECT "
                 + "i.id AS ImageId, "
                 + "i.title AS Title, "
-                + "i.album_id AS AlbumId, "
-                + "i.thumbnail_url as Url "
+                + "i.album_id AS AlbumId "
                 + "FROM images AS i "
                 + "INNER JOIN albums AS a "
                 + "ON a.id = i.album_id "
@@ -195,6 +190,7 @@ namespace SastImg.Infrastructure.QueryRepositories
 
         public Task<IEnumerable<AlbumImageDto>> GetImagesByUserAsync(
             AlbumId albumId,
+            UserId requesterId,
             int page,
             CancellationToken cancellationToken = default
         )
@@ -203,8 +199,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 "SELECT "
                 + "i.id AS ImageId, "
                 + "i.title AS Title, "
-                + "i.album_id AS AlbumId, "
-                + "i.thumbnail_url as Url "
+                + "i.album_id AS AlbumId "
                 + "FROM images AS i "
                 + "INNER JOIN albums AS a ON a.id = i.album_id "
                 + "WHERE a.id = @albumId "
@@ -219,6 +214,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 sql,
                 new
                 {
+                    requesterId = requesterId.Value,
                     albumId = albumId.Value,
                     take = numPerPage,
                     skip = page * numPerPage,
@@ -242,8 +238,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 "SELECT "
                 + "i.id AS ImageId, "
                 + "i.title AS Title, "
-                + "i.album_id AS AlbumId, "
-                + "i.thumbnail_url as Url "
+                + "i.album_id AS AlbumId "
                 + "FROM images AS i "
                 + "INNER JOIN albums AS a ON a.id = i.album_id "
                 + "WHERE a.id = @albumId "
@@ -277,8 +272,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 "SELECT "
                 + "i.id AS ImageId, "
                 + "i.title AS Title, "
-                + "i.album_id AS AlbumId, "
-                + "i.thumbnail_url as Url "
+                + "i.album_id AS AlbumId "
                 + "FROM images AS i "
                 + "INNER JOIN albums AS a ON a.id = i.album_id "
                 + "WHERE a.id = @albumId "
@@ -317,8 +311,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 "SELECT "
                 + "i.id AS ImageId, "
                 + "i.title AS Title, "
-                + "i.album_id AS AlbumId, "
-                + "i.thumbnail_url as Url "
+                + "i.album_id AS AlbumId "
                 + "FROM images AS i "
                 + "INNER JOIN albums AS a ON a.id = i.album_id "
                 + "WHERE a.author_id = @authorId "
@@ -342,8 +335,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 "SELECT "
                 + "i.id AS ImageId, "
                 + "i.title AS Title, "
-                + "i.album_id AS AlbumId, "
-                + "i.thumbnail_url as Url "
+                + "i.album_id AS AlbumId "
                 + "FROM images AS i "
                 + "WHERE i.album_id = @albumId "
                 + "AND i.is_removed "
@@ -366,8 +358,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 "SELECT "
                 + "i.id AS ImageId, "
                 + "i.album_id AS AlbumId, "
-                + "i.title AS Title, "
-                + "i.thumbnail_url as Url "
+                + "i.title AS Title "
                 + "FROM images AS i "
                 + "INNER JOIN albums AS a ON a.id = i.album_id "
                 + "WHERE a.author_id = @userId "
@@ -397,8 +388,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 "SELECT "
                 + "i.id AS ImageId, "
                 + "i.album_id AS AlbumId, "
-                + "i.title AS Title, "
-                + "i.thumbnail_url as Url "
+                + "i.title AS Title "
                 + "FROM images AS i "
                 + "INNER JOIN albums AS a ON a.id = i.album_id "
                 + "WHERE a.author_id = @userId "

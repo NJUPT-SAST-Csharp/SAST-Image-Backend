@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using Auth.Authentication.Extensions;
 using Auth.Authorization.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -35,10 +36,17 @@ namespace SastImg.Infrastructure.Configurations
 
             builder.Services.ConfigureExceptionHandlers();
 
+            builder.Services.ConfigureHttpJsonOptions(options =>
+            {
+                options.SerializerOptions.Converters.Add(new JsonNumberConverter());
+                options.SerializerOptions.NumberHandling = JsonNumberHandling.WriteAsString;
+            });
+
             builder
                 .Services.AddControllers()
                 .AddJsonOptions(options =>
                 {
+                    options.JsonSerializerOptions.Converters.Add(new JsonNumberConverter());
                     options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.WriteAsString;
                 });
 
@@ -55,6 +63,27 @@ namespace SastImg.Infrastructure.Configurations
                 options.Algorithms = [configuration["Authentication:Algorithm"]!];
             });
             builder.Services.AddAuthorizationBuilder().AddBasicPolicies();
+        }
+    }
+
+    file class JsonNumberConverter : JsonConverter<long>
+    {
+        public override long Read(
+            ref Utf8JsonReader reader,
+            Type typeToConvert,
+            JsonSerializerOptions options
+        )
+        {
+            long num = reader.GetInt64();
+            return num;
+        }
+
+        public override void Write(Utf8JsonWriter writer, long value, JsonSerializerOptions options)
+        {
+            if (value > 9007199254740993)
+                writer.WriteStringValue(value.ToString());
+            else
+                writer.WriteNumberValue(value);
         }
     }
 }

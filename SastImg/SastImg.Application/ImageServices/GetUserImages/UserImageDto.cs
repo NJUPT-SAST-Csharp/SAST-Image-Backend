@@ -10,6 +10,5 @@ namespace SastImg.Application.ImageServices.GetUserImages
         public long ImageId { get; init; }
         public long AlbumId { get; init; }
         public string Title { get; init; }
-        public Uri Url { get; init; }
     }
 }
