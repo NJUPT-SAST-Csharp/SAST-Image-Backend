@@ -103,7 +103,7 @@ namespace SastImg.WebAPI.Controllers
         /// <param name="cancellationToken">Cancellation token</param>
         /// <response code="200">The images</response>
         [Authorize]
-        [HttpGet("images/search")]
+        [HttpGet("images")]
         [ProducesResponseType<IEnumerable<SearchedImageDto>>(StatusCodes.Status200OK)]
         public async Task<Ok<IEnumerable<SearchedImageDto>>> SearchImages(
             [FromQuery] [MaxLength(5)] long[] tags,
