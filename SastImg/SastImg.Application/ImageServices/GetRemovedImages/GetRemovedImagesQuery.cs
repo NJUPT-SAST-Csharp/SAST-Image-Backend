@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using SastImg.Application.ImageServices.GetImages;
+using SastImg.Application.ImageServices.GetAlbumImages;
 using SastImg.Application.SeedWorks;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
 using Shared.Primitives.Query;

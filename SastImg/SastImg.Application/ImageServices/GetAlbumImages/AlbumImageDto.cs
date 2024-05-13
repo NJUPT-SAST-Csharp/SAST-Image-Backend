@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace SastImg.Application.ImageServices.GetImages
+namespace SastImg.Application.ImageServices.GetAlbumImages
 {
     public sealed class AlbumImageDto
     {

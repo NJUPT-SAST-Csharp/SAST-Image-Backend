@@ -1,4 +1,4 @@
-﻿using SastImg.Application.ImageServices.GetImages;
+﻿using SastImg.Application.ImageServices.GetAlbumImages;
 using SastImg.Domain;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
 

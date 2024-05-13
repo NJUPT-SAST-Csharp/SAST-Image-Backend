@@ -19,8 +19,8 @@ using SastImg.Application.AlbumServices.GetUserAlbums;
 using SastImg.Application.AlbumServices.SearchAlbums;
 using SastImg.Application.CategoryServices;
 using SastImg.Application.ImageServices.AddImage;
+using SastImg.Application.ImageServices.GetAlbumImages;
 using SastImg.Application.ImageServices.GetImage;
-using SastImg.Application.ImageServices.GetImages;
 using SastImg.Application.ImageServices.GetRemovedImages;
 using SastImg.Application.ImageServices.GetUserImages;
 using SastImg.Application.ImageServices.SearchImages;
@@ -79,7 +79,7 @@ namespace SastImg.Infrastructure.Configurations
             services.AddScoped<IGetRemovedAlbumsRepository, AlbumQueryRepository>();
 
             services.AddScoped<IGetUserImagesRepository, ImageQueryRepository>();
-            services.AddScoped<IGetImagesRepository, ImageQueryRepository>();
+            services.AddScoped<IGetAlbumImagesRepository, ImageQueryRepository>();
             services.AddScoped<IGetImageRepository, ImageQueryRepository>();
             services.AddScoped<ISearchImagesRepository, ImageQueryRepository>();
             services.AddScoped<IGetRemovedImagesRepository, ImageQueryRepository>();

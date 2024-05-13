@@ -1,4 +1,4 @@
-﻿using SastImg.Application.ImageServices.GetImages;
+﻿using SastImg.Application.ImageServices.GetAlbumImages;
 using Shared.Primitives.Query;
 
 namespace SastImg.Application.ImageServices.GetRemovedImages

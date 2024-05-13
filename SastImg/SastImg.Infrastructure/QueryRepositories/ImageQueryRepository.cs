@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Dapper;
+using SastImg.Application.ImageServices.GetAlbumImages;
 using SastImg.Application.ImageServices.GetImage;
-using SastImg.Application.ImageServices.GetImages;
 using SastImg.Application.ImageServices.GetRemovedImages;
 using SastImg.Application.ImageServices.GetUserImages;
 using SastImg.Application.ImageServices.SearchImages;
@@ -16,7 +16,7 @@ namespace SastImg.Infrastructure.QueryRepositories
 {
     internal sealed class ImageQueryRepository(IDbConnectionFactory factory)
         : IGetImageRepository,
-            IGetImagesRepository,
+            IGetAlbumImagesRepository,
             ISearchImagesRepository,
             IGetRemovedImagesRepository,
             IGetUserImagesRepository

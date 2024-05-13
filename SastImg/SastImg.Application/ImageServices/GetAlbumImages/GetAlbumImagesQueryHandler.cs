@@ -1,14 +1,14 @@
 ﻿using Shared.Primitives.Query;
 
-namespace SastImg.Application.ImageServices.GetImages
+namespace SastImg.Application.ImageServices.GetAlbumImages
 {
-    public sealed class GetImagesQueryHandler(IGetImagesRepository repository)
-        : IQueryRequestHandler<GetImagesQuery, IEnumerable<AlbumImageDto>>
+    public sealed class GetAlbumImagesQueryHandler(IGetAlbumImagesRepository repository)
+        : IQueryRequestHandler<GetAlbumImages, IEnumerable<AlbumImageDto>>
     {
-        private readonly IGetImagesRepository _repository = repository;
+        private readonly IGetAlbumImagesRepository _repository = repository;
 
         public Task<IEnumerable<AlbumImageDto>> Handle(
-            GetImagesQuery request,
+            GetAlbumImages request,
             CancellationToken cancellationToken
         )
         {

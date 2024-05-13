@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Primitives.Command;
 using Primitives.Query;
 using SastImg.Application.ImageServices.AddImage;
+using SastImg.Application.ImageServices.GetAlbumImages;
 using SastImg.Application.ImageServices.GetImage;
 using SastImg.Application.ImageServices.GetImageFile;
-using SastImg.Application.ImageServices.GetImages;
 using SastImg.Application.ImageServices.GetRemovedImages;
 using SastImg.Application.ImageServices.GetUserImages;
 using SastImg.Application.ImageServices.RemoveImage;
@@ -43,14 +43,14 @@ namespace SastImg.WebAPI.Controllers
         /// <response code="200">The images</response>
         [HttpGet("album/{albumId}/images")]
         [ProducesResponseType<IEnumerable<AlbumImageDto>>(StatusCodes.Status200OK)]
-        public async Task<Ok<IEnumerable<AlbumImageDto>>> GetImages(
+        public async Task<Ok<IEnumerable<AlbumImageDto>>> GetAlbumImages(
             [Range(0, long.MaxValue)] long albumId = 0,
             [Range(0, 1000)] int page = 0,
             CancellationToken cancellationToken = default
         )
         {
             var images = await _querySender.QueryAsync(
-                new GetImagesQuery(albumId, page, User),
+                new GetAlbumImages(albumId, page, User),
                 cancellationToken
             );
 

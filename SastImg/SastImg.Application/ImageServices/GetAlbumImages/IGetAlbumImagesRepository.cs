@@ -1,9 +1,9 @@
 ﻿using SastImg.Domain;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
 
-namespace SastImg.Application.ImageServices.GetImages
+namespace SastImg.Application.ImageServices.GetAlbumImages
 {
-    public interface IGetImagesRepository
+    public interface IGetAlbumImagesRepository
     {
         public Task<IEnumerable<AlbumImageDto>> GetImagesByUserAsync(
             AlbumId albumId,

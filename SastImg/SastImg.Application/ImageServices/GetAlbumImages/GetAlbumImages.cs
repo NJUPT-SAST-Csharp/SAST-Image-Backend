@@ -3,9 +3,9 @@ using SastImg.Application.SeedWorks;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
 using Shared.Primitives.Query;
 
-namespace SastImg.Application.ImageServices.GetImages
+namespace SastImg.Application.ImageServices.GetAlbumImages
 {
-    public sealed class GetImagesQuery(long albumId, int page, ClaimsPrincipal user)
+    public sealed class GetAlbumImages(long albumId, int page, ClaimsPrincipal user)
         : IQueryRequest<IEnumerable<AlbumImageDto>>
     {
         public int Page { get; } = page;
