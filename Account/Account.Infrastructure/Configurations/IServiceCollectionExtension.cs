@@ -1,9 +1,8 @@
 ﻿using System.Reflection;
 using Account.Application;
+using Account.Application.FileServices;
 using Account.Application.Services;
 using Account.Application.UserServices;
-using Account.Application.UserServices.UpdateAvatar;
-using Account.Application.UserServices.UpdateHeader;
 using Account.Domain.UserEntity.Services;
 using Account.Infrastructure.ApplicationServices;
 using Account.Infrastructure.DomainServices;
@@ -45,7 +44,7 @@ namespace Account.Infrastructure.Configurations
                 .ConfigureAuth(configuration)
                 .AddPersistence(configuration.GetConnectionString("AccountDb")!)
                 .AddRepositories()
-                .AddDistributedCache(configuration.GetConnectionString("DistributedCache")!)
+                .AddDistributedCache()
                 .AddEventBus(configuration)
                 .AddExceptionHandlers()
                 .AddStorages(configuration);
@@ -113,38 +112,18 @@ namespace Account.Infrastructure.Configurations
         )
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddDbContext<AccountDbContext>(options =>
-            {
-                options.UseLoggerFactory(
-                    new LoggerFactory().AddSerilog(
-                        new LoggerConfiguration()
-                            .Enrich.FromLogContext()
-                            .WriteTo.Console()
-                            .MinimumLevel.Warning()
-                            .CreateLogger()
-                    )
-                );
-                options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
-            });
-
             SqlMapper.AddTypeHandler(new UriStringConverter());
             SqlMapper.AddTypeHandler(new DateOnlyConverter());
 
-            services.AddScoped<IDbConnectionFactory>(
-                _ => new DbConnectionFactory(connectionString)
-            );
+            services.AddScoped<IDbConnectionFactory>(_ => new DbConnectionFactory(
+                connectionString
+            ));
 
             return services;
         }
 
-        private static IServiceCollection AddDistributedCache(
-            this IServiceCollection services,
-            string connectionString
-        )
+        private static IServiceCollection AddDistributedCache(this IServiceCollection services)
         {
-            services.AddSingleton<IConnectionMultiplexer>(
-                ConnectionMultiplexer.Connect(connectionString)
-            );
             services.AddScoped<IAuthCodeCache, RedisAuthCache>();
             return services;
         }
@@ -154,23 +133,23 @@ namespace Account.Infrastructure.Configurations
             IConfiguration configuration
         )
         {
-            var config = configuration.GetSection("EventBus");
-
             services.AddCap(x =>
             {
+                string connectionString =
+                    configuration.GetConnectionString("RabbitMQ")
+                    ?? throw new NullReferenceException();
+
                 x.UseEntityFramework<AccountDbContext>();
                 x.UseRabbitMQ(options =>
                 {
-                    options.HostName = config["HostName"]!;
-                    options.UserName = config["UserName"]!;
-                    options.Password = config["Password"]!;
-                    options.Port = config.GetValue<int>("Port");
+                    options.ConnectionFactoryOptions = options =>
+                        options.Uri = new(connectionString);
                 });
             });
 
             services.AddScoped<IMessagePublisher, ExternalEventBus>();
-            services.AddMediatR(
-                mediat => mediat.RegisterServicesFromAssembly(ApplicationAssemblyReference.Assembly)
+            services.AddMediatR(mediat =>
+                mediat.RegisterServicesFromAssembly(ApplicationAssemblyReference.Assembly)
             );
             services.AddScoped<IDomainEventPublisher, InternalEventBus>();
             services.AddScoped<IQueryRequestSender, InternalEventBus>();
@@ -187,9 +166,8 @@ namespace Account.Infrastructure.Configurations
             services.AddScoped<IHeaderStorageRepository, HeaderStorageRepository>();
             services.AddScoped<IAvatarStorageRepository, AvatarStorageRepository>();
 
-            services.AddStorageClient(
-                configuration.GetSection("Storage").Get<StorageOptions>()
-                    ?? throw new NullReferenceException("Couldn't find 'Storage' configuration")
+            services.AddStorageClient(options =>
+                options.FolderPath = configuration["StoragePath"]!
             );
             return services;
         }

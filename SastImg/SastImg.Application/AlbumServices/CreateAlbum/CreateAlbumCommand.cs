@@ -9,7 +9,7 @@ namespace SastImg.Application.AlbumServices.CreateAlbum
     public sealed class CreateAlbumCommand(
         string title,
         string description,
-        long categoryId,
+        int categoryId,
         Accessibility accessibility,
         ClaimsPrincipal user
     ) : ICommandRequest<CreateAlbumDto>

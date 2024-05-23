@@ -18,7 +18,7 @@ using SastImg.Application.AlbumServices.GetRemovedAlbums;
 using SastImg.Application.AlbumServices.GetUserAlbums;
 using SastImg.Application.AlbumServices.SearchAlbums;
 using SastImg.Application.CategoryServices;
-using SastImg.Application.ImageServices.AddImage;
+using SastImg.Application.ImageServices;
 using SastImg.Application.ImageServices.GetAlbumImages;
 using SastImg.Application.ImageServices.GetImage;
 using SastImg.Application.ImageServices.GetRemovedImages;
@@ -56,17 +56,15 @@ namespace SastImg.Infrastructure.Configurations
             string connectionString
         )
         {
-            services.AddDbContext<SastImgDbContext>(options =>
-            {
-                options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
-            });
+            //services.AddDbContext<SastImgDbContext>(options =>
+            //{
+            //    options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
+            //});
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             SqlMapper.AddTypeHandler(new UriStringConverter());
-            services.AddSingleton<DbDataSource>(
-                new NpgsqlDataSourceBuilder(connectionString).Build()
-            );
+
             services.AddScoped<IDbConnectionFactory, DbConnectionFactory>(
                 _ => new DbConnectionFactory(connectionString)
             );
@@ -93,19 +91,6 @@ namespace SastImg.Infrastructure.Configurations
             return services;
         }
 
-        public static IServiceCollection ConfigureCache(
-            this IServiceCollection services,
-            string connectionString
-        )
-        {
-            services.AddResponseCaching();
-            services.AddSingleton<IConnectionMultiplexer>(
-                ConnectionMultiplexer.Connect(connectionString)
-            );
-
-            return services;
-        }
-
         public static IServiceCollection ConfigureExceptionHandlers(
             this IServiceCollection services
         )
@@ -122,17 +107,17 @@ namespace SastImg.Infrastructure.Configurations
             IConfiguration configuration
         )
         {
-            var config = configuration.GetSection("EventBus");
-
             services.AddCap(x =>
             {
+                string connectionString =
+                    configuration.GetConnectionString("RabbitMQ")
+                    ?? throw new NullReferenceException();
+
                 x.UseEntityFramework<SastImgDbContext>();
                 x.UseRabbitMQ(options =>
                 {
-                    options.Port = config.GetValue<int>("Port");
-                    options.HostName = config["HostName"]!;
-                    options.UserName = config["UserName"]!;
-                    options.Password = config["Password"]!;
+                    options.ConnectionFactoryOptions = options =>
+                        options.Uri = new(connectionString);
                 });
             });
 
@@ -146,27 +131,14 @@ namespace SastImg.Infrastructure.Configurations
             IConfiguration configuration
         )
         {
-            services.AddStorageClient(
-                configuration.GetSection("Storage").Get<StorageOptions>()
-                    ?? throw new NullReferenceException("Couldn't find 'Storage' configuration")
+            services.AddStorageClient(options =>
+                options.FolderPath = configuration["StoragePath"]!
             );
 
             services.TryAddScoped<IImageStorageRepository, ImageStorageRepository>();
 
             return services;
         }
-
-        //public static IServiceCollection ConfigureMediator(this IServiceCollection services)
-        //{
-        //    services.AddPrimitives(
-        //        options =>
-        //            options
-        //                .AddUnitOfWorkWithDbContext<SastImgDbContext>()
-        //                .AddResolverFromAssembly(Application.AssemblyReference.Assembly)
-        //    );
-
-        //    return services;
-        //}
 
         public static IServiceCollection ConfigureSwagger(this IServiceCollection services)
         {

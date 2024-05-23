@@ -1,7 +1,9 @@
 ﻿using System.Security.Claims;
+using Account.Application.FileServices.GetAvatarFile;
+using Account.Application.FileServices.GetHeaderFile;
+using Account.Application.FileServices.UpdateAvatar;
+using Account.Application.FileServices.UpdateHeader;
 using Account.Application.UserServices.GetUserBriefInfo;
-using Account.Application.UserServices.UpdateAvatar;
-using Account.Application.UserServices.UpdateHeader;
 using Account.WebAPI.Configurations;
 using Account.WebAPI.Requests;
 using Account.WebAPI.SeedWorks;
@@ -18,11 +20,11 @@ namespace Account.WebAPI.Endpoints
         {
             var mapper = builder.MapGroup("/profile");
 
-            UpdateProfile(mapper);
-            GetProfile(mapper);
+            ProfileInfo(mapper);
+            ImageFile(mapper);
         }
 
-        private static void UpdateProfile(IEndpointRouteBuilder builder)
+        private static void ProfileInfo(IEndpointRouteBuilder builder)
         {
             builder
                 .MapPut(
@@ -42,6 +44,65 @@ namespace Account.WebAPI.Endpoints
                 .WithDescription("Update user profile.");
 
             builder
+                .MapGet(
+                    "/",
+                    (
+                        [AsParameters] GetUserInfoRequest request,
+                        [FromServices] IQueryRequestSender querySender
+                    ) =>
+                        querySender.QueryAsync(
+                            new GetUserInfoQuery(
+                                request.Username,
+                                request.UserId,
+                                request.IsDetailed
+                            )
+                        )
+                )
+                .AddValidator<GetUserInfoRequest>()
+                .WithSummary("Query User Info")
+                .WithDescription(
+                    """
+                    Query user brief info, only containing username, nickname, avatar.
+
+                    Query user detailed info by adding query param 'detailed', 
+                    containing username, nickname, avatar, header, bio, birthday, website.
+
+                    id has a higher priority
+                    """
+                );
+        }
+
+        private static void ImageFile(IEndpointRouteBuilder builder)
+        {
+            builder
+                .MapGet(
+                    "/avatar/{id}",
+                    async ([FromRoute] long id, [FromServices] IQueryRequestSender sender) =>
+                    {
+                        var stream = await sender.QueryAsync(new GetAvatarFileQuery(id));
+                        if (stream is null)
+                            return Results.NotFound();
+                        return Results.File(stream);
+                    }
+                )
+                .WithSummary("Get Avatar")
+                .WithDescription("Get user avatar image file.");
+
+            builder
+                .MapGet(
+                    "/header/{id}",
+                    async ([FromRoute] long id, [FromServices] IQueryRequestSender sender) =>
+                    {
+                        var stream = await sender.QueryAsync(new GetHeaderFileQuery(id));
+                        if (stream is null)
+                            return Results.NotFound();
+                        return Results.File(stream);
+                    }
+                )
+                .WithSummary("Get Header")
+                .WithDescription("Get user header image file.");
+
+            builder
                 .MapPut(
                     "/header",
                     (
@@ -49,11 +110,9 @@ namespace Account.WebAPI.Endpoints
                         [FromServices] ICommandRequestSender commandSender,
                         ClaimsPrincipal user
                     ) =>
-                    {
-                        return commandSender.CommandAsync(
+                        commandSender.CommandAsync(
                             new UpdateHeaderCommand(request.HeaderFile, user)
-                        );
-                    }
+                        )
                 )
                 .DisableAntiforgery()
                 .AddValidator<UpdateHeaderRequest>()
@@ -69,50 +128,15 @@ namespace Account.WebAPI.Endpoints
                         [FromServices] ICommandRequestSender commandSender,
                         ClaimsPrincipal user
                     ) =>
-                    {
-                        return commandSender.CommandAsync(
+                        commandSender.CommandAsync(
                             new UpdateAvatarCommand(request.AvatarFile, user)
-                        );
-                    }
+                        )
                 )
                 .DisableAntiforgery()
                 .AddValidator<UpdateAvatarRequest>()
                 .AddAuthorization(AuthorizationRole.AUTH)
                 .WithSummary("Update Avatar")
                 .WithDescription("Updatet user's avatar image.");
-        }
-
-        private static void GetProfile(IEndpointRouteBuilder builder)
-        {
-            builder
-                .MapGet(
-                    "/",
-                    async (
-                        [AsParameters] GetUserInfoRequest request,
-                        [FromServices] IQueryRequestSender querySender
-                    ) =>
-                    {
-                        return await querySender.QueryAsync(
-                            new GetUserInfoQuery(
-                                request.Username,
-                                request.UserId,
-                                request.IsDetailed
-                            )
-                        );
-                    }
-                )
-                .AddValidator<GetUserInfoRequest>()
-                .WithSummary("Query User Info")
-                .WithDescription(
-                    """
-                    Query user brief info, only containing username, nickname, avatar.
-
-                    Query user detailed info by adding query param 'detailed', 
-                    containing username, nickname, avatar, header, bio, birthday, website.
-
-                    id has a higher priority
-                    """
-                );
         }
     }
 }

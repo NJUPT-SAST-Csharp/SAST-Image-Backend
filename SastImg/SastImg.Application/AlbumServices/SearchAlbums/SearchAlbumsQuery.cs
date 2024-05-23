@@ -6,7 +6,7 @@ using Shared.Primitives.Query;
 namespace SastImg.Application.AlbumServices.SearchAlbums
 {
     public sealed class SearchAlbumsQuery(
-        long categoryId,
+        int categoryId,
         string title,
         int page,
         ClaimsPrincipal user

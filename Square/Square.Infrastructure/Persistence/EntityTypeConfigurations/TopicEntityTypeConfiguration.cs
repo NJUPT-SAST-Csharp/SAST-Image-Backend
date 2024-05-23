@@ -10,6 +10,8 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
     {
         public void Configure(EntityTypeBuilder<Topic> builder)
         {
+            builder.ToTable("topics", "domain");
+
             builder.Ignore(x => x.DomainEvents);
 
             builder.HasKey(x => x.Id);
@@ -35,7 +37,7 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
                 "_subscribers",
                 subscribers =>
                 {
-                    subscribers.ToTable("subscribers");
+                    subscribers.ToTable("subscribers", "domain");
                     subscribers.HasKey(x => new { x.UserId, x.TopicId });
                     subscribers.WithOwner().HasForeignKey(x => x.TopicId);
                     subscribers

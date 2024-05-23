@@ -5,24 +5,24 @@ using Square.Infrastructure.Persistence;
 
 namespace Square.Infrastructure.ApplicationServices
 {
-    internal sealed class CategoryQueryRepository(SquareQueryDbContext context)
+    internal sealed class CategoryQueryRepository(SquareDbContext context)
         : ICategoryQueryRepository
     {
-        private readonly SquareQueryDbContext _context = context;
+        private readonly SquareDbContext _context = context;
 
         public void AddCategory(CategoryModel category)
         {
-            _context.Categories.Add(category);
+            _context.CategoryModels.Add(category);
         }
 
         public async Task<IEnumerable<CategoryModel>> GetCategoriesAsync()
         {
-            return await _context.Categories.ToListAsync();
+            return await _context.CategoryModels.ToListAsync();
         }
 
         public Task<CategoryModel?> GetCategoryAsync(CategoryId id)
         {
-            return _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+            return _context.CategoryModels.FirstOrDefaultAsync(c => c.Id == id);
         }
     }
 }

@@ -6,7 +6,7 @@ namespace SastImg.Domain.CategoryEntity
     public sealed class Category : EntityBase<CategoryId>
     {
         private Category(string name, string description)
-            : base(new(SnowFlakeIdGenerator.NewId))
+            : base(default)
         {
             _name = name;
             _description = description;

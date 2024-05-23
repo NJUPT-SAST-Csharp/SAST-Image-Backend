@@ -43,12 +43,13 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
             builder
                 .PrimitiveCollection<UserId[]>("_collaborators")
                 .HasColumnName("collaborators")
-                .ElementType(
-                    e =>
-                        e.HasConversion(
-                            new ValueConverter<UserId, long>(id => id.Value, id => new UserId(id))
-                        )
+                .ElementType(e =>
+                    e.HasConversion(
+                        new ValueConverter<UserId, long>(id => id.Value, id => new UserId(id))
+                    )
                 );
+
+            builder.HasIndex("_title").IsUnique(true);
 
             builder.HasOne<Category>().WithMany().HasForeignKey("_categoryId");
 
@@ -98,14 +99,10 @@ namespace SastImg.Infrastructure.Domain.AlbumEntity
                     image
                         .PrimitiveCollection<TagId[]>("_tags")
                         .HasColumnName("tags")
-                        .ElementType(
-                            e =>
-                                e.HasConversion(
-                                    new ValueConverter<TagId, long>(
-                                        id => id.Value,
-                                        id => new TagId(id)
-                                    )
-                                )
+                        .ElementType(e =>
+                            e.HasConversion(
+                                new ValueConverter<TagId, long>(id => id.Value, id => new TagId(id))
+                            )
                         );
 
                     image.OwnsOne<ImageUrl>(

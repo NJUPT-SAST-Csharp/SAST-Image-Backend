@@ -2,7 +2,7 @@
 using Primitives;
 using Primitives.Command;
 
-namespace Account.Application.UserServices.UpdateAvatar
+namespace Account.Application.FileServices.UpdateAvatar
 {
     internal sealed class UpdateAvatarCommandHandler(
         IUserRepository repository,

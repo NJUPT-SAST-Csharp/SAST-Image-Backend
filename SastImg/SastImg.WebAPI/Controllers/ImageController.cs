@@ -107,7 +107,7 @@ namespace SastImg.WebAPI.Controllers
         [ProducesResponseType<IEnumerable<SearchedImageDto>>(StatusCodes.Status200OK)]
         public async Task<Ok<IEnumerable<SearchedImageDto>>> SearchImages(
             [FromQuery] [MaxLength(5)] long[] tags,
-            [Range(0, long.MaxValue)] long categoryId = 0,
+            [Range(0, int.MaxValue)] int categoryId = 0,
             [Range(0, 1000)] int page = 0,
             SearchOrder order = SearchOrder.ByDate,
             CancellationToken cancellationToken = default

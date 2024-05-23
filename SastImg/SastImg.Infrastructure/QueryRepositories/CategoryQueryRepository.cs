@@ -17,7 +17,7 @@ namespace SastImg.Infrastructure.QueryRepositories
         {
             const string sql =
                 "SELECT "
-                + "id AS CategoryId, "
+                + "id AS Id, "
                 + "name AS Name, "
                 + "description AS Description "
                 + "from categories";

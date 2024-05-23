@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using SastImg.Domain.AlbumAggregate.ImageEntity;
 
-namespace SastImg.Application.ImageServices.AddImage
+namespace SastImg.Application.ImageServices
 {
     public interface IImageStorageRepository
     {

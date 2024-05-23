@@ -1,8 +1,16 @@
 using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
 using Square.Infrastructure.Configurations;
+using Square.Infrastructure.Persistence;
 using Square.WebAPI;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddNpgsqlDbContext<SquareDbContext>(
+    "SquareDb",
+    settings => settings.DisableRetry = true,
+    options => options.UseSnakeCaseNamingConvention()
+);
 
 // Add services to the container.
 
@@ -31,6 +39,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(options => options.EnablePersistAuthorization());
+}
+
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    await scope.ServiceProvider.GetRequiredService<SquareDbContext>().Database.EnsureCreatedAsync();
 }
 
 app.UseAuthorization();

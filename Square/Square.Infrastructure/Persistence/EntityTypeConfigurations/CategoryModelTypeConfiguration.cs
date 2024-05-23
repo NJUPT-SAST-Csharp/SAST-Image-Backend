@@ -22,7 +22,7 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
 
             builder.HasIndex(c => c.Name).IsUnique();
 
-            builder.ToTable("categories");
+            builder.ToTable("categories", "query");
         }
     }
 }

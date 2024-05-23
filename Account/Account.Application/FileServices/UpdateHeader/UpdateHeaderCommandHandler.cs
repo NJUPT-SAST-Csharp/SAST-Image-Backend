@@ -2,7 +2,7 @@
 using Primitives;
 using Primitives.Command;
 
-namespace Account.Application.UserServices.UpdateHeader
+namespace Account.Application.FileServices.UpdateHeader
 {
     internal class UpdateHeaderCommandHandler(
         IUserRepository repository,

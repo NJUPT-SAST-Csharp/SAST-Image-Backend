@@ -38,14 +38,15 @@ namespace Storage.Clients
                     Path.GetDirectoryName(filename)!,
                     Path.GetFileNameWithoutExtension(filename) + "_compressed.webp"
                 );
+            {
+                using var image = SKBitmap.Decode(filename);
+                using var data = image.PeekPixels();
+                using var encoded = data.Encode(SKEncodedImageFormat.Webp, 50);
+                await using var targetFile = File.OpenWrite(target);
+                encoded.SaveTo(targetFile);
+            }
 
-            using var image = SKBitmap.Decode(filename);
-            using var data = image.PeekPixels();
-            using var encoded = data.Encode(SKEncodedImageFormat.Webp, 50);
-            await using var targetFile = File.OpenWrite(target);
-            encoded.SaveTo(targetFile);
-
-            if (overwrite)
+            if (overwrite && filename.EndsWith(".webp") == false)
                 File.Delete(filename);
 
             return new Uri(target);

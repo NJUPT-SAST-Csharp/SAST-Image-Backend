@@ -46,7 +46,7 @@ namespace SastImg.WebAPI.Controllers
         [HttpGet("albums")]
         [ProducesResponseType<IEnumerable<AlbumDto>>(StatusCodes.Status200OK)]
         public async Task<Ok<IEnumerable<AlbumDto>>> GetAlbums(
-            [Range(0, long.MaxValue)] long categoryId = 0,
+            [Range(0, int.MaxValue)] int categoryId = 0,
             [Range(0, 1000)] int page = 0,
             CancellationToken cancellationToken = default
         )
@@ -122,7 +122,7 @@ namespace SastImg.WebAPI.Controllers
         [HttpGet("albums/search")]
         [ProducesResponseType<IEnumerable<SearchAlbumDto>>(StatusCodes.Status200OK)]
         public async Task<Ok<IEnumerable<SearchAlbumDto>>> SearchAlbums(
-            [Range(0, long.MaxValue)] long categoryId,
+            [Range(0, int.MaxValue)] int categoryId,
             [MaxLength(12)] string title,
             [Range(0, 1000)] int page = 0,
             CancellationToken cancellationToken = default

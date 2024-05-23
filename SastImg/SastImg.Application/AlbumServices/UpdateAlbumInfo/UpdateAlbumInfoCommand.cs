@@ -10,7 +10,7 @@ namespace SastImg.Application.AlbumServices.UpdateAlbumInfo
         long albumId,
         string title,
         string description,
-        long categoryId,
+        int categoryId,
         Accessibility accessibility,
         ClaimsPrincipal user
     ) : ICommandRequest

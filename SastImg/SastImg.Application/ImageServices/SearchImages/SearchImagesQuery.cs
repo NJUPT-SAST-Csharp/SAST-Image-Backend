@@ -9,7 +9,7 @@ namespace SastImg.Application.ImageServices.SearchImages
     public sealed class SearchImagesQuery(
         int page,
         SearchOrder order,
-        long categoryId,
+        int categoryId,
         long[] tags,
         ClaimsPrincipal user
     ) : IQueryRequest<IEnumerable<SearchedImageDto>>

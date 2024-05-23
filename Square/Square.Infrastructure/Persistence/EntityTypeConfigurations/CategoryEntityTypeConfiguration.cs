@@ -24,7 +24,7 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
 
             builder.Ignore(c => c.DomainEvents);
 
-            builder.ToTable("categories");
+            builder.ToTable("categories", "domain");
         }
     }
 }

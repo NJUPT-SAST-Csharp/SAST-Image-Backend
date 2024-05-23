@@ -28,8 +28,6 @@ namespace SastImg.Infrastructure.Configurations
 
             builder.Services.ConfigureDatabase(configuration.GetConnectionString("SastimgDb")!);
 
-            builder.Services.ConfigureCache(configuration.GetConnectionString("DistributedCache")!);
-
             builder.Services.ConfigureMessageQueue(configuration);
 
             builder.Services.ConfigureStorage(configuration);
@@ -50,11 +48,10 @@ namespace SastImg.Infrastructure.Configurations
                     options.JsonSerializerOptions.NumberHandling = JsonNumberHandling.WriteAsString;
                 });
 
-            builder.Services.AddPrimitives(
-                options =>
-                    options
-                        .AddUnitOfWorkWithDbContext<SastImgDbContext>()
-                        .AddResolverFromAssembly(Application.AssemblyReference.Assembly)
+            builder.Services.AddPrimitives(options =>
+                options
+                    .AddUnitOfWorkWithDbContext<SastImgDbContext>()
+                    .AddResolverFromAssembly(Application.AssemblyReference.Assembly)
             );
 
             builder.Services.ConfigureJwtAuthentication(options =>

@@ -39,12 +39,12 @@ namespace SNS.Infrastructure.Configurations
         {
             string connectionString = configuration.GetConnectionString("SNSDb")!;
 
-            services.AddDbContext<SNSDbContext>(
-                options => options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention()
-            );
+            //services.AddDbContext<SNSDbContext>(
+            //    options => options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention()
+            //);
 
-            services.AddSingleton<DbDataSource>(
-                _ => new NpgsqlDataSourceBuilder(connectionString).Build()
+            services.AddSingleton<DbDataSource>(_ =>
+                new NpgsqlDataSourceBuilder(connectionString).Build()
             );
             services.AddScoped<IDbConnectionFactory, DbConnectionFactory>(
                 _ => new DbConnectionFactory(connectionString)
@@ -73,13 +73,16 @@ namespace SNS.Infrastructure.Configurations
 
             services.AddCap(x =>
             {
+                string connectionString =
+                    configuration.GetConnectionString("RabbitMQ")
+                    ?? throw new NullReferenceException();
+
+                Uri url = new(connectionString);
+
                 x.UseEntityFramework<SNSDbContext>();
                 x.UseRabbitMQ(options =>
                 {
-                    options.Port = config.GetValue<int>("Port");
-                    options.HostName = config["HostName"]!;
-                    options.UserName = config["UserName"]!;
-                    options.Password = config["Password"]!;
+                    options.ConnectionFactoryOptions = options => options.Uri = url;
                 });
             });
 

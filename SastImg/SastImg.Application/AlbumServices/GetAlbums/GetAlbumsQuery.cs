@@ -5,7 +5,7 @@ using Shared.Primitives.Query;
 
 namespace SastImg.Application.AlbumServices.GetAlbums
 {
-    public class GetAlbumsQuery(long categoryId, int page, ClaimsPrincipal user)
+    public class GetAlbumsQuery(int categoryId, int page, ClaimsPrincipal user)
         : IQueryRequest<IEnumerable<AlbumDto>>
     {
         public CategoryId CategoryId { get; } = new(categoryId);

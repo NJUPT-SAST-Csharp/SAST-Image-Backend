@@ -18,11 +18,7 @@ namespace Account.Infrastructure.ApplicationServices
         {
             using var connection = _factory.GetConnection();
 
-            const string sql =
-                "SELECT "
-                + "username, nickname, avatar "
-                + "FROM users "
-                + "WHERE username = @username";
+            const string sql = "SELECT username, nickname FROM users WHERE username = @username";
 
             var result = await connection.QueryFirstOrDefaultAsync<UserBriefInfoDto>(
                 sql,
@@ -37,7 +33,7 @@ namespace Account.Infrastructure.ApplicationServices
             CancellationToken cancellationToken = default
         )
         {
-            const string sql = "SELECT username, nickname, avatar FROM users WHERE id = @userId";
+            const string sql = "SELECT username, nickname FROM users WHERE id = @userId";
 
             using var connection = _factory.GetConnection();
 
@@ -58,7 +54,7 @@ namespace Account.Infrastructure.ApplicationServices
 
             const string sql =
                 "SELECT "
-                + "username, nickname, biography, avatar, header, birthday, website, id "
+                + "username, nickname, biography, birthday, website, id "
                 + "FROM users "
                 + "WHERE username = @username";
 
@@ -77,7 +73,7 @@ namespace Account.Infrastructure.ApplicationServices
         {
             const string sql =
                 "SELECT "
-                + "username, nickname, biography, avatar, header, birthday, website, id "
+                + "username, nickname, biography, birthday, website, id "
                 + "FROM users "
                 + "WHERE id = @userId";
 

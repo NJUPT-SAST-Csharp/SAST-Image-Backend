@@ -10,7 +10,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="8.0.0-preview.5.24201.12" />
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="8.0.1" />
+    <PackageReference Include="Aspire.Hosting.NodeJs" Version="8.0.1" />
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="8.0.1" />
+    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="8.0.1" />
+    <PackageReference Include="Aspire.Hosting.Redis" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Proxy\Proxy.csproj" />
+    <ProjectReference Include="..\Account\Account.WebAPI\Account.WebAPI.csproj" />
+    <ProjectReference Include="..\SastImg\SastImg.WebAPI\SastImg.WebAPI.csproj" />
+    <ProjectReference Include="..\SNS\SNS.WebAPI\SNS.WebAPI.csproj" />
+    <ProjectReference Include="..\Square\Square.WebAPI\Square.WebAPI.csproj" />
   </ItemGroup>
 
 </Project>

@@ -8,7 +8,7 @@ namespace SastImg.Test.Domain
     internal static class AlbumUnitTestHelper
     {
         public const long AuthorId = 233;
-        public const long CategoryId = 0;
+        public const int CategoryId = 0;
         public const string Title = "FakeTitle";
         public const string Description = "FakeDescription";
         public const Accessibility Access = Accessibility.Public;

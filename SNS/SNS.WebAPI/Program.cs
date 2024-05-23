@@ -1,8 +1,15 @@
+using Microsoft.EntityFrameworkCore;
 using Primitives;
 using SNS.Infrastructure.Configurations;
 using SNS.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddNpgsqlDbContext<SNSDbContext>(
+    "SNSDb",
+    settings => settings.DisableRetry = true,
+    configureDbContextOptions: options => options.UseSnakeCaseNamingConvention()
+);
 
 builder.Logging.ConfigureLogger();
 
@@ -34,6 +41,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    await scope.ServiceProvider.GetRequiredService<SNSDbContext>().Database.EnsureCreatedAsync();
 }
 
 app.UseAuthorization();

@@ -3,11 +3,11 @@ using Account.Application.SeedWorks;
 using Microsoft.AspNetCore.Http;
 using Primitives.Command;
 
-namespace Account.Application.UserServices.UpdateHeader
+namespace Account.Application.FileServices.UpdateAvatar
 {
-    public sealed class UpdateHeaderCommand(IFormFile file, ClaimsPrincipal user) : ICommandRequest
+    public sealed class UpdateAvatarCommand(IFormFile file, ClaimsPrincipal user) : ICommandRequest
     {
-        public IFormFile Header { get; } = file;
+        public IFormFile Avatar { get; } = file;
         public RequesterInfo Requester { get; } = new(user);
     }
 }

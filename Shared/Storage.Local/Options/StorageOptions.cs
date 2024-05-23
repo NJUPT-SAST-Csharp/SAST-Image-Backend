@@ -1,10 +1,16 @@
 ﻿namespace Storage.Options
 {
-    public sealed class StorageOptions
+    public sealed class StorageOptions()
     {
+        public StorageOptions(string path)
+            : this()
+        {
+            FolderPath = path;
+        }
+
         public const string Position = "Storage";
 
-        private string _folderPath;
+        private string _folderPath = "./Storage";
 
         public string FolderPath
         {

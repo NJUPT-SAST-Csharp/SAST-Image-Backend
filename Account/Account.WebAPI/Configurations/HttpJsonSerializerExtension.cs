@@ -9,6 +9,7 @@ using Account.WebAPI.Requests;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Response.ReponseObjects;
+using Response.ResponseObjects;
 
 namespace Account.WebAPI.Configurations
 {
@@ -18,6 +19,7 @@ namespace Account.WebAPI.Configurations
         {
             services.ConfigureHttpJsonOptions(options =>
             {
+                options.SerializerOptions.NumberHandling = JsonNumberHandling.WriteAsString;
                 options.SerializerOptions.TypeInfoResolver = AppJsonSerializerContext.Default;
                 options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                 options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -39,6 +41,7 @@ namespace Account.WebAPI.Configurations
     [JsonSerializable(typeof(VerifyForgetCodeRequest))]
     [JsonSerializable(typeof(GetUserInfoRequest))]
     [JsonSerializable(typeof(NoContent))]
+    [JsonSerializable(typeof(ConflictResponse))]
     [JsonSerializable(typeof(BadRequestResponse))]
     [JsonSerializable(typeof(ProblemDetails))]
     [JsonSerializable(typeof(LoginDto))]

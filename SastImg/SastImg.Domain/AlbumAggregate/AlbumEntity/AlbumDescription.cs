@@ -21,6 +21,8 @@ namespace SastImg.Domain.AlbumAggregate.AlbumEntity
                     $"Album description length must be between {MinLength} and {MaxLength}"
                 );
             }
+
+            Value = value;
         }
 
         public static implicit operator AlbumDescription(string description)

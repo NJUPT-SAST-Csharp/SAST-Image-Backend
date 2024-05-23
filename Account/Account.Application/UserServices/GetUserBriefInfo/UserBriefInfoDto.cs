@@ -4,6 +4,5 @@
     {
         public string Username { get; init; }
         public string Nickname { get; init; }
-        public Uri? Avatar { get; init; }
     }
 }

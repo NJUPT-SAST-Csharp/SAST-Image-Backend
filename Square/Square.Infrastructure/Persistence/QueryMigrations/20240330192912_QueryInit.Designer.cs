@@ -11,7 +11,7 @@ using Square.Infrastructure.Persistence;
 
 namespace Square.Infrastructure.Persistence.QueryMigrations
 {
-    [DbContext(typeof(SquareQueryDbContext))]
+    [DbContext(typeof(SquareDbContext))]
     [Migration("20240330192912_QueryInit")]
     partial class QueryInit
     {
@@ -95,7 +95,7 @@ namespace Square.Infrastructure.Persistence.QueryMigrations
             modelBuilder.Entity("Square.Application.ColumnServices.Models.ColumnModel", b =>
                 {
                     b.HasOne("Square.Application.TopicServices.TopicModel", null)
-                        .WithMany("Columns")
+                        .WithMany("ColumnModels")
                         .HasForeignKey("TopicId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
@@ -160,7 +160,7 @@ namespace Square.Infrastructure.Persistence.QueryMigrations
 
             modelBuilder.Entity("Square.Application.TopicServices.TopicModel", b =>
                 {
-                    b.Navigation("Columns");
+                    b.Navigation("ColumnModels");
                 });
 #pragma warning restore 612, 618
         }

@@ -23,8 +23,8 @@ namespace SastImg.WebAPI.Requests.AlbumRequest
         /// <summary>
         /// TODO: complete
         /// </summary>
-        [Range(0, long.MaxValue)]
-        public readonly long CategoryId { get; init; }
+        [Range(0, int.MaxValue)]
+        public readonly int CategoryId { get; init; }
 
         /// <summary>
         /// TODO: complete

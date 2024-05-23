@@ -9,22 +9,11 @@ namespace Shared.Storage.Configurations
     {
         public static IServiceCollection AddStorageClient(
             this IServiceCollection services,
-            StorageOptions options
-        )
-        {
-            services.TryAddSingleton(options);
-            services.TryAddSingleton<IProcessClient, ProcessClient>();
-            services.TryAddSingleton<IStorageClient, StorageClient>();
-            return services;
-        }
-
-        public static IServiceCollection AddStorageClient(
-            this IServiceCollection services,
-            Action<StorageOptions> storageOptionsBuilder
+            Action<StorageOptions>? storageOptionsBuilder = null
         )
         {
             StorageOptions options = new();
-            storageOptionsBuilder(options);
+            storageOptionsBuilder?.Invoke(options);
 
             services.TryAddSingleton(options);
             services.TryAddSingleton<IProcessClient, ProcessClient>();

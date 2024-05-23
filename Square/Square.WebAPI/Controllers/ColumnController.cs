@@ -105,7 +105,7 @@ namespace Square.WebAPI.Controllers
         /// </remarks>
         /// <param name="topicId">Id of the target topic</param>
         /// <param name="cancellationToken">Cancellation token</param>
-        /// <response code="200">Columns of the topic.</response>
+        /// <response code="200">ColumnModels of the topic.</response>
         [HttpGet("topic/{topicId}/columns")]
         [ProducesResponseType<IEnumerable<ColumnDto>>(StatusCodes.Status200OK)]
         public Task<IResult> GetColumns(

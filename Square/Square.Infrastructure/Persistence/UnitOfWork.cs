@@ -4,14 +4,10 @@ using Shared.Primitives.DomainEvent;
 
 namespace Square.Infrastructure.Persistence
 {
-    internal class UnitOfWork(
-        SquareDbContext domainContext,
-        SquareQueryDbContext queryContext,
-        IDomainEventPublisher eventBus
-    ) : IUnitOfWork
+    internal class UnitOfWork(SquareDbContext domainContext, IDomainEventPublisher eventBus)
+        : IUnitOfWork
     {
         private readonly SquareDbContext _domainContext = domainContext;
-        private readonly SquareQueryDbContext _queryContext = queryContext;
         private readonly IDomainEventPublisher _eventBus = eventBus;
 
         private bool isTransactionActive = false;
@@ -49,7 +45,6 @@ namespace Square.Infrastructure.Persistence
 
             // Second SaveChangesAsync() call is to save the changes made by the domain event handlers
             await _domainContext.SaveChangesAsync(cancellationToken);
-            await _queryContext.SaveChangesAsync(cancellationToken);
 
             // Commit the transaction
             await transaction.CommitAsync(cancellationToken);

@@ -7,9 +7,9 @@ using Square.Infrastructure.Persistence;
 
 namespace Square.Infrastructure.ApplicationServices
 {
-    internal sealed class TopicQueryRepository(SquareQueryDbContext context) : ITopicQueryRepository
+    internal sealed class TopicQueryRepository(SquareDbContext context) : ITopicQueryRepository
     {
-        private readonly SquareQueryDbContext _context = context;
+        private readonly SquareDbContext _context = context;
 
         public async Task AddTopicAsync(TopicModel topic)
         {
@@ -18,7 +18,7 @@ namespace Square.Infrastructure.ApplicationServices
 
         public async Task DeleteTopicAsync(TopicId id)
         {
-            var topic = await _context.Topics.FirstOrDefaultAsync(t => t.Id == id);
+            var topic = await _context.TopicModels.FirstOrDefaultAsync(t => t.Id == id);
 
             if (topic is null)
             {
@@ -30,7 +30,9 @@ namespace Square.Infrastructure.ApplicationServices
 
         public Task<TopicModel?> GetTopicAsync(TopicId id)
         {
-            return _context.Topics.Include(t => t.Columns).FirstOrDefaultAsync(t => t.Id == id);
+            return _context
+                .TopicModels.Include(t => t.Columns)
+                .FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public async Task<IEnumerable<TopicModel>> GetTopicsAsync(CategoryId? category = null)
@@ -38,12 +40,12 @@ namespace Square.Infrastructure.ApplicationServices
             if (category is not null)
             {
                 return await _context
-                    .Topics.Include(t => t.Columns)
+                    .TopicModels.Include(t => t.Columns)
                     .Where(t => t.CategoryId == category)
                     .ToListAsync();
             }
 
-            return await _context.Topics.Include(t => t.Columns).ToListAsync();
+            return await _context.TopicModels.Include(t => t.Columns).ToListAsync();
         }
     }
 }

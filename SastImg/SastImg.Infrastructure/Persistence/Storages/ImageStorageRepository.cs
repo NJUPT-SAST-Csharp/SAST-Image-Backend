@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using Dapper;
 using Microsoft.AspNetCore.Http;
-using SastImg.Application.ImageServices.AddImage;
+using SastImg.Application.ImageServices;
 using SastImg.Domain.AlbumAggregate.ImageEntity;
 using SastImg.Infrastructure.Persistence.QueryDatabase;
 using Storage.Clients;

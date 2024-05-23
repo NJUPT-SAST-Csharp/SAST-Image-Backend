@@ -55,7 +55,7 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
 
                     subscribe.HasKey(s => new { s.UserId, s.TopicId });
 
-                    subscribe.ToTable("topic_subscribes");
+                    subscribe.ToTable("topic_subscribes", "query");
                 }
             );
 

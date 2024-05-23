@@ -1,5 +1,4 @@
-﻿using SastImg.Application.ImageServices.AddImage;
-using Shared.Primitives.Query;
+﻿using Shared.Primitives.Query;
 
 namespace SastImg.Application.ImageServices.GetImageFile
 {

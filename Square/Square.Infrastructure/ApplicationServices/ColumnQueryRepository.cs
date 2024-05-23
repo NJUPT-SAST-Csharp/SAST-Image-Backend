@@ -11,20 +11,20 @@ namespace Square.Infrastructure.ApplicationServices
 {
     internal sealed class ColumnQueryRepository(
         IColumnImageStorage storage,
-        SquareQueryDbContext context
+        SquareDbContext context
     ) : IColumnQueryRepository
     {
-        private readonly SquareQueryDbContext _context = context;
+        private readonly SquareDbContext _context = context;
         private readonly IColumnImageStorage _storage = storage;
 
         public async Task AddColumnAsync(ColumnModel column)
         {
-            await _context.Columns.AddAsync(column);
+            await _context.ColumnModels.AddAsync(column);
         }
 
         public async Task DeleteColumnAsync(ColumnId id)
         {
-            var column = await _context.Columns.FirstOrDefaultAsync(c => c.Id == id);
+            var column = await _context.ColumnModels.FirstOrDefaultAsync(c => c.Id == id);
 
             if (column is null)
             {
@@ -32,17 +32,19 @@ namespace Square.Infrastructure.ApplicationServices
             }
 
             await _storage.DeleteImagesAsync(column.Images);
-            _context.Columns.Remove(column);
+            _context.ColumnModels.Remove(column);
         }
 
         public Task<ColumnModel?> GetColumnAsync(ColumnId id)
         {
-            return _context.Columns.FirstOrDefaultAsync(c => c.Id == id);
+            return _context.ColumnModels.FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<IEnumerable<ColumnModel>> GetColumnsAsync(TopicId topicId)
         {
-            var columns = await _context.Columns.Where(c => c.TopicId == topicId).ToListAsync();
+            var columns = await _context
+                .ColumnModels.Where(c => c.TopicId == topicId)
+                .ToListAsync();
 
             return columns;
         }

@@ -36,7 +36,7 @@ namespace Square.Infrastructure.Configurations
                     options
                         .AddResolversFromAssemblyContaining<Topic>()
                         .AddResolversFromAssemblyContaining<TopicModel>()
-                        .AddUnitOfWorkWithDbContext<SquareDbContext, SquareQueryDbContext>();
+                        .AddUnitOfWorkWithDbContext<SquareDbContext, SquareDbContext>();
                     options.AutoCommitAfterCommandHandled = true;
                 })
                 .ConfigureDomainServices()
@@ -67,27 +67,16 @@ namespace Square.Infrastructure.Configurations
             IConfiguration configuration
         )
         {
-            services.AddDbContext<SquareDbContext>(
-                options =>
-                    options
-                        .EnableSensitiveDataLogging()
-                        .UseNpgsql(configuration.GetConnectionString("SquareDb"))
-                        .UseSnakeCaseNamingConvention()
-                        .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddSerilog()))
+            services.AddDbContext<SquareDbContext>(options =>
+                options
+                    .EnableSensitiveDataLogging()
+                    .UseNpgsql(configuration.GetConnectionString("SquareDb"))
+                    .UseSnakeCaseNamingConvention()
+                    .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddSerilog()))
             );
 
-            services.AddDbContext<SquareQueryDbContext>(
-                options =>
-                    options
-                        .EnableSensitiveDataLogging()
-                        .UseNpgsql(configuration.GetConnectionString("SquareDb"))
-                        .UseSnakeCaseNamingConvention()
-                        .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddSerilog()))
-            );
-
-            services.AddStorageClient(
-                configuration.GetRequiredSection("Storage").Get<StorageOptions>()
-                    ?? throw new NullReferenceException("Couldn't find 'Storage' configuration")
+            services.AddStorageClient(options =>
+                options.FolderPath = configuration["StoragePath"]!
             );
 
             return services;

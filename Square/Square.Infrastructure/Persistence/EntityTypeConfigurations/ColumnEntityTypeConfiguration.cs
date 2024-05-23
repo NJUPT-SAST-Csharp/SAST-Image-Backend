@@ -10,6 +10,8 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
     {
         public void Configure(EntityTypeBuilder<Column> builder)
         {
+            builder.ToTable("columns", "domain");
+
             builder.HasKey(x => x.Id);
 
             builder.HasOne<Topic>().WithMany().HasForeignKey("_topicId");
@@ -33,7 +35,7 @@ namespace Square.Infrastructure.Persistence.EntityTypeConfigurations
                 "_likes",
                 likes =>
                 {
-                    likes.ToTable("column_likes");
+                    likes.ToTable("column_likes", "domain");
 
                     likes.WithOwner().HasForeignKey(x => x.ColumnId);
                     likes.HasKey(x => x.ColumnId);

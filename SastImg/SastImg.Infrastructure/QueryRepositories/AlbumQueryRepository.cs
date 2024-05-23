@@ -370,7 +370,7 @@ namespace SastImg.Infrastructure.QueryRepositories
                 + "category_id as CategoryId "
                 + "FROM albums "
                 + "WHERE NOT is_removed "
-                + "AND category_id = @categoryId "
+                + "AND ( @categoryId = 0 OR category_id = @categoryId ) "
                 + "AND accessibility = @PUBLIC "
                 + "ORDER BY updated_at DESC "
                 + "LIMIT @take";
