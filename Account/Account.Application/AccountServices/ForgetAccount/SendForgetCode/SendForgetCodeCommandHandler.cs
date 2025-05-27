@@ -1,39 +1,39 @@
 ﻿using Account.Application.Services;
 using Account.Domain.UserEntity.Services;
-using Primitives.Command;
+using Mediator;
 
-namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.SendForgetCode
+namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.SendForgetCode;
+
+public sealed class SendForgetCodeCommandHandler(
+    IAuthCodeSender sender,
+    IAuthCodeCache cache,
+    IUserUniquenessChecker checker
+) : ICommandHandler<SendForgetCodeCommand>
 {
-    public sealed class SendForgetCodeCommandHandler(
-        IAuthCodeSender sender,
-        IAuthCodeCache cache,
-        IUserUniquenessChecker checker
-    ) : ICommandRequestHandler<SendForgetCodeCommand>
+    public async ValueTask<Unit> Handle(
+        SendForgetCodeCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IAuthCodeSender _sender = sender;
-        private readonly IAuthCodeCache _cache = cache;
-        private readonly IUserUniquenessChecker _checker = checker;
+        bool isEmailExist = await checker.CheckEmailExistenceAsync(
+            request.Email,
+            cancellationToken
+        );
 
-        public async Task Handle(SendForgetCodeCommand request, CancellationToken cancellationToken)
-        {
-            var isEmailExist = await _checker.CheckEmailExistenceAsync(
-                request.Email,
-                cancellationToken
-            );
+        if (isEmailExist is false)
+            return Unit.Value;
 
-            if (isEmailExist is false)
-                return;
+        int code = Random.Shared.Next(100000, 999999);
 
-            var code = Random.Shared.Next(100000, 999999);
+        await sender.SendCodeAsync(request.Email, code, cancellationToken);
 
-            await _sender.SendCodeAsync(request.Email, code, cancellationToken);
+        await cache.StoreCodeAsync(
+            CodeCacheKey.ForgetAccount,
+            request.Email,
+            code,
+            cancellationToken
+        );
 
-            await _cache.StoreCodeAsync(
-                CodeCacheKey.ForgetAccount,
-                request.Email,
-                code,
-                cancellationToken
-            );
-        }
+        return Unit.Value;
     }
 }

@@ -1,4 +1,4 @@
-﻿using MediatR;
+﻿using Mediator;
 using Microsoft.Extensions.Logging;
 using Primitives;
 
@@ -8,22 +8,21 @@ public sealed class UnitOfWorkBehavior<TCommand, TResponse>(
     IUnitOfWork unitOfWork,
     ILogger<UnitOfWorkBehavior<TCommand, TResponse>> logger
 ) : IPipelineBehavior<TCommand, TResponse>
-    where TCommand : notnull
+    where TCommand : notnull, IBaseCommand
 {
-    private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly ILogger<UnitOfWorkBehavior<TCommand, TResponse>> _logger = logger;
 
-    public async Task<TResponse> Handle(
-        TCommand request,
-        RequestHandlerDelegate<TResponse> next,
-        CancellationToken cancellationToken
+    public async ValueTask<TResponse> Handle(
+        TCommand message,
+        CancellationToken cancellationToken,
+        MessageHandlerDelegate<TCommand, TResponse> next
     )
     {
-        var response = await next().WaitAsync(cancellationToken);
+        var response = await next(message, cancellationToken);
 
         UnitOfWorkLogger.LogBeginTransaction(_logger);
 
-        await _unitOfWork.CommitChangesAsync(cancellationToken);
+        await unitOfWork.CommitChangesAsync(cancellationToken);
 
         UnitOfWorkLogger.LogEndTransaction(_logger);
 

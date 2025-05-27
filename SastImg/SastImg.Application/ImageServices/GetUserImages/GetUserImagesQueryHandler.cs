@@ -1,34 +1,31 @@
-﻿using Shared.Primitives.Query;
+﻿using Mediator;
 
-namespace SastImg.Application.ImageServices.GetUserImages
+namespace SastImg.Application.ImageServices.GetUserImages;
+
+public sealed class GetUserImagesQueryHandler(IGetUserImagesRepository repository)
+    : IQueryHandler<GetUserImagesQuery, IEnumerable<UserImageDto>>
 {
-    internal sealed class GetUserImagesQueryHandler(IGetUserImagesRepository repository)
-        : IQueryRequestHandler<GetUserImagesQuery, IEnumerable<UserImageDto>>
+    public async ValueTask<IEnumerable<UserImageDto>> Handle(
+        GetUserImagesQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IGetUserImagesRepository _repository = repository;
-
-        public Task<IEnumerable<UserImageDto>> Handle(
-            GetUserImagesQuery request,
-            CancellationToken cancellationToken
-        )
+        if (request.Requester.IsAdmin)
         {
-            if (request.Requester.IsAdmin)
-            {
-                return _repository.GetUserImagesByAdminAsync(
-                    request.UserId,
-                    request.Page,
-                    cancellationToken
-                );
-            }
-            else
-            {
-                return _repository.GetUserImagesByUserAsync(
-                    request.UserId,
-                    request.Requester.Id,
-                    request.Page,
-                    cancellationToken
-                );
-            }
+            return await repository.GetUserImagesByAdminAsync(
+                request.UserId,
+                request.Page,
+                cancellationToken
+            );
+        }
+        else
+        {
+            return await repository.GetUserImagesByUserAsync(
+                request.UserId,
+                request.Requester.Id,
+                request.Page,
+                cancellationToken
+            );
         }
     }
 }

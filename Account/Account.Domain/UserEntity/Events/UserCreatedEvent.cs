@@ -1,9 +1,9 @@
-﻿using Shared.Primitives.DomainEvent;
+﻿using Identity;
+using Mediator;
 
-namespace Account.Domain.UserEntity.Events
+namespace Account.Domain.UserEntity.Events;
+
+public sealed class UserCreatedEvent(User user) : IDomainEvent
 {
-    public sealed class UserCreatedEvent(User user) : IDomainEvent
-    {
-        public UserId UserId { get; } = user.Id;
-    }
+    public UserId UserId { get; } = user.Id;
 }

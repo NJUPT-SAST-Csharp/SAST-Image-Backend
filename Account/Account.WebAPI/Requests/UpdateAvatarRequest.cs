@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Account.WebAPI.Requests
+namespace Account.WebAPI.Requests;
+
+public readonly struct UpdateAvatarRequest
 {
-    public readonly struct UpdateAvatarRequest
-    {
-        [FromForm]
-        public readonly IFormFile AvatarFile { get; init; }
-    }
+    [FromForm]
+    public readonly IFormFile AvatarFile { get; init; }
 }

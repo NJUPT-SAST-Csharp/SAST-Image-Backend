@@ -1,6 +1,5 @@
-﻿using Shared.Primitives.Query;
+﻿using Mediator;
 
-namespace SastImg.Application.CategoryServices.GetAllCategory
-{
-    public sealed class GetAllCategoriesQuery : IQueryRequest<IEnumerable<CategoryDto>> { }
-}
+namespace SastImg.Application.CategoryServices.GetAllCategory;
+
+public sealed class GetAllCategoriesQuery : IQuery<IEnumerable<CategoryDto>> { }

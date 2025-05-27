@@ -1,7 +1,6 @@
-﻿namespace Account.Application.Endpoints.AccountEndpoints.Login
+﻿namespace Account.Application.Endpoints.AccountEndpoints.Login;
+
+public sealed class LoginDto(string jwt)
 {
-    public sealed class LoginDto(string jwt)
-    {
-        public string Jwt { get; } = jwt;
-    }
+    public string Jwt { get; } = jwt;
 }

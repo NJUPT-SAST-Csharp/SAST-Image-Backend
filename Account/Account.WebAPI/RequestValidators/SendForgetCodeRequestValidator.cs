@@ -2,18 +2,17 @@
 using Account.WebAPI.Requests;
 using FluentValidation;
 
-namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.SendForgetCode
+namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.SendForgetCode;
+
+public sealed class SendForgetCodeRequestValidator : AbstractValidator<SendForgetCodeRequest>
 {
-    public sealed class SendForgetCodeRequestValidator : AbstractValidator<SendForgetCodeRequest>
+    public SendForgetCodeRequestValidator()
     {
-        public SendForgetCodeRequestValidator()
-        {
-            RuleFor(r => r.Email)
-                .Cascade(CascadeMode.Stop)
-                .NotEmpty()
-                .MaximumLength(EmailValidRule.MaxLength)
-                .EmailAddress()
-                .WithMessage("Invalid email");
-        }
+        RuleFor(r => r.Email)
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty()
+            .MaximumLength(EmailValidRule.MaxLength)
+            .EmailAddress()
+            .WithMessage("Invalid email");
     }
 }

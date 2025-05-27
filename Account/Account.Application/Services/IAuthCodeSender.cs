@@ -1,7 +1,6 @@
-﻿namespace Account.Application.Services
+﻿namespace Account.Application.Services;
+
+public interface IAuthCodeSender
 {
-    public interface IAuthCodeSender
-    {
-        Task SendCodeAsync(string email, int code, CancellationToken cancellationToken = default);
-    }
+    Task SendCodeAsync(string email, int code, CancellationToken cancellationToken = default);
 }

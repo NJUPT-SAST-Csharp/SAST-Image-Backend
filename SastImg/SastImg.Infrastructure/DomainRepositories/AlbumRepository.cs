@@ -4,36 +4,35 @@ using SastImg.Domain.AlbumAggregate;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
 using SastImg.Infrastructure.Persistence;
 
-namespace SastImg.Infrastructure.DomainRepositories
+namespace SastImg.Infrastructure.DomainRepositories;
+
+public sealed class AlbumRepository(SastImgDbContext context) : IAlbumRepository
 {
-    internal class AlbumRepository(SastImgDbContext context) : IAlbumRepository
+    private readonly SastImgDbContext _context = context;
+
+    public async Task<AlbumId> AddAlbumAsync(
+        Album album,
+        CancellationToken cancellationToken = default
+    )
     {
-        private readonly SastImgDbContext _context = context;
+        var a = await _context.Albums.AddAsync(album, cancellationToken);
+        return a.Entity.Id;
+    }
 
-        public async Task<AlbumId> AddAlbumAsync(
-            Album album,
-            CancellationToken cancellationToken = default
-        )
+    public async Task<Album> GetAlbumAsync(
+        AlbumId id,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var album = await _context
+            .Albums.Include("_images")
+            .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
+
+        if (album is null)
         {
-            var a = await _context.Albums.AddAsync(album, cancellationToken);
-            return a.Entity.Id;
+            throw new DbNotFoundException(nameof(Album), id.Value.ToString());
         }
 
-        public async Task<Album> GetAlbumAsync(
-            AlbumId id,
-            CancellationToken cancellationToken = default
-        )
-        {
-            var album = await _context
-                .Albums.Include("_images")
-                .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
-
-            if (album is null)
-            {
-                throw new DbNotFoundException(nameof(Album), id.Value.ToString());
-            }
-
-            return album;
-        }
+        return album;
     }
 }

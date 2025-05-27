@@ -1,18 +1,15 @@
-﻿using Shared.Primitives.Query;
+﻿using Mediator;
 
-namespace SNS.Application.GetFollowing
+namespace SNS.Application.GetFollowing;
+
+public sealed class GetFollowingQueryHandler(IFollowingRepository repository)
+    : IQueryHandler<GetFollowingQuery, IEnumerable<FollowingDto>>
 {
-    internal sealed class GetFollowingQueryHandler(IFollowingRepository repository)
-        : IQueryRequestHandler<GetFollowingQuery, IEnumerable<FollowingDto>>
+    public async ValueTask<IEnumerable<FollowingDto>> Handle(
+        GetFollowingQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IFollowingRepository _repository = repository;
-
-        public Task<IEnumerable<FollowingDto>> Handle(
-            GetFollowingQuery request,
-            CancellationToken cancellationToken
-        )
-        {
-            return _repository.GetFollowingAsync(request.UserId, cancellationToken);
-        }
+        return await repository.GetFollowingAsync(request.UserId, cancellationToken);
     }
 }

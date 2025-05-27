@@ -1,39 +1,35 @@
 ﻿using Account.Domain.UserEntity.Services;
+using Mediator;
 using Primitives;
-using Primitives.Command;
 
-namespace Account.Application.FileServices.UpdateAvatar
+namespace Account.Application.FileServices.UpdateAvatar;
+
+public sealed class UpdateAvatarCommandHandler(
+    IUserRepository repository,
+    IAvatarStorageRepository storage,
+    IUnitOfWork unit
+) : ICommandHandler<UpdateAvatarCommand>
 {
-    internal sealed class UpdateAvatarCommandHandler(
-        IUserRepository repository,
-        IAvatarStorageRepository storage,
-        IUnitOfWork unit
-    ) : ICommandRequestHandler<UpdateAvatarCommand>
+    public async ValueTask<Unit> Handle(
+        UpdateAvatarCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IUserRepository _repository = repository;
-        private readonly IAvatarStorageRepository _storage = storage;
-        private readonly IUnitOfWork _unit = unit;
+        var user = await repository.GetUserByIdAsync(request.Requester.Id, cancellationToken);
 
-        public async Task Handle(UpdateAvatarCommand request, CancellationToken cancellationToken)
+        if (request.Avatar is not null)
         {
-            var user = await _repository.GetUserByIdAsync(request.Requester.Id, cancellationToken);
+            var url = await storage.UploadAvatarAsync(user.Id, request.Avatar, cancellationToken);
 
-            if (request.Avatar is not null)
-            {
-                var url = await _storage.UploadAvatarAsync(
-                    user.Id,
-                    request.Avatar,
-                    cancellationToken
-                );
-
-                user.UpdateAvatar(url);
-            }
-            else
-            {
-                user.UpdateAvatar(null);
-            }
-
-            await _unit.CommitChangesAsync(cancellationToken);
+            user.UpdateAvatar(url);
         }
+        else
+        {
+            user.UpdateAvatar(null);
+        }
+
+        await unit.CommitChangesAsync(cancellationToken);
+
+        return Unit.Value;
     }
 }

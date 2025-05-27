@@ -1,11 +1,10 @@
 ﻿using Messenger;
 using SastImg.Domain.AlbumAggregate.AlbumEntity.Events;
 
-namespace SastImg.Application.AlbumServices.CreateAlbum
+namespace SastImg.Application.AlbumServices.CreateAlbum;
+
+internal readonly struct AlbumCreatedMessage(AlbumCreatedDomainEvent domainEvent) : IMessage
 {
-    internal readonly struct AlbumCreatedMessage(AlbumCreatedDomainEvent domainEvent) : IMessage
-    {
-        public readonly long AuthorId { get; } = domainEvent.AuthorId.Value;
-        public readonly long AlbumId { get; } = domainEvent.AlbumId.Value;
-    }
+    public readonly long AuthorId { get; } = domainEvent.AuthorId.Value;
+    public readonly long AlbumId { get; } = domainEvent.AlbumId.Value;
 }

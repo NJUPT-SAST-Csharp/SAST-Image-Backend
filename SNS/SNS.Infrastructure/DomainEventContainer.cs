@@ -1,22 +1,21 @@
 ﻿using System.Collections.Concurrent;
-using Shared.Primitives.DomainEvent;
+using Mediator;
 
-namespace SNS.Infrastructure
+namespace SNS.Infrastructure;
+
+internal sealed class DomainEventContainer : IDomainEventContainer
 {
-    internal sealed class DomainEventContainer : IDomainEventContainer
+    private readonly ConcurrentQueue<IDomainEvent> _queue = [];
+
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _queue.ToList();
+
+    public void AddDomainEvent(IDomainEvent domainEvent)
     {
-        private readonly ConcurrentQueue<IDomainEvent> _queue = [];
+        _queue.Enqueue(domainEvent);
+    }
 
-        public IReadOnlyCollection<IDomainEvent> DomainEvents => _queue.ToList();
-
-        public void AddDomainEvent(IDomainEvent domainEvent)
-        {
-            _queue.Enqueue(domainEvent);
-        }
-
-        public void ClearDomainEvents()
-        {
-            _queue.Clear();
-        }
+    public void ClearDomainEvents()
+    {
+        _queue.Clear();
     }
 }

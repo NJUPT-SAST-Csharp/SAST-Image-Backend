@@ -1,8 +1,7 @@
-﻿namespace Account.Domain.UserEntity
+﻿namespace Account.Domain.UserEntity;
+
+public enum Role
 {
-    public enum Role
-    {
-        USER,
-        ADMIN
-    }
+    USER,
+    ADMIN,
 }

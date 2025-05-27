@@ -1,9 +1,8 @@
 ﻿using System.Data;
 
-namespace Account.Infrastructure.Persistence
+namespace Account.Infrastructure.Persistence;
+
+internal interface IDbConnectionFactory : IDisposable
 {
-    internal interface IDbConnectionFactory : IDisposable
-    {
-        public IDbConnection GetConnection();
-    }
+    public IDbConnection GetConnection();
 }

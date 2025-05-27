@@ -1,28 +1,27 @@
-﻿using Primitives.Rule;
+﻿using System.Diagnostics.CodeAnalysis;
+using Primitives.ValueObject;
 
-namespace SastImg.Domain.AlbumAggregate.ImageEntity
+namespace SastImg.Domain.AlbumAggregate.ImageEntity;
+
+[OpenJsonConverter<ImageDescription, string>]
+public readonly record struct ImageDescription : IValueObject<ImageDescription, string>
 {
-    public readonly struct ImageDescription
+    public const int MaxLength = 100;
+
+    public readonly string Value { get; init; }
+
+    public static bool TryCreateNew(
+        string? input,
+        [NotNullWhen(true)] out ImageDescription newObject
+    )
     {
-        public const int MaxLength = 100;
-
-        public readonly string Value { get; } = string.Empty;
-
-        public ImageDescription(string value)
+        if (input is { Length: > MaxLength })
         {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                return;
-            }
-
-            if (value.Length > MaxLength)
-            {
-                throw new DomainObjectValidationException(
-                    $"Image description length must be less than {MaxLength}"
-                );
-            }
-
-            Value = value;
+            newObject = default;
+            return false;
         }
+
+        newObject = new() { Value = input?.Trim() ?? string.Empty };
+        return true;
     }
 }

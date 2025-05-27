@@ -1,63 +1,66 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
 var storage = builder.AddParameter("StoragePath");
+var authentication = builder.AddParameter("Auth-SecKey", true);
 
 var rabbitmq = builder.AddRabbitMQ(
     "RabbitMQ",
-    builder.AddParameter("MQUsername"),
-    builder.AddParameter("MQPassword"),
+    builder.AddParameter("RabbitMQ-Username", true),
+    builder.AddParameter("RabbitMQ-Password", true),
     5672
 );
 
-var redis = builder.AddRedis("Cache");
+var redis = builder.AddRedis("Cache", 6379);
 
-var postgres = builder
-    .AddPostgres(
-        "PostgreSQL",
-        builder.AddParameter("PsqlUsername"),
-        builder.AddParameter("PsqlPassword"),
-        5432
-    )
-    .WithDataVolume();
+var postgres = builder.AddPostgres(
+    "PostgreSQL",
+    builder.AddParameter("Postgres-Username", true),
+    builder.AddParameter("Postgres-Password", true),
+    5432
+)
+//.WithDataVolume()
+;
 
-var square = builder
-    .AddProject<Projects.Square_WebAPI>("Square")
-    .WithReference(postgres.AddDatabase("SquareDb", "sastimg_square"))
-    .WithEnvironment("StoragePath", storage);
-
+var database = postgres.AddDatabase("SNSDb", "sastimg_sns");
 var sns = builder
     .AddProject<Projects.SNS_WebAPI>("SNS")
-    .WithReference(postgres.AddDatabase("SNSDb", "sastimg_sns"))
+    .WaitFor(database)
+    .WithReference(database)
     .WithReference(rabbitmq)
     .WithEnvironment("StoragePath", storage);
 
+database = postgres.AddDatabase("SastimgDb", "sastimg");
 var sastimg = builder
     .AddProject<Projects.SastImg_WebAPI>("SastImg")
-    .WithReference(postgres.AddDatabase("SastimgDb", "sastimg"))
+    .WaitFor(database)
+    .WithReference(database)
     .WithReference(redis)
     .WithReference(rabbitmq)
     .WithEnvironment("StoragePath", storage);
 
+database = postgres.AddDatabase("AccountDb", "sastimg_account");
 var account = builder
     .AddProject<Projects.Account_WebAPI>("Account")
-    .WithReference(postgres.AddDatabase("AccountDb", "sastimg_account"))
+    .WaitFor(database)
+    .WithReference(database)
     .WithReference(redis)
     .WithReference(rabbitmq)
-    .WithEnvironment("StoragePath", storage);
+    .WithEnvironment("StoragePath", storage)
+    .WithEnvironment("Authentication:SecKey", authentication);
 
-var proxy = builder.AddProject<Projects.Proxy>("Proxy");
+var proxy = builder
+    .AddProject<Projects.Proxy>("Proxy")
+    .WithEnvironment("Authentication:SecKey", authentication);
 
 builder
     .AddNpmApp("Frontend", builder.Configuration["Parameters:FrontendDirectory"]!, "dev")
+    .WaitFor(proxy)
     .WithReference(proxy)
     .WithHttpEndpoint(5173, env: "PORT", isProxied: false)
     .WithExternalHttpEndpoints();
 
-proxy
-    .WithExternalHttpEndpoints()
-    .WithReference(sastimg)
-    .WithReference(account)
-    .WithReference(sns)
-    .WithReference(square);
+proxy.WithExternalHttpEndpoints().WithReference(sastimg).WithReference(account).WithReference(sns);
 
-builder.Build().Run();
+var app = builder.Build();
+
+app.Run();

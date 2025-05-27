@@ -2,37 +2,24 @@
 
 #nullable disable
 
-namespace Account.Infrastructure.Persistence.Migrations
+namespace Account.Infrastructure.Persistence.Migrations;
+
+/// <inheritdoc />
+public partial class Fix1 : Migration
 {
     /// <inheritdoc />
-    public partial class Fix1 : Migration
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.RenameColumn(
-                name: "salt",
-                table: "users",
-                newName: "password_salt");
+        migrationBuilder.RenameColumn(name: "salt", table: "users", newName: "password_salt");
 
-            migrationBuilder.RenameColumn(
-                name: "hash",
-                table: "users",
-                newName: "password_hash");
-        }
+        migrationBuilder.RenameColumn(name: "hash", table: "users", newName: "password_hash");
+    }
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.RenameColumn(
-                name: "password_salt",
-                table: "users",
-                newName: "salt");
+    /// <inheritdoc />
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.RenameColumn(name: "password_salt", table: "users", newName: "salt");
 
-            migrationBuilder.RenameColumn(
-                name: "password_hash",
-                table: "users",
-                newName: "hash");
-        }
+        migrationBuilder.RenameColumn(name: "password_hash", table: "users", newName: "hash");
     }
 }

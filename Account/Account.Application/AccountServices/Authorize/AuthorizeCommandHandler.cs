@@ -1,22 +1,23 @@
 ﻿using Account.Domain.UserEntity.Services;
+using Mediator;
 using Primitives;
-using Primitives.Command;
 
-namespace Account.Application.Endpoints.AccountEndpoints.Authorize
+namespace Account.Application.Endpoints.AccountEndpoints.Authorize;
+
+public sealed class AuthorizeCommandHandler(IUserRepository users, IUnitOfWork unit)
+    : ICommandHandler<AuthorizeCommand>
 {
-    public sealed class AuthorizeCommandHandler(IUserRepository users, IUnitOfWork unit)
-        : ICommandRequestHandler<AuthorizeCommand>
+    public async ValueTask<Unit> Handle(
+        AuthorizeCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IUserRepository _users = users;
-        private readonly IUnitOfWork _unit = unit;
+        var user = await users.GetUserByIdAsync(request.UserId, cancellationToken);
 
-        public async Task Handle(AuthorizeCommand request, CancellationToken cancellationToken)
-        {
-            var user = await _users.GetUserByIdAsync(request.UserId, cancellationToken);
+        user.UpdateAuthorizations(request.Roles);
 
-            user.UpdateAuthorizations(request.Roles);
+        await unit.CommitChangesAsync(cancellationToken);
 
-            await _unit.CommitChangesAsync(cancellationToken);
-        }
+        return Unit.Value;
     }
 }

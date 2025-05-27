@@ -1,15 +1,8 @@
-﻿using System.Security.Claims;
-using SastImg.Application.SeedWorks;
+﻿using Identity;
+using Mediator;
 using SastImg.Domain;
-using Shared.Primitives.Query;
 
-namespace SastImg.Application.ImageServices.GetUserImages
-{
-    public sealed class GetUserImagesQuery(long userId, int page, ClaimsPrincipal user)
-        : IQueryRequest<IEnumerable<UserImageDto>>
-    {
-        public UserId UserId { get; } = new(userId);
-        public int Page { get; } = page;
-        public RequesterInfo Requester { get; } = new(user);
-    }
-}
+namespace SastImg.Application.ImageServices.GetUserImages;
+
+public sealed record class GetUserImagesQuery(UserId UserId, int Page, Requester Requester)
+    : IQuery<IEnumerable<UserImageDto>>;

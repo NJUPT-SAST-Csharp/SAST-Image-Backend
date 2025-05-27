@@ -1,9 +1,8 @@
-﻿namespace SastImg.Application.ImageServices.SearchImages
+﻿namespace SastImg.Application.ImageServices.SearchImages;
+
+public enum SearchOrder
 {
-    public enum SearchOrder
-    {
-        ByDate,
-        ByLikes,
-        ByViews,
-    }
+    ByDate,
+    ByLikes,
+    ByViews,
 }

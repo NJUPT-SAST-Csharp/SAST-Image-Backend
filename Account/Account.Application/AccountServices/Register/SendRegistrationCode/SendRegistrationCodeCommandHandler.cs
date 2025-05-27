@@ -1,40 +1,33 @@
 ﻿using Account.Application.Services;
+using Mediator;
 using Microsoft.Extensions.Logging;
-using Primitives.Command;
 
-namespace Account.Application.Endpoints.AccountEndpoints.Register.SendRegistrationCode
+namespace Account.Application.Endpoints.AccountEndpoints.Register.SendRegistrationCode;
+
+public sealed class SendRegistrationCodeCommandHandler(
+    IAuthCodeCache cache,
+    IAuthCodeSender sender,
+    ILogger<SendRegistrationCodeCommandHandler> logger
+) : ICommandHandler<SendRegistrationCodeCommand>
 {
-    public sealed class SendRegistrationCodeCommandHandler(
-        IAuthCodeCache cache,
-        IAuthCodeSender sender,
-        ILogger<SendRegistrationCodeCommandHandler> logger
-    ) : ICommandRequestHandler<SendRegistrationCodeCommand>
+    public async ValueTask<Unit> Handle(
+        SendRegistrationCodeCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IAuthCodeCache _cache = cache;
-        private readonly IAuthCodeSender _sender = sender;
-        private readonly ILogger<SendRegistrationCodeCommandHandler> _logger = logger;
+        int code = Random.Shared.Next(100000, 999999);
 
-        public async Task Handle(
-            SendRegistrationCodeCommand request,
-            CancellationToken cancellationToken
-        )
-        {
-            int code = Random.Shared.Next(100000, 999999);
+        await cache.StoreCodeAsync(
+            CodeCacheKey.Registration,
+            request.Email,
+            code,
+            cancellationToken
+        );
 
-            await _cache.StoreCodeAsync(
-                CodeCacheKey.Registration,
-                request.Email,
-                code,
-                cancellationToken
-            );
+        logger.LogInformation("Code [{code}] for [{email}] has been stored", code, request.Email);
 
-            _logger.LogInformation(
-                "Code [{code}] for [{email}] has been stored",
-                code,
-                request.Email
-            );
+        await sender.SendCodeAsync(request.Email, code, cancellationToken);
 
-            await _sender.SendCodeAsync(request.Email, code, cancellationToken);
-        }
+        return Unit.Value;
     }
 }

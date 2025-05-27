@@ -1,7 +1,6 @@
-﻿namespace Account.WebAPI.Requests
+﻿namespace Account.WebAPI.Requests;
+
+public readonly struct SendRegistrationCodeRequest
 {
-    public readonly struct SendRegistrationCodeRequest
-    {
-        public readonly string Email { get; init; }
-    }
+    public readonly string Email { get; init; }
 }

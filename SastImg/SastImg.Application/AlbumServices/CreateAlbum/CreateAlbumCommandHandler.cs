@@ -1,36 +1,30 @@
-﻿using Primitives;
-using Primitives.Command;
+﻿using Mediator;
+using Primitives;
 using SastImg.Domain.AlbumAggregate;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
 
-namespace SastImg.Application.AlbumServices.CreateAlbum
+namespace SastImg.Application.AlbumServices.CreateAlbum;
+
+public sealed class CreateAlbumCommandHandler(IUnitOfWork unitOfWork, IAlbumRepository repository)
+    : ICommandHandler<CreateAlbumCommand, CreateAlbumDto>
 {
-    internal sealed class CreateAlbumCommandHandler(
-        IUnitOfWork unitOfWork,
-        IAlbumRepository repository
-    ) : ICommandRequestHandler<CreateAlbumCommand, CreateAlbumDto>
+    public async ValueTask<CreateAlbumDto> Handle(
+        CreateAlbumCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IUnitOfWork _unitOfWork = unitOfWork;
-        private readonly IAlbumRepository _repository = repository;
+        var album = Album.CreateNewAlbum(
+            request.Requester.Id,
+            request.CategoryId,
+            request.Title,
+            request.Description,
+            request.Accessibility
+        );
 
-        public async Task<CreateAlbumDto> Handle(
-            CreateAlbumCommand request,
-            CancellationToken cancellationToken
-        )
-        {
-            var album = Album.CreateNewAlbum(
-                request.Requester.Id,
-                request.CategoryId,
-                request.Title,
-                request.Description,
-                request.Accessibility
-            );
+        var id = await repository.AddAlbumAsync(album, cancellationToken);
 
-            var id = await _repository.AddAlbumAsync(album, cancellationToken);
+        await unitOfWork.CommitChangesAsync(cancellationToken);
 
-            await _unitOfWork.CommitChangesAsync(cancellationToken);
-
-            return new CreateAlbumDto(id);
-        }
+        return new CreateAlbumDto(id);
     }
 }

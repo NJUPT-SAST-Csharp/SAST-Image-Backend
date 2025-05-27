@@ -1,9 +1,8 @@
-﻿using Shared.Primitives.DomainEvent;
+﻿using Mediator;
 
-namespace SastImg.Domain.AlbumAggregate.AlbumEntity.Events
+namespace SastImg.Domain.AlbumAggregate.AlbumEntity.Events;
+
+public sealed class AlbumRemovedDomainEvent(in AlbumId albumId) : IDomainEvent
 {
-    public sealed class AlbumRemovedDomainEvent(in AlbumId albumId) : IDomainEvent
-    {
-        public AlbumId AlbumId { get; } = albumId;
-    }
+    public AlbumId AlbumId { get; } = albumId;
 }

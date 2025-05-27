@@ -1,13 +1,13 @@
-﻿using SastImg.Domain.AlbumAggregate.ImageEntity;
-using Shared.Primitives.DomainEvent;
+﻿using Identity;
+using Mediator;
+using SastImg.Domain.AlbumAggregate.ImageEntity;
 
-namespace SastImg.Domain.AlbumAggregate.AlbumEntity.Events
+namespace SastImg.Domain.AlbumAggregate.AlbumEntity.Events;
+
+public sealed class ImageAddedDomainEvent(AlbumId albumId, UserId authorId, ImageId imageId)
+    : IDomainEvent
 {
-    public sealed class ImageAddedDomainEvent(AlbumId albumId, UserId authorId, ImageId imageId)
-        : IDomainEvent
-    {
-        public AlbumId AlbumId { get; } = albumId;
-        public UserId AuthorId { get; } = authorId;
-        public ImageId ImageId { get; } = imageId;
-    }
+    public AlbumId AlbumId { get; } = albumId;
+    public UserId AuthorId { get; } = authorId;
+    public ImageId ImageId { get; } = imageId;
 }

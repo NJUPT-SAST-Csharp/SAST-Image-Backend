@@ -1,30 +1,29 @@
 ﻿using Exceptions.Exceptions;
+using Mediator;
 using Primitives;
-using Primitives.Command;
 using SastImg.Domain.AlbumAggregate;
 
-namespace SastImg.Application.AlbumServices.RestoreAlbum
-{
-    internal sealed class RestoreAlbumCommandHandler(
-        IAlbumRepository repository,
-        IUnitOfWork unitOfWork
-    ) : ICommandRequestHandler<RestoreAlbumCommand>
-    {
-        private readonly IAlbumRepository _repository = repository;
-        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+namespace SastImg.Application.AlbumServices.RestoreAlbum;
 
-        public async Task Handle(RestoreAlbumCommand request, CancellationToken cancellationToken)
+public sealed class RestoreAlbumCommandHandler(IAlbumRepository repository, IUnitOfWork unitOfWork)
+    : ICommandHandler<RestoreAlbumCommand>
+{
+    public async ValueTask<Unit> Handle(
+        RestoreAlbumCommand request,
+        CancellationToken cancellationToken
+    )
+    {
+        var album = await repository.GetAlbumAsync(request.AlbumId, cancellationToken);
+        if (request.Requester.IsAdmin || album.IsOwnedBy(request.Requester.Id))
         {
-            var album = await _repository.GetAlbumAsync(request.AlbumId, cancellationToken);
-            if (request.Requester.IsAdmin || album.IsOwnedBy(request.Requester.Id))
-            {
-                album.Restore();
-                await _unitOfWork.CommitChangesAsync(cancellationToken);
-            }
-            else
-            {
-                throw new NoPermissionException();
-            }
+            album.Restore();
+            await unitOfWork.CommitChangesAsync(cancellationToken);
         }
+        else
+        {
+            throw new NoPermissionException();
+        }
+
+        return Unit.Value;
     }
 }

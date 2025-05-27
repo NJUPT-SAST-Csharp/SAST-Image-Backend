@@ -1,7 +1,6 @@
-﻿namespace Account.WebAPI.Requests
+﻿namespace Account.WebAPI.Requests;
+
+public readonly struct ChangePasswordRequest
 {
-    public readonly struct ChangePasswordRequest
-    {
-        public readonly string NewPassword { get; init; }
-    }
+    public readonly string NewPassword { get; init; }
 }

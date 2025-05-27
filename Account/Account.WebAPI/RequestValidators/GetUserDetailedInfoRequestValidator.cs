@@ -2,16 +2,15 @@
 using Account.WebAPI.Requests;
 using FluentValidation;
 
-namespace Account.WebAPI.RequestValidators
+namespace Account.WebAPI.RequestValidators;
+
+public sealed class GetUserDetailedInfoRequestValidator
+    : AbstractValidator<GetUserDetailedInfoRequest>
 {
-    public sealed class GetUserDetailedInfoRequestValidator
-        : AbstractValidator<GetUserDetailedInfoRequest>
+    public GetUserDetailedInfoRequestValidator()
     {
-        public GetUserDetailedInfoRequestValidator()
-        {
-            RuleFor(x => x.Username)
-                .NotEmpty()
-                .Length(UsernameValidRule.MinLength, UsernameValidRule.MaxLength);
-        }
+        RuleFor(x => x.Username)
+            .NotEmpty()
+            .Length(UsernameValidRule.MinLength, UsernameValidRule.MaxLength);
     }
 }

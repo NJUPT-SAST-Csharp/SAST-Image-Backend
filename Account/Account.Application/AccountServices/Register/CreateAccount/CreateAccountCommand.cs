@@ -1,18 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
-using Primitives.Command;
+﻿using Mediator;
+using Microsoft.AspNetCore.Http;
 
-namespace Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount
+namespace Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount;
+
+public sealed class CreateAccountCommand(string username, string password, string email, int code)
+    : ICommand<IResult>
 {
-    public sealed class CreateAccountCommand(
-        string username,
-        string password,
-        string email,
-        int code
-    ) : ICommandRequest<IResult>
-    {
-        public string Username { get; init; } = username;
-        public string Password { get; init; } = password;
-        public string Email { get; init; } = email;
-        public int Code { get; init; } = code;
-    }
+    public string Username { get; init; } = username;
+    public string Password { get; init; } = password;
+    public string Email { get; init; } = email;
+    public int Code { get; init; } = code;
 }

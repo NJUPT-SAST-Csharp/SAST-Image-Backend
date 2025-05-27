@@ -1,11 +1,11 @@
-﻿using Primitives.Command;
+﻿using Identity;
+using Mediator;
 
-namespace SNS.Domain.Follows
+namespace SNS.Domain.Follows;
+
+public sealed class UnfollowCommand(UserId follower, UserId following) : ICommand
 {
-    public sealed class UnfollowCommand(UserId follower, UserId following) : ICommandRequest
-    {
-        public UserId Follower { get; } = follower;
+    public UserId Follower { get; } = follower;
 
-        public UserId Following { get; } = following;
-    }
+    public UserId Following { get; } = following;
 }

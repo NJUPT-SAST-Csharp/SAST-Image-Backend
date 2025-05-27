@@ -1,10 +1,21 @@
-﻿namespace SastImg.Domain.CategoryEntity
+﻿using System.ComponentModel;
+using Primitives.Entity;
+using Primitives.Utilities;
+
+namespace SastImg.Domain.CategoryEntity;
+
+[TypeConverter(typeof(OpenId<CategoryId>))]
+public readonly record struct CategoryId : ITypedId<CategoryId>
 {
-    public readonly record struct CategoryId(int Value)
+    public long Value { get; init; }
+
+    public static CategoryId GenerateNew()
     {
-        public override string ToString()
-        {
-            return Value.ToString();
-        }
+        return new() { Value = SnowFlakeIdGenerator.NewId };
+    }
+
+    public override string ToString()
+    {
+        return Value.ToString();
     }
 }

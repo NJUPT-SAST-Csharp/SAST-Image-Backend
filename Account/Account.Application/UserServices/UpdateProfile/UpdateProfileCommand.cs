@@ -1,22 +1,12 @@
-﻿using System.Security.Claims;
-using Account.Application.SeedWorks;
-using Primitives.Command;
+﻿using Identity;
+using Mediator;
 
-namespace Account.Application.UserServices.UpdateProfile
-{
-    public sealed class UpdateProfileCommand(
-        string nickname,
-        string biography,
-        DateOnly? birthday,
-        Uri? website,
-        ClaimsPrincipal user
-    ) : ICommandRequest
-    {
-        public string Nickname { get; } = nickname;
-        public string Biography { get; } = biography;
-        public DateOnly? Birthday { get; } = birthday;
-        public Uri? Website { get; } = website;
+namespace Account.Application.UserServices.UpdateProfile;
 
-        public RequesterInfo Requester { get; } = new(user);
-    }
-}
+public sealed record class UpdateProfileCommand(
+    string Nickname,
+    string Biography,
+    DateOnly? Birthday,
+    Uri? Website,
+    Requester Requester
+) : ICommand;

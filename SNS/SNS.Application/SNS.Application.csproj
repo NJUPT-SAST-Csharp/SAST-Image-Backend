@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Auth\Auth.csproj" />
-    <ProjectReference Include="..\..\Shared\Messenger\Messenger.csproj" />
-    <ProjectReference Include="..\..\Shared\Primitives\Primitives.csproj" />
+    <ProjectReference Include="..\..\Components\Auth\Auth.csproj" />
+    <ProjectReference Include="..\..\Components\Messenger\Messenger.csproj" />
+    <ProjectReference Include="..\..\Components\Primitives\Primitives.csproj" />
     <ProjectReference Include="..\SNS.Domain\SNS.Domain.csproj" />
   </ItemGroup>
 

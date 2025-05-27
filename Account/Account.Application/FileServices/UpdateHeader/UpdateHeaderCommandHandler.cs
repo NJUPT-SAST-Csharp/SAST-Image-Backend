@@ -1,39 +1,35 @@
 ﻿using Account.Domain.UserEntity.Services;
+using Mediator;
 using Primitives;
-using Primitives.Command;
 
-namespace Account.Application.FileServices.UpdateHeader
+namespace Account.Application.FileServices.UpdateHeader;
+
+public sealed class UpdateHeaderCommandHandler(
+    IUserRepository repository,
+    IHeaderStorageRepository storage,
+    IUnitOfWork unit
+) : ICommandHandler<UpdateHeaderCommand>
 {
-    internal class UpdateHeaderCommandHandler(
-        IUserRepository repository,
-        IHeaderStorageRepository storage,
-        IUnitOfWork unit
-    ) : ICommandRequestHandler<UpdateHeaderCommand>
+    public async ValueTask<Unit> Handle(
+        UpdateHeaderCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IUnitOfWork _unit = unit;
-        private readonly IUserRepository _repository = repository;
-        private readonly IHeaderStorageRepository _storage = storage;
+        var user = await repository.GetUserByIdAsync(request.Requester.Id, cancellationToken);
 
-        public async Task Handle(UpdateHeaderCommand request, CancellationToken cancellationToken)
+        if (request.Header is not null)
         {
-            var user = await _repository.GetUserByIdAsync(request.Requester.Id, cancellationToken);
+            var url = await storage.UploadHeaderAsync(user.Id, request.Header, cancellationToken);
 
-            if (request.Header is not null)
-            {
-                var url = await _storage.UploadHeaderAsync(
-                    user.Id,
-                    request.Header,
-                    cancellationToken
-                );
-
-                user.UpdateHeader(url);
-            }
-            else
-            {
-                user.UpdateHeader(null);
-            }
-
-            await _unit.CommitChangesAsync(cancellationToken);
+            user.UpdateHeader(url);
         }
+        else
+        {
+            user.UpdateHeader(null);
+        }
+
+        await unit.CommitChangesAsync(cancellationToken);
+
+        return Unit.Value;
     }
 }

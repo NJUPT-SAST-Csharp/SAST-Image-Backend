@@ -1,7 +1,6 @@
-﻿namespace Notifications.Domain.NotificationEntity.NotificationEvents
+﻿namespace Notifications.Domain.NotificationEntity.NotificationEvents;
+
+public interface INotificationEvent
 {
-    public interface INotificationEvent
-    {
-        public string Message { get; }
-    }
+    public string Message { get; }
 }

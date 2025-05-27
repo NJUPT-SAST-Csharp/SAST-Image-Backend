@@ -1,36 +1,33 @@
-﻿using Shared.Primitives.Query;
+﻿using Mediator;
 
-namespace SastImg.Application.AlbumServices.SearchAlbums
+namespace SastImg.Application.AlbumServices.SearchAlbums;
+
+internal sealed class SearchAlbumsQueryHandler(ISearchAlbumsRepository repository)
+    : IQueryHandler<SearchAlbumsQuery, IEnumerable<SearchAlbumDto>>
 {
-    internal sealed class SearchAlbumsQueryHandler(ISearchAlbumsRepository repository)
-        : IQueryRequestHandler<SearchAlbumsQuery, IEnumerable<SearchAlbumDto>>
+    public async ValueTask<IEnumerable<SearchAlbumDto>> Handle(
+        SearchAlbumsQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly ISearchAlbumsRepository _repository = repository;
-
-        public Task<IEnumerable<SearchAlbumDto>> Handle(
-            SearchAlbumsQuery request,
-            CancellationToken cancellationToken
-        )
+        if (request.Requester.IsAdmin)
         {
-            if (request.Requester.IsAdmin)
-            {
-                return _repository.SearchAlbumsByAdminAsync(
-                    request.CategoryId,
-                    request.Title,
-                    request.Page,
-                    cancellationToken
-                );
-            }
-            else
-            {
-                return _repository.SearchAlbumsByUserAsync(
-                    request.CategoryId,
-                    request.Title,
-                    request.Page,
-                    request.Requester.Id,
-                    cancellationToken
-                );
-            }
+            return await repository.SearchAlbumsByAdminAsync(
+                request.CategoryId,
+                request.SearchTitle,
+                request.Page,
+                cancellationToken
+            );
+        }
+        else
+        {
+            return await repository.SearchAlbumsByUserAsync(
+                request.CategoryId,
+                request.SearchTitle,
+                request.Page,
+                request.Requester.Id,
+                cancellationToken
+            );
         }
     }
 }

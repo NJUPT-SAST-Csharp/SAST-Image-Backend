@@ -1,7 +1,7 @@
 ﻿using Primitives.Entity;
+using Primitives.Utilities;
 using SastImg.Domain.AlbumAggregate.ImageEntity.Rules;
-using SastImg.Domain.TagEntity;
-using Utilities;
+using SastImg.Domain.AlbumTagEntity;
 
 namespace SastImg.Domain.AlbumAggregate.ImageEntity;
 
@@ -10,8 +10,8 @@ public sealed class Image : EntityBase<ImageId>
     private Image()
         : base(default) { }
 
-    internal Image(ImageTitle title, ImageDescription description, ImageUrl url, TagId[] tags)
-        : base(new(SnowFlakeIdGenerator.NewId))
+    internal Image(ImageTitle title, ImageDescription description, ImageUrl url, ImageTagId[] tags)
+        : base(new() { Value = SnowFlakeIdGenerator.NewId })
     {
         CheckRule(new ImageOwnNotMoreThan5TagsRule(tags));
 
@@ -27,11 +27,11 @@ public sealed class Image : EntityBase<ImageId>
 
     private readonly ImageDescription _description;
 
-    private readonly ImageUrl _url;
+    private readonly ImageUrl _url = null!;
 
     private readonly DateTime _uploadedAt = DateTime.UtcNow;
 
-    private readonly TagId[] _tags = [];
+    private readonly ImageTagId[] _tags = [];
 
     private bool _isRemoved = false;
 

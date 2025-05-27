@@ -1,12 +1,11 @@
 ﻿using Primitives.Rule;
-using SastImg.Domain.TagEntity;
+using SastImg.Domain.AlbumTagEntity;
 
-namespace SastImg.Domain.AlbumAggregate.ImageEntity.Rules
+namespace SastImg.Domain.AlbumAggregate.ImageEntity.Rules;
+
+internal readonly struct ImageOwnNotMoreThan5TagsRule(ImageTagId[] tags) : IDomainRule
 {
-    internal readonly struct ImageOwnNotMoreThan5TagsRule(TagId[] tags) : IDomainBusinessRule
-    {
-        public bool IsBroken => tags.Length > 5;
+    public bool IsBroken => tags.Length > 5;
 
-        public string Message => "Image couldn't contain more than 5 tags.";
-    }
+    public string Message => "Image couldn't contain more than 5 tags.";
 }

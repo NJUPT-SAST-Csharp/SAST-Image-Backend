@@ -1,10 +1,9 @@
-﻿using Shared.Primitives.Query;
-using SNS.Domain;
+﻿using Identity;
+using Mediator;
 
-namespace SNS.Application.GetFollowCount
+namespace SNS.Application.GetFollowCount;
+
+public sealed class GetFollowCountQuery(long id) : IQuery<FollowCountDto>
 {
-    public sealed class GetFollowCountQuery(long id) : IQueryRequest<FollowCountDto>
-    {
-        public UserId UserId { get; } = new(id);
-    }
+    public UserId UserId { get; } = new(id);
 }

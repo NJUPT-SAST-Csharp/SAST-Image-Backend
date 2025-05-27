@@ -1,29 +1,26 @@
-﻿using Shared.Primitives.Query;
+﻿using Mediator;
 
-namespace SastImg.Application.AlbumServices.GetUserAlbums
+namespace SastImg.Application.AlbumServices.GetUserAlbums;
+
+public sealed class GetUserAlbumsQueryHandler(IGetUserAlbumsRepository database)
+    : IQueryHandler<GetUserAlbumsQuery, IEnumerable<UserAlbumDto>>
 {
-    internal sealed class GetUserAlbumsQueryHandler(IGetUserAlbumsRepository database)
-        : IQueryRequestHandler<GetUserAlbumsQuery, IEnumerable<UserAlbumDto>>
+    public async ValueTask<IEnumerable<UserAlbumDto>> Handle(
+        GetUserAlbumsQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IGetUserAlbumsRepository _database = database;
-
-        public Task<IEnumerable<UserAlbumDto>> Handle(
-            GetUserAlbumsQuery request,
-            CancellationToken cancellationToken
-        )
+        if (request.Requester.IsAdmin)
         {
-            if (request.Requester.IsAdmin)
-            {
-                return _database.GetUserAlbumsByAdminAsync(request.AuthorId, cancellationToken);
-            }
-            else
-            {
-                return _database.GetUserAlbumsByUserAsync(
-                    request.AuthorId,
-                    request.Requester.Id,
-                    cancellationToken
-                );
-            }
+            return await database.GetUserAlbumsByAdminAsync(request.AuthorId, cancellationToken);
+        }
+        else
+        {
+            return await database.GetUserAlbumsByUserAsync(
+                request.AuthorId,
+                request.Requester.Id,
+                cancellationToken
+            );
         }
     }
 }

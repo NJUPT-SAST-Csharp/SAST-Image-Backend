@@ -1,9 +1,8 @@
-﻿using Primitives.Command;
+﻿using Mediator;
 
-namespace Account.Application.Endpoints.AccountEndpoints.Register.SendRegistrationCode
+namespace Account.Application.Endpoints.AccountEndpoints.Register.SendRegistrationCode;
+
+public sealed class SendRegistrationCodeCommand(string email) : ICommand
 {
-    public sealed class SendRegistrationCodeCommand(string email) : ICommandRequest
-    {
-        public string Email { get; } = email;
-    }
+    public string Email { get; } = email;
 }

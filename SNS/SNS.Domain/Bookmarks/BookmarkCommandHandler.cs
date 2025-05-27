@@ -1,22 +1,22 @@
-﻿using Primitives.Command;
-using Shared.Primitives.DomainEvent;
+﻿using Mediator;
 using SNS.Domain.Bookmarks.Events;
 
-namespace SNS.Domain.Bookmarks
+namespace SNS.Domain.Bookmarks;
+
+internal sealed class BookmarkCommandHandler(
+    IBookmarkManager manager,
+    IDomainEventContainer container
+) : ICommandHandler<BookmarkCommand>
 {
-    internal sealed class BookmarkCommandHandler(
-        IBookmarkManager manager,
-        IDomainEventContainer container
-    ) : ICommandRequestHandler<BookmarkCommand>
+    public async ValueTask<Unit> Handle(
+        BookmarkCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IBookmarkManager _manager = manager;
-        private readonly IDomainEventContainer _container = container;
+        await manager.BookmarkAsync(request.UserId, request.ImageId, cancellationToken);
 
-        public async Task Handle(BookmarkCommand request, CancellationToken cancellationToken)
-        {
-            await _manager.BookmarkAsync(request.UserId, request.ImageId, cancellationToken);
+        container.AddDomainEvent(new BookmarkedDomainEvent(request.UserId, request.ImageId));
 
-            _container.AddDomainEvent(new BookmarkedDomainEvent(request.UserId, request.ImageId));
-        }
+        return Unit.Value;
     }
 }

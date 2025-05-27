@@ -1,6 +1,5 @@
-﻿using Shared.Primitives.Query;
+﻿using Mediator;
 
-namespace SastImg.Application.TagServices.GetAllTags
-{
-    public sealed class GetAllTagsQuery : IQueryRequest<IEnumerable<TagDto>> { }
-}
+namespace SastImg.Application.TagServices.GetAllTags;
+
+public sealed class GetAllTagsQuery : IQuery<IEnumerable<TagDto>> { }

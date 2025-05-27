@@ -1,18 +1,15 @@
-﻿using Shared.Primitives.Query;
+﻿using Mediator;
 
-namespace SNS.Application.GetFollowers
+namespace SNS.Application.GetFollowers;
+
+public sealed class GetFollowersQueryHandler(IFollowerRepository repository)
+    : IQueryHandler<GetFollowersQuery, IEnumerable<FollowerDto>>
 {
-    internal class GetFollowersQueryHandler(IFollowerRepository repository)
-        : IQueryRequestHandler<GetFollowersQuery, IEnumerable<FollowerDto>>
+    public async ValueTask<IEnumerable<FollowerDto>> Handle(
+        GetFollowersQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IFollowerRepository _repository = repository;
-
-        public Task<IEnumerable<FollowerDto>> Handle(
-            GetFollowersQuery request,
-            CancellationToken cancellationToken
-        )
-        {
-            return _repository.GetFollowersAsync(request.UserId, cancellationToken);
-        }
+        return await repository.GetFollowersAsync(request.UserId, cancellationToken);
     }
 }

@@ -1,41 +1,36 @@
 ﻿using Account.Application.Services;
 using Account.Domain.UserEntity.Services;
+using Mediator;
 using Microsoft.AspNetCore.Http;
 using Primitives;
-using Primitives.Command;
 using Shared.Response.Builders;
 
-namespace Account.Application.Endpoints.AccountEndpoints.Login
+namespace Account.Application.Endpoints.AccountEndpoints.Login;
+
+public sealed class LoginCommandHandler(
+    IUserRepository repository,
+    IJwtProvider jwtProvider,
+    IUnitOfWork unit
+) : ICommandHandler<LoginCommand, IResult>
 {
-    public sealed class LoginCommandHandler(
-        IUserRepository repository,
-        IJwtProvider jwtProvider,
-        IUnitOfWork unit
-    ) : ICommandRequestHandler<LoginCommand, IResult>
+    public async ValueTask<IResult> Handle(
+        LoginCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IJwtProvider _jwtProvider = jwtProvider;
-        private readonly IUserRepository _repository = repository;
-        private readonly IUnitOfWork _unit = unit;
+        var user = await repository.GetUserByUsernameAsync(request.Username, cancellationToken);
 
-        public async Task<IResult> Handle(LoginCommand request, CancellationToken cancellationToken)
+        bool isValid = await user.LoginAsync(request.Password);
+
+        if (isValid == false)
         {
-            var user = await _repository.GetUserByUsernameAsync(
-                request.Username,
-                cancellationToken
-            );
-
-            var isValid = await user.LoginAsync(request.Password);
-
-            if (isValid == false)
-            {
-                return Responses.BadRequest("Login failed", "Username or password is incorrect.");
-            }
-
-            var jwt = _jwtProvider.GetLoginJwt(user.Id, user.Username, user.Roles);
-
-            await _unit.CommitChangesAsync(cancellationToken);
-
-            return Responses.Data(new LoginDto(jwt));
+            return Responses.BadRequest("Login failed", "Username or password is incorrect.");
         }
+
+        string jwt = jwtProvider.GetLoginJwt(user.Id, user.Username, user.Roles);
+
+        await unit.CommitChangesAsync(cancellationToken);
+
+        return Responses.Data(new LoginDto(jwt));
     }
 }

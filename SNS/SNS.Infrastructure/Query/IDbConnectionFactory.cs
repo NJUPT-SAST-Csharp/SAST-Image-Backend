@@ -1,9 +1,8 @@
 ﻿using System.Data;
 
-namespace SNS.Infrastructure.Query
+namespace SNS.Infrastructure.Query;
+
+internal interface IDbConnectionFactory : IDisposable
 {
-    internal interface IDbConnectionFactory : IDisposable
-    {
-        public IDbConnection GetConnection();
-    }
+    public IDbConnection GetConnection();
 }

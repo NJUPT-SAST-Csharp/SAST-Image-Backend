@@ -1,4 +1,6 @@
-﻿namespace SNS.Domain.Bookmarks;
+﻿using Identity;
+
+namespace SNS.Domain.Bookmarks;
 
 internal sealed record class Bookmark
 {

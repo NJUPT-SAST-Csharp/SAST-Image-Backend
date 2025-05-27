@@ -2,7 +2,6 @@
 
 [assembly: InternalsVisibleTo("SastImg.Test")]
 
-namespace SastImg.Infrastructure
-{
-    internal static class FriendAssembly { }
-}
+namespace SastImg.Infrastructure;
+
+internal static class FriendAssembly { }

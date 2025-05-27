@@ -1,31 +1,30 @@
 ﻿using Exceptions.Exceptions;
+using Mediator;
 using Primitives;
-using Primitives.Command;
 using SastImg.Domain.AlbumAggregate;
 
-namespace SastImg.Application.ImageServices.RemoveImage
+namespace SastImg.Application.ImageServices.RemoveImage;
+
+public sealed class RemoveImageCommandHandler(IAlbumRepository repository, IUnitOfWork unitOfWork)
+    : ICommandHandler<RemoveImageCommand>
 {
-    internal sealed class RemoveImageCommandHandler(
-        IAlbumRepository repository,
-        IUnitOfWork unitOfWork
-    ) : ICommandRequestHandler<RemoveImageCommand>
+    public async ValueTask<Unit> Handle(
+        RemoveImageCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IUnitOfWork _unitOfWork = unitOfWork;
-        private readonly IAlbumRepository _repository = repository;
+        var album = await repository.GetAlbumAsync(request.AlbumId, cancellationToken);
 
-        public async Task Handle(RemoveImageCommand request, CancellationToken cancellationToken)
+        if (request.Requester.IsAdmin || album.IsManagedBy(request.Requester.Id))
         {
-            var album = await _repository.GetAlbumAsync(request.AlbumId, cancellationToken);
-
-            if (request.Requester.IsAdmin || album.IsManagedBy(request.Requester.Id))
-            {
-                album.RemoveImage(request.ImageId);
-                await _unitOfWork.CommitChangesAsync(cancellationToken);
-            }
-            else
-            {
-                throw new NoPermissionException();
-            }
+            album.RemoveImage(request.ImageId);
+            await unitOfWork.CommitChangesAsync(cancellationToken);
         }
+        else
+        {
+            throw new NoPermissionException();
+        }
+
+        return Unit.Value;
     }
 }

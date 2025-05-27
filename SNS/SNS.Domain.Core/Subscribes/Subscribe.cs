@@ -1,4 +1,6 @@
-﻿namespace SNS.Domain.Subscribes;
+﻿using Identity;
+
+namespace SNS.Domain.Subscribes;
 
 internal sealed record class Subscribe
 {

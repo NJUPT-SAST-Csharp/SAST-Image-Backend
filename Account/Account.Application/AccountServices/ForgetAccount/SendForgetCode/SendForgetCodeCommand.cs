@@ -1,9 +1,8 @@
-﻿using Primitives.Command;
+﻿using Mediator;
 
-namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.SendForgetCode
+namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.SendForgetCode;
+
+public sealed class SendForgetCodeCommand(string email) : ICommand
 {
-    public sealed class SendForgetCodeCommand(string email) : ICommandRequest
-    {
-        public string Email { get; } = email;
-    }
+    public string Email { get; } = email;
 }

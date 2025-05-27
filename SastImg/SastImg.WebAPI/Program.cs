@@ -4,22 +4,14 @@ using SastImg.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 builder.AddRedisClient("Cache");
 builder.AddNpgsqlDbContext<SastImgDbContext>(
     "SastimgDb",
     settings => settings.DisableRetry = true,
     options => options.UseSnakeCaseNamingConvention()
 );
-
-// Configure the config provider.
-builder
-    .Configuration.AddJsonFile("appsettings.json")
-    .AddJsonFile("appsettings.Development.json")
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json")
-    .Build();
-
-// Configure the logger.
-builder.Logging.ConfigureLogger();
 
 // Add & Configure services.
 builder.ConfigureServices();

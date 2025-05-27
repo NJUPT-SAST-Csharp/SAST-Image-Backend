@@ -1,25 +1,19 @@
-﻿using Microsoft.AspNetCore.Http;
-using Shared.Primitives.Query;
+﻿using Mediator;
+using Microsoft.AspNetCore.Http;
 using Shared.Response.Builders;
 
-namespace Account.Application.UserServices.GetUserDetailedInfo
+namespace Account.Application.UserServices.GetUserDetailedInfo;
+
+public sealed class GetUserDetailedInfoQueryHandler(IUserQueryRepository repository)
+    : IQueryHandler<GetUserDetailedInfoQuery, IResult>
 {
-    internal class GetUserDetailedInfoQueryHandler(IUserQueryRepository repository)
-        : IQueryRequestHandler<GetUserDetailedInfoQuery, IResult>
+    public async ValueTask<IResult> Handle(
+        GetUserDetailedInfoQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IUserQueryRepository _repository = repository;
+        var dto = await repository.GetUserDetailedInfoAsync(request.Username, cancellationToken);
 
-        public async Task<IResult> Handle(
-            GetUserDetailedInfoQuery request,
-            CancellationToken cancellationToken
-        )
-        {
-            var dto = await _repository.GetUserDetailedInfoAsync(
-                request.Username,
-                cancellationToken
-            );
-
-            return Responses.DataOrNotFound(dto);
-        }
+        return Responses.DataOrNotFound(dto);
     }
 }

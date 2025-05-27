@@ -1,13 +1,14 @@
-using System.Data;
 using System.Reflection;
 using Account.Infrastructure.Configurations;
 using Account.Infrastructure.Persistence;
 using Account.WebAPI.Configurations;
+using Auth;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
 builder.AddRedisClient("Cache");
 builder.AddNpgsqlDbContext<AccountDbContext>(
     "AccountDb",
@@ -15,31 +16,18 @@ builder.AddNpgsqlDbContext<AccountDbContext>(
     options => options.UseSnakeCaseNamingConvention()
 );
 
-builder.Logging.ConfigureLogger();
-
-builder
-    .Configuration.AddJsonFile("appsettings.json")
-    .AddJsonFile("appsettings.Development.json")
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json");
+//builder
+//    .Configuration.AddJsonFile("appsettings.json")
+//    .AddJsonFile("appsettings.Development.json")
+//    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json");
 
 builder.Services.ConfigureJsonSerializer();
-builder.Services.ConfigureServices(builder.Configuration);
 builder.Services.AddValidatorsFromAssembly(Assembly.GetAssembly(typeof(Program)));
 builder.Services.RegisterEndpointMappersFromAssembly(Assembly.GetAssembly(typeof(Program))!);
 
-if (builder.Environment.IsDevelopment())
-{
-    builder.Services.ConfigureSwagger();
-}
+builder.ConfigureServices();
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 await using (var scope = app.Services.CreateAsyncScope())
 {
@@ -50,9 +38,9 @@ await using (var scope = app.Services.CreateAsyncScope())
 
 app.UseExceptionHandler(_ => { });
 
-app.UseAuthentication();
+app.UseRouting();
 
-app.UseAuthorization();
+app.UseInternalAuth();
 
 app.MapEndpoints();
 

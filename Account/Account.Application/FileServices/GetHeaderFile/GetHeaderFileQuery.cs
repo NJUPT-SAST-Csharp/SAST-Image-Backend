@@ -1,10 +1,9 @@
-﻿using Account.Domain.UserEntity;
-using Shared.Primitives.Query;
+﻿using Identity;
+using Mediator;
 
-namespace Account.Application.FileServices.GetHeaderFile
+namespace Account.Application.FileServices.GetHeaderFile;
+
+public sealed class GetHeaderFileQuery(long userId) : IQuery<Stream?>
 {
-    public sealed class GetHeaderFileQuery(long userId) : IQueryRequest<Stream?>
-    {
-        public UserId UserId { get; } = new(userId);
-    }
+    public UserId UserId { get; } = new(userId);
 }

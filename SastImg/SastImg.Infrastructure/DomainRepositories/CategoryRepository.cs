@@ -3,35 +3,34 @@ using SastImg.Domain.Categories;
 using SastImg.Domain.CategoryEntity;
 using SastImg.Infrastructure.Persistence;
 
-namespace SastImg.Infrastructure.DomainRepositories
+namespace SastImg.Infrastructure.DomainRepositories;
+
+internal sealed class CategoryRepository(SastImgDbContext context) : ICategoryRepository
 {
-    internal sealed class CategoryRepository(SastImgDbContext context) : ICategoryRepository
+    private readonly SastImgDbContext _context = context;
+
+    public async Task<CategoryId> AddCatergoryAsync(
+        Category category,
+        CancellationToken cancellationToken = default
+    )
     {
-        private readonly SastImgDbContext _context = context;
+        var entity = await _context.Categories.AddAsync(category, cancellationToken);
+        return entity.Entity.Id;
+    }
 
-        public async Task<CategoryId> AddCatergoryAsync(
-            Category category,
-            CancellationToken cancellationToken = default
-        )
+    public async Task<Category> GetCatogoryAsync(
+        CategoryId id,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var category = await _context.Categories.FindAsync([id], cancellationToken);
+        if (category is null)
         {
-            var entity = await _context.Categories.AddAsync(category, cancellationToken);
-            return entity.Entity.Id;
+            throw new DbNotFoundException(nameof(Category), id.Value.ToString());
         }
-
-        public async Task<Category> GetCatogoryAsync(
-            CategoryId id,
-            CancellationToken cancellationToken = default
-        )
+        else
         {
-            var category = await _context.Categories.FindAsync([id], cancellationToken);
-            if (category is null)
-            {
-                throw new DbNotFoundException(nameof(Category), id.Value.ToString());
-            }
-            else
-            {
-                return category;
-            }
+            return category;
         }
     }
 }

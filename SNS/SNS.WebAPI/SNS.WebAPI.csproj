@@ -1,35 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <InvariantGlobalization>true</InvariantGlobalization>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
-
   <ItemGroup>
-    <Compile Remove="Requests\**" />
-    <Content Remove="Requests\**" />
-    <EmbeddedResource Remove="Requests\**" />
-    <None Remove="Requests\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.4">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\SNS.Application\SNS.Application.csproj" />
     <ProjectReference Include="..\SNS.Infrastructure\SNS.Infrastructure.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Messages\" />
-  </ItemGroup>
-
 </Project>

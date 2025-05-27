@@ -1,7 +1,6 @@
-﻿namespace Account.WebAPI.SeedWorks
+﻿namespace Account.WebAPI.SeedWorks;
+
+public interface IEndpointMapper
 {
-    public interface IEndpointMapper
-    {
-        public void MapEndpoints(IEndpointRouteBuilder builder);
-    }
+    public void MapEndpoints(IEndpointRouteBuilder builder);
 }

@@ -1,33 +1,28 @@
-﻿using Primitives.Rule;
+﻿using System.Diagnostics.CodeAnalysis;
+using Primitives.ValueObject;
 
-namespace SastImg.Domain.AlbumAggregate.AlbumEntity
+namespace SastImg.Domain.AlbumAggregate.AlbumEntity;
+
+[OpenJsonConverter<AlbumDescription, string>]
+public readonly record struct AlbumDescription : IValueObject<AlbumDescription, string>
 {
-    public readonly struct AlbumDescription
+    public const int MinLength = 2;
+    public const int MaxLength = 100;
+
+    public readonly string Value { get; init; }
+
+    public static bool TryCreateNew(
+        string input,
+        [NotNullWhen(true)] out AlbumDescription newObject
+    )
     {
-        public const int MinLength = 2;
-        public const int MaxLength = 100;
-
-        public readonly string Value { get; } = string.Empty;
-
-        public AlbumDescription(string value)
+        if (input is not { Length: >= MinLength and <= MaxLength })
         {
-            if (
-                string.IsNullOrWhiteSpace(value)
-                || value.Length < MinLength
-                || value.Length > MaxLength
-            )
-            {
-                throw new DomainObjectValidationException(
-                    $"Album description length must be between {MinLength} and {MaxLength}"
-                );
-            }
-
-            Value = value;
+            newObject = default;
+            return false;
         }
 
-        public static implicit operator AlbumDescription(string description)
-        {
-            return new(description);
-        }
+        newObject = new() { Value = input };
+        return true;
     }
 }

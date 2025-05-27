@@ -1,28 +1,25 @@
-﻿using Primitives.Rule;
+﻿using System.Diagnostics.CodeAnalysis;
+using Primitives.ValueObject;
 
-namespace SastImg.Domain.AlbumAggregate.ImageEntity
+namespace SastImg.Domain.AlbumAggregate.ImageEntity;
+
+[OpenJsonConverter<ImageDescription, string>]
+public readonly record struct ImageTitle : IValueObject<ImageTitle, string>
 {
-    public readonly struct ImageTitle
+    public const int MinLength = 1;
+    public const int MaxLength = 12;
+
+    public readonly string Value { get; init; }
+
+    public static bool TryCreateNew(string input, [NotNullWhen(true)] out ImageTitle newObject)
     {
-        public const int MinLength = 1;
-        public const int MaxLength = 12;
-
-        public readonly string Value { get; } = string.Empty;
-
-        public ImageTitle(string value)
+        if (input is not { Length: >= MinLength and <= MaxLength })
         {
-            if (
-                string.IsNullOrWhiteSpace(value)
-                || value.Length < MinLength
-                || value.Length > MaxLength
-            )
-            {
-                throw new DomainObjectValidationException(
-                    $"Image title length must be between {MinLength} and {MaxLength}"
-                );
-            }
-
-            Value = value;
+            newObject = default;
+            return false;
         }
+
+        newObject = new() { Value = input };
+        return true;
     }
 }

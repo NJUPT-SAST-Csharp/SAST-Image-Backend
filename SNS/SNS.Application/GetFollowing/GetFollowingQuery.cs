@@ -1,10 +1,9 @@
-﻿using Shared.Primitives.Query;
-using SNS.Domain;
+﻿using Identity;
+using Mediator;
 
-namespace SNS.Application.GetFollowing
+namespace SNS.Application.GetFollowing;
+
+public sealed class GetFollowingQuery(long userId) : IQuery<IEnumerable<FollowingDto>>
 {
-    public sealed class GetFollowingQuery(long userId) : IQueryRequest<IEnumerable<FollowingDto>>
-    {
-        public UserId UserId { get; } = new(userId);
-    }
+    public UserId UserId { get; } = new(userId);
 }

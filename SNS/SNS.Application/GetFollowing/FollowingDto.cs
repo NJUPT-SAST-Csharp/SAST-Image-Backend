@@ -1,7 +1,6 @@
-﻿namespace SNS.Application.GetFollowing
+﻿namespace SNS.Application.GetFollowing;
+
+public sealed class FollowingDto
 {
-    public sealed class FollowingDto
-    {
-        public long Id { get; init; }
-    }
+    public long Id { get; init; }
 }

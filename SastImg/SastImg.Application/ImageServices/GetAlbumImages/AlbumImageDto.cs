@@ -1,14 +1,13 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace SastImg.Application.ImageServices.GetAlbumImages
-{
-    public sealed class AlbumImageDto
-    {
-        [JsonConstructor]
-        private AlbumImageDto() { }
+namespace SastImg.Application.ImageServices.GetAlbumImages;
 
-        public long ImageId { get; init; }
-        public long AlbumId { get; init; }
-        public string Title { get; init; }
-    }
+public sealed class AlbumImageDto
+{
+    [JsonConstructor]
+    private AlbumImageDto() { }
+
+    public long ImageId { get; init; }
+    public long AlbumId { get; init; }
+    public required string Title { get; init; }
 }

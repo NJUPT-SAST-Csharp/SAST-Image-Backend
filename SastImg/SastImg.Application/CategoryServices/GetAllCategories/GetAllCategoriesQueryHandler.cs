@@ -1,18 +1,15 @@
-﻿using Shared.Primitives.Query;
+﻿using Mediator;
 
-namespace SastImg.Application.CategoryServices.GetAllCategory
+namespace SastImg.Application.CategoryServices.GetAllCategory;
+
+public sealed class GetAllCategoriesQueryHandler(ICategoryQueryRepository repository)
+    : IQueryHandler<GetAllCategoriesQuery, IEnumerable<CategoryDto>>
 {
-    public sealed class GetAllCategoriesQueryHandler(ICategoryQueryRepository repository)
-        : IQueryRequestHandler<GetAllCategoriesQuery, IEnumerable<CategoryDto>>
+    public async ValueTask<IEnumerable<CategoryDto>> Handle(
+        GetAllCategoriesQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly ICategoryQueryRepository _repository = repository;
-
-        public Task<IEnumerable<CategoryDto>> Handle(
-            GetAllCategoriesQuery request,
-            CancellationToken cancellationToken
-        )
-        {
-            return _repository.GetAllCategoriesAsync(cancellationToken);
-        }
+        return await repository.GetAllCategoriesAsync(cancellationToken);
     }
 }

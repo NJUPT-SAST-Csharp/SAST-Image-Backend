@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using Primitives.Command;
+﻿using Mediator;
+using Microsoft.AspNetCore.Http;
 
-namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.VerifyForgetCode
+namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.VerifyForgetCode;
+
+public sealed class VerifyForgetCodeCommand(int code, string email) : ICommand<IResult>
 {
-    public sealed class VerifyForgetCodeCommand(int code, string email) : ICommandRequest<IResult>
-    {
-        public string Email { get; } = email;
-        public int Code { get; } = code;
-    }
+    public string Email { get; } = email;
+    public int Code { get; } = code;
 }

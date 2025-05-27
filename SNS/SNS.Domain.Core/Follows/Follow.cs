@@ -1,4 +1,6 @@
-﻿namespace SNS.Domain.Follows;
+﻿using Identity;
+
+namespace SNS.Domain.Follows;
 
 internal sealed record class Follow
 {

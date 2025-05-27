@@ -2,74 +2,74 @@
 using Account.Domain.UserEntity.Services;
 using Account.Infrastructure.Persistence;
 using Exceptions.Exceptions;
+using Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Account.Infrastructure.DomainServices
+namespace Account.Infrastructure.DomainServices;
+
+public sealed class UserRepository(AccountDbContext context) : IUserRepository
 {
-    public sealed class UserRepository(AccountDbContext context) : IUserRepository
+    private readonly AccountDbContext _context = context;
+
+    public async Task<UserId> AddNewUserAsync(
+        User user,
+        CancellationToken cancellationToken = default
+    )
     {
-        private readonly AccountDbContext _context = context;
+        var entity = await _context.Users.AddAsync(user, cancellationToken);
+        return entity.Entity.Id;
+    }
 
-        public async Task<UserId> AddNewUserAsync(
-            User user,
-            CancellationToken cancellationToken = default
-        )
+    public async Task<User> GetUserByEmailAsync(
+        string email,
+        CancellationToken cancellationToken = default
+    )
+    {
+        email = email.ToUpperInvariant();
+
+        var user = await _context.Users.FirstOrDefaultAsync(
+            u => EF.Property<string>(u, "_email") == email,
+            cancellationToken
+        );
+
+        if (user is null)
         {
-            var entity = await _context.Users.AddAsync(user, cancellationToken);
-            return entity.Entity.Id;
+            throw new DbNotFoundException(nameof(User), email);
         }
 
-        public async Task<User> GetUserByEmailAsync(
-            string email,
-            CancellationToken cancellationToken = default
-        )
+        return user;
+    }
+
+    public async Task<User> GetUserByIdAsync(
+        UserId id,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+
+        if (user is null)
         {
-            email = email.ToUpperInvariant();
-
-            var user = await _context.Users.FirstOrDefaultAsync(
-                u => EF.Property<string>(u, "_email") == email,
-                cancellationToken
-            );
-
-            if (user is null)
-            {
-                throw new DbNotFoundException(nameof(User), email);
-            }
-
-            return user;
+            throw new DbNotFoundException(nameof(User), id.Value.ToString());
         }
 
-        public async Task<User> GetUserByIdAsync(
-            UserId id,
-            CancellationToken cancellationToken = default
-        )
+        return user;
+    }
+
+    public async Task<User> GetUserByUsernameAsync(
+        string username,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(
+            u => EF.Functions.ILike(EF.Property<string>(u, "_username"), username),
+            cancellationToken
+        );
+
+        if (user is null)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
-
-            if (user is null)
-            {
-                throw new DbNotFoundException(nameof(User), id.Value.ToString());
-            }
-
-            return user;
+            throw new DbNotFoundException(nameof(User), username);
         }
 
-        public async Task<User> GetUserByUsernameAsync(
-            string username,
-            CancellationToken cancellationToken = default
-        )
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(
-                u => EF.Functions.ILike(EF.Property<string>(u, "_username"), username),
-                cancellationToken
-            );
-
-            if (user is null)
-            {
-                throw new DbNotFoundException(nameof(User), username);
-            }
-
-            return user;
-        }
+        return user;
     }
 }

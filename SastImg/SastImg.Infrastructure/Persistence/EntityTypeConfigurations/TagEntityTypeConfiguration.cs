@@ -1,19 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SastImg.Domain.TagEntity;
+using SastImg.Domain.AlbumTagEntity;
 
-namespace SastImg.Infrastructure.Persistence.EntityTypeConfigurations
+namespace SastImg.Infrastructure.Persistence.EntityTypeConfigurations;
+
+public sealed class TagEntityTypeConfiguration : IEntityTypeConfiguration<ImageTag>
 {
-    internal class TagEntityTypeConfiguration : IEntityTypeConfiguration<Tag>
+    public void Configure(EntityTypeBuilder<ImageTag> builder)
     {
-        public void Configure(EntityTypeBuilder<Tag> builder)
-        {
-            builder.ToTable("tags");
-            builder.HasKey(x => x.Id);
-            builder.Property(x => x.Id).HasConversion(x => x.Value, x => new(x));
+        builder.ToTable("tags");
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.Id);
 
-            builder.HasIndex("_name").IsUnique();
-            builder.Property<string>("_name").HasColumnName("name");
-        }
+        builder.HasIndex("_name").IsUnique();
+        builder.Property<TagName>("_name").HasColumnName("name");
     }
 }

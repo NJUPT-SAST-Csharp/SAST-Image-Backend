@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using Primitives.Command;
+﻿using Mediator;
+using Microsoft.AspNetCore.Http;
 
-namespace Account.Application.Endpoints.AccountEndpoints.Login
+namespace Account.Application.Endpoints.AccountEndpoints.Login;
+
+public sealed class LoginCommand(string username, string password) : ICommand<IResult>
 {
-    public sealed class LoginCommand(string username, string password) : ICommandRequest<IResult>
-    {
-        public string Username { get; } = username;
-        public string Password { get; } = password;
-    }
+    public string Username { get; } = username;
+    public string Password { get; } = password;
 }

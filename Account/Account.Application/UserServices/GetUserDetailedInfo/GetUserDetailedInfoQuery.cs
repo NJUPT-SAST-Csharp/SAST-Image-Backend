@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Shared.Primitives.Query;
+﻿using Mediator;
+using Microsoft.AspNetCore.Http;
 
-namespace Account.Application.UserServices.GetUserDetailedInfo
+namespace Account.Application.UserServices.GetUserDetailedInfo;
+
+public sealed class GetUserDetailedInfoQuery(string username) : IQuery<IResult>
 {
-    public sealed class GetUserDetailedInfoQuery(string username) : IQueryRequest<IResult>
-    {
-        public string Username { get; } = username;
-    }
+    public string Username { get; } = username;
 }

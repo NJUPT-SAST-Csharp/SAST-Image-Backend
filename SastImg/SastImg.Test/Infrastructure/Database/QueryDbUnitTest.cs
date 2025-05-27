@@ -1,33 +1,32 @@
 ﻿using System.Data;
 using SastImg.Infrastructure.Persistence.QueryDatabase;
 
-namespace SastImg.Test.Infrastructure.Database
+namespace SastImg.Test.Infrastructure.Database;
+
+[TestClass]
+public sealed class QueryDbUnitTest
 {
-    [TestClass]
-    public sealed class QueryDbUnitTest
+    const string ConnectionString =
+        "Host=localhost;Port=5432;Database=sastimg;Username=postgres;Password=150524";
+
+    [TestMethod]
+    public void Create_Connection_ShouldOpen()
     {
-        const string ConnectionString =
-            "Host=localhost;Port=5432;Database=sastimg;Username=postgres;Password=150524";
+        using DbConnectionFactory factory = new(ConnectionString);
 
-        [TestMethod]
-        public void Create_Connection_ShouldOpen()
-        {
-            using DbConnectionFactory factory = new(ConnectionString);
+        var connection = factory.GetConnection();
 
-            var connection = factory.GetConnection();
+        Assert.AreEqual(ConnectionState.Open, connection.State);
+    }
 
-            Assert.AreEqual(ConnectionState.Open, connection.State);
-        }
+    [TestMethod]
+    public void Dispose_ConnectionFactory_ShouldClosed()
+    {
+        DbConnectionFactory factory = new(ConnectionString);
 
-        [TestMethod]
-        public void Dispose_ConnectionFactory_ShouldClosed()
-        {
-            DbConnectionFactory factory = new(ConnectionString);
+        var connection = factory.GetConnection();
+        factory.Dispose();
 
-            var connection = factory.GetConnection();
-            factory.Dispose();
-
-            Assert.AreEqual(ConnectionState.Closed, connection.State);
-        }
+        Assert.AreEqual(ConnectionState.Closed, connection.State);
     }
 }

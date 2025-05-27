@@ -1,29 +1,23 @@
 ﻿using Account.Domain.UserEntity.Services;
+using Mediator;
 using Primitives;
-using Primitives.Command;
 
-namespace Account.Application.UserServices.UpdateProfile
+namespace Account.Application.UserServices.UpdateProfile;
+
+public sealed class UpdateProfileCommandHandler(IUserRepository repository, IUnitOfWork unitOfWork)
+    : ICommandHandler<UpdateProfileCommand>
 {
-    internal sealed class UpdateProfileCommandHandler(
-        IUserRepository repository,
-        IUnitOfWork unitOfWork
-    ) : ICommandRequestHandler<UpdateProfileCommand>
+    public async ValueTask<Unit> Handle(
+        UpdateProfileCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IUserRepository _repository = repository;
-        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        var user = await repository.GetUserByIdAsync(request.Requester.Id, cancellationToken);
 
-        public async Task Handle(UpdateProfileCommand request, CancellationToken cancellationToken)
-        {
-            var user = await _repository.GetUserByIdAsync(request.Requester.Id, cancellationToken);
+        user.UpdateProfile(request.Nickname, request.Biography, request.Birthday, request.Website);
 
-            user.UpdateProfile(
-                request.Nickname,
-                request.Biography,
-                request.Birthday,
-                request.Website
-            );
+        await unitOfWork.CommitChangesAsync(cancellationToken);
 
-            await _unitOfWork.CommitChangesAsync(cancellationToken);
-        }
+        return Unit.Value;
     }
 }

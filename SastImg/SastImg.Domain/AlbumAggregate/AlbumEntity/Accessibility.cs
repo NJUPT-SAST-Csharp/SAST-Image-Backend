@@ -1,9 +1,8 @@
-﻿namespace SastImg.Domain.AlbumAggregate.AlbumEntity
+﻿namespace SastImg.Domain.AlbumAggregate.AlbumEntity;
+
+public enum Accessibility
 {
-    public enum Accessibility
-    {
-        Public,
-        Auth,
-        Private
-    }
+    Public,
+    Auth,
+    Private,
 }

@@ -1,11 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="AlbumAggregate\ImageEntity\Events\**" />
     <Compile Remove="CategoryEntity\Events\**" />
@@ -14,10 +12,8 @@
     <None Remove="AlbumAggregate\ImageEntity\Events\**" />
     <None Remove="CategoryEntity\Events\**" />
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Primitives\Primitives.csproj" />
-    <ProjectReference Include="..\..\Shared\Utilities\Utilities.csproj" />
+    <ProjectReference Include="..\..\Components\Primitives\Primitives.csproj" />
+    <ProjectReference Include="..\..\Components\Identity\Identity.csproj" />
   </ItemGroup>
-
 </Project>

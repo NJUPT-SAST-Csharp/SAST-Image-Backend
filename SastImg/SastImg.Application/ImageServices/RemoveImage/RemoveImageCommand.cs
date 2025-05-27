@@ -1,18 +1,9 @@
-﻿using System.Security.Claims;
-using Primitives.Command;
-using SastImg.Application.SeedWorks;
+﻿using Identity;
+using Mediator;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
 using SastImg.Domain.AlbumAggregate.ImageEntity;
 
-namespace SastImg.Application.ImageServices.RemoveImage
-{
-    public sealed class RemoveImageCommand(long albumId, long imageId, ClaimsPrincipal user)
-        : ICommandRequest
-    {
-        public AlbumId AlbumId { get; } = new(albumId);
+namespace SastImg.Application.ImageServices.RemoveImage;
 
-        public ImageId ImageId { get; } = new(imageId);
-
-        public RequesterInfo Requester { get; } = new(user);
-    }
-}
+public sealed record class RemoveImageCommand(AlbumId AlbumId, ImageId ImageId, Requester Requester)
+    : ICommand;

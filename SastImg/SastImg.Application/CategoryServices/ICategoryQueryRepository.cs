@@ -1,11 +1,10 @@
 ﻿using SastImg.Application.CategoryServices.GetAllCategory;
 
-namespace SastImg.Application.CategoryServices
+namespace SastImg.Application.CategoryServices;
+
+public interface ICategoryQueryRepository
 {
-    public interface ICategoryQueryRepository
-    {
-        public Task<IEnumerable<CategoryDto>> GetAllCategoriesAsync(
-            CancellationToken cancellationToken = default
-        );
-    }
+    public Task<IEnumerable<CategoryDto>> GetAllCategoriesAsync(
+        CancellationToken cancellationToken = default
+    );
 }

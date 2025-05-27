@@ -1,41 +1,38 @@
-﻿using Shared.Primitives.Query;
+﻿using Mediator;
 
-namespace SastImg.Application.ImageServices.GetAlbumImages
+namespace SastImg.Application.ImageServices.GetAlbumImages;
+
+public sealed class GetAlbumImagesQueryHandler(IGetAlbumImagesRepository repository)
+    : IQueryHandler<GetAlbumImages, IEnumerable<AlbumImageDto>>
 {
-    public sealed class GetAlbumImagesQueryHandler(IGetAlbumImagesRepository repository)
-        : IQueryRequestHandler<GetAlbumImages, IEnumerable<AlbumImageDto>>
+    public async ValueTask<IEnumerable<AlbumImageDto>> Handle(
+        GetAlbumImages request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IGetAlbumImagesRepository _repository = repository;
-
-        public Task<IEnumerable<AlbumImageDto>> Handle(
-            GetAlbumImages request,
-            CancellationToken cancellationToken
-        )
+        if (request.Requester.IsAuthenticated)
         {
-            if (request.Requester.IsAuthenticated)
+            if (request.Requester.IsAdmin)
             {
-                if (request.Requester.IsAdmin)
-                {
-                    return _repository.GetImagesByAdminAsync(
-                        request.AlbumId,
-                        request.Page,
-                        cancellationToken
-                    );
-                }
-                else
-                {
-                    return _repository.GetImagesByUserAsync(
-                        request.AlbumId,
-                        request.Requester.Id,
-                        request.Page,
-                        cancellationToken
-                    );
-                }
+                return await repository.GetImagesByAdminAsync(
+                    request.AlbumId,
+                    request.Page,
+                    cancellationToken
+                );
             }
             else
             {
-                return _repository.GetImagesByAnonymousAsync(request.AlbumId, cancellationToken);
+                return await repository.GetImagesByUserAsync(
+                    request.AlbumId,
+                    request.Requester.Id,
+                    request.Page,
+                    cancellationToken
+                );
             }
+        }
+        else
+        {
+            return await repository.GetImagesByAnonymousAsync(request.AlbumId, cancellationToken);
         }
     }
 }

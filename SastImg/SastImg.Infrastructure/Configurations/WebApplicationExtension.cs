@@ -1,26 +1,18 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Hosting;
+﻿using Auth;
+using Microsoft.AspNetCore.Builder;
 
-namespace SastImg.Infrastructure.Configurations
+namespace SastImg.Infrastructure.Configurations;
+
+public static class WebApplicationExtension
 {
-    public static class WebApplicationExtension
+    public static void ConfigureApplication(this WebApplication app)
     {
-        public static void ConfigureApplication(this WebApplication app)
-        {
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(options => options.EnablePersistAuthorization());
-            }
+        app.UseExceptionHandler(op => { });
 
-            app.UseExceptionHandler(op => { });
+        app.UseInternalAuth();
 
-            app.UseAuthorization();
+        app.UseResponseCaching();
 
-            app.UseResponseCaching();
-
-            app.MapControllers();
-        }
+        app.MapControllers();
     }
 }

@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using Primitives.Command;
+﻿using Mediator;
+using Microsoft.AspNetCore.Http;
 
-namespace Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistrationCode
+namespace Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistrationCode;
+
+public sealed class VerifyRegistrationCodeCommand(string email, int code) : ICommand<IResult>
 {
-    public sealed class VerifyRegistrationCodeCommand(string email, int code)
-        : ICommandRequest<IResult>
-    {
-        public string Email { get; } = email;
-        public int Code { get; } = code;
-    }
+    public string Email { get; } = email;
+    public int Code { get; } = code;
 }

@@ -1,42 +1,39 @@
-﻿using Shared.Primitives.Query;
+﻿using Mediator;
 
-namespace SastImg.Application.AlbumServices.GetDetailedAlbum
+namespace SastImg.Application.AlbumServices.GetDetailedAlbum;
+
+public sealed class GetDetailedAlbumQueryHandler(IGetDetailedAlbumRepository repository)
+    : IQueryHandler<GetDetailedAlbumQuery, DetailedAlbumDto?>
 {
-    internal sealed class GetDetailedAlbumQueryHandler(IGetDetailedAlbumRepository repository)
-        : IQueryRequestHandler<GetDetailedAlbumQuery, DetailedAlbumDto?>
+    public async ValueTask<DetailedAlbumDto?> Handle(
+        GetDetailedAlbumQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IGetDetailedAlbumRepository _repository = repository;
-
-        public Task<DetailedAlbumDto?> Handle(
-            GetDetailedAlbumQuery request,
-            CancellationToken cancellationToken
-        )
+        if (request.Requester.IsAuthenticated)
         {
-            if (request.Requester.IsAuthenticated)
+            if (request.Requester.IsAdmin)
             {
-                if (request.Requester.IsAdmin)
-                {
-                    return _repository.GetDetailedAlbumByAdminAsync(
-                        request.AlbumId,
-                        cancellationToken
-                    );
-                }
-                else
-                {
-                    return _repository.GetDetailedAlbumByUserAsync(
-                        request.AlbumId,
-                        request.Requester.Id,
-                        cancellationToken
-                    );
-                }
-            }
-            else
-            {
-                return _repository.GetDetailedAlbumByAnonymousAsync(
+                return await repository.GetDetailedAlbumByAdminAsync(
                     request.AlbumId,
                     cancellationToken
                 );
             }
+            else
+            {
+                return await repository.GetDetailedAlbumByUserAsync(
+                    request.AlbumId,
+                    request.Requester.Id,
+                    cancellationToken
+                );
+            }
+        }
+        else
+        {
+            return await repository.GetDetailedAlbumByAnonymousAsync(
+                request.AlbumId,
+                cancellationToken
+            );
         }
     }
 }

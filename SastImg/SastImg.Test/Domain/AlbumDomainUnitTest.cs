@@ -1,5 +1,4 @@
-using SastImg.Domain;
-using SastImg.Domain.AlbumAggregate.AlbumEntity;
+using Identity;
 
 namespace SastImg.Test.Domain;
 
@@ -11,7 +10,7 @@ public sealed class AlbumDomainUnitTest
     {
         const int expected = 1;
 
-        Album album = AlbumUnitTestHelper.CreateDefaultAlbum();
+        var album = AlbumUnitTestHelper.CreateDefaultAlbum();
 
         Assert.AreEqual(expected, album.DomainEvents.Count);
     }
@@ -22,7 +21,7 @@ public sealed class AlbumDomainUnitTest
     public void Album_OwnedBy_Author(long testAuthorId, long testUserId, bool expected)
     {
         UserId userId = new(testUserId);
-        Album album = AlbumUnitTestHelper.CreateAlbumWithAuthor(testAuthorId);
+        var album = AlbumUnitTestHelper.CreateAlbumWithAuthor(testAuthorId);
 
         bool result = album.IsOwnedBy(userId);
 
@@ -38,8 +37,8 @@ public sealed class AlbumDomainUnitTest
     [DataRow(new long[] { authorId, authorId, authorId })]
     public void Update_AlbumCollaborators_NotIncludeAuthor(long[] testCollaborators)
     {
-        UserId[] collaborators = Array.ConvertAll(testCollaborators, id => new UserId(id));
-        Album album = AlbumUnitTestHelper.CreateDefaultAlbum();
+        var collaborators = Array.ConvertAll(testCollaborators, id => new UserId(id));
+        var album = AlbumUnitTestHelper.CreateDefaultAlbum();
 
         album.UpdateCollaborators(collaborators);
         collaborators = album.GetCollaborators();
@@ -60,8 +59,8 @@ public sealed class AlbumDomainUnitTest
     )
     {
         UserId user = new(testUserId);
-        UserId[] collaborators = Array.ConvertAll(testCollaborators, id => new UserId(id));
-        Album album = AlbumUnitTestHelper.CreateDefaultAlbum();
+        var collaborators = Array.ConvertAll(testCollaborators, id => new UserId(id));
+        var album = AlbumUnitTestHelper.CreateDefaultAlbum();
         album.UpdateCollaborators(collaborators);
 
         bool result = album.IsManagedBy(user);

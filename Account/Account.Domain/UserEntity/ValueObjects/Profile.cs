@@ -1,12 +1,11 @@
-﻿namespace Account.Domain.UserEntity.ValueObjects
+﻿namespace Account.Domain.UserEntity.ValueObjects;
+
+public sealed record class Profile(
+    string Nickname,
+    string Biography,
+    DateOnly? Birthday,
+    Uri? Website
+)
 {
-    public sealed record class Profile(
-        string Nickname,
-        string Biography,
-        DateOnly? Birthday,
-        Uri? Website
-    )
-    {
-        internal static Profile Default => new("SASTer", string.Empty, null, null);
-    }
+    internal static Profile Default => new("SASTer", string.Empty, null, null);
 }

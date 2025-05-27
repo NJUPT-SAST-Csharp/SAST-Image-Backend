@@ -476,28 +476,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-SastImgAPI/appsettings.Development.json
-/SastImg/SastImg.WebAPI/appsettings.Development.json
-/SastImg/SastImg.WebAPI/appsettings.json
-/SastImg/SastImg.Infrastructure/Persistence/Migrations/20231104061732_First.cs
-/SastImg/SastImg.Infrastructure/Persistence/Migrations/SastImgDbContextModelSnapshot.cs
-/SastImg/SastImg.Infrastructure/Persistence/Migrations/20231104061732_First.cs
-/SastImg/SastImg.Infrastructure/Persistence/Migrations/20231104061732_First.Designer.cs
-/SastImg/SastImg.Infrastructure/Persistence/Migrations/20231103150729_First.cs
-/SastImg/SastImg.Infrastructure/Persistence/Migrations/20231103150729_First.Designer.cs
-/Account/Account.WebAPI/appsettings.json
-/Account/Account.WebAPI/appsettings.Development.json
-/SNS/SNS.WebAPI/appsettings.json
-/SNS/SNS.WebAPI/appsettings.Development.json
-/Account/Account.Infrastructure/Persistence/Migrations/20231124142516_Init.cs
-/Account/Account.Infrastructure/Persistence/Migrations/AccountDbContextModelSnapshot.cs
-/Account/Account.Infrastructure/Persistence/Migrations/20231129135343_Init.cs
-/Account/Account.Infrastructure/Persistence/Migrations/20231204144129_Second.cs
-/Account/Account.Infrastructure/Persistence/Migrations/20231204144803_Third.cs
-/Account/Account.Infrastructure/Persistence/Migrations/20231208073817_Init.cs
-/Account/Account.Infrastructure/Persistence/Migrations/AccountDbContextModelSnapshot.cs
-/Account/Account.Infrastructure/Persistence/Migrations/20231208080113_Init.cs
-/Account/Account.Infrastructure/Persistence/Migrations/20231208080113_Init.Designer.cs
+/SastImg/SastImg.Infrastructure/Persistence/Migrations/
+/Account/Account.Infrastructure/Persistence/Migrations/
 /.editorconfig
-/Square/Square.WebAPI/appsettings.json
-/Square/Square.WebAPI/appsettings.Development.json

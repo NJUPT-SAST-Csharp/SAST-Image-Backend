@@ -1,124 +1,87 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Auth.Authorization;
+using Identity;
+using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Primitives.Command;
-using Primitives.Query;
 using SastImg.Application.TagServices;
 using SastImg.Application.TagServices.CreateTag;
 using SastImg.Application.TagServices.GetAllTags;
-using SastImg.Application.TagServices.GetTags;
 using SastImg.Application.TagServices.SearchTags;
-using SastImg.WebAPI.Requests.TagRequest;
+using SastImg.Domain.AlbumTagEntity;
 using Shared.Response.Builders;
 
-namespace SastImg.WebAPI.Controllers
+namespace SastImg.WebAPI.Controllers;
+
+/// <summary>
+/// Controller for tag related operations.
+/// </summary>
+[ApiController]
+[Route("api/sastimg")]
+[Produces("application/json")]
+public class TagController(IMediator mediator) : ControllerBase
 {
     /// <summary>
-    /// Controller for tag related operations.
+    /// Get All Tags
     /// </summary>
-    [ApiController]
-    [Route("api/sastimg")]
-    [Produces("application/json")]
-    public class TagController(IQueryRequestSender querySender, ICommandRequestSender commandSender)
-        : ControllerBase
+    /// <remarks>
+    /// Get all tags
+    /// <para>ADMIN authorization is required</para>
+    /// </remarks>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <response code="200">The tags</response>
+    [Authorize(nameof(Roles.ADMIN))]
+    [HttpGet("tags/all")]
+    [ProducesResponseType<IEnumerable<TagDto>>(StatusCodes.Status200OK)]
+    public async Task<Ok<IEnumerable<TagDto>>> GetAllTags(CancellationToken cancellationToken)
     {
-        private readonly IQueryRequestSender _querySender = querySender;
-        private readonly ICommandRequestSender _commandSender = commandSender;
+        var tags = await mediator.Send(new GetAllTagsQuery(), cancellationToken);
+        return Responses.Data(tags);
+    }
 
-        /// <summary>
-        /// Get All Tags
-        /// </summary>
-        /// <remarks>
-        /// Get all tags
-        /// <para>ADMIN authorization is required</para>
-        /// </remarks>
-        /// <param name="cancellationToken">Cancellation token</param>
-        /// <response code="200">The tags</response>
-        [Authorize(nameof(AuthorizationRole.ADMIN))]
-        [HttpGet("tags/all")]
-        [ProducesResponseType<IEnumerable<TagDto>>(StatusCodes.Status200OK)]
-        public async Task<Ok<IEnumerable<TagDto>>> GetAllTags(CancellationToken cancellationToken)
-        {
-            var tags = await _querySender.QueryAsync(new GetAllTagsQuery(), cancellationToken);
-            return Responses.Data(tags);
-        }
+    /// <summary>
+    /// Search Tags
+    /// </summary>
+    /// <remarks>
+    /// Search tags by name
+    /// <para>Authorization is required</para>
+    /// </remarks>
+    /// <param name="name">The tag name(Support approximate search)</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <response code="200">The tags</response>
+    [Authorize]
+    [HttpGet("tags/search")]
+    [ProducesResponseType<IEnumerable<TagDto>>(StatusCodes.Status200OK)]
+    public async Task<Ok<IEnumerable<TagDto>>> SearchTags(
+        [MaxLength(TagName.MaxLength)] string name,
+        CancellationToken cancellationToken
+    )
+    {
+        var tagsDto = await mediator.Send(new SearchTagsQuery(name), cancellationToken);
+        return Responses.Data(tagsDto);
+    }
 
-        /// <summary>
-        /// Search Tags
-        /// </summary>
-        /// <remarks>
-        /// Search tags by name
-        /// <para>Authorization is required</para>
-        /// </remarks>
-        /// <param name="name">The tag name(Support approximate search)</param>
-        /// <param name="cancellationToken">Cancellation token</param>
-        /// <response code="200">The tags</response>
-        [Authorize]
-        [HttpGet("tags/search")]
-        [ProducesResponseType<IEnumerable<TagDto>>(StatusCodes.Status200OK)]
-        public async Task<Ok<IEnumerable<TagDto>>> SearchTags(
-            [MaxLength(10)] string name,
-            CancellationToken cancellationToken
-        )
-        {
-            var tagsDto = await _querySender.QueryAsync(
-                new SearchTagsQuery(name),
-                cancellationToken
-            );
-            return Responses.Data(tagsDto);
-        }
+    public readonly record struct CreateTagRequest(TagName Name);
 
-        /// <summary>
-        /// Get Tags by Ids
-        /// </summary>
-        /// <remarks>
-        /// Get tags by ids.
-        /// This endpoint is used to get tag's info when displaying images.
-        /// <para>Authorization is required</para>
-        /// </remarks>
-        /// <param name="tagIds">The tags' ids (up to 5)</param>
-        /// <param name="cancellationToken">Cancellation token</param>
-        /// <response code="200">The tags</response>
-        [Authorize]
-        [HttpGet("tags")]
-        [ProducesResponseType<IEnumerable<TagDto>>(StatusCodes.Status200OK)]
-        public async Task<Ok<IEnumerable<TagDto>>> GetTags(
-            [FromQuery] long[] tagIds,
-            CancellationToken cancellationToken
-        )
-        {
-            var tagsDto = await _querySender.QueryAsync(
-                new GetTagsQuery(tagIds),
-                cancellationToken
-            );
-            return Responses.Data(tagsDto);
-        }
-
-        /// <summary>
-        /// Create Tag
-        /// </summary>
-        /// <remarks>
-        /// Create a new tag.
-        /// <para>Authorization is required</para>
-        /// </remarks>
-        /// <param name="request">The new tag info</param>
-        /// <param name="cancellationToken">Cancellation token</param>
-        /// <response code="201">The tag is created successfully</response>
-        [Authorize]
-        [HttpPost("tag")]
-        [ProducesResponseType<TagDto>(StatusCodes.Status201Created)]
-        public async Task<Created<TagDto>> CreateTag(
-            [FromBody] CreateTagRequest request,
-            CancellationToken cancellationToken
-        )
-        {
-            var tagDto = await _commandSender.CommandAsync(
-                new CreateTagCommand(request.Name),
-                cancellationToken
-            );
-            return Responses.Created(tagDto);
-        }
+    /// <summary>
+    /// Create ImageTag
+    /// </summary>
+    /// <remarks>
+    /// Create a new tag.
+    /// <para>Authorization is required</para>
+    /// </remarks>
+    /// <param name="request">The new tag info</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <response code="201">The tag is created successfully</response>
+    [Authorize]
+    [HttpPost("tag")]
+    [ProducesResponseType<TagDto>(StatusCodes.Status201Created)]
+    public async Task<Created<TagDto>> CreateTag(
+        [FromBody] CreateTagRequest request,
+        CancellationToken cancellationToken
+    )
+    {
+        var tagDto = await mediator.Send(new CreateTagCommand(request.Name), cancellationToken);
+        return Responses.Created(tagDto);
     }
 }

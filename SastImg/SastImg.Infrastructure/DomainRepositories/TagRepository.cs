@@ -1,28 +1,33 @@
 ﻿using Exceptions.Exceptions;
-using SastImg.Domain.TagEntity;
+using SastImg.Domain.AlbumTagEntity;
 using SastImg.Infrastructure.Persistence;
 
-namespace SastImg.Infrastructure.DomainRepositories
+namespace SastImg.Infrastructure.DomainRepositories;
+
+internal sealed class TagRepository(SastImgDbContext context) : ITagRepository
 {
-    internal sealed class TagRepository(SastImgDbContext context) : ITagRepository
+    private readonly SastImgDbContext _context = context;
+
+    public async Task<ImageTagId> AddTagAsync(
+        ImageTag tag,
+        CancellationToken cancellationToken = default
+    )
     {
-        private readonly SastImgDbContext _context = context;
+        var entity = await _context.Tags.AddAsync(tag, cancellationToken);
+        return entity.Entity.Id;
+    }
 
-        public async Task<TagId> AddTagAsync(Tag tag, CancellationToken cancellationToken = default)
+    public async Task<ImageTag> GetTagAsync(
+        ImageTagId id,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var tag = await _context.Tags.FindAsync([id], cancellationToken);
+        if (tag is null)
         {
-            var entity = await _context.Tags.AddAsync(tag, cancellationToken);
-            return entity.Entity.Id;
+            throw new DbNotFoundException(nameof(ImageTag), id.Value.ToString());
         }
 
-        public async Task<Tag> GetTagAsync(TagId id, CancellationToken cancellationToken = default)
-        {
-            var tag = await _context.Tags.FindAsync([id], cancellationToken);
-            if (tag is null)
-            {
-                throw new DbNotFoundException(nameof(Tag), id.Value.ToString());
-            }
-
-            return tag;
-        }
+        return tag;
     }
 }

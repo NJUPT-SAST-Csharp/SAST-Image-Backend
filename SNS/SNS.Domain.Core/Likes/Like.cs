@@ -1,4 +1,6 @@
-﻿namespace SNS.Domain.Likes;
+﻿using Identity;
+
+namespace SNS.Domain.Likes;
 
 internal sealed record class Like
 {

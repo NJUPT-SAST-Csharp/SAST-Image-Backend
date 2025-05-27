@@ -1,9 +1,8 @@
 ﻿using SastImg.Domain.AlbumAggregate.AlbumEntity;
 
-namespace SastImg.Application.AlbumServices.CreateAlbum
+namespace SastImg.Application.AlbumServices.CreateAlbum;
+
+public sealed class CreateAlbumDto(AlbumId id)
 {
-    public sealed class CreateAlbumDto(AlbumId id)
-    {
-        public long Id { get; } = id.Value;
-    }
+    public long Id { get; } = id.Value;
 }

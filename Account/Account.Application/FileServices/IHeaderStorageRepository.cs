@@ -1,18 +1,17 @@
-﻿using Account.Domain.UserEntity;
+﻿using Identity;
 using Microsoft.AspNetCore.Http;
 
-namespace Account.Application.FileServices
+namespace Account.Application.FileServices;
+
+public interface IHeaderStorageRepository
 {
-    public interface IHeaderStorageRepository
-    {
-        public Task<Stream?> GetHeaderAsync(
-            UserId userId,
-            CancellationToken cancellationToken = default
-        );
-        public Task<Uri> UploadHeaderAsync(
-            UserId id,
-            IFormFile file,
-            CancellationToken cancellationToken = default
-        );
-    }
+    public Task<Stream?> GetHeaderAsync(
+        UserId userId,
+        CancellationToken cancellationToken = default
+    );
+    public Task<Uri> UploadHeaderAsync(
+        UserId id,
+        IFormFile file,
+        CancellationToken cancellationToken = default
+    );
 }

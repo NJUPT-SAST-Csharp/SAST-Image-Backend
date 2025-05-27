@@ -1,22 +1,23 @@
 ﻿using Account.Domain.UserEntity.Services;
+using Mediator;
 using Primitives;
-using Primitives.Command;
 
-namespace Account.Application.Endpoints.AccountEndpoints.ChangePassword
+namespace Account.Application.Endpoints.AccountEndpoints.ChangePassword;
+
+public sealed class ChangePasswordCommandHandler(IUserRepository repository, IUnitOfWork unit)
+    : ICommandHandler<ChangePasswordCommand>
 {
-    public sealed class ChangePasswordCommandHandler(IUserRepository repository, IUnitOfWork unit)
-        : ICommandRequestHandler<ChangePasswordCommand>
+    public async ValueTask<Unit> Handle(
+        ChangePasswordCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IUserRepository _repository = repository;
-        private readonly IUnitOfWork _unit = unit;
+        var user = await repository.GetUserByIdAsync(request.Requester.Id, cancellationToken);
 
-        public async Task Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
-        {
-            var user = await _repository.GetUserByIdAsync(request.Requester.Id, cancellationToken);
+        user.ResetPassword(request.NewPassword);
 
-            user.ResetPassword(request.NewPassword);
+        await unit.CommitChangesAsync(cancellationToken);
 
-            await _unit.CommitChangesAsync(cancellationToken);
-        }
+        return Unit.Value;
     }
 }

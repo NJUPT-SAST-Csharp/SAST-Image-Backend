@@ -1,28 +1,30 @@
 ﻿using Primitives.Entity;
-using Utilities;
 
-namespace SastImg.Domain.CategoryEntity
+namespace SastImg.Domain.CategoryEntity;
+
+public sealed class Category : EntityBase<CategoryId>
 {
-    public sealed class Category : EntityBase<CategoryId>
+    private Category(CategoryName name, CategoryDescription description)
+        : base(default)
     {
-        private Category(string name, string description)
-            : base(default)
-        {
-            _name = name;
-            _description = description;
-        }
+        _name = name;
+        _description = description;
+    }
 
-        public static Category CreateNewCategory(string name, string description) =>
-            new(name, description);
+    public static Category CreateNewCategory(CategoryName name, CategoryDescription description)
+    {
+        var category = new Category(name, description);
 
-        private string _name;
+        return category;
+    }
 
-        private string _description;
+    private CategoryName _name;
 
-        public void UpdateCategoryInfo(string name, string description)
-        {
-            _name = name;
-            _description = description;
-        }
+    private CategoryDescription _description;
+
+    public void UpdateCategoryInfo(CategoryName name, CategoryDescription description)
+    {
+        _name = name;
+        _description = description;
     }
 }

@@ -1,15 +1,8 @@
-﻿using System.Security.Claims;
-using SastImg.Application.SeedWorks;
+﻿using Identity;
+using Mediator;
 using SastImg.Domain.CategoryEntity;
-using Shared.Primitives.Query;
 
-namespace SastImg.Application.AlbumServices.GetAlbums
-{
-    public class GetAlbumsQuery(int categoryId, int page, ClaimsPrincipal user)
-        : IQueryRequest<IEnumerable<AlbumDto>>
-    {
-        public CategoryId CategoryId { get; } = new(categoryId);
-        public int Page { get; } = page;
-        public RequesterInfo Requester { get; } = new(user);
-    }
-}
+namespace SastImg.Application.AlbumServices.GetAlbums;
+
+public sealed record class GetAlbumsQuery(CategoryId CategoryId, int Page, Requester Requester)
+    : IQuery<IEnumerable<AlbumDto>>;

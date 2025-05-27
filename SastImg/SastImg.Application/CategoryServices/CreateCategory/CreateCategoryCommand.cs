@@ -1,10 +1,7 @@
-﻿using Primitives.Command;
+﻿using Mediator;
+using SastImg.Domain.CategoryEntity;
 
-namespace SastImg.Application.CategoryServices.CreateCategory
-{
-    public sealed class CreateCategoryCommand(string name, string description) : ICommandRequest
-    {
-        public string Name { get; } = name;
-        public string Description { get; } = description;
-    }
-}
+namespace SastImg.Application.CategoryServices.CreateCategory;
+
+public sealed record class CreateCategoryCommand(CategoryName Name, CategoryDescription Description)
+    : ICommand;

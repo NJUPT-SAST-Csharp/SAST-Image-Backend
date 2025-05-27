@@ -1,18 +1,15 @@
-﻿using Shared.Primitives.Query;
+﻿using Mediator;
 
-namespace SastImg.Application.TagServices.SearchTags
+namespace SastImg.Application.TagServices.SearchTags;
+
+public sealed class SearchTagsQueryHandler(ITagQueryRepository repository)
+    : IQueryHandler<SearchTagsQuery, IEnumerable<TagDto>>
 {
-    internal class SearchTagsQueryHandler(ITagQueryRepository repository)
-        : IQueryRequestHandler<SearchTagsQuery, IEnumerable<TagDto>>
+    public async ValueTask<IEnumerable<TagDto>> Handle(
+        SearchTagsQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly ITagQueryRepository _repository = repository;
-
-        public Task<IEnumerable<TagDto>> Handle(
-            SearchTagsQuery request,
-            CancellationToken cancellationToken
-        )
-        {
-            return _repository.SearchTagsAsync(request.Name, cancellationToken);
-        }
+        return await repository.SearchTagsAsync(request.SearchName, cancellationToken);
     }
 }

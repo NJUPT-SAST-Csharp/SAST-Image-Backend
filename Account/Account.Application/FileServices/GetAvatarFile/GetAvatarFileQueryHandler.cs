@@ -1,15 +1,17 @@
-﻿using Shared.Primitives.Query;
+﻿using Mediator;
 
-namespace Account.Application.FileServices.GetAvatarFile
+namespace Account.Application.FileServices.GetAvatarFile;
+
+public sealed class GetAvatarFileQueryHandler(IAvatarStorageRepository repository)
+    : IQueryHandler<GetAvatarFileQuery, Stream?>
 {
-    internal sealed class GetAvatarFileQueryHandler(IAvatarStorageRepository repository)
-        : IQueryRequestHandler<GetAvatarFileQuery, Stream?>
-    {
-        private readonly IAvatarStorageRepository _repository = repository;
+    private readonly IAvatarStorageRepository _repository = repository;
 
-        public Task<Stream?> Handle(GetAvatarFileQuery request, CancellationToken cancellationToken)
-        {
-            return _repository.GetAvatarAsync(request.UserId, cancellationToken);
-        }
+    public async ValueTask<Stream?> Handle(
+        GetAvatarFileQuery request,
+        CancellationToken cancellationToken
+    )
+    {
+        return await _repository.GetAvatarAsync(request.UserId, cancellationToken);
     }
 }

@@ -1,10 +1,9 @@
-﻿using Shared.Primitives.DomainEvent;
+﻿using Identity;
+using Mediator;
 
-namespace SNS.Domain.Bookmarks.Events
+namespace SNS.Domain.Bookmarks.Events;
+
+public sealed record class BookmarkedDomainEvent(UserId UserId, ImageId ImageId) : IDomainEvent
 {
-    internal sealed record class BookmarkedDomainEvent(UserId UserId, ImageId ImageId)
-        : IDomainEvent
-    {
-        public DateTime At { get; } = DateTime.UtcNow;
-    }
+    public DateTime At { get; } = DateTime.UtcNow;
 }

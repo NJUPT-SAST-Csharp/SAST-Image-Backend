@@ -1,9 +1,6 @@
-﻿using Primitives.Command;
+﻿using Mediator;
+using SastImg.Domain.AlbumTagEntity;
 
-namespace SastImg.Application.TagServices.CreateTag
-{
-    public sealed class CreateTagCommand(string name) : ICommandRequest<TagDto>
-    {
-        public string Name { get; } = name;
-    }
-}
+namespace SastImg.Application.TagServices.CreateTag;
+
+public sealed record class CreateTagCommand(TagName Name) : ICommand<TagDto>;

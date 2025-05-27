@@ -1,10 +1,9 @@
-﻿using Account.Domain.UserEntity;
-using Shared.Primitives.Query;
+﻿using Identity;
+using Mediator;
 
-namespace Account.Application.FileServices.GetAvatarFile
+namespace Account.Application.FileServices.GetAvatarFile;
+
+public sealed class GetAvatarFileQuery(long userId) : IQuery<Stream?>
 {
-    public sealed class GetAvatarFileQuery(long userId) : IQueryRequest<Stream?>
-    {
-        public UserId UserId { get; } = new(userId);
-    }
+    public UserId UserId { get; } = new() { Value = userId };
 }

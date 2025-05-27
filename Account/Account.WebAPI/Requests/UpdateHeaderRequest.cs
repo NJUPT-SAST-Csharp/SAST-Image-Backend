@@ -1,7 +1,6 @@
-﻿namespace Account.WebAPI.Requests
+﻿namespace Account.WebAPI.Requests;
+
+public readonly struct UpdateHeaderRequest
 {
-    public readonly struct UpdateHeaderRequest
-    {
-        public readonly IFormFile HeaderFile { get; init; }
-    }
+    public readonly IFormFile HeaderFile { get; init; }
 }

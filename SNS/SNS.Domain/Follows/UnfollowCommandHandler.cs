@@ -1,35 +1,33 @@
-﻿using Primitives.Command;
-using Shared.Primitives.DomainEvent;
+﻿using Mediator;
 using SNS.Domain.Core.Follows.Events;
 
-namespace SNS.Domain.Follows
+namespace SNS.Domain.Follows;
+
+internal sealed class UnfollowCommandHandler(
+    IFollowManager manager,
+    IDomainEventContainer container
+) : ICommandHandler<UnfollowCommand>
 {
-    internal sealed class UnfollowCommandHandler(
-        IFollowManager manager,
-        IDomainEventContainer container
-    ) : ICommandRequestHandler<UnfollowCommand>
+    public async ValueTask<Unit> Handle(
+        UnfollowCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IFollowManager _manager = manager;
-        private readonly IDomainEventContainer _container = container;
+        var follow = await manager.GetFollowAsync(
+            request.Follower,
+            request.Following,
+            cancellationToken
+        );
 
-        public async Task Handle(UnfollowCommand request, CancellationToken cancellationToken)
+        if (follow is null)
         {
-            var follow = await _manager.GetFollowAsync(
-                request.Follower,
-                request.Following,
-                cancellationToken
-            );
-
-            if (follow is null)
-            {
-                return;
-            }
-
-            await _manager.UnfollowAsync(follow, cancellationToken);
-
-            _container.AddDomainEvent(
-                new UnfollowedDomainEvent(request.Follower, request.Following)
-            );
+            return Unit.Value;
         }
+
+        await manager.UnfollowAsync(follow, cancellationToken);
+
+        container.AddDomainEvent(new UnfollowedDomainEvent(request.Follower, request.Following));
+
+        return Unit.Value;
     }
 }

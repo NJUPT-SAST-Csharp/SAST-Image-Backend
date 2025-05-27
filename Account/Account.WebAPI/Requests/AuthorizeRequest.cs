@@ -1,10 +1,9 @@
 ﻿using Account.Domain.UserEntity;
 
-namespace Account.WebAPI.Requests
+namespace Account.WebAPI.Requests;
+
+public readonly struct AuthorizeRequest
 {
-    public readonly struct AuthorizeRequest
-    {
-        public readonly long UserId { get; init; }
-        public readonly Role[] Roles { get; init; }
-    }
+    public readonly long UserId { get; init; }
+    public readonly Role[] Roles { get; init; }
 }

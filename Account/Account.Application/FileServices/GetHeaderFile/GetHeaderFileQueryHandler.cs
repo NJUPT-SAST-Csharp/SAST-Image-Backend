@@ -1,15 +1,15 @@
-﻿using Shared.Primitives.Query;
+﻿using Mediator;
 
-namespace Account.Application.FileServices.GetHeaderFile
+namespace Account.Application.FileServices.GetHeaderFile;
+
+public sealed class GetHeaderFileQueryHandler(IHeaderStorageRepository repository)
+    : IQueryHandler<GetHeaderFileQuery, Stream?>
 {
-    internal sealed class GetHeaderFileQueryHandler(IHeaderStorageRepository repository)
-        : IQueryRequestHandler<GetHeaderFileQuery, Stream?>
+    public async ValueTask<Stream?> Handle(
+        GetHeaderFileQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IHeaderStorageRepository _repository = repository;
-
-        public Task<Stream?> Handle(GetHeaderFileQuery request, CancellationToken cancellationToken)
-        {
-            return _repository.GetHeaderAsync(request.UserId, cancellationToken);
-        }
+        return await repository.GetHeaderAsync(request.UserId, cancellationToken);
     }
 }

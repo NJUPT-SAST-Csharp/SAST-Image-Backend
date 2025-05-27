@@ -1,19 +1,19 @@
-﻿using Shared.Primitives.Query;
+﻿using Mediator;
 
-namespace SastImg.Application.ImageServices.GetImageFile
+namespace SastImg.Application.ImageServices.GetImageFile;
+
+public sealed class GetImageFileQueryHandler(IImageStorageRepository repository)
+    : IQueryHandler<GetImageFileQuery, Stream?>
 {
-    internal sealed class GetImageFileQueryHandler(IImageStorageRepository repository)
-        : IQueryRequestHandler<GetImageFileQuery, Stream?>
+    public async ValueTask<Stream?> Handle(
+        GetImageFileQuery request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IImageStorageRepository _repository = repository;
-
-        public Task<Stream?> Handle(GetImageFileQuery request, CancellationToken cancellationToken)
-        {
-            return _repository.GetImageAsync(
-                request.ImageId,
-                request.IsThumbnail,
-                cancellationToken
-            );
-        }
+        return await repository.GetImageAsync(
+            request.ImageId,
+            request.IsThumbnail,
+            cancellationToken
+        );
     }
 }

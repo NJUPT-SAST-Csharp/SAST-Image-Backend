@@ -2,17 +2,16 @@
 using Account.Infrastructure.Persistence.EntityTypeConfigurations;
 using Microsoft.EntityFrameworkCore;
 
-namespace Account.Infrastructure.Persistence
-{
-    public sealed class AccountDbContext(DbContextOptions<AccountDbContext> options)
-        : DbContext(options)
-    {
-        public DbSet<User> Users { get; set; }
+namespace Account.Infrastructure.Persistence;
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
-            base.OnModelCreating(modelBuilder);
-        }
+public sealed class AccountDbContext(DbContextOptions<AccountDbContext> options)
+    : DbContext(options)
+{
+    public DbSet<User> Users { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
+        base.OnModelCreating(modelBuilder);
     }
 }

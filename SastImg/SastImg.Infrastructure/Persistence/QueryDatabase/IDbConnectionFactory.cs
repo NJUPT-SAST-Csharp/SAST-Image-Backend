@@ -1,9 +1,8 @@
 ﻿using System.Data;
 
-namespace SastImg.Infrastructure.Persistence.QueryDatabase
+namespace SastImg.Infrastructure.Persistence.QueryDatabase;
+
+internal interface IDbConnectionFactory : IDisposable
 {
-    internal interface IDbConnectionFactory : IDisposable
-    {
-        public IDbConnection GetConnection();
-    }
+    public IDbConnection GetConnection();
 }

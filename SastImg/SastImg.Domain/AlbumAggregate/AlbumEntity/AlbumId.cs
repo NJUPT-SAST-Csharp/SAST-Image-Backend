@@ -1,7 +1,15 @@
-﻿namespace SastImg.Domain.AlbumAggregate.AlbumEntity
+﻿using System.ComponentModel;
+using Primitives.Entity;
+using Primitives.Utilities;
+
+namespace SastImg.Domain.AlbumAggregate.AlbumEntity;
+
+[TypeConverter(typeof(OpenId<AlbumId>))]
+public readonly record struct AlbumId : ITypedId<AlbumId>
 {
-    public readonly record struct AlbumId(long Value)
-    {
-        public override string ToString() => Value.ToString();
-    }
+    public long Value { get; init; }
+
+    public static AlbumId GenerateNew() => new() { Value = SnowFlakeIdGenerator.NewId };
+
+    public override string ToString() => Value.ToString();
 }

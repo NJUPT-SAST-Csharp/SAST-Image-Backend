@@ -1,32 +1,33 @@
-﻿using Primitives;
-using Primitives.Command;
+﻿using Mediator;
+using Primitives;
 using SastImg.Domain.AlbumAggregate;
 
-namespace SastImg.Application.AlbumServices.UpdateAlbumInfo
+namespace SastImg.Application.AlbumServices.UpdateAlbumInfo;
+
+public sealed class UpdateAlbumInfoCommandHandler(
+    IAlbumRepository respository,
+    IUnitOfWork unitOfWork
+) : ICommandHandler<UpdateAlbumInfoCommand>
 {
-    public sealed class UpdateAlbumInfoCommandHandler(
-        IAlbumRepository respository,
-        IUnitOfWork unitOfWork
-    ) : ICommandRequestHandler<UpdateAlbumInfoCommand>
+    private readonly IAlbumRepository _repository = respository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+
+    public async ValueTask<Unit> Handle(
+        UpdateAlbumInfoCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IAlbumRepository _repository = respository;
-        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        var album = await _repository.GetAlbumAsync(request.AlbumId, cancellationToken);
 
-        public async Task Handle(
-            UpdateAlbumInfoCommand request,
-            CancellationToken cancellationToken
-        )
-        {
-            var album = await _repository.GetAlbumAsync(request.AlbumId, cancellationToken);
+        album.UpdateAlbumInfo(
+            request.Title,
+            request.Description,
+            request.CategoryId,
+            request.Accessibility
+        );
 
-            album.UpdateAlbumInfo(
-                request.Title,
-                request.Description,
-                request.CategoryId,
-                request.Accessibility
-            );
+        await _unitOfWork.CommitChangesAsync(cancellationToken);
 
-            await _unitOfWork.CommitChangesAsync(cancellationToken);
-        }
+        return Unit.Value;
     }
 }

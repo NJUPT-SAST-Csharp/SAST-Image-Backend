@@ -1,10 +1,9 @@
-﻿using Account.Domain.UserEntity;
+﻿using Identity;
 using Messenger;
 
-namespace Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount
+namespace Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount;
+
+internal readonly struct UserCreatedMessage(UserId userId) : IMessage
 {
-    internal readonly struct UserCreatedMessage(UserId userId) : IMessage
-    {
-        public readonly long UserId { get; init; } = userId.Value;
-    }
+    public readonly long UserId { get; init; } = userId.Value;
 }

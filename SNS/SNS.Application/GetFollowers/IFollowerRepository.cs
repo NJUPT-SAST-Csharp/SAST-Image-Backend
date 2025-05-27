@@ -1,12 +1,11 @@
-﻿using SNS.Domain;
+﻿using Identity;
 
-namespace SNS.Application.GetFollowers
+namespace SNS.Application.GetFollowers;
+
+public interface IFollowerRepository
 {
-    public interface IFollowerRepository
-    {
-        public Task<IEnumerable<FollowerDto>> GetFollowersAsync(
-            UserId userId,
-            CancellationToken cancellationToken = default
-        );
-    }
+    public Task<IEnumerable<FollowerDto>> GetFollowersAsync(
+        UserId userId,
+        CancellationToken cancellationToken = default
+    );
 }

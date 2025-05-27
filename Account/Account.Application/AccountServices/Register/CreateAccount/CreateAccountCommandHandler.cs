@@ -1,45 +1,35 @@
 ﻿using Account.Application.Services;
 using Account.Domain.UserEntity;
 using Account.Domain.UserEntity.Services;
+using Mediator;
 using Microsoft.AspNetCore.Http;
 using Primitives;
-using Primitives.Command;
 using Shared.Response.Builders;
 
-namespace Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount
+namespace Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount;
+
+public sealed class CreateAccountCommandHandler(
+    IAuthCodeCache cache,
+    IUserRepository repository,
+    IJwtProvider provider,
+    IUnitOfWork unit
+) : ICommandHandler<CreateAccountCommand, IResult>
 {
-    public sealed class CreateAccountCommandHandler(
-        IAuthCodeCache cache,
-        IUserRepository repository,
-        IJwtProvider provider,
-        IUnitOfWork unit
-    ) : ICommandRequestHandler<CreateAccountCommand, IResult>
+    public async ValueTask<IResult> Handle(
+        CreateAccountCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly IAuthCodeCache _cache = cache;
-        private readonly IUserRepository _repository = repository;
-        private readonly IJwtProvider _provider = provider;
-        private readonly IUnitOfWork _unit = unit;
+        var user = User.CreateNewUser(request.Username, request.Password, request.Email);
 
-        public async Task<IResult> Handle(
-            CreateAccountCommand request,
-            CancellationToken cancellationToken
-        )
-        {
-            User user = User.CreateNewUser(request.Username, request.Password, request.Email);
+        await repository.AddNewUserAsync(user, cancellationToken);
 
-            await _repository.AddNewUserAsync(user, cancellationToken);
+        string jwt = provider.GetLoginJwt(user.Id, user.Username, user.Roles);
 
-            var jwt = _provider.GetLoginJwt(user.Id, user.Username, user.Roles);
+        await unit.CommitChangesAsync(cancellationToken);
 
-            await _unit.CommitChangesAsync(cancellationToken);
+        await cache.DeleteCodeAsync(CodeCacheKey.Registration, request.Email, cancellationToken);
 
-            await _cache.DeleteCodeAsync(
-                CodeCacheKey.Registration,
-                request.Email,
-                cancellationToken
-            );
-
-            return Responses.Data(new CreateAccountDto(jwt));
-        }
+        return Responses.Data(new CreateAccountDto(jwt));
     }
 }

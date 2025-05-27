@@ -1,21 +1,20 @@
-﻿using Primitives.Command;
-using SastImg.Domain.TagEntity;
+﻿using Mediator;
+using SastImg.Domain.AlbumTagEntity;
 
-namespace SastImg.Application.TagServices.CreateTag
+namespace SastImg.Application.TagServices.CreateTag;
+
+public sealed class CreateTagCommandHandler(ITagRepository repository)
+    : ICommandHandler<CreateTagCommand, TagDto>
 {
-    public sealed class CreateTagCommandHandler(ITagRepository repository)
-        : ICommandRequestHandler<CreateTagCommand, TagDto>
-    {
-        private readonly ITagRepository _repository = repository;
+    private readonly ITagRepository _repository = repository;
 
-        public async Task<TagDto> Handle(
-            CreateTagCommand request,
-            CancellationToken cancellationToken
-        )
-        {
-            var tag = Tag.CreateNewTag(request.Name);
-            var id = await _repository.AddTagAsync(tag, cancellationToken);
-            return new() { Id = id.Value, Name = request.Name };
-        }
+    public async ValueTask<TagDto> Handle(
+        CreateTagCommand request,
+        CancellationToken cancellationToken
+    )
+    {
+        var tag = ImageTag.CreateNewTag(request.Name);
+        var id = await _repository.AddTagAsync(tag, cancellationToken);
+        return new() { Id = id.Value, Name = request.Name.Value };
     }
 }
