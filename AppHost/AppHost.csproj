@@ -13,7 +13,6 @@
     <PackageReference Include="Aspire.Hosting.Redis" Version="9.3.0" />
     <PackageReference Include="Aspire.Hosting.NodeJs" Version="9.3.0" />
     <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.3.0" />
-    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="9.3.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Proxy\Proxy.csproj" />

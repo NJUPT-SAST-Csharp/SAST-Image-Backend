@@ -117,7 +117,7 @@ public sealed class Album : EntityBase<AlbumId>, IAggregateRoot<Album>
 
     public void SetCoverAsLatestImage()
     {
-        CheckRule(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
+        Check(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
 
         var image = _images
             .Where(image => image.IsRemoved == false)
@@ -129,7 +129,7 @@ public sealed class Album : EntityBase<AlbumId>, IAggregateRoot<Album>
 
     public void SetCoverAsContainedImage(ImageId imageId)
     {
-        CheckRule(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
+        Check(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
 
         var image = _images.FirstOrDefault(image => image.Id == imageId);
         _cover = new(image?.Id, false);
@@ -142,7 +142,7 @@ public sealed class Album : EntityBase<AlbumId>, IAggregateRoot<Album>
         Accessibility accessibility
     )
     {
-        CheckRule(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
+        Check(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
 
         _title = title;
         _description = description;
@@ -162,7 +162,7 @@ public sealed class Album : EntityBase<AlbumId>, IAggregateRoot<Album>
         ImageTagId[] tags
     )
     {
-        CheckRule(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
+        Check(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
 
         var image = new Image(title, description, url, tags);
 
@@ -180,7 +180,7 @@ public sealed class Album : EntityBase<AlbumId>, IAggregateRoot<Album>
 
     public void RemoveImage(ImageId imageId)
     {
-        CheckRule(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
+        Check(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
 
         var image = _images.FirstOrDefault(image => image.Id == imageId);
         if (image is not null)
@@ -195,8 +195,8 @@ public sealed class Album : EntityBase<AlbumId>, IAggregateRoot<Album>
 
     public void RestoreImage(ImageId imageId)
     {
-        CheckRule(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
-        CheckRule(new RestoreImageOnlyWhenAlbumNotRemovedRule(_isRemoved));
+        Check(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
+        Check(new RestoreImageOnlyWhenAlbumNotRemovedRule(_isRemoved));
 
         var image = _images.FirstOrDefault(image => image.Id == imageId);
         if (image is not null)
@@ -211,7 +211,7 @@ public sealed class Album : EntityBase<AlbumId>, IAggregateRoot<Album>
 
     public void UpdateCollaborators(UserId[] collaborators)
     {
-        CheckRule(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
+        Check(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
 
         _collaborators = collaborators.Distinct().Where(c => c != _authorId).ToArray();
         //TODO: Raise domain event

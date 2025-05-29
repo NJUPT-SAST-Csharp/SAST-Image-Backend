@@ -4,19 +4,17 @@ using Account.Application.UserServices;
 using Account.Domain.UserEntity.Services;
 using Account.Infrastructure.ApplicationServices;
 using Account.Infrastructure.DomainServices;
-using Account.Infrastructure.EventBus;
 using Account.Infrastructure.Persistence;
 using Account.Infrastructure.Persistence.Storages;
 using Account.Infrastructure.Persistence.TypeConverters;
 using Dapper;
 using Exceptions.Configurations;
 using Exceptions.ExceptionHandlers;
-using Messenger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Primitives;
+using Persistence;
 using Shared.Storage.Configurations;
 
 namespace Account.Infrastructure.Configurations;
@@ -33,13 +31,10 @@ public static class IServiceCollectionExtension
         services
             .AddRepositories()
             .AddDistributedCache()
-            .AddEventBus(configuration)
             .AddExceptionHandlers()
             .AddStorages(configuration)
-            .AddPersistence(configuration.GetConnectionString("AccountDb")!)
-            .AddPrimitives(options =>
-                options.AddUnitOfWorkWithDbContext<AccountDbContext>().AddDefaultExceptionHandler()
-            );
+            .AddPersistence<AccountDbContext>(configuration.GetConnectionString("AccountDb")!)
+            .AddPersistence(configuration.GetConnectionString("AccountDb")!);
 
         services.AddScoped<IUserUniquenessChecker, UserUniquenessChecker>();
         services.AddScoped<IAuthCodeSender, EmailCodeSender>();
@@ -71,29 +66,6 @@ public static class IServiceCollectionExtension
     private static IServiceCollection AddDistributedCache(this IServiceCollection services)
     {
         services.AddScoped<IAuthCodeCache, RedisAuthCache>();
-        return services;
-    }
-
-    private static IServiceCollection AddEventBus(
-        this IServiceCollection services,
-        IConfiguration configuration
-    )
-    {
-        services.AddCap(x =>
-        {
-            string connectionString =
-                configuration.GetConnectionString("RabbitMQ") ?? throw new NullReferenceException();
-
-            x.UseEntityFramework<AccountDbContext>();
-            x.UseRabbitMQ(options =>
-            {
-                options.ConnectionFactoryOptions = options => options.Uri = new(connectionString);
-            });
-        });
-
-        services.AddScoped<IMessagePublisher, ExternalEventBus>();
-        services.AddMediator(o => o.ServiceLifetime = ServiceLifetime.Scoped);
-
         return services;
     }
 

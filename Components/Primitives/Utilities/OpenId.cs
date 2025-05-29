@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
+using Primitives.Entity;
 
-namespace Primitives.Entity;
+namespace Primitives.Utilities;
 
 public sealed class OpenId<T> : TypeConverter
     where T : ITypedId<T>, new()

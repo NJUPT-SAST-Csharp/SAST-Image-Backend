@@ -6,6 +6,5 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Components\Primitives\Primitives.csproj" />
-    <ProjectReference Include="..\..\Components\Utilities\Utilities.csproj" />
   </ItemGroup>
 </Project>

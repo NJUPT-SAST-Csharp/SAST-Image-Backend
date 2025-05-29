@@ -1,8 +1,6 @@
 ﻿using Dapper;
 using Exceptions.Configurations;
 using Exceptions.ExceptionHandlers;
-using Messenger;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -23,8 +21,6 @@ using SastImg.Domain.AlbumAggregate;
 using SastImg.Domain.AlbumTagEntity;
 using SastImg.Domain.Categories;
 using SastImg.Infrastructure.DomainRepositories;
-using SastImg.Infrastructure.EventBus;
-using SastImg.Infrastructure.Persistence;
 using SastImg.Infrastructure.Persistence.QueryDatabase;
 using SastImg.Infrastructure.Persistence.Storages;
 using SastImg.Infrastructure.Persistence.TypeConverters;
@@ -81,28 +77,6 @@ public static class IServiceCollectionExtension
         services.AddExceptionHandler<DbNotFoundExceptionHandler>();
         services.AddExceptionHandler<NoPermissionExceptionHandler>();
         services.AddDefaultExceptionHandler();
-        return services;
-    }
-
-    public static IServiceCollection ConfigureMessageQueue(
-        this IServiceCollection services,
-        IConfiguration configuration
-    )
-    {
-        services.AddCap(x =>
-        {
-            string connectionString =
-                configuration.GetConnectionString("RabbitMQ") ?? throw new NullReferenceException();
-
-            x.UseEntityFramework<SastImgDbContext>();
-            x.UseRabbitMQ(options =>
-            {
-                options.ConnectionFactoryOptions = options => options.Uri = new(connectionString);
-            });
-        });
-
-        services.AddScoped<IMessagePublisher, ExternalEventBus>();
-
         return services;
     }
 

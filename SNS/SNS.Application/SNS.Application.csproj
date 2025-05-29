@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Components\Auth\Auth.csproj" />
-    <ProjectReference Include="..\..\Components\Messenger\Messenger.csproj" />
     <ProjectReference Include="..\..\Components\Primitives\Primitives.csproj" />
     <ProjectReference Include="..\SNS.Domain\SNS.Domain.csproj" />
   </ItemGroup>

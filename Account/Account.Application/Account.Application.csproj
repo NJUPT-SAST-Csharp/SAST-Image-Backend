@@ -17,9 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Components\Auth\Auth.csproj" />
     <ProjectReference Include="..\..\Components\Exceptions\Exceptions.csproj" />
-    <ProjectReference Include="..\..\Components\Messenger\Messenger.csproj" />
     <ProjectReference Include="..\..\Components\Response\Response.csproj" />
-    <ProjectReference Include="..\..\Components\Utilities\Utilities.csproj" />
     <ProjectReference Include="..\Account.Domain\Account.Domain.csproj" />
   </ItemGroup>
 

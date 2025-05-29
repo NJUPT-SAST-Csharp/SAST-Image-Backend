@@ -1,19 +1,18 @@
 ﻿using Mediator;
+using Primitives;
 
-namespace Primitives.Behaviors;
+namespace Persistence;
 
 internal sealed class UnitOfWorkPostProcessor<TCommand, TResponse>(IUnitOfWork unitOfWork)
     : MessagePostProcessor<TCommand, TResponse>
     where TCommand : IBaseCommand
 {
-    private readonly IUnitOfWork _unitOfWork = unitOfWork;
-
     protected override async ValueTask Handle(
         TCommand message,
         TResponse response,
         CancellationToken cancellationToken
     )
     {
-        await _unitOfWork.CommitChangesAsync(cancellationToken);
+        await unitOfWork.CommitChangesAsync(cancellationToken);
     }
 }

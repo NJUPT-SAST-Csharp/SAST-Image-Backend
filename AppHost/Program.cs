@@ -3,21 +3,11 @@ var builder = DistributedApplication.CreateBuilder(args);
 var storage = builder.AddParameter("StoragePath");
 var authentication = builder.AddParameter("Auth-SecKey", true);
 
-var rabbitmq = builder.AddRabbitMQ(
-    "RabbitMQ",
-    builder.AddParameter("RabbitMQ-Username", true),
-    builder.AddParameter("RabbitMQ-Password", true),
-    5672
-);
+var username = builder.AddParameter("Username", true);
+var password = builder.AddParameter("Password", true);
 
 var redis = builder.AddRedis("Cache", 6379);
-
-var postgres = builder.AddPostgres(
-    "PostgreSQL",
-    builder.AddParameter("Postgres-Username", true),
-    builder.AddParameter("Postgres-Password", true),
-    5432
-)
+var postgres = builder.AddPostgres("PostgreSQL", username, password, 5432)
 //.WithDataVolume()
 ;
 
@@ -26,7 +16,6 @@ var sns = builder
     .AddProject<Projects.SNS_WebAPI>("SNS")
     .WaitFor(database)
     .WithReference(database)
-    .WithReference(rabbitmq)
     .WithEnvironment("StoragePath", storage);
 
 database = postgres.AddDatabase("SastimgDb", "sastimg");
@@ -35,7 +24,6 @@ var sastimg = builder
     .WaitFor(database)
     .WithReference(database)
     .WithReference(redis)
-    .WithReference(rabbitmq)
     .WithEnvironment("StoragePath", storage);
 
 database = postgres.AddDatabase("AccountDb", "sastimg_account");
@@ -44,7 +32,6 @@ var account = builder
     .WaitFor(database)
     .WithReference(database)
     .WithReference(redis)
-    .WithReference(rabbitmq)
     .WithEnvironment("StoragePath", storage)
     .WithEnvironment("Authentication:SecKey", authentication);
 

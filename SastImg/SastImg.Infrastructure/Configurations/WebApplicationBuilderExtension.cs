@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Primitives;
+using Persistence;
 using SastImg.Infrastructure.Persistence;
 
 namespace SastImg.Infrastructure.Configurations;
@@ -17,8 +17,9 @@ public static class WebApplicationBuilderExtension
 
         services.AddMediator(options => options.ServiceLifetime = ServiceLifetime.Scoped);
 
-        services.AddPrimitives(options =>
-            options.AddUnitOfWorkWithDbContext<SastImgDbContext>().AddDefaultExceptionHandler()
+        services.AddPersistence<SastImgDbContext>(
+            configuration.GetConnectionString("SastimgDb")
+                ?? throw new InvalidOperationException("Connection string 'SastImgDb' not found.")
         );
 
         services.ConfigureOptions(configuration);
@@ -26,8 +27,6 @@ public static class WebApplicationBuilderExtension
         services.AddLogging();
 
         services.ConfigureDatabase(configuration.GetConnectionString("SastimgDb")!);
-
-        services.ConfigureMessageQueue(configuration);
 
         services.ConfigureStorage(configuration);
 

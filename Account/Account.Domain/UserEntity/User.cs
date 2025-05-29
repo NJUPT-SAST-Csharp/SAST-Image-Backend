@@ -25,9 +25,9 @@ public sealed class User : EntityBase<UserId>, IAggregateRoot<User>
 
     public static User CreateNewUser(string username, string password, string email)
     {
-        CheckRule(new UsernameValidRule(username));
-        CheckRule(new PasswordValidRule(password));
-        CheckRule(new EmailValidRule(email));
+        Check(new UsernameValidRule(username));
+        Check(new PasswordValidRule(password));
+        Check(new EmailValidRule(email));
 
         var user = new User(username, password, email);
         user.AddDomainEvent(new UserCreatedEvent(user));
@@ -67,14 +67,14 @@ public sealed class User : EntityBase<UserId>, IAggregateRoot<User>
 
     public void ResetPassword(string newPassword)
     {
-        CheckRule(new PasswordValidRule(newPassword));
+        Check(new PasswordValidRule(newPassword));
 
         _password = Password.NewPassword(newPassword);
     }
 
     public async Task<bool> LoginAsync(string password)
     {
-        CheckRule(new PasswordValidRule(password));
+        Check(new PasswordValidRule(password));
 
         if (await _password.ValidateAsync(password) is false)
         {
@@ -87,8 +87,8 @@ public sealed class User : EntityBase<UserId>, IAggregateRoot<User>
 
     public void UpdateProfile(string nickname, string biography, DateOnly? birthday, Uri? website)
     {
-        CheckRule(new NicknameLengthRule(nickname));
-        CheckRule(new BiographyValidRule(biography));
+        Check(new NicknameLengthRule(nickname));
+        Check(new BiographyValidRule(biography));
 
         _profile = new(nickname, biography, birthday, website);
     }

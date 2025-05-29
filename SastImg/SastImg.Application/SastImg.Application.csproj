@@ -9,7 +9,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Components\Auth\Auth.csproj" />
     <ProjectReference Include="..\..\Components\Exceptions\Exceptions.csproj" />
-    <ProjectReference Include="..\..\Components\Messenger\Messenger.csproj" />
     <ProjectReference Include="..\SastImg.Domain\SastImg.Domain.csproj" />
   </ItemGroup>
 

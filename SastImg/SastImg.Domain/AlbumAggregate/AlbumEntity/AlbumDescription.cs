@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Primitives.Utilities;
 using Primitives.ValueObject;
 
 namespace SastImg.Domain.AlbumAggregate.AlbumEntity;

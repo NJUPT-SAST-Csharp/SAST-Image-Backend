@@ -4,17 +4,15 @@ using Account.Infrastructure.Persistence;
 using Account.WebAPI.Configurations;
 using Auth;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
+using ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.ConfigureServices();
+
 builder.AddServiceDefaults();
 builder.AddRedisClient("Cache");
-builder.AddNpgsqlDbContext<AccountDbContext>(
-    "AccountDb",
-    settings => settings.DisableRetry = true,
-    options => options.UseSnakeCaseNamingConvention()
-);
+builder.EnrichPersistence<AccountDbContext>();
 
 //builder
 //    .Configuration.AddJsonFile("appsettings.json")
@@ -24,8 +22,6 @@ builder.AddNpgsqlDbContext<AccountDbContext>(
 builder.Services.ConfigureJsonSerializer();
 builder.Services.AddValidatorsFromAssembly(Assembly.GetAssembly(typeof(Program)));
 builder.Services.RegisterEndpointMappersFromAssembly(Assembly.GetAssembly(typeof(Program))!);
-
-builder.ConfigureServices();
 
 var app = builder.Build();
 

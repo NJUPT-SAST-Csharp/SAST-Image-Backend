@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
+using Primitives.ValueObject;
 
-namespace Primitives.ValueObject;
+namespace Primitives.Utilities;
 
 public sealed class OpenType<TObject> : TypeConverter
     where TObject : IValueObject<TObject, string>

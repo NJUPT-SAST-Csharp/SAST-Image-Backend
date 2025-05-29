@@ -1,20 +1,15 @@
-using Microsoft.EntityFrameworkCore;
 using SastImg.Infrastructure.Configurations;
 using SastImg.Infrastructure.Persistence;
+using ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddServiceDefaults();
-
-builder.AddRedisClient("Cache");
-builder.AddNpgsqlDbContext<SastImgDbContext>(
-    "SastimgDb",
-    settings => settings.DisableRetry = true,
-    options => options.UseSnakeCaseNamingConvention()
-);
-
 // Add & Configure services.
 builder.ConfigureServices();
+
+builder.AddServiceDefaults();
+builder.AddRedisClient("Cache");
+builder.EnrichPersistence<SastImgDbContext>();
 
 // Build the web application.
 var app = builder.Build();

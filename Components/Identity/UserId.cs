@@ -1,8 +1,11 @@
-﻿using Primitives.Entity;
+﻿using System.ComponentModel;
+using Primitives.Entity;
 using Primitives.Utilities;
 
 namespace Identity;
 
+[OpenJsonConverter<UserId>]
+[TypeConverter(typeof(OpenId<UserId>))]
 public readonly record struct UserId : ITypedId<UserId>
 {
     public UserId(long value)

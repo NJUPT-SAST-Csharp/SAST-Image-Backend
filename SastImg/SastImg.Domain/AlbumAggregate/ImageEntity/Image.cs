@@ -13,7 +13,7 @@ public sealed class Image : EntityBase<ImageId>
     internal Image(ImageTitle title, ImageDescription description, ImageUrl url, ImageTagId[] tags)
         : base(new() { Value = SnowFlakeIdGenerator.NewId })
     {
-        CheckRule(new ImageOwnNotMoreThan5TagsRule(tags));
+        Check(new ImageOwnNotMoreThan5TagsRule(tags));
 
         _title = title;
         _description = description;

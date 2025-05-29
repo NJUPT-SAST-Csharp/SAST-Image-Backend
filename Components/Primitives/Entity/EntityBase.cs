@@ -39,7 +39,7 @@ public abstract class EntityBase<T>(T id)
         return Equals(obj as EntityBase<T>);
     }
 
-    protected static bool CheckRule<TRule>(in TRule rule)
+    protected static bool Check<TRule>(in TRule rule)
         where TRule : IDomainRule, allows ref struct
     {
         bool isBroken = rule.IsBroken;
@@ -47,7 +47,7 @@ public abstract class EntityBase<T>(T id)
         return isBroken is false;
     }
 
-    protected static void CheckRule<TRule>(TRule rule)
+    protected static void Check<TRule>(TRule rule)
         where TRule : IDomainRule
     {
         if (rule.IsBroken)

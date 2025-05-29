@@ -2,8 +2,9 @@
 using System.Text.Json.Serialization;
 using Primitives.Entity;
 using Primitives.Exceptions;
+using Primitives.ValueObject;
 
-namespace Primitives.ValueObject;
+namespace Primitives.Utilities;
 
 [AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class)]
 public sealed class OpenJsonConverterAttribute<TObject, TValue>()

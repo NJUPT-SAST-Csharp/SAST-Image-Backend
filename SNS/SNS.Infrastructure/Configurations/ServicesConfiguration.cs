@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
-using Primitives;
+using Persistence;
 using SNS.Application.GetFollowCount;
 using SNS.Application.GetFollowers;
 using SNS.Application.GetFollowing;
@@ -28,21 +28,9 @@ public static class ServicesConfiguration
         services.AddMediator(options => options.ServiceLifetime = ServiceLifetime.Scoped);
 
         services
-            .ConfigureEventBus(builder.Configuration)
-            .ConfigurePersistence(builder.Configuration)
-            .AddPrimitives(options =>
-            {
-                options.AddUnitOfWorkWithDbContext<SNSDbContext>();
-            });
+            .AddPersistence<SNSDbContext>(builder.Configuration.GetConnectionString("SNSDb")!)
+            .ConfigurePersistence(builder.Configuration);
 
-        return services;
-    }
-
-    public static IServiceCollection ConfigureDatabase(
-        this IServiceCollection services,
-        string connectionString
-    )
-    {
         return services;
     }
 
@@ -73,30 +61,6 @@ public static class ServicesConfiguration
         services.AddScoped<IFollowManager, FollowManager>();
 
         services.AddSingleton<IDomainEventContainer, DomainEventContainer>();
-
-        return services;
-    }
-
-    public static IServiceCollection ConfigureEventBus(
-        this IServiceCollection services,
-        IConfiguration configuration
-    )
-    {
-        var config = configuration.GetSection("EventBus");
-
-        services.AddCap(x =>
-        {
-            string connectionString =
-                configuration.GetConnectionString("RabbitMQ") ?? throw new NullReferenceException();
-
-            Uri url = new(connectionString);
-
-            x.UseEntityFramework<SNSDbContext>();
-            x.UseRabbitMQ(options =>
-            {
-                options.ConnectionFactoryOptions = options => options.Uri = url;
-            });
-        });
 
         return services;
     }
