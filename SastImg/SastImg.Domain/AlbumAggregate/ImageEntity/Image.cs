@@ -1,6 +1,5 @@
 ﻿using Primitives.Entity;
 using Primitives.Utilities;
-using SastImg.Domain.AlbumAggregate.ImageEntity.Rules;
 using SastImg.Domain.AlbumTagEntity;
 
 namespace SastImg.Domain.AlbumAggregate.ImageEntity;
@@ -13,8 +12,6 @@ public sealed class Image : EntityBase<ImageId>
     internal Image(ImageTitle title, ImageDescription description, ImageUrl url, ImageTagId[] tags)
         : base(new() { Value = SnowFlakeIdGenerator.NewId })
     {
-        Check(new ImageOwnNotMoreThan5TagsRule(tags));
-
         _title = title;
         _description = description;
         _url = url;

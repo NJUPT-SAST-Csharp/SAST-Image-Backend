@@ -9,12 +9,14 @@ namespace Primitives.Utilities;
 [AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class)]
 public sealed class OpenJsonConverterAttribute<TObject, TValue>()
     : JsonConverterAttribute(typeof(OpenJsonConverter<TObject, TValue>))
-    where TObject : IValueObject<TObject, TValue> { }
+    where TObject : IValueObject<TObject, TValue>
+{ }
 
 [AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class)]
 public sealed class OpenJsonConverterAttribute<TId>()
     : JsonConverterAttribute(typeof(OpenJsonConverter<TId>))
-    where TId : ITypedId<TId>, new() { }
+    where TId : ITypedId<TId>, new()
+{ }
 
 file sealed class OpenJsonConverter<TObject, TValue> : JsonConverter<TObject>
     where TObject : IValueObject<TObject, TValue>
@@ -27,8 +29,12 @@ file sealed class OpenJsonConverter<TObject, TValue> : JsonConverter<TObject>
     {
         var value = JsonSerializer.Deserialize<TValue>(ref reader, options);
 
-        if (TObject.TryCreateNew(value!, out var newObject) == false)
-            ValueObjectInvalidException.Throw(newObject);
+        if (TObject.TryCreateNew(value!, out var newObject) is false)
+            throw new ValueObjectInvalidException()
+            {
+                ValueObject = newObject,
+                Type = typeof(TObject),
+            };
 
         return newObject;
     }

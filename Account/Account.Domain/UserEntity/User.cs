@@ -1,5 +1,4 @@
 ﻿using Account.Domain.UserEntity.Events;
-using Account.Domain.UserEntity.Rules;
 using Account.Domain.UserEntity.ValueObjects;
 using Identity;
 using Primitives.Entity;
@@ -19,16 +18,12 @@ public sealed class User : EntityBase<UserId>, IAggregateRoot<User>
         _password = Password.NewPassword(password);
         _registerAt = DateTime.UtcNow;
         _loginAt = DateTime.UtcNow;
-        _roles = [Role.USER];
+        _roles = [Roles.USER];
         _profile = Profile.Default;
     }
 
     public static User CreateNewUser(string username, string password, string email)
     {
-        Check(new UsernameValidRule(username));
-        Check(new PasswordValidRule(password));
-        Check(new EmailValidRule(email));
-
         var user = new User(username, password, email);
         user.AddDomainEvent(new UserCreatedEvent(user));
         return user;
@@ -46,7 +41,7 @@ public sealed class User : EntityBase<UserId>, IAggregateRoot<User>
     private Profile _profile = null!;
     private Password _password = null!;
 
-    private Role[] _roles = [];
+    private Roles[] _roles = [];
 
     #endregion
 
@@ -54,28 +49,24 @@ public sealed class User : EntityBase<UserId>, IAggregateRoot<User>
 
     public string Username => _username;
 
-    public IReadOnlyCollection<Role> Roles => _roles;
+    public IReadOnlyCollection<Roles> UserRoles => _roles;
 
     #endregion
 
     #region Methods
 
-    public void UpdateAuthorizations(params Role[] roles)
+    public void UpdateAuthorizations(params Roles[] roles)
     {
         _roles = roles;
     }
 
     public void ResetPassword(string newPassword)
     {
-        Check(new PasswordValidRule(newPassword));
-
         _password = Password.NewPassword(newPassword);
     }
 
     public async Task<bool> LoginAsync(string password)
     {
-        Check(new PasswordValidRule(password));
-
         if (await _password.ValidateAsync(password) is false)
         {
             return false;
@@ -87,9 +78,6 @@ public sealed class User : EntityBase<UserId>, IAggregateRoot<User>
 
     public void UpdateProfile(string nickname, string biography, DateOnly? birthday, Uri? website)
     {
-        Check(new NicknameLengthRule(nickname));
-        Check(new BiographyValidRule(biography));
-
         _profile = new(nickname, biography, birthday, website);
     }
 

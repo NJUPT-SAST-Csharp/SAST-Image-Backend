@@ -1,5 +1,5 @@
-﻿using Exceptions.Exceptions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Primitives.Exceptions;
 using SastImg.Domain.AlbumAggregate;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
 using SastImg.Infrastructure.Persistence;
@@ -28,10 +28,7 @@ public sealed class AlbumRepository(SastImgDbContext context) : IAlbumRepository
             .Albums.Include("_images")
             .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
 
-        if (album is null)
-        {
-            throw new DbNotFoundException(nameof(Album), id.Value.ToString());
-        }
+        EntityNotFoundException.ThrowIf(album is null);
 
         return album;
     }

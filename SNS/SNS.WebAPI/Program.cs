@@ -21,6 +21,8 @@ await using (var scope = app.Services.CreateAsyncScope())
     await scope.ServiceProvider.GetRequiredService<SNSDbContext>().Database.EnsureCreatedAsync();
 }
 
+app.MapDefaultEndpoints();
+
 app.UseInternalAuth();
 
 app.MapControllers();

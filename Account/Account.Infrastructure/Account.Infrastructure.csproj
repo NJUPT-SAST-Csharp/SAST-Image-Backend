@@ -21,8 +21,6 @@
     <ProjectReference Include="..\..\Components\Auth\Auth.csproj" />
     <ProjectReference Include="..\..\Components\Persistence\Persistence.csproj" />
     <ProjectReference Include="..\..\Components\ServiceDefaults\ServiceDefaults.csproj" />
-    <ProjectReference Include="..\..\Components\Storage.Local\Storage.Local.csproj" />
-    <ProjectReference Include="..\..\Components\Storage\Storage.csproj" />
     <ProjectReference Include="..\Account.Application\Account.Application.csproj" />
   </ItemGroup>
 </Project>

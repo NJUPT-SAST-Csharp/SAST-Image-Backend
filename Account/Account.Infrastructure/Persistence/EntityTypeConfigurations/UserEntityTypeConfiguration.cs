@@ -18,7 +18,7 @@ internal sealed class UserEntityTypeConfiguration : IEntityTypeConfiguration<Use
             .HasConversion(k => k.Value, id => new UserId(id));
 
         builder.Ignore(x => x.DomainEvents);
-        builder.Ignore(x => x.Roles);
+        builder.Ignore(x => x.UserRoles);
         builder.Ignore(x => x.Username);
 
         builder.Property<string>("_username").HasColumnName("username");
@@ -52,10 +52,10 @@ internal sealed class UserEntityTypeConfiguration : IEntityTypeConfiguration<Use
         builder.HasIndex("_email").IsUnique();
 
         builder
-            .PrimitiveCollection<Role[]>("_roles")
+            .PrimitiveCollection<Roles[]>("_roles")
             .HasColumnName("roles")
             .ElementType(e =>
-                e.HasConversion(new ValueConverter<Role, int>(role => (int)role, id => (Role)id))
+                e.HasConversion(new ValueConverter<Roles, int>(role => (int)role, id => (Roles)id))
             );
     }
 }

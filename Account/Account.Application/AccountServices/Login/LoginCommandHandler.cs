@@ -27,7 +27,7 @@ public sealed class LoginCommandHandler(
             return Responses.BadRequest("Login failed", "Username or password is incorrect.");
         }
 
-        string jwt = jwtProvider.GetLoginJwt(user.Id, user.Username, user.Roles);
+        string jwt = jwtProvider.GetLoginJwt(user.Id, user.Username, user.UserRoles);
 
         await unit.CommitChangesAsync(cancellationToken);
 

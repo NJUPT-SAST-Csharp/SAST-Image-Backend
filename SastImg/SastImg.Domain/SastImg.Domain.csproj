@@ -5,14 +5,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="AlbumAggregate\ImageEntity\Events\**" />
-    <Compile Remove="CategoryEntity\Events\**" />
-    <EmbeddedResource Remove="AlbumAggregate\ImageEntity\Events\**" />
-    <EmbeddedResource Remove="CategoryEntity\Events\**" />
-    <None Remove="AlbumAggregate\ImageEntity\Events\**" />
-    <None Remove="CategoryEntity\Events\**" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Components\Primitives\Primitives.csproj" />
     <ProjectReference Include="..\..\Components\Identity\Identity.csproj" />
   </ItemGroup>

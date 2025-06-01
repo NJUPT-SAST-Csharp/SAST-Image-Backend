@@ -36,7 +36,6 @@ public static class HttpJsonSerializerExtension
 [JsonSerializable(typeof(AuthorizeRequest))]
 [JsonSerializable(typeof(UpdateProfileRequest))]
 [JsonSerializable(typeof(UpdateAvatarRequest))]
-[JsonSerializable(typeof(UpdateHeaderRequest))]
 [JsonSerializable(typeof(SendForgetCodeRequest))]
 [JsonSerializable(typeof(VerifyForgetCodeRequest))]
 [JsonSerializable(typeof(GetUserInfoRequest))]

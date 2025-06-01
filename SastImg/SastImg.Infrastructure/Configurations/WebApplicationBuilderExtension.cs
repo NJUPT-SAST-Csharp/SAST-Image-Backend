@@ -22,15 +22,9 @@ public static class WebApplicationBuilderExtension
                 ?? throw new InvalidOperationException("Connection string 'SastImgDb' not found.")
         );
 
-        services.ConfigureOptions(configuration);
-
         services.AddLogging();
 
         services.ConfigureDatabase(configuration.GetConnectionString("SastimgDb")!);
-
-        services.ConfigureStorage(configuration);
-
-        services.ConfigureExceptionHandlers();
 
         services.ConfigureHttpJsonOptions(options =>
         {

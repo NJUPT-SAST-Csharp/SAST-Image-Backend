@@ -18,7 +18,7 @@ public sealed class VerifyForgetCodeCommandHandler(
     {
         var user = await repository.GetUserByEmailAsync(request.Email, cancellationToken);
 
-        string jwt = provider.GetLoginJwt(user.Id, user.Username, user.Roles);
+        string jwt = provider.GetLoginJwt(user.Id, user.Username, user.UserRoles);
 
         return Responses.Data(new VerifyForgetCodeDto(jwt));
     }

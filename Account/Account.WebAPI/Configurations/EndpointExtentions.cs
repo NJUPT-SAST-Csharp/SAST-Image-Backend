@@ -1,24 +1,10 @@
 ﻿using System.Reflection;
 using Account.WebAPI.SeedWorks;
-using Identity;
-using Response.Extensions;
 
 namespace Account.WebAPI.Configurations;
 
 internal static class EndpointExtentions
 {
-    public static RouteHandlerBuilder AddAuthorization(
-        this RouteHandlerBuilder builder,
-        params Roles[] roles
-    )
-    {
-        builder.RequireAuthorization(Array.ConvertAll(roles, r => r.ToString()));
-
-        builder.WithUnauthorizedResponse();
-
-        return builder;
-    }
-
     public static WebApplication MapEndpoints(this WebApplication app)
     {
         var builder = app.MapGroup("/api");
@@ -54,11 +40,5 @@ internal static class EndpointExtentions
             services.AddTransient(typeof(IEndpointMapper), t);
         }
         return services;
-    }
-
-    public static RouteHandlerBuilder AddValidator<TRequest>(this RouteHandlerBuilder builder)
-    {
-        builder.AddEndpointFilter<ValidationFilter<TRequest>>();
-        return builder;
     }
 }

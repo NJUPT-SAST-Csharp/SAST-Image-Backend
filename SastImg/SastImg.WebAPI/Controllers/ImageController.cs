@@ -7,16 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 using SastImg.Application.ImageServices.AddImage;
 using SastImg.Application.ImageServices.GetAlbumImages;
 using SastImg.Application.ImageServices.GetImage;
-using SastImg.Application.ImageServices.GetImageFile;
 using SastImg.Application.ImageServices.GetRemovedImages;
 using SastImg.Application.ImageServices.GetUserImages;
-using SastImg.Application.ImageServices.RemoveImage;
 using SastImg.Application.ImageServices.SearchImages;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
 using SastImg.Domain.AlbumAggregate.ImageEntity;
+using SastImg.Domain.AlbumAggregate.ImageEntity.Commands;
 using SastImg.Domain.AlbumTagEntity;
 using Shared.Response.Builders;
-using Utilities.Validators;
 
 namespace SastImg.WebAPI.Controllers;
 
@@ -186,7 +184,6 @@ public sealed class ImageController(IMediator mediator) : ControllerBase
     }
 
     public readonly record struct AddImageRequest(
-        [property: FileValidator(50)] IFormFile Image,
         ImageTitle Title,
         ImageDescription Description,
         ImageTagId[] Tags
@@ -216,43 +213,11 @@ public sealed class ImageController(IMediator mediator) : ControllerBase
             request.Title,
             request.Description,
             request.Tags,
-            request.Image,
             id,
             User
         );
 
         var response = await mediator.Send(command, cancellationToken);
         return Responses.Created(response);
-    }
-
-    /// <summary>
-    ///
-    /// </summary>
-    /// <param name="imageId"></param>
-    /// <param name="cancellationToken"></param>
-    /// <param name="thumbnail"></param>
-    /// <returns></returns>
-    [HttpGet("image/{imageId}")]
-    [Produces("image/png", "image/jpeg", "image/gif", "image/webp", "image/svg+xml")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IResult> GetImageFile(
-        [FromRoute] long imageId,
-        [FromQuery] bool thumbnail = false,
-        CancellationToken cancellationToken = default
-    )
-    {
-        // file will be disposes automatically after return;
-        var file = await mediator.Send(
-            new GetImageFileQuery(imageId, thumbnail, User),
-            cancellationToken
-        );
-
-        if (file is null)
-        {
-            return Results.NotFound();
-        }
-
-        return Results.File(file, "image/*");
     }
 }

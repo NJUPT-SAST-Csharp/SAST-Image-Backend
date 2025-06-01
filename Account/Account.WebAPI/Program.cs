@@ -3,7 +3,6 @@ using Account.Infrastructure.Configurations;
 using Account.Infrastructure.Persistence;
 using Account.WebAPI.Configurations;
 using Auth;
-using FluentValidation;
 using ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,7 +19,6 @@ builder.EnrichPersistence<AccountDbContext>();
 //    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json");
 
 builder.Services.ConfigureJsonSerializer();
-builder.Services.AddValidatorsFromAssembly(Assembly.GetAssembly(typeof(Program)));
 builder.Services.RegisterEndpointMappersFromAssembly(Assembly.GetAssembly(typeof(Program))!);
 
 var app = builder.Build();
@@ -37,6 +35,8 @@ app.UseExceptionHandler(_ => { });
 app.UseRouting();
 
 app.UseInternalAuth();
+
+app.MapDefaultEndpoints();
 
 app.MapEndpoints();
 

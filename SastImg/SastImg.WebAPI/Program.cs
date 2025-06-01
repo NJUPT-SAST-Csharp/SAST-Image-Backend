@@ -21,6 +21,8 @@ await using (var scope = app.Services.CreateAsyncScope())
         .Database.EnsureCreatedAsync();
 }
 
+app.MapDefaultEndpoints();
+
 // Add & Configure services.
 app.ConfigureApplication();
 

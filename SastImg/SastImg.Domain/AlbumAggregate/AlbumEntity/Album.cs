@@ -1,8 +1,10 @@
 ﻿using Identity;
 using Primitives.Entity;
+using SastImg.Domain.AlbumAggregate.AlbumEntity.Commands;
 using SastImg.Domain.AlbumAggregate.AlbumEntity.Events;
-using SastImg.Domain.AlbumAggregate.AlbumEntity.Rules;
+using SastImg.Domain.AlbumAggregate.AlbumEntity.Exceptions;
 using SastImg.Domain.AlbumAggregate.ImageEntity;
+using SastImg.Domain.AlbumAggregate.ImageEntity.Commands;
 using SastImg.Domain.AlbumTagEntity;
 using SastImg.Domain.CategoryEntity;
 
@@ -70,23 +72,33 @@ public sealed class Album : EntityBase<AlbumId>, IAggregateRoot<Album>
 
     #endregion
 
-    #region Properties
+    #region Helpers
 
-    public bool IsOwnedBy(UserId userId) => _authorId == userId;
+    private bool IsOwnedBy(Requester user) => _authorId == user.Id;
 
-    public bool IsManagedBy(UserId userId) =>
-        _authorId == userId || Array.Exists(_collaborators, id => id == userId);
+    private bool CanManage(Requester user) => IsOwnedBy(user) || user.IsAdmin;
+
+    private bool CanNotManage(Requester user) => !CanManage(user);
+
+    private bool CanManageImages(Requester user) =>
+        CanManage(user) || _collaborators.Contains(user.Id);
+
+    private bool CanNotManageImages(Requester user) => !CanManageImages(user);
 
     #endregion
 
     #region Methods
 
 
-    public void Remove()
+    public void Remove(RemoveAlbumCommand command)
     {
+        NoPermissionDomainException.ThrowIf(CanNotManage(command.Requester));
+
         if (_isRemoved)
             return;
+
         _isRemoved = true;
+
         foreach (var image in _images)
         {
             image.Remove();
@@ -94,7 +106,7 @@ public sealed class Album : EntityBase<AlbumId>, IAggregateRoot<Album>
         // TODO: Raise domain event.
     }
 
-    public void Restore()
+    public void Restore(RestoreAlbumCommand command)
     {
         if (_isRemoved == false)
             return;
@@ -108,6 +120,8 @@ public sealed class Album : EntityBase<AlbumId>, IAggregateRoot<Album>
 
     public void Archive()
     {
+        AlbumRemovedDomainException.ThrowIf(_isRemoved);
+
         if (_isArchived)
             return;
         _isArchived = true;
@@ -117,7 +131,8 @@ public sealed class Album : EntityBase<AlbumId>, IAggregateRoot<Album>
 
     public void SetCoverAsLatestImage()
     {
-        Check(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
+        AlbumRemovedDomainException.ThrowIf(_isRemoved);
+        AlbumArchivedDomainException.ThrowIf(_isArchived);
 
         var image = _images
             .Where(image => image.IsRemoved == false)
@@ -129,7 +144,8 @@ public sealed class Album : EntityBase<AlbumId>, IAggregateRoot<Album>
 
     public void SetCoverAsContainedImage(ImageId imageId)
     {
-        Check(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
+        AlbumRemovedDomainException.ThrowIf(_isRemoved);
+        AlbumArchivedDomainException.ThrowIf(_isArchived);
 
         var image = _images.FirstOrDefault(image => image.Id == imageId);
         _cover = new(image?.Id, false);
@@ -142,7 +158,8 @@ public sealed class Album : EntityBase<AlbumId>, IAggregateRoot<Album>
         Accessibility accessibility
     )
     {
-        Check(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
+        AlbumRemovedDomainException.ThrowIf(_isRemoved);
+        AlbumArchivedDomainException.ThrowIf(_isArchived);
 
         _title = title;
         _description = description;
@@ -162,7 +179,8 @@ public sealed class Album : EntityBase<AlbumId>, IAggregateRoot<Album>
         ImageTagId[] tags
     )
     {
-        Check(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
+        AlbumRemovedDomainException.ThrowIf(_isRemoved);
+        AlbumArchivedDomainException.ThrowIf(_isArchived);
 
         var image = new Image(title, description, url, tags);
 
@@ -178,11 +196,14 @@ public sealed class Album : EntityBase<AlbumId>, IAggregateRoot<Album>
         return image.Id;
     }
 
-    public void RemoveImage(ImageId imageId)
+    public void RemoveImage(RemoveImageCommand command)
     {
-        Check(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
+        NoPermissionDomainException.ThrowIf(CanNotManageImages(command.Requester));
+        AlbumRemovedDomainException.ThrowIf(_isRemoved);
+        AlbumArchivedDomainException.ThrowIf(_isArchived);
 
-        var image = _images.FirstOrDefault(image => image.Id == imageId);
+        var image = _images.FirstOrDefault(image => image.Id == command.ImageId);
+
         if (image is not null)
         {
             image.Remove();
@@ -195,8 +216,8 @@ public sealed class Album : EntityBase<AlbumId>, IAggregateRoot<Album>
 
     public void RestoreImage(ImageId imageId)
     {
-        Check(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
-        Check(new RestoreImageOnlyWhenAlbumNotRemovedRule(_isRemoved));
+        AlbumRemovedDomainException.ThrowIf(_isRemoved);
+        AlbumArchivedDomainException.ThrowIf(_isArchived);
 
         var image = _images.FirstOrDefault(image => image.Id == imageId);
         if (image is not null)
@@ -211,7 +232,8 @@ public sealed class Album : EntityBase<AlbumId>, IAggregateRoot<Album>
 
     public void UpdateCollaborators(UserId[] collaborators)
     {
-        Check(new ActionAllowedOnlyWhenNotArchivedRule(_isArchived));
+        AlbumRemovedDomainException.ThrowIf(_isRemoved);
+        AlbumArchivedDomainException.ThrowIf(_isArchived);
 
         _collaborators = collaborators.Distinct().Where(c => c != _authorId).ToArray();
         //TODO: Raise domain event

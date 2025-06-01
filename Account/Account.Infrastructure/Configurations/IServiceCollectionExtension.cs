@@ -1,21 +1,17 @@
-﻿using Account.Application.FileServices;
-using Account.Application.Services;
+﻿using Account.Application.Services;
 using Account.Application.UserServices;
 using Account.Domain.UserEntity.Services;
 using Account.Infrastructure.ApplicationServices;
 using Account.Infrastructure.DomainServices;
 using Account.Infrastructure.Persistence;
-using Account.Infrastructure.Persistence.Storages;
 using Account.Infrastructure.Persistence.TypeConverters;
 using Dapper;
-using Exceptions.Configurations;
-using Exceptions.ExceptionHandlers;
+using Exceptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence;
-using Shared.Storage.Configurations;
 
 namespace Account.Infrastructure.Configurations;
 
@@ -31,8 +27,7 @@ public static class IServiceCollectionExtension
         services
             .AddRepositories()
             .AddDistributedCache()
-            .AddExceptionHandlers()
-            .AddStorages(configuration)
+            .AddDefaultExceptionHandler()
             .AddPersistence<AccountDbContext>(configuration.GetConnectionString("AccountDb")!)
             .AddPersistence(configuration.GetConnectionString("AccountDb")!);
 
@@ -66,25 +61,6 @@ public static class IServiceCollectionExtension
     private static IServiceCollection AddDistributedCache(this IServiceCollection services)
     {
         services.AddScoped<IAuthCodeCache, RedisAuthCache>();
-        return services;
-    }
-
-    private static IServiceCollection AddStorages(
-        this IServiceCollection services,
-        IConfiguration configuration
-    )
-    {
-        services.AddScoped<IHeaderStorageRepository, HeaderStorageRepository>();
-        services.AddScoped<IAvatarStorageRepository, AvatarStorageRepository>();
-
-        services.AddStorageClient(options => options.FolderPath = configuration["StoragePath"]!);
-        return services;
-    }
-
-    private static IServiceCollection AddExceptionHandlers(this IServiceCollection services)
-    {
-        services.AddExceptionHandler<DbNotFoundExceptionHandler>();
-        services.AddDefaultExceptionHandler();
         return services;
     }
 }

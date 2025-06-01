@@ -1,9 +1,9 @@
 ﻿using Account.Domain.UserEntity;
 using Account.Domain.UserEntity.Services;
 using Account.Infrastructure.Persistence;
-using Exceptions.Exceptions;
 using Identity;
 using Microsoft.EntityFrameworkCore;
+using Primitives.Exceptions;
 
 namespace Account.Infrastructure.DomainServices;
 
@@ -32,10 +32,7 @@ public sealed class UserRepository(AccountDbContext context) : IUserRepository
             cancellationToken
         );
 
-        if (user is null)
-        {
-            throw new DbNotFoundException(nameof(User), email);
-        }
+        EntityNotFoundException.ThrowIf(user is null);
 
         return user;
     }
@@ -47,10 +44,7 @@ public sealed class UserRepository(AccountDbContext context) : IUserRepository
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
-        if (user is null)
-        {
-            throw new DbNotFoundException(nameof(User), id.Value.ToString());
-        }
+        EntityNotFoundException.ThrowIf(user is null);
 
         return user;
     }
@@ -65,10 +59,7 @@ public sealed class UserRepository(AccountDbContext context) : IUserRepository
             cancellationToken
         );
 
-        if (user is null)
-        {
-            throw new DbNotFoundException(nameof(User), username);
-        }
+        EntityNotFoundException.ThrowIf(user is null);
 
         return user;
     }

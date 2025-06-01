@@ -1,6 +1,4 @@
 ﻿using Mediator;
-using Primitives.Exceptions;
-using Primitives.Rule;
 
 namespace Primitives.Entity;
 
@@ -37,23 +35,6 @@ public abstract class EntityBase<T>(T id)
     public override bool Equals(object? obj)
     {
         return Equals(obj as EntityBase<T>);
-    }
-
-    protected static bool Check<TRule>(in TRule rule)
-        where TRule : IDomainRule, allows ref struct
-    {
-        bool isBroken = rule.IsBroken;
-
-        return isBroken is false;
-    }
-
-    protected static void Check<TRule>(TRule rule)
-        where TRule : IDomainRule
-    {
-        if (rule.IsBroken)
-        {
-            throw new DomainException(rule);
-        }
     }
 
     public void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);

@@ -24,7 +24,7 @@ public sealed class CreateAccountCommandHandler(
 
         await repository.AddNewUserAsync(user, cancellationToken);
 
-        string jwt = provider.GetLoginJwt(user.Id, user.Username, user.Roles);
+        string jwt = provider.GetLoginJwt(user.Id, user.Username, user.UserRoles);
 
         await unit.CommitChangesAsync(cancellationToken);
 

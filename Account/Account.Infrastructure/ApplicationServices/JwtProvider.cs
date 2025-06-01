@@ -2,7 +2,6 @@
 using System.Security.Claims;
 using System.Text;
 using Account.Application.Services;
-using Account.Domain.UserEntity;
 using Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -11,7 +10,7 @@ namespace Account.Infrastructure.ApplicationServices;
 
 internal sealed class JwtProvider(IConfiguration configuration) : IJwtProvider
 {
-    public string GetLoginJwt(UserId userId, string username, IEnumerable<Role> roles)
+    public string GetLoginJwt(UserId userId, string username, IEnumerable<Roles> roles)
     {
         var claims = new List<Claim>() { new(nameof(UserId), userId.Value.ToString()) };
         claims.AddRange(roles.Select(r => new Claim(nameof(Roles), r.ToString())));

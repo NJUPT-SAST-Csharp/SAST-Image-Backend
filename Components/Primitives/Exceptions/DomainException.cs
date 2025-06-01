@@ -1,13 +1,27 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Primitives.Rule;
 
 namespace Primitives.Exceptions;
 
-public class DomainException(IDomainRule rule) : Exception
+public abstract class DomainException : Exception
 {
-    public IDomainRule Rule { get; } = rule;
+    public static void ThrowIf<T>([DoesNotReturnIf(true)] bool condition)
+        where T : DomainException, new()
+    {
+        if (condition)
+        {
+            throw new T();
+        }
+    }
+}
 
-    [DoesNotReturn]
-    public static void Throw<TRule>(TRule rule)
-        where TRule : IDomainRule => throw new DomainException(rule);
+public abstract class DomainException<T> : DomainException
+    where T : DomainException, new()
+{
+    public static void ThrowIf([DoesNotReturnIf(true)] bool condition)
+    {
+        if (condition)
+        {
+            throw new T();
+        }
+    }
 }

@@ -1,4 +1,4 @@
-﻿using Exceptions.Exceptions;
+﻿using Primitives.Exceptions;
 using SastImg.Domain.Categories;
 using SastImg.Domain.CategoryEntity;
 using SastImg.Infrastructure.Persistence;
@@ -24,13 +24,9 @@ internal sealed class CategoryRepository(SastImgDbContext context) : ICategoryRe
     )
     {
         var category = await _context.Categories.FindAsync([id], cancellationToken);
-        if (category is null)
-        {
-            throw new DbNotFoundException(nameof(Category), id.Value.ToString());
-        }
-        else
-        {
-            return category;
-        }
+
+        EntityNotFoundException.ThrowIf(category is null);
+
+        return category;
     }
 }

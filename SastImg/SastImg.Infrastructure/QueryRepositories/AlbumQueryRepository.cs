@@ -1,11 +1,11 @@
 ﻿using System.Data;
 using Dapper;
 using Identity;
-using SastImg.Application.AlbumServices.GetAlbums;
-using SastImg.Application.AlbumServices.GetDetailedAlbum;
-using SastImg.Application.AlbumServices.GetRemovedAlbums;
-using SastImg.Application.AlbumServices.GetUserAlbums;
-using SastImg.Application.AlbumServices.SearchAlbums;
+using SastImg.Application.AlbumAggregate.GetAlbums;
+using SastImg.Application.AlbumAggregate.GetDetailedAlbum;
+using SastImg.Application.AlbumAggregate.GetRemovedAlbums;
+using SastImg.Application.AlbumAggregate.GetUserAlbums;
+using SastImg.Application.AlbumAggregate.SearchAlbums;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
 using SastImg.Domain.CategoryEntity;
 using SastImg.Infrastructure.Persistence.QueryDatabase;

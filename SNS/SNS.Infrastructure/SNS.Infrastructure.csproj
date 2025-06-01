@@ -8,7 +8,6 @@
     <ProjectReference Include="..\..\Components\Exceptions\Exceptions.csproj" />
     <ProjectReference Include="..\..\Components\Persistence\Persistence.csproj" />
     <ProjectReference Include="..\..\Components\ServiceDefaults\ServiceDefaults.csproj" />
-    <ProjectReference Include="..\..\Components\Storage\Storage.csproj" />
     <ProjectReference Include="..\SNS.Application\SNS.Application.csproj" />
     <ProjectReference Include="..\SNS.Domain\SNS.Domain.csproj" />
   </ItemGroup>

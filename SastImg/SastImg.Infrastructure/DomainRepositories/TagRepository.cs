@@ -1,4 +1,4 @@
-﻿using Exceptions.Exceptions;
+﻿using Primitives.Exceptions;
 using SastImg.Domain.AlbumTagEntity;
 using SastImg.Infrastructure.Persistence;
 
@@ -23,10 +23,8 @@ internal sealed class TagRepository(SastImgDbContext context) : ITagRepository
     )
     {
         var tag = await _context.Tags.FindAsync([id], cancellationToken);
-        if (tag is null)
-        {
-            throw new DbNotFoundException(nameof(ImageTag), id.Value.ToString());
-        }
+
+        EntityNotFoundException.ThrowIf(tag is null);
 
         return tag;
     }
