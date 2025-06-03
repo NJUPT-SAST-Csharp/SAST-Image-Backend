@@ -9,13 +9,33 @@ internal sealed class FileStorage(IMinioClient client) : IFileStorage
 {
     public async Task<FileToken> AddAsync(
         IImageFile file,
+        string bucketName,
         CancellationToken cancellationToken = default
     )
     {
-        var args = new PutObjectArgs().WithStreamData(file.Stream);
+        var token = FileToken.Create();
 
-        var response = await client.PutObjectAsync(args, cancellationToken);
+        bool exists = await client.BucketExistsAsync(
+            new BucketExistsArgs().WithBucket(bucketName),
+            cancellationToken
+        );
+        if (exists is false)
+        {
+            await client.MakeBucketAsync(
+                new MakeBucketArgs().WithBucket(bucketName),
+                cancellationToken
+            );
+        }
 
-        return FileToken.Create();
+        var args = new PutObjectArgs()
+            .WithObject(token.Value)
+            .WithObjectSize(file.Length)
+            .WithBucket(bucketName)
+            .WithContentType("image/*")
+            .WithStreamData(file.Stream);
+
+        await client.PutObjectAsync(args, cancellationToken);
+
+        return token;
     }
 }

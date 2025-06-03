@@ -4,6 +4,8 @@ using Storage.WebAPI.Endpoint;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
+builder.WebHost.UseKestrel(options => options.Limits.MaxRequestBodySize = null);
+
 builder.AddServiceDefaults();
 
 builder.AddRedisClient("Cache");

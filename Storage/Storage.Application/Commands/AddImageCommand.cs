@@ -6,7 +6,8 @@ namespace Storage.Application.Commands;
 
 public readonly record struct AddImageResult(FileToken Token);
 
-public sealed record class AddImageCommand(IImageFile File) : ICommand<AddImageResult>;
+public sealed record class AddImageCommand(IImageFile File, string BucketName)
+    : ICommand<AddImageResult>;
 
 internal sealed class AddImageCommandHandler(IFileStorage storage, ITokenRepository repository)
     : ICommandHandler<AddImageCommand, AddImageResult>
@@ -16,7 +17,7 @@ internal sealed class AddImageCommandHandler(IFileStorage storage, ITokenReposit
         CancellationToken cancellationToken
     )
     {
-        var token = await storage.AddAsync(command.File, cancellationToken);
+        var token = await storage.AddAsync(command.File, command.BucketName, cancellationToken);
 
         await repository.InsertAsync(token, cancellationToken);
 

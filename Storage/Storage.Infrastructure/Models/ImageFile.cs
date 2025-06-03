@@ -76,13 +76,13 @@ public sealed unsafe class ImageFile : IDisposable, IImageFile
 
     public static bool TryGetFormat(Stream stream, [NotNullWhen(true)] out ImageFileFormat? format)
     {
-        using SKFrontBufferedManagedStream skStream = new(
-            stream,
-            SKCodec.MinBufferedBytesNeeded,
-            true
-        );
+        SKFrontBufferedManagedStream skStream = new(stream, SKCodec.MinBufferedBytesNeeded, true);
 
-        using var code = SKCodec.Create(skStream);
+        var code = SKCodec.Create(skStream);
+
+        // Reset stream position after reading
+        stream.Position = 0;
+        stream.Seek(0, SeekOrigin.Begin);
 
         if (code is null)
         {

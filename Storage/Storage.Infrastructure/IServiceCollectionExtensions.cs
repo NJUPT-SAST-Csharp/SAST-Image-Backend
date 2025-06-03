@@ -17,6 +17,7 @@ public static class IServiceCollectionExtensions
 
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
+        services.AddMediator();
         services.AddSingleton<IFileStorage, FileStorage>();
         services.AddSingleton<ITokenRepository, TokenRepository>();
 
@@ -39,11 +40,13 @@ public static class IServiceCollectionExtensions
 
         services.AddSingleton(options);
         services.AddMinio(client =>
+        {
             client
                 .WithEndpoint(options.Endpoint)
                 .WithCredentials(options.AccessKey, options.SecretKey)
-                .Build()
-        );
+                .WithSSL(false)
+                .Build();
+        });
 
         return services;
     }

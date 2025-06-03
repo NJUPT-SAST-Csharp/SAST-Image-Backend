@@ -5,7 +5,7 @@ var authentication = builder.AddParameter("Auth-SecKey", true);
 var username = builder.AddParameter("Username", true);
 var password = builder.AddParameter("Password", true);
 
-var redis = builder.AddRedis("Cache", 6379);
+var redis = builder.AddRedis("Cache", 6379, password);
 var minio = builder.AddMinIO("MinIO", username, password, 9000, 9001);
 var postgres = builder.AddPostgres("PostgreSQL", username, password, 5432)
 //.WithDataVolume()
