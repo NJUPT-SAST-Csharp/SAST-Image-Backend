@@ -6,7 +6,7 @@ namespace Identity;
 public sealed class Requester : IEquatable<Requester>
 {
     public const string UserIdClaimType = nameof(UserId);
-    public const string RolesClaimType = nameof(Roles);
+    public const string RolesClaimType = nameof(Identity.Role);
 
     public static readonly Requester Anonymous = new();
 
@@ -18,7 +18,7 @@ public sealed class Requester : IEquatable<Requester>
             user.TryFetchClaim(UserIdClaimType, out string? idValue) is false
             || user.TryFetchClaim(RolesClaimType, out string? roleValue) is false
             || long.TryParse(idValue, out long id) is false
-            || Enum.TryParse<Roles>(roleValue, true, out var role) is false
+            || Enum.TryParse<Role>(roleValue, true, out var role) is false
         )
         {
             return;
@@ -29,9 +29,9 @@ public sealed class Requester : IEquatable<Requester>
     }
 
     public UserId Id { get; } = new() { Value = -1 };
-    public Roles Role { get; } = Roles.NONE;
-    public bool IsAuthenticated => Role != Roles.NONE;
-    public bool IsAdmin => (Role & Roles.ADMIN) != 0;
+    public Role Role { get; } = Role.NONE;
+    public bool IsAuthenticated => Role != Role.NONE;
+    public bool IsAdmin => (Role & Role.ADMIN) != 0;
 
     public bool Equals(Requester? other) => Id == other?.Id;
 

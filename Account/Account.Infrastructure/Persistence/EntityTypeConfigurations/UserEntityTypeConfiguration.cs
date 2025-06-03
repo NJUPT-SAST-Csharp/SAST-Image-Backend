@@ -52,10 +52,10 @@ internal sealed class UserEntityTypeConfiguration : IEntityTypeConfiguration<Use
         builder.HasIndex("_email").IsUnique();
 
         builder
-            .PrimitiveCollection<Roles[]>("_roles")
+            .PrimitiveCollection<Role[]>("_roles")
             .HasColumnName("roles")
             .ElementType(e =>
-                e.HasConversion(new ValueConverter<Roles, int>(role => (int)role, id => (Roles)id))
+                e.HasConversion(new ValueConverter<Role, int>(role => (int)role, id => (Role)id))
             );
     }
 }

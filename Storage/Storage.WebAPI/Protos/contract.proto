@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+service Contract {
+  rpc Confirm(ConfirmRequest) returns (ConfirmReply);
+}
+
+message ConfirmRequest {
+  string token = 1;
+  string bucket = 2;
+}
+
+message ConfirmReply {
+  bool success = 1;
+}

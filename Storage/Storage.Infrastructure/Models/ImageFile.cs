@@ -1,12 +1,11 @@
-﻿using System.Buffers;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Http;
 using SkiaSharp;
-using Storage.Domain;
+using Storage.Application.Model;
 
 namespace Storage.Infrastructure.Models;
 
@@ -18,7 +17,7 @@ public sealed unsafe class ImageFile : IDisposable, IImageFile
     private byte* _content;
     private readonly long _length;
 
-    private ImageFile(byte* content, long length, ImageFormat format)
+    private ImageFile(byte* content, long length, ImageFileFormat format)
     {
         _content = content;
         _length = length;
@@ -35,7 +34,7 @@ public sealed unsafe class ImageFile : IDisposable, IImageFile
         }
     }
 
-    public ImageFormat Format { get; }
+    public ImageFileFormat Format { get; }
     public long Length => _length;
 
     public static bool TryCreate(Stream stream, [NotNullWhen(true)] out ImageFile? imageFile)
@@ -75,6 +74,26 @@ public sealed unsafe class ImageFile : IDisposable, IImageFile
         }
     }
 
+    public static bool TryGetFormat(Stream stream, [NotNullWhen(true)] out ImageFileFormat? format)
+    {
+        using SKFrontBufferedManagedStream skStream = new(
+            stream,
+            SKCodec.MinBufferedBytesNeeded,
+            true
+        );
+
+        using var code = SKCodec.Create(skStream);
+
+        if (code is null)
+        {
+            format = null;
+            return false;
+        }
+
+        format = (ImageFileFormat)code.EncodedFormat;
+        return true;
+    }
+
     public static ValueTask<ImageFile?> BindAsync(HttpContext context, ParameterInfo info)
     {
         var files = context.Request.Form.Files;
@@ -106,49 +125,22 @@ public sealed unsafe class ImageFile : IDisposable, IImageFile
         _content = null;
     }
 
-    private static bool TryGetFormat(Stream stream, [NotNullWhen(true)] out ImageFormat? format)
-    {
-        using SKFrontBufferedManagedStream skStream = new(
-            stream,
-            SKCodec.MinBufferedBytesNeeded,
-            true
-        );
-
-        using var code = SKCodec.Create(skStream);
-
-        if (code is null)
-        {
-            format = null;
-            return false;
-        }
-
-        format = (ImageFormat)code.EncodedFormat;
-        return true;
-    }
-
     private static int ReadStreamToUnmanagedMemory(Stream stream, nint unmanagedPointer)
     {
         int totalBytesRead = 0;
         int bytesRead;
         const int bufferSize = 4 * 1024;
 
-        byte[] pool = ArrayPool<byte>.Shared.Rent(bufferSize);
+        Span<byte> buffer = stackalloc byte[bufferSize];
 
-        try
+        while ((bytesRead = stream.Read(buffer)) > 0)
         {
-            while ((bytesRead = stream.Read(pool, 0, bufferSize)) > 0)
-            {
-                if (totalBytesRead + bytesRead > stream.Length)
-                    throw new InvalidOperationException("Read more bytes than expected.");
+            if (totalBytesRead + bytesRead > stream.Length)
+                throw new InvalidOperationException("Read more bytes than expected.");
 
-                byte* ptr = (byte*)unmanagedPointer + totalBytesRead;
-                Unsafe.CopyBlock(ref Unsafe.AsRef<byte>(ptr), ref pool[0], (uint)bytesRead);
-                totalBytesRead += bytesRead;
-            }
-        }
-        finally
-        {
-            ArrayPool<byte>.Shared.Return(pool);
+            byte* ptr = (byte*)unmanagedPointer + totalBytesRead;
+            Unsafe.CopyBlock(ref Unsafe.AsRef<byte>(ptr), ref buffer[0], (uint)bytesRead);
+            totalBytesRead += bytesRead;
         }
 
         return totalBytesRead;

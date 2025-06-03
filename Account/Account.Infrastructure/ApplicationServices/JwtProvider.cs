@@ -10,10 +10,10 @@ namespace Account.Infrastructure.ApplicationServices;
 
 internal sealed class JwtProvider(IConfiguration configuration) : IJwtProvider
 {
-    public string GetLoginJwt(UserId userId, string username, IEnumerable<Roles> roles)
+    public string GetLoginJwt(UserId userId, string username, IEnumerable<Role> roles)
     {
         var claims = new List<Claim>() { new(nameof(UserId), userId.Value.ToString()) };
-        claims.AddRange(roles.Select(r => new Claim(nameof(Roles), r.ToString())));
+        claims.AddRange(roles.Select(r => new Claim(nameof(Role), r.ToString())));
         return GenerateJwtByClaims(claims);
     }
 

@@ -19,11 +19,11 @@ public static class AuthorizationExtension
     /// Adds authorization metadata to the endpoint builder, specifying the roles that are allowed to access the endpoint.
     /// </summary>
     /// <param name="allowedRoles">
-    ///     <inheritdoc cref="RoleAttribute(Roles[])"/>
+    ///     <inheritdoc cref="RoleAttribute(Role[])"/>
     /// </param>
     public static RouteHandlerBuilder AddAuthorization(
         this RouteHandlerBuilder builder,
-        params Roles[] allowedRoles
+        params Role[] allowedRoles
     )
     {
         builder.Add(endpoint => endpoint.Metadata.Add(new RoleAttribute(allowedRoles)));

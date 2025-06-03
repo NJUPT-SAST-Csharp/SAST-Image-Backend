@@ -14,7 +14,9 @@ var postgres = builder.AddPostgres("PostgreSQL", username, password, 5432)
 var storage = builder
     .AddProject<Projects.Storage_WebAPI>("Storage")
     .WaitFor(minio)
-    .WithReference(minio);
+    .WaitFor(redis)
+    .WithReference(minio)
+    .WithReference(redis);
 
 var database = postgres.AddDatabase("SNSDb", "sastimg_sns");
 var sns = builder.AddProject<Projects.SNS_WebAPI>("SNS").WaitFor(database).WithReference(database);

@@ -1,11 +1,11 @@
 ﻿using SkiaSharp;
-using Storage.Domain;
+using Storage.Application.Model;
 
 namespace Storage.Infrastructure.Models;
 
 public static class Adaptors
 {
-    public static SKEncodedImageFormat ToSKFormat(this ImageFormat format)
+    public static SKEncodedImageFormat ToSKFormat(this ImageFileFormat format)
     {
         return (SKEncodedImageFormat)format;
     }

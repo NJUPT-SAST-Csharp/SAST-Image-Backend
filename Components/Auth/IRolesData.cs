@@ -4,5 +4,5 @@ namespace Auth;
 
 internal interface IRolesData
 {
-    public Roles[] Roles { get; }
+    public Role[] Roles { get; }
 }

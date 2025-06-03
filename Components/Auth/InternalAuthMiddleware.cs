@@ -13,11 +13,11 @@ internal sealed class InternalAuthMiddleware(RequestDelegate next)
 
         if (
             context.Request.Headers.TryGetValue(nameof(UserId), out var idValues) is false
-            || context.Request.Headers.TryGetValue(nameof(Roles), out var roleValues) is false
+            || context.Request.Headers.TryGetValue(nameof(Role), out var roleValues) is false
             || roleValues.Count != 1
             || idValues.Count != 1
             || long.TryParse(idValues[0], out long id) is false
-            || Enum.TryParse<Roles>(roleValues[0], out var role) is false
+            || Enum.TryParse<Role>(roleValues[0], out var role) is false
         )
         {
             ProxyNotAuthenticated(context);
@@ -52,7 +52,7 @@ internal sealed class InternalAuthMiddleware(RequestDelegate next)
         }
 
         ClaimsIdentity identity = new(
-            [new Claim(nameof(UserId), idValues[0]!), new Claim(nameof(Roles), roleValues[0]!)]
+            [new Claim(nameof(UserId), idValues[0]!), new Claim(nameof(Role), roleValues[0]!)]
         );
         context.User = new(identity);
 

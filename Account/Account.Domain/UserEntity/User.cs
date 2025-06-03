@@ -18,7 +18,7 @@ public sealed class User : EntityBase<UserId>, IAggregateRoot<User>
         _password = Password.NewPassword(password);
         _registerAt = DateTime.UtcNow;
         _loginAt = DateTime.UtcNow;
-        _roles = [Roles.USER];
+        _roles = [Role.USER];
         _profile = Profile.Default;
     }
 
@@ -41,7 +41,7 @@ public sealed class User : EntityBase<UserId>, IAggregateRoot<User>
     private Profile _profile = null!;
     private Password _password = null!;
 
-    private Roles[] _roles = [];
+    private Role[] _roles = [];
 
     #endregion
 
@@ -49,13 +49,13 @@ public sealed class User : EntityBase<UserId>, IAggregateRoot<User>
 
     public string Username => _username;
 
-    public IReadOnlyCollection<Roles> UserRoles => _roles;
+    public IReadOnlyCollection<Role> UserRoles => _roles;
 
     #endregion
 
     #region Methods
 
-    public void UpdateAuthorizations(params Roles[] roles)
+    public void UpdateAuthorizations(params Role[] roles)
     {
         _roles = roles;
     }

@@ -33,7 +33,7 @@ public class CategoryController(IMediator mediator) : ControllerBase
     /// <param name="request">The new category info</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <response code="204">The category is created</response>
-    [Authorize(nameof(Roles.ADMIN))]
+    [Authorize(nameof(Role.ADMIN))]
     [HttpPost("category")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<NoContent> CreateCategory(

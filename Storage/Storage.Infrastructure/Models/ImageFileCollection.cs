@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
-using Storage.Domain;
+using Storage.Application.Model;
 
 namespace Storage.Infrastructure.Models;
 

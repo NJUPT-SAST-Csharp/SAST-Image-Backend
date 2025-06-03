@@ -1,11 +1,14 @@
 using Storage.Infrastructure;
+using Storage.WebAPI.Endpoint;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 builder.AddServiceDefaults();
 
-builder.Services.AddStorage(options =>
+builder.AddRedisClient("Cache");
+
+builder.Services.ConfigureServices(options =>
 {
     options.Endpoint =
         configuration["AWS_ENDPOINT_URL_S3"]?.Replace("http://", string.Empty)
@@ -19,10 +22,14 @@ builder.Services.AddStorage(options =>
         ?? throw new NullReferenceException("AWS_SECRET_ACCESS_KEY is not set in configuration.");
 });
 
+builder.Services.AddGrpc();
+
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
 
-app.MapGet("/weatherforecast", () => { });
+app.MapStorageEndpoints();
+
+app.MapGrpcService<ConfirmGrpcService>();
 
 app.Run();

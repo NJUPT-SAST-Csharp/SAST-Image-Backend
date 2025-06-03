@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace Storage.Domain;
+namespace Storage.Application.Model;
 
 public interface IImageFileCollection
     : IReadOnlyList<IImageFile>,

@@ -37,7 +37,7 @@ public sealed class AccountMapper : IEndpointMapper
                     return mediator.Send(new AuthorizeCommand(request.UserId, request.Roles));
                 }
             )
-            .AddAuthorization(Roles.ADMIN)
+            .AddAuthorization(Role.ADMIN)
             .WithSummary("Authorize")
             .WithDescription("Authorize specific user with specific roles.");
     }
@@ -70,7 +70,7 @@ public sealed class AccountMapper : IEndpointMapper
                     return mediator.Send(new ChangePasswordCommand(request.NewPassword, user));
                 }
             )
-            .AddAuthorization(Roles.USER)
+            .AddAuthorization(Role.USER)
             .WithSummary("Change Password.")
             .WithDescription("Authorized user changes password.");
     }

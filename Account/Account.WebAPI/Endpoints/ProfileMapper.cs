@@ -32,7 +32,7 @@ public sealed class ProfileMapper : IEndpointMapper
                     return mediator.Send(request.ToCommand(user));
                 }
             )
-            .AddAuthorization(Roles.USER)
+            .AddAuthorization(Role.USER)
             .WithSummary("Update Profile")
             .WithDescription("Update user profile.");
 

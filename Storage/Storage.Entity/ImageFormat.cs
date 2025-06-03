@@ -1,4 +1,4 @@
-﻿namespace Storage.Domain;
+﻿namespace Storage.Entity;
 
 public enum ImageFormat
 {

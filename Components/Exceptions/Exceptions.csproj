@@ -10,7 +10,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Primitives\Primitives.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Rule\" />
-  </ItemGroup>
 </Project>

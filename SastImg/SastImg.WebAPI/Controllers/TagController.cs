@@ -30,7 +30,7 @@ public class TagController(IMediator mediator) : ControllerBase
     /// </remarks>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <response code="200">The tags</response>
-    [Authorize(nameof(Roles.ADMIN))]
+    [Authorize(nameof(Role.ADMIN))]
     [HttpGet("tags/all")]
     [ProducesResponseType<IEnumerable<TagDto>>(StatusCodes.Status200OK)]
     public async Task<Ok<IEnumerable<TagDto>>> GetAllTags(CancellationToken cancellationToken)

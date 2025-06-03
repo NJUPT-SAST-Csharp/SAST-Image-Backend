@@ -1,7 +1,7 @@
 ﻿namespace Identity;
 
 [Flags]
-public enum Roles
+public enum Role
 {
     NONE = 0,
     AUTH = 1,

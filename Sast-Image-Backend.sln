@@ -75,8 +75,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Storage.Application", "Stor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Storage.Infrastructure", "Storage\Storage.Infrastructure\Storage.Infrastructure.csproj", "{0A85A110-9B4D-49B1-9348-00476805BB9B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Storage.Domain", "Storage\Storage.Domain\Storage.Domain.csproj", "{BE064445-ABE0-9B7C-0DEA-DC4026D7AF65}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -203,10 +201,6 @@ Global
 		{0A85A110-9B4D-49B1-9348-00476805BB9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A85A110-9B4D-49B1-9348-00476805BB9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A85A110-9B4D-49B1-9348-00476805BB9B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BE064445-ABE0-9B7C-0DEA-DC4026D7AF65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BE064445-ABE0-9B7C-0DEA-DC4026D7AF65}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BE064445-ABE0-9B7C-0DEA-DC4026D7AF65}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BE064445-ABE0-9B7C-0DEA-DC4026D7AF65}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -240,7 +234,6 @@ Global
 		{DD1E2EBE-D3FE-2219-3C3E-96504740ABD9} = {0573FDDC-6744-4623-BFC4-37396D9357B8}
 		{FCB66345-F912-4760-8412-42C7CED1C509} = {0573FDDC-6744-4623-BFC4-37396D9357B8}
 		{0A85A110-9B4D-49B1-9348-00476805BB9B} = {0573FDDC-6744-4623-BFC4-37396D9357B8}
-		{BE064445-ABE0-9B7C-0DEA-DC4026D7AF65} = {0573FDDC-6744-4623-BFC4-37396D9357B8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DEF9C9F4-A717-4AEF-BE30-DF9F13D3C94E}
