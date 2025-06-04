@@ -1,14 +1,13 @@
 ﻿using Mediator;
-using Storage.Application.Model;
 using Storage.Application.Service;
 
 namespace Storage.Application.Commands;
 
 public readonly record struct ConfirmResult(bool Success);
 
-public sealed record class ConfirmCommand(FileToken Token) : ICommand<ConfirmResult>;
+public sealed record class ConfirmCommand(string Token) : ICommand<ConfirmResult>;
 
-internal sealed class ConfirmCommandHandler(ITokenRepository repository)
+internal sealed class ConfirmCommandHandler(ITokenRepository repository, ITokenValidator validator)
     : ICommandHandler<ConfirmCommand, ConfirmResult>
 {
     public async ValueTask<ConfirmResult> Handle(
@@ -16,8 +15,11 @@ internal sealed class ConfirmCommandHandler(ITokenRepository repository)
         CancellationToken cancellationToken
     )
     {
-        await repository.ConfirmAsync(command.Token, cancellationToken);
+        if (validator.TryValidate(command.Token, out var token) is false)
+            return new(false);
 
-        return new(true);
+        bool result = await repository.ConfirmAsync(token.Value, cancellationToken);
+
+        return new(result);
     }
 }

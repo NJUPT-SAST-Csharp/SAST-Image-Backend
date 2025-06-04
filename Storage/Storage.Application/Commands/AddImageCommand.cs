@@ -17,6 +17,8 @@ internal sealed class AddImageCommandHandler(IFileStorage storage, ITokenReposit
         CancellationToken cancellationToken
     )
     {
+        // TODO: What if S3 add suceeds but Cache insert fails? Should we have a transaction here?
+
         var token = await storage.AddAsync(command.File, command.BucketName, cancellationToken);
 
         await repository.InsertAsync(token, cancellationToken);

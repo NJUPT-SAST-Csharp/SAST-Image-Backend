@@ -1,37 +1,43 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Security.Cryptography;
+﻿using System.Buffers.Text;
+using System.Text;
 
 namespace Storage.Application.Model;
 
-public readonly record struct FileToken
+public readonly struct FileToken : IEquatable<FileToken>
 {
-    public string Value { get; private init; }
+    public const int ByteLength = 64;
 
-    public static bool TryParse(string? value, [NotNullWhen(true)] out FileToken? token)
+    private readonly byte[] bytes;
+
+    private FileToken(byte[] value)
     {
-        if (string.IsNullOrEmpty(value) || value.Length != 64 || !value.IsUppercaseHex())
-        {
-            token = default;
-            return false;
-        }
-        token = new FileToken() { Value = value };
-        return true;
+        bytes = value;
     }
 
-    public static FileToken Create() => new() { Value = RandomNumberGenerator.GetHexString(64) };
-}
+    public string Value => ToString();
+    public Guid ObjectName => new(bytes.AsSpan(16, 16));
+    public string BucketName => Encoding.ASCII.GetString(bytes.AsSpan(0, 16)).TrimEnd('\0');
 
-file static class StringExtensions
-{
-    public static bool IsUppercaseHex(this string value)
+    public override string ToString() => Base64Url.EncodeToString(bytes);
+
+    public bool Equals(FileToken other) => bytes.SequenceEqual(other.bytes);
+
+    public override bool Equals(object? obj)
     {
-        foreach (char c in value)
+        return obj is FileToken token && Equals(token);
+    }
+
+    public static bool operator ==(FileToken left, FileToken right) => left.Equals(right);
+
+    public static bool operator !=(FileToken left, FileToken right) => !(left == right);
+
+    public override int GetHashCode()
+    {
+        int hash = 17;
+        foreach (byte b in bytes)
         {
-            if (!((c >= '0' && c <= '9') || (c >= 'A' && c <= 'F')))
-            {
-                return false;
-            }
+            hash = hash * 31 + b.GetHashCode();
         }
-        return true;
+        return hash;
     }
 }

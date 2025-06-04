@@ -9,4 +9,9 @@ public interface IFileStorage
         string bucketName,
         CancellationToken cancellationToken = default
     );
+
+    public Task<IImageFile> GetImageAsync(
+        FileToken token,
+        CancellationToken cancellationToken = default
+    );
 }

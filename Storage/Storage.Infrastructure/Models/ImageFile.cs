@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +7,7 @@ using Storage.Application.Model;
 
 namespace Storage.Infrastructure.Models;
 
-public sealed unsafe class ImageFile : IDisposable, IImageFile
+public sealed unsafe class ImageFile : IImageFile
 {
     public const long DefaultMinSize = 1024 * 1024 * 0;
     public const long DefaultMaxSize = 1024 * 1024 * 256; // 256 MB
@@ -76,13 +74,16 @@ public sealed unsafe class ImageFile : IDisposable, IImageFile
 
     public static bool TryGetFormat(Stream stream, [NotNullWhen(true)] out ImageFileFormat? format)
     {
-        SKFrontBufferedManagedStream skStream = new(stream, SKCodec.MinBufferedBytesNeeded, true);
+        SKFrontBufferedManagedStream skStream = new(stream, SKCodec.MinBufferedBytesNeeded, false);
 
         var code = SKCodec.Create(skStream);
 
         // Reset stream position after reading
-        stream.Position = 0;
-        stream.Seek(0, SeekOrigin.Begin);
+        if (stream.CanSeek)
+        {
+            stream.Position = 0;
+            stream.Seek(0, SeekOrigin.Begin);
+        }
 
         if (code is null)
         {
@@ -92,28 +93,6 @@ public sealed unsafe class ImageFile : IDisposable, IImageFile
 
         format = (ImageFileFormat)code.EncodedFormat;
         return true;
-    }
-
-    public static ValueTask<ImageFile?> BindAsync(HttpContext context, ParameterInfo info)
-    {
-        var files = context.Request.Form.Files;
-
-        if (files.Count <= 0)
-            return ValueTask.FromResult<ImageFile?>(null);
-
-        var file = files[0];
-
-        var attributes = info.GetCustomAttributes<ValidationAttribute>();
-        foreach (var attribute in attributes)
-            if (attribute.IsValid(file) is false)
-                return ValueTask.FromResult<ImageFile?>(null);
-
-        if (TryCreate(file.OpenReadStream(), out var imageFile) is false)
-            return ValueTask.FromResult(null as ImageFile);
-
-        context.Response.RegisterForDispose(imageFile);
-
-        return ValueTask.FromResult<ImageFile?>(imageFile);
     }
 
     public void Dispose()
@@ -144,5 +123,27 @@ public sealed unsafe class ImageFile : IDisposable, IImageFile
         }
 
         return totalBytesRead;
+    }
+}
+
+public static class HttpContextExtensions
+{
+    public static bool TryGetImageFile(
+        this HttpContext context,
+        [NotNullWhen(true)] out ImageFile? image
+    )
+    {
+        image = null;
+
+        var files = context.Request.Form.Files;
+
+        if (files is not [var file])
+            return false;
+
+        if (ImageFile.TryCreate(file.OpenReadStream(), out image) is false)
+            return false;
+
+        context.Response.RegisterForDispose(image);
+        return true;
     }
 }

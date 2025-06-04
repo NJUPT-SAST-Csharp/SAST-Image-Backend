@@ -7,7 +7,4 @@
   <ItemGroup>
     <PackageReference Include="Mediator.Abstractions" Version="2.1.7" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Queries\" />
-  </ItemGroup>
 </Project>

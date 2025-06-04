@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using Minio;
 using Storage.Application.Service;
 using Storage.Infrastructure.Service;
@@ -7,21 +10,24 @@ namespace Storage.Infrastructure;
 
 public static class IServiceCollectionExtensions
 {
-    public static IServiceCollection ConfigureServices(
-        this IServiceCollection services,
-        Action<StorageOptions>? optionsBuilder = null
+    public static IServiceCollection AddServices(
+        this WebApplicationBuilder builder,
+        Action<StorageConfiguration>? optionsBuilder = null
     )
     {
-        return services.AddMinIO(optionsBuilder).AddCache().AddServices();
-    }
+        var services = builder.Services;
 
-    private static IServiceCollection AddServices(this IServiceCollection services)
-    {
         services.AddMediator();
         services.AddSingleton<IFileStorage, FileStorage>();
         services.AddSingleton<ITokenRepository, TokenRepository>();
 
-        return services;
+        services.AddSingleton<TokenProcessor>();
+        services.AddSingleton<ITokenIssuer>(sp => sp.GetRequiredService<TokenProcessor>());
+        services.AddSingleton<ITokenValidator>(sp => sp.GetRequiredService<TokenProcessor>());
+
+        services.AddOptions<StorageConfiguration>().BindConfiguration(nameof(StorageConfiguration));
+
+        return services.AddCache();
     }
 
     private static IServiceCollection AddCache(this IServiceCollection services)
@@ -30,22 +36,28 @@ public static class IServiceCollectionExtensions
         return services;
     }
 
-    private static IServiceCollection AddMinIO(
+    public static IServiceCollection AddMinIO(
         this IServiceCollection services,
-        Action<StorageOptions>? optionsBuilder = null
+        Action<MinIOConfiguration>? optionsBuilder = null
     )
     {
-        StorageOptions options = new();
-        optionsBuilder?.Invoke(options);
+        var config = services
+            .AddOptions<MinIOConfiguration>()
+            .BindConfiguration(nameof(MinIOConfiguration));
 
-        services.AddSingleton(options);
-        services.AddMinio(client =>
+        if (optionsBuilder is not null)
+            config.PostConfigure(optionsBuilder);
+
+        services.TryAddSingleton<IMinioClient>(sp =>
         {
-            client
-                .WithEndpoint(options.Endpoint)
-                .WithCredentials(options.AccessKey, options.SecretKey)
+            var config = sp.GetRequiredService<IOptions<MinIOConfiguration>>().Value;
+            var minio = new MinioClient()
+                .WithEndpoint(config.Endpoint)
+                .WithCredentials(config.AccessKey, config.SecretKey)
                 .WithSSL(false)
                 .Build();
+
+            return minio;
         });
 
         return services;
