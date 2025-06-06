@@ -5,5 +5,5 @@ namespace Storage.Application.Service;
 
 public interface ITokenValidator
 {
-    public bool TryValidate(string? value, [NotNullWhen(true)] out FileToken? token);
+    public bool TryValidate(string? value, [NotNullWhen(true)] out IFileToken? token);
 }

@@ -27,6 +27,8 @@ internal sealed class ManagedImageFile : IImageFile
     public Stream Stream { get; private init; } = new MemoryStream();
     public long Length => Stream.Length;
     public ImageFileFormat Format { get; private init; }
+    public IDictionary<string, string> MetaData { get; private set; } =
+        new Dictionary<string, string>();
 
     public void Dispose()
     {

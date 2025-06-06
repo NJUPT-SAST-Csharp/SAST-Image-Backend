@@ -1,10 +1,17 @@
-﻿using Mediator;
+﻿using System.Diagnostics.CodeAnalysis;
+using Mediator;
 using Storage.Application.Model;
 using Storage.Application.Service;
 
 namespace Storage.Application.Commands;
 
-public readonly record struct AddImageResult(FileToken Token);
+public readonly record struct AddImageResult(
+    IFileToken? Token,
+    [property: MemberNotNullWhen(true, nameof(AddImageResult.Token))] bool Success
+)
+{
+    public static readonly AddImageResult Fail = new(null, false);
+}
 
 public sealed record class AddImageCommand(IImageFile File, string BucketName)
     : ICommand<AddImageResult>;
@@ -21,8 +28,11 @@ internal sealed class AddImageCommandHandler(IFileStorage storage, ITokenReposit
 
         var token = await storage.AddAsync(command.File, command.BucketName, cancellationToken);
 
-        await repository.InsertAsync(token, cancellationToken);
+        if (token is null)
+            return AddImageResult.Fail;
 
-        return new(token);
+        await repository.AddAsync(token, cancellationToken);
+
+        return new(token, true);
     }
 }

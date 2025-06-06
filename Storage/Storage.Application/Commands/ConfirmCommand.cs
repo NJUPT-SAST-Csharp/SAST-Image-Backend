@@ -18,8 +18,13 @@ internal sealed class ConfirmCommandHandler(ITokenRepository repository, ITokenV
         if (validator.TryValidate(command.Token, out var token) is false)
             return new(false);
 
-        bool result = await repository.ConfirmAsync(token.Value, cancellationToken);
+        bool exists = await repository.ExistsAsync(token, cancellationToken);
 
-        return new(result);
+        if (exists is false)
+            return new(false);
+
+        await repository.DeleteAsync(token, cancellationToken);
+
+        return new(true);
     }
 }

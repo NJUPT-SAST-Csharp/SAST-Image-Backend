@@ -1,4 +1,6 @@
-﻿using Minio;
+﻿using System.IO.Pipelines;
+using Microsoft.AspNetCore.Http;
+using Minio;
 using Minio.DataModel.Args;
 using Storage.Application.Model;
 using Storage.Application.Service;
@@ -8,56 +10,160 @@ namespace Storage.Infrastructure.Service;
 
 internal sealed class FileStorage(IMinioClient client, ITokenIssuer factory) : IFileStorage
 {
-    public async Task<FileToken> AddAsync(
+    public async Task<IFileToken?> AddAsync(
         IImageFile file,
         string bucketName,
         CancellationToken cancellationToken = default
     )
     {
-        factory.TryCreateNew(bucketName, out var token);
+        const int expireMinutes = 10;
 
-        bool exists = await client.BucketExistsAsync(
-            new BucketExistsArgs().WithBucket(bucketName),
-            cancellationToken
-        );
-        if (exists is false)
+        try
         {
-            await client.MakeBucketAsync(
-                new MakeBucketArgs().WithBucket(bucketName),
+            if (
+                factory.TryCreateNew(bucketName, TimeSpan.FromMinutes(expireMinutes), out var token)
+                is false
+            )
+                return token;
+
+            bool exists = await client.BucketExistsAsync(
+                new BucketExistsArgs().WithBucket(bucketName),
                 cancellationToken
             );
+            if (exists is false)
+            {
+                await client.MakeBucketAsync(
+                    new MakeBucketArgs().WithBucket(bucketName),
+                    cancellationToken
+                );
+            }
+
+            var args = new PutObjectArgs()
+                .WithObject(token!.ObjectName.ToString())
+                .WithObjectSize(file.Length)
+                .WithBucket(bucketName)
+                .WithContentType($"image/{file.Format}")
+                .WithStreamData(file.Stream);
+
+            await client.PutObjectAsync(args, cancellationToken);
+
+            return token;
         }
-
-        var args = new PutObjectArgs()
-            .WithObject(token!.Value.ObjectName.ToString())
-            .WithObjectSize(file.Length)
-            .WithBucket(bucketName)
-            .WithContentType($"image/{file.Format}")
-            .WithStreamData(file.Stream);
-
-        await client.PutObjectAsync(args, cancellationToken);
-
-        return token.Value;
+        catch
+        {
+            return null;
+        }
     }
 
-    public async Task<IImageFile> GetImageAsync(
-        FileToken token,
+    public async Task<bool> DeleteAsync(
+        IFileToken token,
         CancellationToken cancellationToken = default
     )
     {
-        IImageFile file = null!;
+        try
+        {
+            var args = new RemoveObjectArgs()
+                .WithObject(token.ObjectName.ToString())
+                .WithBucket(token.BucketName);
 
-        var args = new GetObjectArgs()
-            .WithObject(token.ObjectName.ToString())
-            .WithBucket(token.BucketName)
-            .WithCallbackStream(
-                async (stream, cancellationToken) =>
-                {
-                    file = await ManagedImageFile.CreateAsync(stream, cancellationToken);
-                }
-            );
+            await client.RemoveObjectAsync(args, cancellationToken);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 
-        await client.GetObjectAsync(args, cancellationToken);
-        return file;
+    public async Task<IFileToken[]> DeleteAsync(
+        IFileToken[] tokens,
+        CancellationToken cancellationToken = default
+    )
+    {
+        try
+        {
+            string bucketName = tokens[0].BucketName;
+
+            var args = new RemoveObjectsArgs()
+                .WithBucket(bucketName)
+                .WithObjects([.. tokens.Select(t => t.ObjectName.ToString())]);
+
+            var failList = await client.RemoveObjectsAsync(args, cancellationToken);
+            if (failList.Count <= 0)
+                return [];
+
+            var failedKeys = failList.Select(f => f.Key);
+            return Array.FindAll(tokens, t => failedKeys.Contains(t.ObjectName) is false);
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
+    public async Task<IImageFile?> GetAsync(
+        IFileToken token,
+        CancellationToken cancellationToken = default
+    )
+    {
+        try
+        {
+            ManagedImageFile file = null!;
+            var args = new GetObjectArgs()
+                .WithObject(token.ObjectName.ToString())
+                .WithBucket(token.BucketName)
+                .WithCallbackStream(
+                    async (stream, cancellationToken) =>
+                    {
+                        file = await ManagedImageFile.CreateAsync(stream, cancellationToken);
+                    }
+                );
+
+            await client.GetObjectAsync(args, cancellationToken);
+            string filename = token.ObjectName.ToString() + "." + file.Format;
+            file.MetaData.Add(nameof(IFormFile.FileName), filename);
+
+            return file;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<bool> TryWriteAsync(
+        IFileToken token,
+        PipeWriter writer,
+        CancellationToken cancellationToken = default
+    )
+    {
+        try
+        {
+            var args = new GetObjectArgs()
+                .WithObject(token.ObjectName.ToString())
+                .WithBucket(token.BucketName)
+                .WithCallbackStream(
+                    async (stream, cancellationToken) =>
+                    {
+                        while (true)
+                        {
+                            var memory = writer.GetMemory(4 * 1024);
+                            int bytesRead = await stream.ReadAsync(memory, cancellationToken);
+                            if (bytesRead <= 0)
+                                break;
+                            writer.Advance(bytesRead);
+                            var result = await writer.FlushAsync(cancellationToken);
+                            if (result.IsCompleted)
+                                break;
+                        }
+                    }
+                );
+            await client.GetObjectAsync(args, cancellationToken);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }

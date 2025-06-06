@@ -1,24 +1,21 @@
-﻿using Mediator;
-using Storage.Application.Model;
+﻿using System.IO.Pipelines;
+using Mediator;
 using Storage.Application.Service;
 
 namespace Storage.Application.Queries;
 
-public sealed record class ImageFileQuery(string Token) : IQuery<IImageFile?>;
+public sealed record class ImageFileQuery(string Token, PipeWriter Writer) : IQuery<bool>;
 
 internal sealed class ImageFileQueryHandler(IFileStorage storage, ITokenValidator validator)
-    : IQueryHandler<ImageFileQuery, IImageFile?>
+    : IQueryHandler<ImageFileQuery, bool>
 {
-    public async ValueTask<IImageFile?> Handle(
-        ImageFileQuery query,
-        CancellationToken cancellationToken
-    )
+    public async ValueTask<bool> Handle(ImageFileQuery query, CancellationToken cancellationToken)
     {
         if (validator.TryValidate(query.Token, out var token) is false)
-            return null;
+            return false;
 
-        var file = await storage.GetImageAsync(token.Value, cancellationToken);
+        bool result = await storage.TryWriteAsync(token, query.Writer, cancellationToken);
 
-        return file;
+        return result;
     }
 }

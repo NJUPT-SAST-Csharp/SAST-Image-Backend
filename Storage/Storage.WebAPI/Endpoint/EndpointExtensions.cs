@@ -18,9 +18,13 @@ public static class EndpointExtensions
                     return Results.BadRequest("Invalid image file.");
 
                 var result = await mediator.Send(new AddImageCommand(image, "default"));
-                return Results.Ok<Dictionary<string, object?>>(
-                    new() { ["token"] = result.Token.Value }
-                );
+                return result.Success
+                    ? Results.Ok<Dictionary<string, object?>>(
+                        new() { ["token"] = result.Token.Value }
+                    )
+                    : Results.InternalServerError(
+                        "Upload failed but we just dunno what happened ;)"
+                    );
             }
         );
 
@@ -29,13 +33,13 @@ public static class EndpointExtensions
             "/image/{token:maxlength(128)}",
             async (string token, HttpResponse response, IMediator mediator) =>
             {
-                var file = await mediator.Send(new ImageFileQuery(token));
-                if (file is null)
+                bool file = await mediator.Send(new ImageFileQuery(token, response.BodyWriter));
+                if (file is false)
                 {
                     return Results.NotFound();
                 }
-                response.RegisterForDispose(file);
-                return Results.File(file.Stream, $"image/{file.Format}", $"image.{file.Format}");
+
+                return Results.Ok();
             }
         );
 

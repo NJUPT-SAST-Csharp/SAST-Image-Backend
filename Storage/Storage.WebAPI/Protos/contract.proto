@@ -12,5 +12,4 @@ message ConfirmRequest {
 
 message ConfirmReply {
   bool success = 1;
-  google.protobuf.StringValue url = 2;
 }

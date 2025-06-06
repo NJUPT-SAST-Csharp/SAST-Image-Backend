@@ -7,14 +7,14 @@ var password = builder.AddParameter("Password", true);
 
 var redis = builder.AddRedis("Cache", 6379, password);
 var minio = builder.AddMinIO("MinIO", username, password, 9000, 9001);
-var postgres = builder.AddPostgres("PostgreSQL", username, password, 5432)
-//.WithDataVolume()
-;
+var postgres = builder.AddPostgres("PostgreSQL", username, password, 5432);
+var orleans = builder.AddOrleans("Orleans").WithClustering(redis).WithGrainStorage(redis);
 
 var storage = builder
     .AddProject<Projects.Storage_WebAPI>("Storage")
     .WaitFor(minio)
     .WaitFor(redis)
+    .WithReference(orleans)
     .WithReference(minio)
     .WithReference(redis);
 
@@ -39,13 +39,6 @@ var account = builder
 var proxy = builder
     .AddProject<Projects.Proxy>("Proxy")
     .WithEnvironment("Authentication:SecKey", authentication);
-
-builder
-    .AddNpmApp("Frontend", builder.Configuration["Parameters:FrontendDirectory"]!, "dev")
-    .WaitFor(proxy)
-    .WithReference(proxy)
-    .WithHttpEndpoint(5173, env: "PORT", isProxied: false)
-    .WithExternalHttpEndpoints();
 
 proxy
     .WithExternalHttpEndpoints()

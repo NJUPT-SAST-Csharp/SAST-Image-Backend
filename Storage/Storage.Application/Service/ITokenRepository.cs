@@ -4,7 +4,11 @@ namespace Storage.Application.Service;
 
 public interface ITokenRepository
 {
-    public Task<bool> ConfirmAsync(FileToken token, CancellationToken cancellationToken = default);
+    public Task<bool> ExistsAsync(IFileToken token, CancellationToken cancellationToken = default);
 
-    public Task InsertAsync(FileToken token, CancellationToken cancellationToken = default);
+    public Task AddAsync(IFileToken token, CancellationToken cancellationToken = default);
+
+    public Task<IFileToken[]> GetExpiredAsync(CancellationToken cancellationToken = default);
+    public Task DeleteAsync(IFileToken token, CancellationToken cancellationToken = default);
+    public Task DeleteAsync(IFileToken[] tokens, CancellationToken cancellationToken = default);
 }

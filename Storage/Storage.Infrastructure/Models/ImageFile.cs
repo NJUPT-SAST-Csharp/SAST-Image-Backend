@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Microsoft.AspNetCore.Http;
 using SkiaSharp;
 using Storage.Application.Model;
 
@@ -34,6 +33,7 @@ public sealed unsafe class ImageFile : IImageFile
 
     public ImageFileFormat Format { get; }
     public long Length => _length;
+    public IDictionary<string, string> MetaData { get; } = new Dictionary<string, string>();
 
     public static bool TryCreate(Stream stream, [NotNullWhen(true)] out ImageFile? imageFile)
     {
@@ -123,27 +123,5 @@ public sealed unsafe class ImageFile : IImageFile
         }
 
         return totalBytesRead;
-    }
-}
-
-public static class HttpContextExtensions
-{
-    public static bool TryGetImageFile(
-        this HttpContext context,
-        [NotNullWhen(true)] out ImageFile? image
-    )
-    {
-        image = null;
-
-        var files = context.Request.Form.Files;
-
-        if (files is not [var file])
-            return false;
-
-        if (ImageFile.TryCreate(file.OpenReadStream(), out image) is false)
-            return false;
-
-        context.Response.RegisterForDispose(image);
-        return true;
     }
 }

@@ -1,42 +1,70 @@
-﻿using Storage.Application.Model;
+﻿using StackExchange.Redis;
+using Storage.Application.Model;
 using Storage.Application.Service;
+using Storage.Infrastructure.Models;
 
 namespace Storage.Infrastructure.Service;
 
-internal sealed class TokenRepository(StackExchange.Redis.IConnectionMultiplexer connection)
-    : ITokenRepository
+internal sealed class TokenRepository(IConnectionMultiplexer connection) : ITokenRepository
 {
     private const string HashSetName = "FileTokens";
-    private static readonly TimeSpan TokenExpiration = TimeSpan.FromMinutes(1);
 
-    public async Task<bool> ConfirmAsync(
-        FileToken token,
+    public async Task<bool> ExistsAsync(
+        IFileToken token,
         CancellationToken cancellationToken = default
     )
     {
         var database = connection.GetDatabase();
-        var value = await database.HashGetAsync(HashSetName, token.Value);
-        if (value.HasValue is false || value.TryParse(out long timestamp) is false)
-        {
-            return false;
-        }
-        await database.HashDeleteAsync(HashSetName, token.Value);
-        var expireAt = DateTimeOffset.FromUnixTimeSeconds(timestamp).UtcDateTime;
-        return expireAt < DateTime.UtcNow;
+        var value = await database
+            .HashGetAsync(HashSetName, token.Value)
+            .WaitAsync(cancellationToken);
+
+        return value.HasValue;
     }
 
-    public Task InsertAsync(FileToken token, CancellationToken cancellationToken = default)
+    public async Task<IFileToken[]> GetExpiredAsync(CancellationToken cancellationToken = default)
     {
         var database = connection.GetDatabase();
-        var expireAt = DateTimeOffset.UtcNow + TokenExpiration;
-        long timestamp = expireAt.ToUnixTimeSeconds();
+        var values = await database.HashGetAllAsync(HashSetName).WaitAsync(cancellationToken);
+        return values
+            .Where(e =>
+                e.Value.TryParse(out long timestamp)
+                && DateTimeOffset.FromUnixTimeSeconds(timestamp).UtcDateTime < DateTime.UtcNow
+            )
+            .Select(e => new FileToken(e.Name.ToString()))
+            .ToArray();
+    }
+
+    public Task DeleteAsync(IFileToken token, CancellationToken cancellationToken = default)
+    {
+        var database = connection.GetDatabase();
+        return database
+            .HashDeleteAsync(HashSetName, token.Value, CommandFlags.FireAndForget)
+            .WaitAsync(cancellationToken);
+    }
+
+    public Task DeleteAsync(IFileToken[] tokens, CancellationToken cancellationToken = default)
+    {
+        var database = connection.GetDatabase();
+        return database
+            .HashDeleteAsync(
+                HashSetName,
+                tokens.Select(t => new RedisValue(t.Value)).ToArray(),
+                CommandFlags.FireAndForget
+            )
+            .WaitAsync(cancellationToken);
+    }
+
+    public Task AddAsync(IFileToken token, CancellationToken cancellationToken = default)
+    {
+        var database = connection.GetDatabase();
 
         return database.HashSetAsync(
             HashSetName,
             token.Value,
-            timestamp,
-            when: StackExchange.Redis.When.NotExists,
-            flags: StackExchange.Redis.CommandFlags.FireAndForget
+            token.ExpireAt.ToBinary(),
+            when: When.NotExists,
+            flags: CommandFlags.FireAndForget
         );
     }
 }

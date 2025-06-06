@@ -6,4 +6,5 @@ public interface IImageFile : IDisposable
     public long Length { get; }
 
     public ImageFileFormat Format { get; }
+    public IDictionary<string, string> MetaData { get; }
 }
