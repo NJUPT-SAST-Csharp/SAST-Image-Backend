@@ -101,36 +101,6 @@ internal sealed class FileStorage(IMinioClient client, ITokenIssuer factory) : I
         }
     }
 
-    public async Task<IImageFile?> GetAsync(
-        IFileToken token,
-        CancellationToken cancellationToken = default
-    )
-    {
-        try
-        {
-            ManagedImageFile file = null!;
-            var args = new GetObjectArgs()
-                .WithObject(token.ObjectName.ToString())
-                .WithBucket(token.BucketName)
-                .WithCallbackStream(
-                    async (stream, cancellationToken) =>
-                    {
-                        file = await ManagedImageFile.CreateAsync(stream, cancellationToken);
-                    }
-                );
-
-            await client.GetObjectAsync(args, cancellationToken);
-            string filename = token.ObjectName.ToString() + "." + file.Format;
-            file.MetaData.Add(nameof(IFormFile.FileName), filename);
-
-            return file;
-        }
-        catch
-        {
-            return null;
-        }
-    }
-
     public async Task<bool> TryWriteAsync(
         IFileToken token,
         PipeWriter writer,

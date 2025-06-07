@@ -1,4 +1,5 @@
-﻿using StackExchange.Redis;
+﻿using System.Runtime.CompilerServices;
+using StackExchange.Redis;
 using Storage.Application.Model;
 using Storage.Application.Service;
 using Storage.Infrastructure.Models;
@@ -31,7 +32,7 @@ internal sealed class TokenRepository(IConnectionMultiplexer connection) : IToke
                 e.Value.TryParse(out long timestamp)
                 && DateTimeOffset.FromUnixTimeSeconds(timestamp).UtcDateTime < DateTime.UtcNow
             )
-            .Select(e => new FileToken(e.Name.ToString()))
+            .Select(e => Create(e.Name.ToString()))
             .ToArray();
     }
 
@@ -67,4 +68,7 @@ internal sealed class TokenRepository(IConnectionMultiplexer connection) : IToke
             flags: CommandFlags.FireAndForget
         );
     }
+
+    [UnsafeAccessor(UnsafeAccessorKind.Constructor)]
+    private static extern FileToken Create(string base64String);
 }

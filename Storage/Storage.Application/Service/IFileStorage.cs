@@ -11,11 +11,6 @@ public interface IFileStorage
         CancellationToken cancellationToken = default
     );
 
-    public Task<IImageFile?> GetAsync(
-        IFileToken token,
-        CancellationToken cancellationToken = default
-    );
-
     public Task<bool> TryWriteAsync(
         IFileToken token,
         PipeWriter writer,

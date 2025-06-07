@@ -18,10 +18,7 @@ var storage = builder
     .WithReference(minio)
     .WithReference(redis);
 
-var database = postgres.AddDatabase("SNSDb", "sastimg_sns");
-var sns = builder.AddProject<Projects.SNS_WebAPI>("SNS").WaitFor(database).WithReference(database);
-
-database = postgres.AddDatabase("SastimgDb", "sastimg");
+var database = postgres.AddDatabase("SastimgDb", "sastimg");
 var sastimg = builder
     .AddProject<Projects.SastImg_WebAPI>("SastImg")
     .WaitFor(database)
@@ -36,16 +33,17 @@ var account = builder
     .WithReference(redis)
     .WithEnvironment("Authentication:SecKey", authentication);
 
-var proxy = builder
-    .AddProject<Projects.Proxy>("Proxy")
-    .WithEnvironment("Authentication:SecKey", authentication);
+//database = postgres.AddDatabase("SNSDb", "sastimg_sns");
+//var sns = builder.AddProject<Projects.SNS_WebAPI>("SNS").WaitFor(database).WithReference(database);
 
-proxy
-    .WithExternalHttpEndpoints()
-    .WithReference(storage)
-    .WithReference(sastimg)
-    .WithReference(account)
-    .WithReference(sns);
+//var proxy = builder
+//    .AddProject<Projects.Proxy>("Proxy")
+//    .WithEnvironment("Authentication:SecKey", authentication)
+//    .WithExternalHttpEndpoints()
+//    .WithReference(storage)
+//    .WithReference(sastimg)
+//    .WithReference(account)
+//    .WithReference(sns);
 
 var app = builder.Build();
 
