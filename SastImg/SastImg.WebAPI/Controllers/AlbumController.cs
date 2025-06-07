@@ -4,6 +4,7 @@ using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Response;
 using SastImg.Application.AlbumAggregate.CreateAlbum;
 using SastImg.Application.AlbumAggregate.GetAlbums;
 using SastImg.Application.AlbumAggregate.GetDetailedAlbum;
@@ -15,7 +16,6 @@ using SastImg.Application.AlbumAggregate.UpdateCollaborators;
 using SastImg.Domain.AlbumAggregate.AlbumEntity;
 using SastImg.Domain.AlbumAggregate.AlbumEntity.Commands;
 using SastImg.Domain.CategoryEntity;
-using Shared.Response.Builders;
 
 namespace SastImg.WebAPI.Controllers;
 
@@ -46,7 +46,7 @@ public sealed class AlbumController(IMediator mediator) : ControllerBase
     )
     {
         var albums = await mediator.Send(new GetAlbumsQuery(id, page, User), cancellationToken);
-        return Responses.Data(albums);
+        return TypedResults.Ok(albums);
     }
 
     /// <summary>
@@ -67,7 +67,7 @@ public sealed class AlbumController(IMediator mediator) : ControllerBase
     )
     {
         var album = await mediator.Send(new GetDetailedAlbumQuery(id, User), cancellationToken);
-        return Responses.DataOrNotFound(album);
+        return Results.Extensions.Data(album);
     }
 
     /// <summary>
@@ -88,7 +88,7 @@ public sealed class AlbumController(IMediator mediator) : ControllerBase
     )
     {
         var albums = await mediator.Send(new GetUserAlbumsQuery(id, User), cancellationToken);
-        return Responses.Data(albums);
+        return TypedResults.Ok(albums);
     }
 
     /// <summary>
@@ -117,7 +117,7 @@ public sealed class AlbumController(IMediator mediator) : ControllerBase
             new SearchAlbumsQuery(categoryId, title, page, User),
             cancellationToken
         );
-        return Responses.Data(albums);
+        return TypedResults.Ok(albums);
     }
 
     /// <summary>
@@ -139,7 +139,7 @@ public sealed class AlbumController(IMediator mediator) : ControllerBase
     )
     {
         var albums = await mediator.Send(new GetRemovedAlbumsQuery(id, User), cancellationToken);
-        return Responses.Data(albums);
+        return TypedResults.Ok(albums);
     }
 
     public readonly record struct CreateAlbumRequest(
@@ -175,7 +175,7 @@ public sealed class AlbumController(IMediator mediator) : ControllerBase
             User
         );
         var album = await mediator.Send(command, cancellationToken);
-        return Responses.Created(album);
+        return Results.Extensions.Created(album);
     }
 
     public readonly record struct UpdateAlbumInfoRequest(
@@ -215,7 +215,7 @@ public sealed class AlbumController(IMediator mediator) : ControllerBase
         );
 
         await mediator.Send(command, cancellationToken);
-        return Responses.NoContent;
+        return TypedResults.NoContent();
     }
 
     /// <summary>
@@ -239,7 +239,7 @@ public sealed class AlbumController(IMediator mediator) : ControllerBase
     )
     {
         await mediator.Send(new RemoveAlbumCommand(id, User), cancellationToken);
-        return Responses.NoContent;
+        return TypedResults.NoContent();
     }
 
     /// <summary>
@@ -261,7 +261,7 @@ public sealed class AlbumController(IMediator mediator) : ControllerBase
     )
     {
         await mediator.Send(new RestoreAlbumCommand(id, User), cancellationToken);
-        return Responses.NoContent;
+        return TypedResults.NoContent();
     }
 
     public readonly record struct UpdateCollaboratorsRequest(UserId[] Collaborators);
@@ -291,6 +291,6 @@ public sealed class AlbumController(IMediator mediator) : ControllerBase
             cancellationToken
         );
 
-        return Responses.NoContent;
+        return TypedResults.NoContent();
     }
 }

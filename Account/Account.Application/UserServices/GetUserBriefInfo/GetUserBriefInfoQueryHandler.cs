@@ -1,7 +1,7 @@
 ﻿using Account.Application.UserServices.GetUserDetailedInfo;
 using Mediator;
 using Microsoft.AspNetCore.Http;
-using Shared.Response.Builders;
+using Response;
 
 namespace Account.Application.UserServices.GetUserBriefInfo;
 
@@ -28,7 +28,7 @@ public sealed class GetUserBriefInfoQueryHandler(IUserQueryRepository repository
                     request.Id.Value,
                     cancellationToken
                 );
-                return Responses.DataOrNotFound(dto);
+                return Results.Extensions.Data(dto);
             }
             else
             {
@@ -36,7 +36,7 @@ public sealed class GetUserBriefInfoQueryHandler(IUserQueryRepository repository
                     request.Username!,
                     cancellationToken
                 );
-                return Responses.DataOrNotFound(dto);
+                return Results.Extensions.Data(dto);
             }
         }
 
@@ -45,7 +45,7 @@ public sealed class GetUserBriefInfoQueryHandler(IUserQueryRepository repository
         if (request.Id.HasValue)
         {
             briefInfo = await repository.GetUserBriefInfoAsync(request.Id.Value, cancellationToken);
-            return Responses.DataOrNotFound(briefInfo);
+            return Results.Extensions.Data(briefInfo);
         }
         else
         {
@@ -53,7 +53,7 @@ public sealed class GetUserBriefInfoQueryHandler(IUserQueryRepository repository
                 request.Username!,
                 cancellationToken
             );
-            return Responses.DataOrNotFound(briefInfo);
+            return Results.Extensions.Data(briefInfo);
         }
     }
 }

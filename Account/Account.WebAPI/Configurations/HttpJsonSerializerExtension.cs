@@ -8,8 +8,7 @@ using Account.Application.UserServices.GetUserDetailedInfo;
 using Account.WebAPI.Requests;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Response.ReponseObjects;
-using Response.ResponseObjects;
+using Response;
 
 namespace Account.WebAPI.Configurations;
 
@@ -40,8 +39,7 @@ public static class HttpJsonSerializerExtension
 [JsonSerializable(typeof(VerifyForgetCodeRequest))]
 [JsonSerializable(typeof(GetUserInfoRequest))]
 [JsonSerializable(typeof(NoContent))]
-[JsonSerializable(typeof(ConflictResponse))]
-[JsonSerializable(typeof(BadRequestResponse))]
+[JsonSerializable(typeof(Result))]
 [JsonSerializable(typeof(ProblemDetails))]
 [JsonSerializable(typeof(LoginDto))]
 [JsonSerializable(typeof(VerifyRegistrationCodeDto))]

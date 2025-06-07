@@ -4,6 +4,7 @@ using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Response;
 using SastImg.Application.ImageServices.AddImage;
 using SastImg.Application.ImageServices.GetAlbumImages;
 using SastImg.Application.ImageServices.GetImage;
@@ -14,7 +15,6 @@ using SastImg.Domain.AlbumAggregate.AlbumEntity;
 using SastImg.Domain.AlbumAggregate.ImageEntity;
 using SastImg.Domain.AlbumAggregate.ImageEntity.Commands;
 using SastImg.Domain.AlbumTagEntity;
-using Shared.Response.Builders;
 
 namespace SastImg.WebAPI.Controllers;
 
@@ -46,7 +46,7 @@ public sealed class ImageController(IMediator mediator) : ControllerBase
     {
         var images = await mediator.Send(new GetAlbumImages(id, page, User), cancellationToken);
 
-        return Responses.Data(images);
+        return TypedResults.Ok(images);
     }
 
     /// <summary>
@@ -68,7 +68,7 @@ public sealed class ImageController(IMediator mediator) : ControllerBase
     )
     {
         var images = await mediator.Send(new GetUserImagesQuery(id, page, User), cancellationToken);
-        return Responses.Data(images);
+        return TypedResults.Ok(images);
     }
 
     /// <summary>
@@ -106,7 +106,7 @@ public sealed class ImageController(IMediator mediator) : ControllerBase
             new SearchImagesQuery(page, order, categoryId, tags, User),
             cancellationToken
         );
-        return Responses.Data(images);
+        return TypedResults.Ok(images);
     }
 
     /// <summary>
@@ -133,7 +133,7 @@ public sealed class ImageController(IMediator mediator) : ControllerBase
             new GetImageQuery(albumId, imageId, User),
             cancellationToken
         );
-        return Responses.DataOrNotFound(image);
+        return Results.Extensions.Data(image);
     }
 
     /// <summary>
@@ -156,7 +156,7 @@ public sealed class ImageController(IMediator mediator) : ControllerBase
     )
     {
         var images = await mediator.Send(new GetRemovedImagesQuery(id, User), cancellationToken);
-        return Responses.Data(images);
+        return TypedResults.Ok(images);
     }
 
     /// <summary>
@@ -180,7 +180,7 @@ public sealed class ImageController(IMediator mediator) : ControllerBase
     )
     {
         await mediator.Send(new RemoveImageCommand(albumId, imageId, User));
-        return Responses.NoContent;
+        return TypedResults.NoContent();
     }
 
     public readonly record struct AddImageRequest(
@@ -218,6 +218,6 @@ public sealed class ImageController(IMediator mediator) : ControllerBase
         );
 
         var response = await mediator.Send(command, cancellationToken);
-        return Responses.Created(response);
+        return Results.Extensions.Created(response);
     }
 }

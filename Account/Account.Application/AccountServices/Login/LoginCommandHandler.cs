@@ -3,7 +3,7 @@ using Account.Domain.UserEntity.Services;
 using Mediator;
 using Microsoft.AspNetCore.Http;
 using Primitives;
-using Shared.Response.Builders;
+using Response;
 
 namespace Account.Application.Endpoints.AccountEndpoints.Login;
 
@@ -24,13 +24,16 @@ public sealed class LoginCommandHandler(
 
         if (isValid == false)
         {
-            return Responses.BadRequest("Login failed", "Username or password is incorrect.");
+            return Results.Extensions.BadRequest(
+                "Login failed",
+                "Username or password is incorrect."
+            );
         }
 
         string jwt = jwtProvider.GetLoginJwt(user.Id, user.Username, user.UserRoles);
 
         await unit.CommitChangesAsync(cancellationToken);
 
-        return Responses.Data(new LoginDto(jwt));
+        return Results.Ok(new LoginDto(jwt));
     }
 }

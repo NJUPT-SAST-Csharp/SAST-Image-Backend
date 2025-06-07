@@ -4,12 +4,12 @@ using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Response;
 using SastImg.Application.TagServices;
 using SastImg.Application.TagServices.CreateTag;
 using SastImg.Application.TagServices.GetAllTags;
 using SastImg.Application.TagServices.SearchTags;
 using SastImg.Domain.AlbumTagEntity;
-using Shared.Response.Builders;
 
 namespace SastImg.WebAPI.Controllers;
 
@@ -36,7 +36,7 @@ public class TagController(IMediator mediator) : ControllerBase
     public async Task<Ok<IEnumerable<TagDto>>> GetAllTags(CancellationToken cancellationToken)
     {
         var tags = await mediator.Send(new GetAllTagsQuery(), cancellationToken);
-        return Responses.Data(tags);
+        return TypedResults.Ok(tags);
     }
 
     /// <summary>
@@ -58,7 +58,7 @@ public class TagController(IMediator mediator) : ControllerBase
     )
     {
         var tagsDto = await mediator.Send(new SearchTagsQuery(name), cancellationToken);
-        return Responses.Data(tagsDto);
+        return TypedResults.Ok(tagsDto);
     }
 
     public readonly record struct CreateTagRequest(TagName Name);
@@ -82,6 +82,6 @@ public class TagController(IMediator mediator) : ControllerBase
     )
     {
         var tagDto = await mediator.Send(new CreateTagCommand(request.Name), cancellationToken);
-        return Responses.Created(tagDto);
+        return Results.Extensions.Created(tagDto);
     }
 }

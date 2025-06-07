@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using SastImg.Application.CategoryServices.CreateCategory;
 using SastImg.Application.CategoryServices.GetAllCategory;
 using SastImg.Domain.CategoryEntity;
-using Shared.Response.Builders;
 
 namespace SastImg.WebAPI.Controllers;
 
@@ -45,7 +44,7 @@ public class CategoryController(IMediator mediator) : ControllerBase
             new CreateCategoryCommand(request.Name, request.Description),
             cancellationToken
         );
-        return Responses.NoContent;
+        return TypedResults.NoContent();
     }
 
     /// <summary>
@@ -63,6 +62,6 @@ public class CategoryController(IMediator mediator) : ControllerBase
     )
     {
         var categories = await mediator.Send(new GetAllCategoriesQuery(), cancellationToken);
-        return Responses.Data(categories);
+        return TypedResults.Ok(categories);
     }
 }

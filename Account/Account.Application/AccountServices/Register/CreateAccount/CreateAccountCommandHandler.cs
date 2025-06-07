@@ -4,7 +4,6 @@ using Account.Domain.UserEntity.Services;
 using Mediator;
 using Microsoft.AspNetCore.Http;
 using Primitives;
-using Shared.Response.Builders;
 
 namespace Account.Application.Endpoints.AccountEndpoints.Register.CreateAccount;
 
@@ -30,6 +29,6 @@ public sealed class CreateAccountCommandHandler(
 
         await cache.DeleteCodeAsync(CodeCacheKey.Registration, request.Email, cancellationToken);
 
-        return Responses.Data(new CreateAccountDto(jwt));
+        return Results.Ok(new CreateAccountDto(jwt));
     }
 }

@@ -2,7 +2,6 @@
 using Account.Application.Services;
 using Mediator;
 using Microsoft.AspNetCore.Http;
-using Shared.Response.Builders;
 
 namespace Account.Application.Endpoints.AccountEndpoints.Register.VerifyRegistrationCode;
 
@@ -21,6 +20,6 @@ public sealed class VerifyRegistrationCodeCommandHandler(IAuthCodeCache cache)
             cancellationToken
         );
 
-        return Responses.Data(new VerifyRegistrationCodeDto(result));
+        return Results.Ok(new VerifyRegistrationCodeDto(result));
     }
 }

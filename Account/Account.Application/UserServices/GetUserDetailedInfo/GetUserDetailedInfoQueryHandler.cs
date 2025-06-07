@@ -1,6 +1,6 @@
 ﻿using Mediator;
 using Microsoft.AspNetCore.Http;
-using Shared.Response.Builders;
+using Response;
 
 namespace Account.Application.UserServices.GetUserDetailedInfo;
 
@@ -14,6 +14,6 @@ public sealed class GetUserDetailedInfoQueryHandler(IUserQueryRepository reposit
     {
         var dto = await repository.GetUserDetailedInfoAsync(request.Username, cancellationToken);
 
-        return Responses.DataOrNotFound(dto);
+        return Results.Extensions.Data(dto);
     }
 }

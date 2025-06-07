@@ -2,7 +2,6 @@
 using Account.Domain.UserEntity.Services;
 using Mediator;
 using Microsoft.AspNetCore.Http;
-using Shared.Response.Builders;
 
 namespace Account.Application.Endpoints.AccountEndpoints.ForgetAccount.VerifyForgetCode;
 
@@ -20,6 +19,6 @@ public sealed class VerifyForgetCodeCommandHandler(
 
         string jwt = provider.GetLoginJwt(user.Id, user.Username, user.UserRoles);
 
-        return Responses.Data(new VerifyForgetCodeDto(jwt));
+        return Results.Ok(new VerifyForgetCodeDto(jwt));
     }
 }
