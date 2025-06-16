@@ -11,8 +11,10 @@ builder.WebHost.UseKestrel(options =>
 });
 
 builder.AddServiceDefaults();
+builder.AddRedisClient(nameof(StackExchange.Redis));
+builder.AddKeyedRedisClient(nameof(StackExchange.Redis));
 
-builder.AddRedisClient("Cache");
+builder.UseOrleans();
 
 builder.Services.AddMinIO(options =>
 {
@@ -30,14 +32,10 @@ builder.Services.AddMinIO(options =>
 
 builder.AddServices();
 
-builder.Services.AddGrpc();
-
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
 
 app.MapStorageEndpoints();
-
-app.MapGrpcService<ConfirmGrpcService>();
 
 app.Run();

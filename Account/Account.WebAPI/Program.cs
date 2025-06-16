@@ -1,7 +1,6 @@
-using System.Reflection;
 using Account.Infrastructure.Configurations;
 using Account.Infrastructure.Persistence;
-using Account.WebAPI.Configurations;
+using Account.WebAPI;
 using Auth;
 using ServiceDefaults;
 
@@ -9,17 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.ConfigureServices();
 
-builder.AddServiceDefaults();
-builder.AddRedisClient("Cache");
-builder.EnrichPersistence<AccountDbContext>();
+if (builder.Environment.IsDevelopment())
+{
+    builder.AddServiceDefaults();
+    builder.AddRedisSupport();
+    builder.AddPersistenceSupport<AccountDbContext>();
+}
 
-//builder
-//    .Configuration.AddJsonFile("appsettings.json")
-//    .AddJsonFile("appsettings.Development.json")
-//    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json");
-
-builder.Services.ConfigureJsonSerializer();
-builder.Services.RegisterEndpointMappersFromAssembly(Assembly.GetAssembly(typeof(Program))!);
+builder.UseOrleans(options => options.AddRedisGrainStorageAsDefault());
 
 var app = builder.Build();
 

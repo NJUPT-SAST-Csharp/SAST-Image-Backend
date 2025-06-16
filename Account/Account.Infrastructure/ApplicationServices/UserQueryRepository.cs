@@ -1,6 +1,5 @@
-﻿using Account.Application.UserServices;
-using Account.Application.UserServices.GetUserBriefInfo;
-using Account.Application.UserServices.GetUserDetailedInfo;
+﻿using Account.Application.Queries;
+using Account.Application.Services;
 using Account.Infrastructure.Persistence;
 using Dapper;
 using Identity;

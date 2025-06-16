@@ -1,4 +1,6 @@
-﻿using Account.Domain.UserEntity.Events;
+﻿using Account.Domain.UserEntity.Commands;
+using Account.Domain.UserEntity.Exceptions;
+using Account.Domain.UserEntity.Services;
 using Account.Domain.UserEntity.ValueObjects;
 using Identity;
 using Primitives.Entity;
@@ -10,80 +12,76 @@ public sealed class User : EntityBase<UserId>, IAggregateRoot<User>
     private User()
         : base(default) { }
 
-    private User(string username, string password, string email)
-        : base(UserId.GenerateNew())
+    public static async ValueTask<User> RegisterAsync(
+        RegisterCommand command,
+        IPasswordGenerator passwordGenerator,
+        IUsernameUniquenessChecker checker
+    )
     {
-        _username = username;
-        _email = email.ToUpperInvariant();
-        _password = Password.NewPassword(password);
-        _registerAt = DateTime.UtcNow;
-        _loginAt = DateTime.UtcNow;
-        _roles = [Role.USER];
-        _profile = Profile.Default;
-    }
+        if (await checker.ExistsAsync(command.Username))
+            throw new UsernameDuplicatedDomainException(command.Username);
 
-    public static User CreateNewUser(string username, string password, string email)
-    {
-        var user = new User(username, password, email);
-        user.AddDomainEvent(new UserCreatedEvent(user));
+        User user = new()
+        {
+            Password = await passwordGenerator.GenerateAsync(command.Password),
+            Username = command.Username,
+            Roles = [Role.USER],
+        };
+
         return user;
     }
 
-    #region Fields
-
-    private readonly string _username = null!;
-    private readonly string _email = null!;
-    private Uri? _avatar = null;
-    private Uri? _header = null;
-    private readonly DateTime _registerAt;
-    private DateTime _loginAt;
-
-    private Profile _profile = null!;
-    private Password _password = null!;
-
-    private Role[] _roles = [];
-
-    #endregion
-
     #region Properties
 
-    public string Username => _username;
-
-    public IReadOnlyCollection<Role> UserRoles => _roles;
+    public Username Username { get; private set; }
+    public Role[] Roles { get; private set; } = [];
+    internal ImageToken? Avatar { get; private set; } = null;
+    internal ImageToken? Header { get; private set; } = null;
+    internal Password Password { get; private set; } = null!;
 
     #endregion
 
     #region Methods
 
-    public void UpdateAuthorizations(params Role[] roles)
+    public void Authorize(AuthorizeCommand command)
     {
-        _roles = roles;
+        NoPermissionDomainException.ThrowIf(command.Requester.IsAdmin is false);
+
+        Roles = command.Roles;
     }
 
-    public void ResetPassword(string newPassword)
+    public async ValueTask ResetPasswordAsync(
+        ChangePasswordCommand command,
+        IPasswordGenerator generator
+    )
     {
-        _password = Password.NewPassword(newPassword);
+        NoPermissionDomainException.ThrowIf(
+            command.Requester.Id != Id || command.Requester.IsAdmin is false
+        );
+
+        var password = await generator.GenerateAsync(command.NewPassword);
+        Password = password;
     }
 
-    public async Task<bool> LoginAsync(string password)
+    public async ValueTask<JwtToken> LoginAsync(
+        LoginCommand command,
+        IPasswordValidator validator,
+        IJwtTokenGenerator generator
+    )
     {
-        if (await _password.ValidateAsync(password) is false)
-        {
-            return false;
-        }
+        LoginFailDomainException.ThrowIf(await validator.ValidateAsync(command.Password, Password));
 
-        _loginAt = DateTime.UtcNow;
-        return true;
+        return generator.Issue(this);
     }
 
-    public void UpdateProfile(string nickname, string biography, DateOnly? birthday, Uri? website)
+    public void UpdateUsername(UpdateUsernameCommand command)
     {
-        _profile = new(nickname, biography, birthday, website);
+        NoPermissionDomainException.ThrowIf(
+            command.Requester.Id != Id || command.Requester.IsAdmin is false
+        );
+
+        Username = command.Username;
     }
-
-    public void UpdateAvatar(Uri? avatar) => _avatar = avatar;
-
-    public void UpdateHeader(Uri? header) => _header = header;
 
     #endregion
 }

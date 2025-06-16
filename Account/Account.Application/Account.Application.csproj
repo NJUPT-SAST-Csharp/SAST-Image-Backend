@@ -1,24 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <Optimize>False</Optimize>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <Optimize>False</Optimize>
-  </PropertyGroup>
-
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="9.1.2" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Components\Auth\Auth.csproj" />
     <ProjectReference Include="..\..\Components\Exceptions\Exceptions.csproj" />
     <ProjectReference Include="..\..\Components\Response\Response.csproj" />
     <ProjectReference Include="..\Account.Domain\Account.Domain.csproj" />
   </ItemGroup>
-
 </Project>

@@ -5,7 +5,7 @@ var authentication = builder.AddParameter("Auth-SecKey", true);
 var username = builder.AddParameter("Username", true);
 var password = builder.AddParameter("Password", true);
 
-var redis = builder.AddRedis("Cache", 6379, password);
+var redis = builder.AddRedis(nameof(StackExchange.Redis), 6379, password);
 var minio = builder.AddMinIO("MinIO", username, password, 9000, 9001);
 var postgres = builder.AddPostgres("PostgreSQL", username, password, 5432);
 var orleans = builder.AddOrleans("Orleans").WithClustering(redis).WithGrainStorage(redis);
@@ -18,20 +18,23 @@ var storage = builder
     .WithReference(minio)
     .WithReference(redis);
 
-var database = postgres.AddDatabase("SastimgDb", "sastimg");
-var sastimg = builder
-    .AddProject<Projects.SastImg_WebAPI>("SastImg")
-    .WaitFor(database)
-    .WithReference(database)
-    .WithReference(redis);
-
-database = postgres.AddDatabase("AccountDb", "sastimg_account");
+var database = postgres.AddDatabase("AccountDb", "sastimg_account");
 var account = builder
     .AddProject<Projects.Account_WebAPI>("Account")
+    .WaitFor(storage)
     .WaitFor(database)
+    .WaitFor(redis)
+    .WithReference(orleans)
     .WithReference(database)
     .WithReference(redis)
     .WithEnvironment("Authentication:SecKey", authentication);
+
+//database = postgres.AddDatabase("SastimgDb", "sastimg");
+//var sastimg = builder
+//    .AddProject<Projects.SastImg_WebAPI>("SastImg")
+//    .WaitFor(database)
+//    .WithReference(database)
+//    .WithReference(redis);
 
 //database = postgres.AddDatabase("SNSDb", "sastimg_sns");
 //var sns = builder.AddProject<Projects.SNS_WebAPI>("SNS").WaitFor(database).WithReference(database);

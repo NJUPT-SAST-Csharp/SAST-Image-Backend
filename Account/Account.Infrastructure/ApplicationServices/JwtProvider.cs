@@ -1,28 +1,32 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Account.Application.Services;
+using Account.Domain.UserEntity;
+using Account.Domain.UserEntity.Services;
+using Account.Domain.UserEntity.ValueObjects;
 using Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Account.Infrastructure.ApplicationServices;
 
-internal sealed class JwtProvider(IConfiguration configuration) : IJwtProvider
+internal sealed class JwtProvider(IConfiguration configuration) : IJwtTokenGenerator
 {
-    public string GetLoginJwt(UserId userId, string username, IEnumerable<Role> roles)
-    {
-        var claims = new List<Claim>() { new(nameof(UserId), userId.Value.ToString()) };
-        claims.AddRange(roles.Select(r => new Claim(nameof(Role), r.ToString())));
-        return GenerateJwtByClaims(claims);
-    }
-
     private readonly string secKey =
         configuration.GetRequiredSection(nameof(Auth)).GetValue<string?>("SecKey")
         ?? throw new NullReferenceException("Couldn't find 'SecKey' from configuration.");
     private readonly long expires = configuration
         .GetRequiredSection(nameof(Auth))
         .GetValue<long>("Expires");
+
+    public JwtToken Issue(User user)
+    {
+        var claims = new List<Claim>() { new(nameof(UserId), user.Id.Value.ToString()) };
+        claims.AddRange(user.Roles.Select(r => new Claim(nameof(Role), ((int)r).ToString())));
+        string token = GenerateJwtByClaims(claims);
+
+        return new(token, expires);
+    }
 
     private string GenerateJwtByClaims(ICollection<Claim> claims, TimeSpan? expiration = null)
     {

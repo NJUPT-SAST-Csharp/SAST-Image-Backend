@@ -1,5 +1,6 @@
-﻿using Account.Application.Services;
-using Account.Application.UserServices;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using Account.Application.Services;
 using Account.Domain.UserEntity.Services;
 using Account.Infrastructure.ApplicationServices;
 using Account.Infrastructure.DomainServices;
@@ -25,42 +26,31 @@ public static class IServiceCollectionExtension
         services.AddMediator(options => options.ServiceLifetime = ServiceLifetime.Scoped);
 
         services
-            .AddRepositories()
-            .AddDistributedCache()
             .AddDefaultExceptionHandler()
-            .AddPersistence<AccountDbContext>(configuration.GetConnectionString("AccountDb")!)
-            .AddPersistence(configuration.GetConnectionString("AccountDb")!);
+            .AddPersistence<AccountDbContext>(configuration.GetConnectionString("AccountDb")!);
 
-        services.AddScoped<IUserUniquenessChecker, UserUniquenessChecker>();
-        services.AddScoped<IAuthCodeSender, EmailCodeSender>();
-        services.AddScoped<IJwtProvider, JwtProvider>();
-
-        return services;
-    }
-
-    public static IServiceCollection AddRepositories(this IServiceCollection services)
-    {
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IUserQueryRepository, UserQueryRepository>();
-        return services;
-    }
-
-    private static IServiceCollection AddPersistence(
-        this IServiceCollection services,
-        string connectionString
-    )
-    {
         SqlMapper.AddTypeHandler(new UriStringConverter());
         SqlMapper.AddTypeHandler(new DateOnlyConverter());
+        services.AddScoped<IDbConnectionFactory>(_ => new DbConnectionFactory(
+            configuration.GetConnectionString("AccountDb")!
+        ));
 
-        services.AddScoped<IDbConnectionFactory>(_ => new DbConnectionFactory(connectionString));
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IUserQueryRepository, UserQueryRepository>();
 
-        return services;
-    }
+        services.AddScoped<IUsernameUniquenessChecker, UserUniquenessChecker>();
+        services.AddScoped<IJwtTokenGenerator, JwtProvider>();
 
-    private static IServiceCollection AddDistributedCache(this IServiceCollection services)
-    {
-        services.AddScoped<IAuthCodeCache, RedisAuthCache>();
+        services.AddSingleton<PasswordProcessor>();
+        services.AddSingleton<IPasswordGenerator>(sp => sp.GetRequiredService<PasswordProcessor>());
+        services.AddSingleton<IPasswordValidator>(sp => sp.GetRequiredService<PasswordProcessor>());
+
+        services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.NumberHandling = JsonNumberHandling.WriteAsString;
+            options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        });
+
         return services;
     }
 }

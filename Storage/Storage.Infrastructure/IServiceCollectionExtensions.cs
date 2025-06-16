@@ -10,7 +10,7 @@ namespace Storage.Infrastructure;
 
 public static class IServiceCollectionExtensions
 {
-    public static IServiceCollection AddServices(
+    public static WebApplicationBuilder AddServices(
         this WebApplicationBuilder builder,
         Action<StorageConfiguration>? optionsBuilder = null
     )
@@ -27,13 +27,7 @@ public static class IServiceCollectionExtensions
 
         services.AddOptions<StorageConfiguration>().BindConfiguration(nameof(StorageConfiguration));
 
-        return services.AddCache();
-    }
-
-    private static IServiceCollection AddCache(this IServiceCollection services)
-    {
-        // TODO: Implement caching mechanism if needed
-        return services;
+        return builder;
     }
 
     public static IServiceCollection AddMinIO(
@@ -61,5 +55,14 @@ public static class IServiceCollectionExtensions
         });
 
         return services;
+    }
+
+    public static WebApplicationBuilder AddMinIO(
+        this WebApplicationBuilder builder,
+        Action<MinIOConfiguration>? optionsBuilder = null
+    )
+    {
+        builder.Services.AddMinIO(optionsBuilder);
+        return builder;
     }
 }

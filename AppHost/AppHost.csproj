@@ -9,11 +9,11 @@
     <UserSecretsId>f04eab90-7206-4a70-8a99-98196091836c</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Altavec.Aspire.Hosting.MinIO" Version="9.3.0" />
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.3.0" />
-    <PackageReference Include="Aspire.Hosting.Orleans" Version="9.3.0" />
-    <PackageReference Include="Aspire.Hosting.Redis" Version="9.3.0" />
-    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.3.0" />
+    <PackageReference Include="Altavec.Aspire.Hosting.MinIO" Version="9.3.1" />
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.3.1" />
+    <PackageReference Include="Aspire.Hosting.Orleans" Version="9.3.1" />
+    <PackageReference Include="Aspire.Hosting.Redis" Version="9.3.1" />
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.3.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Proxy\Proxy.csproj" />

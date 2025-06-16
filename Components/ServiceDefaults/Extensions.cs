@@ -58,9 +58,14 @@ public static class Extensions
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation();
+
+                metrics.AddMeter("Microsoft.Orleans");
             })
             .WithTracing(tracing =>
             {
+                tracing.AddSource("Microsoft.Orleans.Runtime");
+                tracing.AddSource("Microsoft.Orleans.Application");
+
                 tracing
                     .AddSource(builder.Environment.ApplicationName)
                     .AddAspNetCoreInstrumentation()

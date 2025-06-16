@@ -1,6 +1,5 @@
 using SastImg.Infrastructure.Configurations;
 using SastImg.Infrastructure.Persistence;
-using ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +8,7 @@ builder.ConfigureServices();
 
 builder.AddServiceDefaults();
 builder.AddRedisClient("Cache");
-builder.EnrichPersistence<SastImgDbContext>();
+builder.AddPersistenceSupport<SastImgDbContext>();
 
 // Build the web application.
 var app = builder.Build();

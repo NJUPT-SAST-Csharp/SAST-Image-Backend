@@ -1,29 +1,59 @@
-﻿using Utilities;
+﻿using System.Diagnostics.CodeAnalysis;
+using Primitives.Utilities;
+using Primitives.ValueObject;
 
 namespace Account.Domain.UserEntity.ValueObjects;
 
 public sealed record class Password
 {
-    private Password(byte[] hash, byte[] salt)
+    public required byte[] Hash { get; init; }
+    public required byte[] Salt { get; init; }
+}
+
+[OpenJsonConverter<PasswordInput, string>]
+public readonly record struct PasswordInput : IValueObject<PasswordInput, string>
+{
+    public const int MaxLength = 20;
+    public const int MinLength = 6;
+
+    public string Value { get; init; }
+
+    public static bool TryCreateNew(string input, [NotNullWhen(true)] out PasswordInput newObject)
     {
-        _hash = hash;
-        _salt = salt;
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            newObject = default;
+            return false;
+        }
+
+        input = input.Trim();
+
+        if (input.Length < MinLength || input.Length > MaxLength)
+        {
+            newObject = default;
+            return false;
+        }
+
+        if (IsLetterOrDigitOrUnderline(input) == false)
+        {
+            newObject = default;
+            return false;
+        }
+
+        newObject = new() { Value = input };
+        return true;
     }
 
-    private readonly byte[] _hash;
-    private readonly byte[] _salt;
-
-    internal static Password NewPassword(string password)
+    private static bool IsLetterOrDigitOrUnderline(string value)
     {
-        byte[] salt = Argon2Hasher.RandomSalt;
-        byte[] hash = Argon2Hasher.Hash(password, salt);
+        foreach (char c in value)
+        {
+            if (!char.IsLetterOrDigit(c) && c != '_')
+            {
+                return false;
+            }
+        }
 
-        return new Password(hash, salt);
-    }
-
-    internal async Task<bool> ValidateAsync(string password)
-    {
-        bool result = await Argon2Hasher.ValidateAsync(password, _hash, _salt);
-        return result;
+        return true;
     }
 }
