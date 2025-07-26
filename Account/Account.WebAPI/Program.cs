@@ -1,7 +1,6 @@
 using Account.Infrastructure.Configurations;
 using Account.Infrastructure.Persistence;
 using Account.WebAPI;
-using Auth;
 using ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,8 +28,6 @@ await using (var scope = app.Services.CreateAsyncScope())
 app.UseExceptionHandler(_ => { });
 
 app.UseRouting();
-
-app.UseInternalAuth();
 
 app.MapDefaultEndpoints();
 
