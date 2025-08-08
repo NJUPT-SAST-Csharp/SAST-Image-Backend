@@ -14,8 +14,8 @@ public sealed class UnitOfWorkBehavior<TCommand, TResponse>(
 
     public async ValueTask<TResponse> Handle(
         TCommand message,
-        CancellationToken cancellationToken,
-        MessageHandlerDelegate<TCommand, TResponse> next
+        MessageHandlerDelegate<TCommand, TResponse> next,
+        CancellationToken cancellationToken
     )
     {
         var response = await next(message, cancellationToken);
