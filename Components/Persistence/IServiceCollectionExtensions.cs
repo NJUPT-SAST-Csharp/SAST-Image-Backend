@@ -19,7 +19,7 @@ public static class IServiceCollectionExtensions
     {
         services.AddDbContext<TContext>(options =>
         {
-            options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
+            options.UseNpgsql(connectionString);
             optionsAction?.Invoke(options);
         });
 
@@ -41,18 +41,14 @@ public static class IServiceCollectionExtensions
             .AddDbContext<TWriteContext>(
                 (services, options) =>
                 {
-                    options
-                        .UseNpgsql(services.GetRequiredService<DbConnection>())
-                        .UseSnakeCaseNamingConvention();
+                    options.UseNpgsql(services.GetRequiredService<DbConnection>());
                     optionsAction?.Invoke(options);
                 }
             )
             .AddDbContext<TQueryContext>(
                 (services, options) =>
                 {
-                    options
-                        .UseNpgsql(services.GetRequiredService<DbConnection>())
-                        .UseSnakeCaseNamingConvention();
+                    options.UseNpgsql(services.GetRequiredService<DbConnection>());
                     optionsAction?.Invoke(options);
                 }
             );

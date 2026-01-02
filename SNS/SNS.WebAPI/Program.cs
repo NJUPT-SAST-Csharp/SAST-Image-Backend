@@ -9,7 +9,7 @@ builder.AddServiceDefaults();
 builder.AddNpgsqlDbContext<SNSDbContext>(
     "SNSDb",
     settings => settings.DisableRetry = true,
-    configureDbContextOptions: options => options.UseSnakeCaseNamingConvention()
+    configureDbContextOptions: options => { }
 );
 
 builder.Services.AddControllers();
