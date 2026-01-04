@@ -1,0 +1,38 @@
+<Solution>
+  <Folder Name="/Account/">
+    <Project Path="src/Account/Account.Application/Account.Application.csproj" />
+    <Project Path="src/Account/Account.Domain/Account.Domain.csproj" />
+    <Project Path="src/Account/Account.Infrastructure/Account.Infrastructure.csproj" />
+    <Project Path="src/Account/Account.WebAPI/Account.WebAPI.csproj" />
+  </Folder>
+  <Folder Name="/Components/">
+    <Project Path="src/Components/Auth/Auth.csproj" />
+    <Project Path="src/Components/Exceptions/Exceptions.csproj" />
+    <Project Path="src/Components/Identity/Identity.csproj" />
+    <Project Path="src/Components/Persistence/Persistence.csproj" />
+    <Project Path="src/Components/Primitives/Primitives.csproj" />
+    <Project Path="src/Components/Response/Response.csproj" />
+    <Project Path="src/Components/ServiceDefaults/ServiceDefaults.csproj" />
+  </Folder>
+  <Folder Name="/Notifications/">
+    <Project Path="src/Notifications/Notifications.Application/Notifications.Application.csproj" />
+    <Project Path="src/Notifications/Notifications.Domain/Notifications.Domain.csproj" />
+    <Project Path="src/Notifications/Notifications.Infrastructure/Notifications.Infrastructure.csproj" />
+    <Project Path="src/Notifications/Notifications.WebAPI/Notifications.WebAPI.csproj" />
+  </Folder>
+  <Folder Name="/SastImg/">
+    <Project Path="src/SastImg/SastImg.Application/SastImg.Application.csproj" />
+    <Project Path="src/SastImg/SastImg.Domain/SastImg.Domain.csproj" />
+    <Project Path="src/SastImg/SastImg.Infrastructure/SastImg.Infrastructure.csproj" />
+    <Project Path="src/SastImg/SastImg.Test/SastImg.Test.csproj" />
+    <Project Path="src/SastImg/SastImg.WebAPI/SastImg.WebAPI.csproj" />
+  </Folder>
+  <Folder Name="/Storage/">
+    <Project Path="src/Storage/Storage.Application/Storage.Application.csproj" />
+    <Project Path="src/Storage/Storage.Infrastructure/Storage.Infrastructure.csproj" />
+    <Project Path="src/Storage/Storage.Test/Storage.Test.csproj" />
+    <Project Path="src/Storage/Storage.WebAPI/Storage.WebAPI.csproj" />
+  </Folder>
+  <Project Path="src/AppHost/AppHost.csproj" />
+  <Project Path="src/Proxy/Proxy.csproj" />
+</Solution>

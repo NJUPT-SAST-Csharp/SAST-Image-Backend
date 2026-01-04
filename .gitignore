@@ -476,6 +476,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-/SastImg/SastImg.Infrastructure/Persistence/Migrations/
-/Account/Account.Infrastructure/Persistence/Migrations/
-/.editorconfig
+**/Migrations/

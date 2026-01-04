@@ -1,6 +1,0 @@
-@SNS.WebAPI_HostAddress = http://localhost:5057
-
-GET {{SNS.WebAPI_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
