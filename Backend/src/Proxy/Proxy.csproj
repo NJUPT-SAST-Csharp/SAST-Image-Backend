@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.ServiceDiscovery" Version="10.1.0" />
+    <PackageReference
+      Include="Microsoft.Extensions.ServiceDiscovery.Abstractions"
+      Version="10.1.0"
+    />
+    <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="10.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.1" />
+    <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Components\Identity\Identity.csproj" />
+    <ProjectReference Include="..\Components\ServiceDefaults\ServiceDefaults.csproj" />
+    <ProjectReference Include="..\Components\Auth\Auth.csproj" />
+  </ItemGroup>
+</Project>
