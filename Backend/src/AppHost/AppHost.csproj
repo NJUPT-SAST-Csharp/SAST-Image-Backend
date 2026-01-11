@@ -8,8 +8,8 @@
     <UserSecretsId>f04eab90-7206-4a70-8a99-98196091836c</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.Garnet" Version="13.1.0" />
     <PackageReference Include="Aspire.Hosting.Orleans" Version="13.1.0" />
-    <PackageReference Include="Aspire.Hosting.Redis" Version="13.1.0" />
     <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.1.0" />
     <PackageReference Include="AspireIntegration.Hosting.RustFs" Version="0.2.0" />
   </ItemGroup>

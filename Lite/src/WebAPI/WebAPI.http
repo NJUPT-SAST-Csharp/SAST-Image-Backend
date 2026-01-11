@@ -1,0 +1,18 @@
+@WebAPI_HostAddress = http://localhost:5265/api
+
+POST {{WebAPI_HostAddress}}/album/
+Content-Type: application/json
+
+{
+  "title": "我是标题",
+  "description": "The album description",
+  "accessLevel": 2,
+  "categoryId": 1
+}
+
+###
+GET {{WebAPI_HostAddress}}/album/1276461256283164672
+###
+GET {{WebAPI_HostAddress}}/albums?c=1
+###
+GET {{WebAPI_HostAddress}}/album/cover/1276461256283164672

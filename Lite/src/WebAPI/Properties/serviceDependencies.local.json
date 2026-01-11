@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "secrets1": {
+      "secretStore": null,
+      "resourceId": null,
+      "type": "secrets.user",
+      "connectionId": null
+    },
+    "postgresql1": {
+      "containerPorts": "5432:5432",
+      "secretStore": "LocalSecretsFile",
+      "containerName": "sastimg-db",
+      "containerImage": "postgres",
+      "resourceId": null,
+      "type": "postgresql.container",
+      "connectionId": "ConnectionStrings:Database"
+    },
+    "redis1": {
+      "containerPorts": "6379:6379",
+      "secretStore": "LocalSecretsFile",
+      "containerName": "sastimg-cache",
+      "containerImage": "redis",
+      "resourceId": null,
+      "type": "redis.container",
+      "connectionId": "ConnectionStrings:Cache"
+    }
+  }
+}
