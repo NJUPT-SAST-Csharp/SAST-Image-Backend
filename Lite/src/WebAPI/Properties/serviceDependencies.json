@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "secrets1": {
+      "type": "secrets",
+      "connectionId": null
+    },
+    "postgresql1": {
+      "type": "postgresql",
+      "connectionId": "ConnectionStrings:Database"
+    },
+    "redis1": {
+      "type": "redis",
+      "connectionId": "ConnectionStrings:Cache"
+    }
+  }
+}
