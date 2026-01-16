@@ -24,7 +24,6 @@
     <Project Path="src/SastImg/SastImg.Application/SastImg.Application.csproj" />
     <Project Path="src/SastImg/SastImg.Domain/SastImg.Domain.csproj" />
     <Project Path="src/SastImg/SastImg.Infrastructure/SastImg.Infrastructure.csproj" />
-    <Project Path="src/SastImg/SastImg.Test/SastImg.Test.csproj" />
     <Project Path="src/SastImg/SastImg.WebAPI/SastImg.WebAPI.csproj" />
   </Folder>
   <Folder Name="/Storage/">

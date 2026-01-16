@@ -63,26 +63,6 @@ internal static class ImageTestsHelper
         return image;
     }
 
-    public static void SetValue<T>(this Image image, T value)
-    {
-        typeof(Image)
-            .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
-            .First(f => f.FieldType == typeof(T))
-            .SetValue(image, value);
-    }
-
-    public static T GetValue<T>(this Image image)
-    {
-        object? value = typeof(Image)
-            .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
-            .First(f => f.FieldType == typeof(T))
-            .GetValue(image);
-
-        Assert.IsNotNull(value);
-
-        return (T)value;
-    }
-
     private static Image CreateNewImageFromReflection()
     {
         var constructor = typeof(Image).GetConstructor(
@@ -96,5 +76,10 @@ internal static class ImageTestsHelper
         image.SetValue(new List<Like>());
 
         return image;
+    }
+
+    extension(Image image)
+    {
+        public T GetValue<T>() => image.GetValue<Image, T>();
     }
 }

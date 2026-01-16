@@ -1,28 +1,88 @@
 ﻿using System.Reflection;
+using Domain.AlbumAggregate;
 using Domain.AlbumAggregate.AlbumEntity;
 using Domain.AlbumAggregate.Commands;
 using Domain.AlbumAggregate.Events;
 using Domain.AlbumAggregate.Exceptions;
 using Domain.AlbumAggregate.ImageEntity;
+using Domain.AlbumAggregate.Services;
 using Domain.CategoryAggregate.CategoryEntity;
 using Domain.Entity;
 using Domain.Shared;
+using Domain.Tests;
 using Domain.Tests.ImageEntity;
 using Domain.UserAggregate.UserEntity;
+using Moq;
 using Shouldly;
-using static Domain.Tests.AlbumEntity.AlbumTestsHelper;
+using static Domain.Tests.AlbumEntity.ActorTestHelper;
+using static Domain.Tests.AlbumEntity.CollaboratorsTestHelper;
+using static Domain.Tests.AlbumEntity.ImageTestHelper;
 
 namespace Domain.Tests.AlbumEntity;
 
 [TestClass]
-public class AlbumTests
+public class AlbumTests(TestContext context)
 {
+    #region Create
+    [TestMethod]
+    public async Task Add_New_Album_When_Created()
+    {
+        List<Album> db = [];
+        var command = new CreateAlbumCommand(
+            AlbumTitle.New,
+            AlbumDescription.New,
+            AccessLevel.Default,
+            CategoryId.New,
+            Actor.New(AuthorId)
+        );
+        var categoryCheckerMock = new Mock<ICategoryExistenceChecker>();
+        var albumTitleCheckerMock = new Mock<IAlbumTitleUniquenessChecker>();
+        var repositoryMock = new Mock<IAlbumRepository>();
+        var cancellationToken = context.CancellationToken;
+
+        categoryCheckerMock
+            .Setup(c => c.CheckAsync(command.CategoryId, cancellationToken))
+            .Returns(Task.CompletedTask);
+        albumTitleCheckerMock
+            .Setup(t => t.CheckAsync(command.Title, cancellationToken))
+            .Returns(Task.CompletedTask);
+        repositoryMock
+            .Setup(r => r.AddAsync(It.IsAny<Album>(), cancellationToken))
+            .Callback<Album, CancellationToken>((album, _) => db.Add(album))
+            .Returns(Task.CompletedTask);
+
+        var id = await Album.CreateAsync(
+            command,
+            categoryCheckerMock.Object,
+            albumTitleCheckerMock.Object,
+            repositoryMock.Object,
+            cancellationToken
+        );
+
+        db.Count.ShouldBe(1);
+        var album = db[0];
+        album.Id.ShouldBe(id);
+        album.DomainEvents.Count.ShouldBe(1);
+        album.DomainEvents.First().ShouldBeOfType<AlbumCreatedEvent>();
+        categoryCheckerMock.Verify(
+            c => c.CheckAsync(command.CategoryId, cancellationToken),
+            Times.Once
+        );
+        albumTitleCheckerMock.Verify(
+            t => t.CheckAsync(command.Title, cancellationToken),
+            Times.Once
+        );
+        repositoryMock.Verify(r => r.AddAsync(It.IsAny<Album>(), cancellationToken), Times.Once);
+    }
+
+    #endregion
+
     #region IsRemoved
 
     [TestMethod]
     public void Return_True_When_Album_Removed()
     {
-        var album = RemovedNewAlbum;
+        var album = Album.Removed;
 
         bool isRemoved = album.GetValue<AlbumStatus>().IsRemoved;
 
@@ -32,7 +92,7 @@ public class AlbumTests
     [TestMethod]
     public void Return_False_When_Album_Not_Removed()
     {
-        var album = ValidNewAlbum;
+        var album = Album.New;
 
         bool isRemoved = album.GetValue<AlbumStatus>().IsRemoved;
 
@@ -46,8 +106,12 @@ public class AlbumTests
     [TestMethod]
     public void Throw_When_UpdateDescription_In_Immutable_Album()
     {
-        var album = RemovedNewAlbum;
-        UpdateAlbumDescriptionCommand command = new(Id, NewDescription, Author);
+        var album = Album.Removed;
+        UpdateAlbumDescriptionCommand command = new(
+            AlbumId.New,
+            AlbumDescription.New,
+            Actor.Author
+        );
 
         Should.Throw<AlbumRemovedException>(() => album.UpdateDescription(command));
     }
@@ -57,8 +121,12 @@ public class AlbumTests
     [TestMethod]
     public void Throw_When_UpdateDescription_As_Not_Author_Or_Admin(long actorId)
     {
-        var album = ValidNewAlbum;
-        UpdateAlbumDescriptionCommand command = new(Id, NewDescription, NewActor(actorId));
+        var album = Album.New;
+        UpdateAlbumDescriptionCommand command = new(
+            AlbumId.New,
+            AlbumDescription.New,
+            Actor.New(actorId)
+        );
 
         Should.Throw<NoPermissionException>(() => album.UpdateDescription(command));
     }
@@ -68,8 +136,12 @@ public class AlbumTests
     [TestMethod]
     public void Raise_Event_When_Description_Updated(long actorId, bool isAdmin)
     {
-        var album = ValidNewAlbum;
-        UpdateAlbumDescriptionCommand command = new(Id, NewDescription, NewActor(actorId, isAdmin));
+        var album = Album.New;
+        UpdateAlbumDescriptionCommand command = new(
+            AlbumId.New,
+            AlbumDescription.New,
+            Actor.New(actorId, isAdmin)
+        );
 
         album.UpdateDescription(command);
 
@@ -84,8 +156,8 @@ public class AlbumTests
     [TestMethod]
     public void Throw_When_UpdateTitle_In_Immutable_Album()
     {
-        var album = RemovedNewAlbum;
-        UpdateAlbumTitleCommand command = new(Id, NewTitle, Author);
+        var album = Album.Removed;
+        UpdateAlbumTitleCommand command = new(AlbumId.New, AlbumTitle.New, Actor.Author);
 
         Should.Throw<AlbumRemovedException>(() => album.UpdateTitle(command));
     }
@@ -95,8 +167,8 @@ public class AlbumTests
     [TestMethod]
     public void Throw_When_UpdateTitle_As_Not_Author_Or_Admin(long actorId)
     {
-        var album = ValidNewAlbum;
-        UpdateAlbumTitleCommand command = new(Id, NewTitle, NewActor(actorId));
+        var album = Album.New;
+        UpdateAlbumTitleCommand command = new(AlbumId.New, AlbumTitle.New, Actor.New(actorId));
 
         Should.Throw<NoPermissionException>(() => album.UpdateTitle(command));
     }
@@ -106,8 +178,12 @@ public class AlbumTests
     [TestMethod]
     public void Raise_Event_When_Title_Updated(long actorId, bool isAdmin)
     {
-        var album = ValidNewAlbum;
-        UpdateAlbumTitleCommand command = new(Id, NewTitle, NewActor(actorId, isAdmin));
+        var album = Album.New;
+        UpdateAlbumTitleCommand command = new(
+            AlbumId.New,
+            AlbumTitle.New,
+            Actor.New(actorId, isAdmin)
+        );
 
         album.UpdateTitle(command);
 
@@ -122,8 +198,8 @@ public class AlbumTests
     [TestMethod]
     public void Throw_When_UpdateCategory_In_Immutable_Album()
     {
-        var album = RemovedNewAlbum;
-        UpdateAlbumCategoryCommand command = new(Id, NewCategory, Author);
+        var album = Album.Removed;
+        UpdateAlbumCategoryCommand command = new(AlbumId.New, CategoryId.New, Actor.Author);
 
         Should.Throw<AlbumRemovedException>(() => album.UpdateCategory(command));
     }
@@ -133,8 +209,8 @@ public class AlbumTests
     [TestMethod]
     public void Throw_When_UpdateCategory_As_Not_Author_Or_Admin(long actorId)
     {
-        var album = ValidNewAlbum;
-        UpdateAlbumCategoryCommand command = new(Id, NewCategory, NewActor(actorId));
+        var album = Album.New;
+        UpdateAlbumCategoryCommand command = new(AlbumId.New, CategoryId.New, Actor.New(actorId));
 
         Should.Throw<NoPermissionException>(() => album.UpdateCategory(command));
     }
@@ -144,8 +220,12 @@ public class AlbumTests
     [TestMethod]
     public void Raise_Event_When_Category_Updated(long actorId, bool isAdmin)
     {
-        var album = ValidNewAlbum;
-        UpdateAlbumCategoryCommand command = new(Id, NewCategory, NewActor(actorId, isAdmin));
+        var album = Album.New;
+        UpdateAlbumCategoryCommand command = new(
+            AlbumId.New,
+            CategoryId.New,
+            Actor.New(actorId, isAdmin)
+        );
 
         album.UpdateCategory(command);
 
@@ -160,8 +240,8 @@ public class AlbumTests
     [TestMethod]
     public void Throw_When_UpdateAccessLevel_In_Removed_Album()
     {
-        var album = RemovedNewAlbum;
-        UpdateAccessLevelCommand command = new(Id, NewAccessLevel, Author);
+        var album = Album.Removed;
+        UpdateAccessLevelCommand command = new(AlbumId.New, AccessLevel.Default, Actor.Author);
 
         Should.Throw<AlbumRemovedException>(() => album.UpdateAccessLevel(command));
     }
@@ -171,8 +251,12 @@ public class AlbumTests
     [TestMethod]
     public void Throw_When_UpdateAccessLevel_As_Not_Author_Or_Admin(long actorId)
     {
-        var album = ValidNewAlbum;
-        UpdateAccessLevelCommand command = new(Id, NewAccessLevel, NewActor(actorId));
+        var album = Album.New;
+        UpdateAccessLevelCommand command = new(
+            AlbumId.New,
+            AccessLevel.Default,
+            Actor.New(actorId)
+        );
 
         Should.Throw<NoPermissionException>(() => album.UpdateAccessLevel(command));
     }
@@ -182,8 +266,12 @@ public class AlbumTests
     [TestMethod]
     public void Raise_Event_When_AccessLevel_Updated(long actorId, bool isAdmin)
     {
-        var album = ValidNewAlbum;
-        UpdateAccessLevelCommand command = new(Id, NewAccessLevel, NewActor(actorId, isAdmin));
+        var album = Album.New;
+        UpdateAccessLevelCommand command = new(
+            AlbumId.New,
+            AccessLevel.Default,
+            Actor.New(actorId, isAdmin)
+        );
 
         album.UpdateAccessLevel(command);
 
@@ -198,8 +286,12 @@ public class AlbumTests
     [TestMethod]
     public void Throw_When_UpdateCollaborators_In_Immutable_Album()
     {
-        var album = RemovedNewAlbum;
-        UpdateCollaboratorsCommand command = new(Id, new(NewCollaborators), Author);
+        var album = Album.Removed;
+        UpdateCollaboratorsCommand command = new(
+            AlbumId.New,
+            Collaborators.DefaultNew,
+            Actor.Author
+        );
 
         Should.Throw<AlbumRemovedException>(() => album.UpdateCollaborators(command));
     }
@@ -209,9 +301,9 @@ public class AlbumTests
     [TestMethod]
     public void Throw_When_UpdateCollaborators_As_Not_Author_Or_Admin(long actorId)
     {
-        var album = ValidNewAlbum;
-        var collaborators = NewCollaborators;
-        UpdateCollaboratorsCommand command = new(Id, new(collaborators), NewActor(actorId));
+        var album = Album.New;
+        var collaborators = Collaborators.DefaultNew;
+        UpdateCollaboratorsCommand command = new(AlbumId.New, collaborators, Actor.New(actorId));
 
         Should.Throw<NoPermissionException>(() => album.UpdateCollaborators(command));
     }
@@ -221,12 +313,12 @@ public class AlbumTests
     [TestMethod]
     public void Raise_Event_When_Collaborators_Updated(long actorId, bool isAdmin)
     {
-        var album = ValidNewAlbum;
-        var collaborators = NewCollaborators;
+        var album = Album.New;
+        var collaborators = Collaborators.DefaultNew;
         UpdateCollaboratorsCommand command = new(
-            Id,
-            new(collaborators),
-            NewActor(actorId, isAdmin)
+            AlbumId.New,
+            collaborators,
+            Actor.New(actorId, isAdmin)
         );
 
         album.UpdateCollaborators(command);
@@ -242,8 +334,8 @@ public class AlbumTests
     [TestMethod]
     public void Throw_When_UpdateCover_In_Immutable_Album()
     {
-        var album = RemovedNewAlbum;
-        UpdateCoverCommand command = new(Id, null, Author);
+        var album = Album.Removed;
+        UpdateCoverCommand command = new(AlbumId.New, null, Actor.Author);
 
         Should.Throw<AlbumRemovedException>(() => album.UpdateCover(command));
     }
@@ -253,8 +345,8 @@ public class AlbumTests
     [TestMethod]
     public void Throw_When_UpdateCover_As_Not_Author_Or_Admin(long actorId)
     {
-        var album = ValidNewAlbum;
-        UpdateCoverCommand command = new(Id, null, NewActor(actorId));
+        var album = Album.New;
+        UpdateCoverCommand command = new(AlbumId.New, null, Actor.New(actorId));
 
         Should.Throw<NoPermissionException>(() => album.UpdateCover(command));
     }
@@ -264,8 +356,12 @@ public class AlbumTests
     [TestMethod]
     public void Raise_Event_When_Cover_Updated(long actorId, bool isAdmin)
     {
-        var album = ValidNewAlbum;
-        UpdateCoverCommand command = new(Id, ImageFile, NewActor(actorId, isAdmin));
+        var album = Album.New;
+        UpdateCoverCommand command = new(
+            AlbumId.New,
+            IImageFile.Default,
+            Actor.New(actorId, isAdmin)
+        );
 
         album.UpdateCover(command);
 
@@ -280,8 +376,14 @@ public class AlbumTests
     [TestMethod]
     public void Throw_When_AddImage_In_Immutable_Album()
     {
-        var album = RemovedNewAlbum;
-        AddImageCommand command = new(Id, NewImageTitle, NewImageTags, ImageFile, Author);
+        var album = Album.Removed;
+        AddImageCommand command = new(
+            AlbumId.New,
+            ImageTitle.New,
+            ImageTags.New,
+            IImageFile.Default,
+            Actor.Author
+        );
 
         Should.Throw<AlbumRemovedException>(() => album.AddImage(command));
     }
@@ -289,13 +391,13 @@ public class AlbumTests
     [TestMethod]
     public void Throw_When_AddImage_As_Not_Author_Or_Admin_Or_Collaborator()
     {
-        var album = ValidNewAlbum;
+        var album = Album.New;
         AddImageCommand command = new(
-            Id,
-            NewImageTitle,
-            NewImageTags,
-            ImageFile,
-            NewActor(VisitorId)
+            AlbumId.New,
+            ImageTitle.New,
+            ImageTags.New,
+            IImageFile.Default,
+            Actor.New(VisitorId)
         );
 
         Should.Throw<NoPermissionException>(() => album.AddImage(command));
@@ -308,13 +410,13 @@ public class AlbumTests
     [TestMethod]
     public void Raise_Event_When_Image_Added(long actorId, bool isAdmin)
     {
-        var album = ValidNewAlbum;
+        var album = Album.New;
         AddImageCommand command = new(
-            Id,
-            NewImageTitle,
-            NewImageTags,
-            ImageFile,
-            NewActor(actorId, isAdmin)
+            AlbumId.New,
+            ImageTitle.New,
+            ImageTags.New,
+            IImageFile.Default,
+            Actor.New(actorId, isAdmin)
         );
 
         album.AddImage(command);
@@ -326,8 +428,14 @@ public class AlbumTests
     [TestMethod]
     public void Raise_AlbumCoverUpdatedEvent_When_IsLatestImage_As_Image_Added()
     {
-        var album = ValidNewAlbum;
-        AddImageCommand command = new(Id, NewImageTitle, NewImageTags, ImageFile, Author);
+        var album = Album.New;
+        AddImageCommand command = new(
+            AlbumId.New,
+            ImageTitle.New,
+            ImageTags.New,
+            IImageFile.Default,
+            Actor.Author
+        );
 
         album.AddImage(command);
 
@@ -338,9 +446,16 @@ public class AlbumTests
     [TestMethod]
     public void Not_Raise_AlbumCoverUpdatedEvent_When_Not_IsLatestImage_As_Image_Added()
     {
-        var album = ValidNewAlbum;
-        album.SetValue(ImmutableCover);
-        AddImageCommand command = new(Id, NewImageTitle, NewImageTags, ImageFile, Author);
+        var fixedCover = Cover.UserCustomCover;
+        var album = Album.New;
+        album.SetValue(fixedCover);
+        AddImageCommand command = new(
+            AlbumId.New,
+            ImageTitle.New,
+            ImageTags.New,
+            IImageFile.Default,
+            Actor.Author
+        );
 
         album.AddImage(command);
 
@@ -356,8 +471,8 @@ public class AlbumTests
     [TestMethod]
     public void Throw_When_RemoveImage_In_Immutable_Album()
     {
-        var album = RemovedNewAlbum;
-        RemoveImageCommand command = new(Id, new(Image1Id), Author);
+        var album = Album.Removed;
+        RemoveImageCommand command = new(AlbumId.New, new(Image1Id), Actor.Author);
 
         Should.Throw<AlbumRemovedException>(() => album.RemoveImage(command));
     }
@@ -365,8 +480,8 @@ public class AlbumTests
     [TestMethod]
     public void Throw_When_RemoveImage_As_Not_Author_Or_Admin_Or_Collaborator()
     {
-        var album = ValidNewAlbum;
-        RemoveImageCommand command = new(Id, new(Image1Id), NewActor(VisitorId));
+        var album = Album.New;
+        RemoveImageCommand command = new(AlbumId.New, new(Image1Id), Actor.New(VisitorId));
 
         Should.Throw<NoPermissionException>(() => album.RemoveImage(command));
     }
@@ -374,9 +489,9 @@ public class AlbumTests
     [TestMethod]
     public void Raise_CoverUpdatedEvent_When_Image_As_LatestImage_Removed()
     {
-        var album = ValidNewAlbum;
+        var album = Album.New;
         album.SetValue(new Cover(new(Image2Id), true));
-        RemoveImageCommand command = new(Id, new(Image2Id), Author);
+        RemoveImageCommand command = new(AlbumId.New, new(Image2Id), Actor.Author);
 
         album.RemoveImage(command);
 
@@ -388,8 +503,8 @@ public class AlbumTests
     [TestMethod]
     public void Not_Raise_CoverUpdatedEvent_When_Image_Not_As_LatestImage_Removed()
     {
-        var album = ValidNewAlbum;
-        RemoveImageCommand command = new(Id, new(Image2Id), Author);
+        var album = Album.New;
+        RemoveImageCommand command = new(AlbumId.New, new(Image2Id), Actor.Author);
 
         album.RemoveImage(command);
 
@@ -403,8 +518,8 @@ public class AlbumTests
     [TestMethod]
     public void Throw_When_RestoreImage_In_Immutable_Album()
     {
-        var album = RemovedNewAlbum;
-        RestoreImageCommand command = new(Id, new(Image1Id), Author);
+        var album = Album.Removed;
+        RestoreImageCommand command = new(AlbumId.New, new(Image1Id), Actor.Author);
 
         Should.Throw<AlbumRemovedException>(() => album.RestoreImage(command));
     }
@@ -412,8 +527,8 @@ public class AlbumTests
     [TestMethod]
     public void Throw_When_RestoreImage_As_Not_Author_Or_Admin_Or_Collaborator()
     {
-        var album = ValidNewAlbum;
-        RestoreImageCommand command = new(Id, new(Image1Id), NewActor(VisitorId));
+        var album = Album.New;
+        RestoreImageCommand command = new(AlbumId.New, new(Image1Id), Actor.New(VisitorId));
 
         Should.Throw<NoPermissionException>(() => album.RestoreImage(command));
     }
@@ -421,9 +536,9 @@ public class AlbumTests
     [TestMethod]
     public void Raise_CoverUpdatedEvent_When_Image_As_LatestImage_Restored()
     {
-        var album = ValidNewAlbum;
+        var album = Album.New;
         album.GetImage(Image2Id).SetValue(ImageTestsHelper.RemovedStatus);
-        RestoreImageCommand command = new(Id, new(Image2Id), Author);
+        RestoreImageCommand command = new(AlbumId.New, new(Image2Id), Actor.Author);
 
         album.RestoreImage(command);
 
@@ -435,9 +550,9 @@ public class AlbumTests
     [TestMethod]
     public void Not_Raise_CoverUpdatedEvent_When_Image_Not_As_LatestImage_Restored()
     {
-        var album = ValidNewAlbum;
+        var album = Album.New;
         album.SetValue(new Cover(null, false));
-        RestoreImageCommand command = new(Id, new(Image2Id), Author);
+        RestoreImageCommand command = new(AlbumId.New, new(Image2Id), Actor.Author);
 
         album.RestoreImage(command);
 
@@ -451,8 +566,8 @@ public class AlbumTests
     [TestMethod]
     public void Not_Change_When_Album_Already_Removed()
     {
-        var album = RemovedNewAlbum;
-        RemoveAlbumCommand command = new(Id, Author);
+        var album = Album.Removed;
+        RemoveAlbumCommand command = new(AlbumId.New, Actor.Author);
         var time = album.GetValue<AlbumStatus>().RemovedAt!.Value;
 
         album.Remove(command);
@@ -464,8 +579,8 @@ public class AlbumTests
     [TestMethod]
     public void Raise_Event_When_Removed()
     {
-        var album = ValidNewAlbum;
-        RemoveAlbumCommand command = new(Id, Author);
+        var album = Album.New;
+        RemoveAlbumCommand command = new(AlbumId.New, Actor.Author);
 
         album.Remove(command);
 
@@ -476,8 +591,8 @@ public class AlbumTests
     [TestMethod]
     public void Update_Contained_Images_Status_When_Removed()
     {
-        var album = ValidNewAlbum;
-        RemoveAlbumCommand command = new(Id, Author);
+        var album = Album.New;
+        RemoveAlbumCommand command = new(AlbumId.New, Actor.Author);
 
         album.Remove(command);
 
@@ -494,8 +609,8 @@ public class AlbumTests
     [TestMethod]
     public void Not_Change_When_Album_Available()
     {
-        var album = ValidNewAlbum;
-        RestoreAlbumCommand command = new(Id, Author);
+        var album = Album.New;
+        RestoreAlbumCommand command = new(AlbumId.New, Actor.Author);
 
         album.Restore(command);
 
@@ -506,8 +621,8 @@ public class AlbumTests
     [TestMethod]
     public void Raise_Event_When_Restored()
     {
-        var album = RemovedNewAlbum;
-        RestoreAlbumCommand command = new(Id, Author);
+        var album = Album.Removed;
+        RestoreAlbumCommand command = new(AlbumId.New, Actor.Author);
 
         album.Restore(command);
 
@@ -518,8 +633,8 @@ public class AlbumTests
     [TestMethod]
     public void Update_Contained_Images_Status_When_Restored()
     {
-        var album = RemovedNewAlbum;
-        RestoreAlbumCommand command = new(Id, Author);
+        var album = Album.Removed;
+        RestoreAlbumCommand command = new(AlbumId.New, Actor.Author);
 
         album.Restore(command);
 
@@ -532,165 +647,206 @@ public class AlbumTests
     #endregion
 }
 
-internal static class AlbumTestsHelper
+file static class AlbumTestHelper
 {
-    public static readonly AlbumId Id = AlbumId.GenerateNew();
-
-    public static Actor NewActor(long id, bool isAdmin = false) =>
-        new()
+    extension(Album album)
+    {
+        public static Album New
         {
-            Id = new(id),
-            IsAdmin = isAdmin,
-            IsAuthenticated = true,
-        };
+            get
+            {
+                var constructor = typeof(Album).GetConstructor(
+                    BindingFlags.Instance | BindingFlags.NonPublic,
+                    Type.EmptyTypes
+                );
 
-    public const long Subscriber1Id = 9;
-    public const long Subscriber2Id = 8;
-    public const long NewSubscriberId = 7;
-    public static readonly Subscribe Subscriber1 = new(Id, new(Subscriber1Id));
-    public static readonly Subscribe Subscriber2 = new(Id, new(Subscriber2Id));
-    public static readonly Subscribe NewSubscriber = new(Id, new(NewSubscriberId));
-    public static List<Subscribe> OriginalSubscribers => [Subscriber1, Subscriber2];
+                Assert.IsNotNull(constructor);
 
-    public static readonly IImageFile ImageFile = null!;
+                var a = (Album)constructor.Invoke([]);
 
+                a.SetValue(Actor.Author.Id);
+                a.SetValue(AlbumTitle.New);
+                a.SetValue(Cover.Default);
+                a.SetValue(Subscribe.Default(a.Id));
+                a.SetValue(Image.Default);
+                a.SetValue(Collaborators.Default.Value);
+
+                typeof(EntityBase<AlbumId>)
+                    .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
+                    .First(f => f.Name.Contains("id", StringComparison.OrdinalIgnoreCase))
+                    .SetValue(a, AlbumId.New);
+
+                return a;
+            }
+        }
+
+        public static Album Removed
+        {
+            get
+            {
+                var status = AlbumStatus.Removed(DateTime.UtcNow);
+                var a = Album.New;
+                a.SetValue(status);
+
+                return a;
+            }
+        }
+
+        public T GetValue<T>() => album.GetValue<Album, T>();
+
+        public Image GetImage(long id)
+        {
+            Image? image = album
+                .GetValue<List<Image>>()
+                .FirstOrDefault(image => image.Id.Value == id);
+
+            Assert.IsNotNull(image);
+
+            return image;
+        }
+    }
+}
+
+file static class SubscribeTestHelper
+{
+    extension(Subscribe)
+    {
+        public static Subscribe New(AlbumId albumId, UserId userId) => new(albumId, userId);
+
+        public static List<Subscribe> Default(AlbumId album) =>
+            new([Subscribe.New(album, new(123)), Subscribe.New(album, new(321))]);
+    }
+}
+
+file static class ImageTestHelper
+{
     public const long Image1Id = 1111111;
     public const long Image2Id = 2222222;
-    public static List<Image> OriginalImages =>
-        [ImageTestsHelper.CreateNewImage(Image1Id), ImageTestsHelper.CreateNewImage(Image2Id)];
 
-    public static Image GetImage(this Album album, long id)
+    extension(Image)
     {
-        Image? image = album.GetValue<List<Image>>().FirstOrDefault(image => image.Id.Value == id);
+        public static Image New(long id) => ImageTestsHelper.CreateNewImage(id);
 
-        Assert.IsNotNull(image);
-
-        return image;
+        public static List<Image> Default => [Image.New(Image1Id), Image.New(Image2Id)];
     }
+}
 
-    public static readonly ImageTitle NewImageTitle = new("new_title");
-    public static readonly ImageTags NewImageTags = new([new("741"), new("ywwuyi")]);
-
-    public static readonly Cover DefaultCover = Cover.Default;
-    public static readonly Cover ImmutableCover = Cover.UserCustomCover;
-
-    public const long Collaborator1Id = 1;
-    public const long Collaborator2Id = 2;
-    public static readonly UserId[] OriginalCollaborators =
-    [
-        new(Collaborator1Id),
-        new(Collaborator2Id),
-    ];
-    public static readonly UserId[] NewCollaborators =
-    [
-        new(Collaborator1Id),
-        new(Collaborator2Id),
-        new(3),
-    ];
-    public static readonly UserId[] EmptyCollaborators = [];
-
+file static class ActorTestHelper
+{
     public const long AuthorId = 11111;
     public const long AdminId = 99999;
     public const long VisitorId = 55555;
-    public static readonly Actor Author = NewActor(AuthorId);
-    public static readonly Actor Adm = NewActor(AdminId, true);
-    public static readonly Actor Visitor = NewActor(VisitorId);
 
-    public static readonly AlbumTitle OriginalTitle = new("original_title");
-    public static readonly AlbumTitle NewTitle = new("new_title");
-    public static readonly CategoryId NewCategory = new(2222222222);
-    public static readonly AlbumDescription NewDescription = new("new_description");
-    public static readonly AccessLevel NewAccessLevel = AccessLevel.AuthReadOnly;
-
-    public static T GetProperty<T>(this Album album, string propertyName)
+    extension(Actor actor)
     {
-        var property = typeof(Album)
-            .GetProperties(BindingFlags.NonPublic | BindingFlags.Instance)
-            .First(p =>
-                p.PropertyType == typeof(T)
-                && p.Name.Contains(propertyName, StringComparison.OrdinalIgnoreCase)
-            );
-        object? value = property.GetValue(album);
+        public static Actor New(long id, bool isAdmin = false) =>
+            new()
+            {
+                Id = new(id),
+                IsAdmin = isAdmin,
+                IsAuthenticated = true,
+            };
 
-        Assert.IsNotNull(value);
-
-        return (T)value;
+        public static Actor Author => Actor.New(AuthorId);
+        public static Actor Visitor => Actor.New(VisitorId);
+        public static Actor Admin => Actor.New(AdminId);
     }
+}
 
-    public static T GetValue<T>(this Album album)
+file static class CollaboratorsTestHelper
+{
+    public const long Collaborator1Id = 1;
+    public const long Collaborator2Id = 2;
+
+    extension(Collaborators)
     {
-        var field = typeof(Album)
-            .GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
-            .First(f => f.FieldType == typeof(T));
-        object? value = field.GetValue(album);
+        public static Collaborators New(params long[] userIds) =>
+            new(Array.ConvertAll(userIds, i => new UserId(i)));
 
-        Assert.IsNotNull(value);
+        public static Collaborators DefaultNew =>
+            Collaborators.New([
+                Collaborator1Id,
+                Collaborator2Id,
+                Random.Shared.NextInt64(
+                    long.Max(Collaborator1Id, Collaborator2Id) + 1,
+                    long.MaxValue
+                ),
+            ]);
 
-        return (T)value;
+        public static Collaborators Default => new([new(Collaborator1Id), new(Collaborator2Id)]);
     }
+}
 
-    public static void SetValue<T>(this Album album, string fieldName, T value)
+file static class AlbumIdTestHelper
+{
+    extension(AlbumId)
     {
-        var field = typeof(Album)
-            .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
-            .First(f =>
-                f.FieldType == typeof(T)
-                && f.Name.Contains(fieldName, StringComparison.OrdinalIgnoreCase)
-            );
-
-        Assert.IsNotNull(field);
-
-        field.SetValue(album, value);
+        public static AlbumId New => AlbumId.GenerateNew();
     }
+}
 
-    public static void SetValue<T>(this Album album, T value)
+file static class AlbumTitleTestHelper
+{
+    extension(AlbumTitle)
     {
-        var field = typeof(Album)
-            .GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
-            .First(f => f.FieldType == typeof(T));
-
-        Assert.IsNotNull(field);
-
-        field.SetValue(album, value);
+        public static AlbumTitle New =>
+            new(Random.Shared.Chars(AlbumTitle.MinLength, AlbumTitle.MaxLength));
     }
+}
 
-    public static Album ValidNewAlbum => CreateNewAlbumFromReflection();
-
-    public static Album RemovedNewAlbum
+file static class AlbumDescriptionTestHelper
+{
+    extension(AlbumDescription)
     {
-        get
-        {
-            var status = AlbumStatus.Removed(DateTime.UtcNow);
-            var album = ValidNewAlbum;
-            album.SetValue(status);
-
-            return album;
-        }
+        public static AlbumDescription New =>
+            new(Random.Shared.Chars(AlbumDescription.MinLength, AlbumDescription.MaxLength));
     }
+}
 
-    private static Album CreateNewAlbumFromReflection()
+file static class CategoryIdTestHelper
+{
+    extension(CategoryId)
     {
-        var constructor = typeof(Album).GetConstructor(
-            BindingFlags.Instance | BindingFlags.NonPublic,
-            Type.EmptyTypes
-        );
+        public static CategoryId New => new(Random.Shared.NextInt64(1, long.MaxValue));
+    }
+}
 
-        Assert.IsNotNull(constructor);
+file static class ImageTitleTestHelper
+{
+    extension(ImageTitle)
+    {
+        public static ImageTitle New => new(Random.Shared.Chars(0, ImageTitle.MaxLength));
+    }
+}
 
-        var album = (Album)constructor.Invoke([]);
+file static class ImageTagsTestHelper
+{
+    extension(ImageTags)
+    {
+        public static ImageTags New =>
+            new([
+                .. Enumerable
+                    .Repeat(
+                        () => Random.Shared.Chars(default, ImageTags.MaxLength),
+                        Random.Shared.Next(1, ImageTags.MaxCount)
+                    )
+                    .Select(f => f()),
+            ]);
+    }
+}
 
-        album.SetValue(Author.Id);
-        album.SetValue(OriginalTitle);
-        album.SetValue(DefaultCover);
-        album.SetValue(OriginalSubscribers);
-        album.SetValue(OriginalImages);
-        album.SetValue(OriginalCollaborators);
+file static class ImageFileTestHelper
+{
+    extension(IImageFile)
+    {
+        public static IImageFile Default => null!;
+    }
+}
 
-        typeof(EntityBase<AlbumId>)
-            .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
-            .First(f => f.Name.Contains("id", StringComparison.OrdinalIgnoreCase))
-            .SetValue(album, Id);
-
-        return album;
+file static class AccessLevelHelper
+{
+    extension(AccessLevel)
+    {
+        public static AccessLevel Default => AccessLevel.AuthReadOnly;
     }
 }
