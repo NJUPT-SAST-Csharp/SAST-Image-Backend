@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Domain.Entity;
+using Domain.Tests.AlbumEntity;
 
 namespace Domain.Tests;
 
@@ -74,14 +75,21 @@ public static class AccessHelper
 
             field.SetValue(obj, value);
         }
+    }
+}
 
+public static class EntityHelper
+{
+    extension<TEntity>(TEntity entity)
+        where TEntity : IBaseEntity
+    {
         public void SetId<TId>(TId id)
             where TId : IBaseTypedId, IEquatable<TId>
         {
             typeof(EntityBase<TId>)
                 .GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
                 .First(f => f.Name.Contains("id", StringComparison.OrdinalIgnoreCase))
-                .SetValue(obj, id);
+                .SetValue(entity, id);
         }
     }
 }
