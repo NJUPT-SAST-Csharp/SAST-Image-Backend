@@ -116,3 +116,11 @@ public class ImageTitleTests
         image1.ShouldNotBe(image2);
     }
 }
+
+internal static class TestImageTitle
+{
+    extension(ImageTitle)
+    {
+        public static ImageTitle New => new("test_title");
+    }
+}

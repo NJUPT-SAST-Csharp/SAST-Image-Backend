@@ -9,4 +9,8 @@ namespace Domain.UserAggregate.UserEntity;
 public readonly record struct UserId(long Value) : ITypedId<UserId, long>
 {
     public static UserId GenerateNew() => new(Snowflake.NewId);
+
+    public static implicit operator long(UserId id) => id.Value;
+
+    public static implicit operator UserId(long value) => new(value);
 }

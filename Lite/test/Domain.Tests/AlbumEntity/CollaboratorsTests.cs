@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Domain.AlbumAggregate.AlbumEntity;
+﻿using Domain.AlbumAggregate.AlbumEntity;
 using Domain.UserAggregate.UserEntity;
 using Shouldly;
 
@@ -8,20 +7,6 @@ namespace Domain.Tests.AlbumEntity;
 [TestClass]
 public class CollaboratorsTests
 {
-    private static UserId NewCollaborator(long id)
-    {
-        UserId userId = new();
-        var valueField = typeof(UserId)
-            .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
-            .First(f => f.Name.Contains(nameof(userId.Value)));
-
-        object boxedUserId = userId;
-        valueField.SetValue(boxedUserId, id);
-        userId = (UserId)boxedUserId;
-
-        return userId;
-    }
-
     [TestMethod]
     public void Return_False_When_Too_Many_Collaborators()
     {

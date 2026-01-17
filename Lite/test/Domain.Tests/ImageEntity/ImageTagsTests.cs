@@ -103,3 +103,11 @@ public class ImageTagsTests
         result.ShouldBeTrue();
     }
 }
+
+public static class TestImageTags
+{
+    extension(ImageTags)
+    {
+        public static ImageTags New => new([new("quin"), new("ywwuyi")]);
+    }
+}

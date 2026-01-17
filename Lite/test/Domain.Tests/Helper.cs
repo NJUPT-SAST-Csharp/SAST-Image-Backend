@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Domain.Entity;
 
 namespace Domain.Tests;
 
@@ -22,6 +23,11 @@ internal static class RandomHelper
             int length = random.Next(minLength, maxLength + 1);
             return random.Chars(length);
         }
+    }
+
+    extension<T>(IEnumerable<T> values)
+    {
+        public T Random => values.ElementAt(new Random().Next(0, values.Count()));
     }
 }
 
@@ -67,6 +73,15 @@ public static class AccessHelper
             Assert.IsNotNull(field);
 
             field.SetValue(obj, value);
+        }
+
+        public void SetId<TId>(TId id)
+            where TId : IBaseTypedId, IEquatable<TId>
+        {
+            typeof(EntityBase<TId>)
+                .GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
+                .First(f => f.Name.Contains("id", StringComparison.OrdinalIgnoreCase))
+                .SetValue(obj, id);
         }
     }
 }
